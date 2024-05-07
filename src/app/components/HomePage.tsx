@@ -77,7 +77,7 @@ export default function HomePage() {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     console.log("Fetching status for startupId:", startupId);
     if (jwtAccessToken && startupId) {
-      const url = `http://127.0.0.1:8000/connects/${startupId}/`;
+      const url = `https://theyellow.group/api/connects/${startupId}/`;
       try {
         const response = await axios.get(url, {
           headers: {
@@ -121,11 +121,11 @@ export default function HomePage() {
               <span>
                 {typeof message?.response === "string"
                   ? JSON.parse(message?.response).map((startup, index) => (
-                    <div key={index}>{startup}</div>
-                  ))
+                      <div key={index}>{startup}</div>
+                    ))
                   : message?.response?.results.length === 0 &&
-                  message?.response?.chainresult &&
-                  message?.response?.chainresult}
+                    message?.response?.chainresult &&
+                    message?.response?.chainresult}
               </span>
 
               {message?.response?.results?.length > 0 && (
@@ -167,14 +167,9 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative">
-      <div className="absolute">
-        <NavBar
-          open={open}
-          handleToggleLeftFrame={handleToggleLeftFrameNavbar}
-        />
-      </div>
-      <div className="flex flex-row gap-x-4 w-full">
+    <main className="">
+    
+      <div className="flex flex-row  w-full">
         {open && (
           <div className="w-1/5">
             <LeftFrame
@@ -187,8 +182,9 @@ export default function HomePage() {
             />
           </div>
         )}
+         
 
-        <div className="flex-grow pt-12">
+        <div className="relative flex-grow pt-12">
           <Prompt
             onSaveInput={handleSaveInput}
             defaultPrompt={defaultPrompt}
@@ -202,8 +198,13 @@ export default function HomePage() {
             isInputEmpty={isInputEmpty}
             setIsInputEmpty={setIsInputEmpty}
           />
+           <div className="absolute left-2 top-2">
+           <NavBar
+          open={open}
+          handleToggleLeftFrame={handleToggleLeftFrameNavbar}
+        />
+      </div>
         </div>
-
         {openRightFrame && selectedStartup && (
           <div className={`${expanded ? "" : "w-1/4"}`}>
             <CompanyProfilePane

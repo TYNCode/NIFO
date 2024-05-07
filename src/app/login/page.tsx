@@ -37,8 +37,8 @@ const LoginPage: React.FC = () => {
       setLoginState(response.data.user);
       router.push("/");
       const { access_token, refresh_token } = response.data.tokens;
-      localStorage.setItem('jwtAccessToken', access_token);
-      localStorage.setItem('jwtRefreshToken', refresh_token);
+      localStorage.setItem("jwtAccessToken", access_token);
+      localStorage.setItem("jwtRefreshToken", refresh_token);
     } catch (error) {
       setLoginResponse(error?.response?.data?.message);
       console.log("errorinlogin", error);

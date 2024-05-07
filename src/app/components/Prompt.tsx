@@ -1,7 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import DefaultCard from "./DefaultCard";
+import { BsChatQuote } from "react-icons/bs";
 import axios from "axios";
+import FeedbackForm from './FeedbackForm';
 
 interface PromptProps {
   open: boolean;
@@ -30,7 +32,15 @@ const Prompt: React.FC<PromptProps> = ({
   setIsInputEmpty,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
 
+  const handleFeedbackIconClick = () => {
+    setIsFeedbackFormOpen(true);
+  };
+
+  const closeFeedbackForm = () => {
+    setIsFeedbackFormOpen(false);
+  };
   useEffect(() => {
     scrollToBottom();
   }, [renderMessages]);
@@ -84,7 +94,7 @@ const Prompt: React.FC<PromptProps> = ({
   };
 
   return (
-    <div className=" flex flex-col w-full items-center justify-center ">
+    <div className=" flex flex-col w-full items-center justify-center relative">
       <div className="prompt-container overflow-y-auto">
         {renderMessages().length === 0 ? (
           <>
@@ -133,6 +143,12 @@ const Prompt: React.FC<PromptProps> = ({
             </div>
           )}
         </div>
+        <div
+          className="absolute right-12 bottom-6 text-gray-500 bg-blue-200 rounded-full cursor-pointer"
+          onClick={handleFeedbackIconClick}>
+          <BsChatQuote size={32} />
+        </div>
+        <FeedbackForm isOpen={isFeedbackFormOpen} onRequestClose={closeFeedbackForm} />
       </div>
     </div>
   );
