@@ -168,7 +168,6 @@ export default function HomePage() {
 
   return (
     <main className="">
-    
       <div className="flex flex-row  w-full">
         {open && (
           <div className="w-1/5">
@@ -182,8 +181,6 @@ export default function HomePage() {
             />
           </div>
         )}
-         
-
         <div className="relative flex-grow pt-12">
           <Prompt
             onSaveInput={handleSaveInput}
@@ -198,12 +195,12 @@ export default function HomePage() {
             isInputEmpty={isInputEmpty}
             setIsInputEmpty={setIsInputEmpty}
           />
-           <div className="absolute left-2 top-2">
-           <NavBar
-          open={open}
-          handleToggleLeftFrame={handleToggleLeftFrameNavbar}
-        />
-      </div>
+          <div className="absolute left-2 top-2">
+            <NavBar
+              open={open}
+              handleToggleLeftFrame={handleToggleLeftFrameNavbar}
+            />
+          </div>
         </div>
         {openRightFrame && selectedStartup && (
           <div className={`${expanded ? "" : "w-1/4"}`}>

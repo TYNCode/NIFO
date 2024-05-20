@@ -3,7 +3,7 @@ import { IoMdSend } from "react-icons/io";
 import DefaultCard from "./DefaultCard";
 import { BsChatQuote } from "react-icons/bs";
 import axios from "axios";
-import FeedbackForm from './FeedbackForm';
+import FeedbackForm from "./FeedbackForm";
 
 interface PromptProps {
   open: boolean;
@@ -145,10 +145,14 @@ const Prompt: React.FC<PromptProps> = ({
         </div>
         <div
           className="absolute right-12 bottom-6 text-gray-500 bg-blue-200 rounded-full cursor-pointer"
-          onClick={handleFeedbackIconClick}>
+          onClick={handleFeedbackIconClick}
+        >
           <BsChatQuote size={32} />
         </div>
-        <FeedbackForm isOpen={isFeedbackFormOpen} onRequestClose={closeFeedbackForm} />
+        <FeedbackForm
+          isOpen={isFeedbackFormOpen}
+          onRequestClose={closeFeedbackForm}
+        />
       </div>
     </div>
   );
