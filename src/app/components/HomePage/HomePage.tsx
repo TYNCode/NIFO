@@ -69,7 +69,7 @@ export default function HomePage() {
     ]);
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000//prompt/ragsearch/`,
+        `https://theyellow.group/api/prompt/ragsearch/`,
         userquery
       );
       setMessages([...messages, { question: input, response: response.data }]);
@@ -83,7 +83,7 @@ export default function HomePage() {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken) {
       const response = await axios.post(
-        "http://127.0.0.1:8000//queryhistory/save/",
+        "https://theyellow.group/api/queryhistory/save/",
         {
           userquery: query,
         },
@@ -103,7 +103,7 @@ export default function HomePage() {
   const fetchConnectStatus = async (startupId: number) => {
     console.log("Fetching status for startupId:", startupId);
     if (jwtAccessToken && startupId) {
-      const url = `http://127.0.0.1:8000/connects/${startupId}/`;
+      const url = `https://theyellow.group/apiconnects/${startupId}/`;
       try {
         const response = await axios.get(url, {
           headers: {

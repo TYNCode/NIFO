@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
     try {
       console.log(data, "data");
       const response = await axios.post(
-        `http://127.0.0.1:8000//user/login/`,
+        `https://theyellow.group/api/user/login/`,
         data
       );
       setLoginResponse(response.data.message);

@@ -37,7 +37,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   setIsInputEmpty,
   queryData,
 }) => {
-  const [historyData, setHistoryData] = useState([]);
+  const [historyData, setHistoryData] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<string>(() => {
     // Retrieve the active tab from localStorage if available
     const savedActiveTab = localStorage.getItem("activeTab");
@@ -80,7 +80,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/queryhistory/retrieve/",
+          "https://theyellow.group/apiqueryhistory/retrieve/",
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
