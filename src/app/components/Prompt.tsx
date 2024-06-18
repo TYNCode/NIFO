@@ -17,6 +17,7 @@ interface PromptProps {
   handleToggleRightFrame: () => void;
   isInputEmpty: boolean;
   setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
+  saveQueryData;
 }
 
 const Prompt: React.FC<PromptProps> = ({
@@ -30,6 +31,7 @@ const Prompt: React.FC<PromptProps> = ({
   handleToggleRightFrame,
   isInputEmpty,
   setIsInputEmpty,
+  saveQueryData,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
@@ -55,26 +57,7 @@ const Prompt: React.FC<PromptProps> = ({
       onSaveInput(inputPrompt);
       setInputPrompt("");
       setIsInputEmpty(true);
-      await savedQueryData(inputPrompt); // Pass the input prompt value to saveQueryData
-    }
-  };
-
-  const savedQueryData = async (query: string) => {
-    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    if (jwtAccessToken) {
-      const response = await axios.post(
-        "https://theyellow.group/api/queryhistory/save/",
-        {
-          userquery: query,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtAccessToken}`,
-          },
-        }
-      );
-    } else {
-      console.error("JWT token not found in localStorage");
+      await saveQueryData(inputPrompt); // Pass the input prompt value to saveQueryData
     }
   };
 
@@ -116,7 +99,7 @@ const Prompt: React.FC<PromptProps> = ({
           </div>
         )}
       </div>
-      <div className="bg-white w-4/6 rounded-lg shadow-lg ">
+      <div className="bg-white w-4/6 rounded-lg shadow-customShadow ">
         <div className="flex items-center ">
           <textarea
             className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none overflow-hidden text-[14px]"
@@ -134,7 +117,7 @@ const Prompt: React.FC<PromptProps> = ({
             }}
           />
           {isInputEmpty ? (
-            <div className="px-8 opacity-50">
+            <div className="px-8 opacity-10">
               <IoMdSend size={23} />
             </div>
           ) : (

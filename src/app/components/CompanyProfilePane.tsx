@@ -3,7 +3,7 @@ import {
   MdOutlineKeyboardDoubleArrowLeft,
   MdOutlineKeyboardDoubleArrowRight,
 } from "react-icons/md";
-import { StartupType } from "../interfaces";
+import { QueryResponse, StartupType } from "../interfaces";
 import { GrFormClose } from "react-icons/gr";
 import { FaSpinner } from "react-icons/fa";
 import api from "./Axios";
@@ -24,6 +24,7 @@ interface CompanyProfilePaneProps {
   setMailData: React.Dispatch<React.SetStateAction<any>>;
   connectionStatus: string;
   setConnectionStatus: React.Dispatch<React.SetStateAction<string>>;
+  queryData: QueryResponse;
 }
 
 const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
@@ -36,10 +37,13 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   mailData,
   connectionStatus,
   setConnectionStatus,
+  queryData,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  console.log("companyData", companyData);
+  console.log("querydata",queryData)
   const openPane = () => {
     setOpenState(false);
   };
@@ -47,14 +51,15 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   const handleConnect = async () => {
     if (connectionStatus === "Connect") {
       await sendEmail();
-      connectStatusChange();
+      await connectStatusChange();
+      createPartnerConnect();
     }
   };
 
   const sendEmail = async () => {
     try {
       setIsLoading(true);
-      await axios.post("https://theyellow.group/api/email/send-email/", {
+      await axios.post("http://127.0.0.1:8000/email/send-email/", {
         subject: "Demo",
         template_name: "email_template.html",
         context: { userInfo, mailData, companyData },
@@ -72,7 +77,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken) {
       const response = await axios.post(
-        "https://theyellow.group/api/connects/",
+        "http://127.0.0.1:8000/connects/",
         {
           startup_id: companyData?.startup_id,
         },
@@ -89,6 +94,25 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
       setConnectionStatus("Requested");
     } else {
       console.error("JWT token not found in localStorage");
+    }
+  };
+
+  const createPartnerConnect = async () => {
+    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
+    if (jwtAccessToken) {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/partnerconnect/",
+        {
+          to_growthtechfirm: companyData?.startup_id,
+          query_status: "requested",
+          user_query: queryData?.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtAccessToken}`,
+          },
+        }
+      );
     }
   };
 
@@ -127,7 +151,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
                   className={`flex justify-center items-center px-4 py-1.5 bg-gray-400 rounded-md text-white font-semibold  lg:w-5/12 lg:text-sm xl:text-xl xl:w-5/12 ${
                     connectionStatus === "Connect"
                       ? "hover:bg-yellow-400 cursor-pointer"
-                      : "cursor-default bg-yellow-400"
+                      : "cursor-default bg-red-400"
                   }`}
                   onClick={handleConnect}
                 >

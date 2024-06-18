@@ -18,7 +18,9 @@ const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
                 <div
                     className={`${open ? '' : 'hidden'}`}
                     onClick={handleToggleLeftFrame}>
-                    <IoIosArrowBack size={23} />
+                    <div>
+                        <IoIosArrowBack size={23} />
+                    </div>
                 </div>
             ) : (
                 <div

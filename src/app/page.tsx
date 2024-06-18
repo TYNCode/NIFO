@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import HomePage from "./components/HomePage";
 import LoginPage from "./login/page";
+import HomePage from "./components/HomePage/HomePage";
 
 export default function Page() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -26,15 +26,14 @@ export default function Page() {
 
   return (
     <main className="">
-      {isInitialCheckDone && (
-        isLoggedIn ? (
+      {isInitialCheckDone &&
+        (isLoggedIn ? (
           <div className="">
             <HomePage />
           </div>
         ) : (
           <LoginPage />
-        )
-      )}
+        ))}
     </main>
   );
 }

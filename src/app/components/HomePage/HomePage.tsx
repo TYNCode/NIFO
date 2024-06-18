@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
-import NavBar from "./Navbar";
-import Prompt from "./Prompt";
+import NavBar from "../Navbar";
+import Prompt from "../Prompt";
 import axios from "axios";
-import CompanyProfilePane from "./CompanyProfilePane";
-import { StartupType } from "../interfaces";
-import LeftFrame from "./LeftFrame/LeftFrame";
-import api from "./Axios";
+import CompanyProfilePane from "../CompanyProfilePane";
+import { QueryResponse, StartupType } from "../../interfaces";
+import LeftFrame from "../LeftFrame/LeftFrame";
+import api from "../Axios";
+import RenderStartup from "./RenderStartup";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
@@ -22,6 +23,9 @@ export default function HomePage() {
   const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true);
   const [mailMessage, setMailMessage] = useState<any>(null);
   const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
+  const [queryData, setQueryData] = useState<QueryResponse | null>(null);
+
+  console.log("queryDatainHome", queryData, inputPrompt);
 
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("userInfo");
@@ -39,6 +43,7 @@ export default function HomePage() {
     setOpen(!open);
   };
 
+  console.log("messages", messages);
   const handleToggleLeftFrame = () => {
     if (open) {
       setOpen(!open);
@@ -64,7 +69,7 @@ export default function HomePage() {
     ]);
     try {
       const response = await axios.post(
-        `https://theyellow.group/api/prompt/ragsearch/`,
+        `http://127.0.0.1:8000//prompt/ragsearch/`,
         userquery
       );
       setMessages([...messages, { question: input, response: response.data }]);
@@ -73,18 +78,39 @@ export default function HomePage() {
     }
   };
 
-  const fetchConnectStatus = async (startupId) => {
+  //save the data queried
+  const saveQueryData = async (query: string) => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
+    if (jwtAccessToken) {
+      const response = await axios.post(
+        "http://127.0.0.1:8000//queryhistory/save/",
+        {
+          userquery: query,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwtAccessToken}`,
+          },
+        }
+      );
+      setQueryData(response.data);
+    } else {
+      console.error("JWT token not found in localStorage");
+    }
+  };
+
+  let jwtAccessToken = localStorage.getItem("jwtAccessToken");
+  const fetchConnectStatus = async (startupId: number) => {
     console.log("Fetching status for startupId:", startupId);
     if (jwtAccessToken && startupId) {
-      const url = `https://theyellow.group/api/connects/${startupId}/`;
+      const url = `http://127.0.0.1:8000/connects/${startupId}/`;
       try {
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${jwtAccessToken}`,
           },
         });
-        console.log("Fetching status response", response.data);
+        console.log("Fetching status response", response.data.status);
         setConnectionStatus(response.data.status);
       } catch (error) {
         console.error("Error fetching connection status:", error);
@@ -94,13 +120,12 @@ export default function HomePage() {
     }
   };
 
-  const handleSendStartupData = (item: StartupType, message: any) => {
-    console.log("mailmessage", message);
+  const handleSendStartupData = (item: any, message: any) => {
+    console.log("itemofhandlem", item);
     setMailMessage(message);
-    setSelectedStartup(item);
-    console.log("selectedStartup", selectedStartup);
+    setSelectedStartup(item?.database_info);
     setOpenRightFrame(true);
-    fetchConnectStatus(item.startup_id);
+    fetchConnectStatus(item?.database_info?.startup_id);
   };
 
   const renderMessages = () => {
@@ -110,55 +135,25 @@ export default function HomePage() {
           <span className="font-semibold text-[17px] text-black block mb-1">
             You:
           </span>
-          <span className="text-[17px]">{message.question}</span>
+          <span className="text-[17px]">{message?.question}</span>
         </div>
         <div className="p-6 text-left border-l-4 border-blue-100">
-          <span className="font-semibold text-black block mb-3">GamePlan:</span>
+          <span className="font-semibold text-black block mb-3">NIFO:</span>
           {message?.response === "Loading" ? (
             <div>Loading..</div>
           ) : (
             <div>
-              <span>
-                {typeof message?.response === "string"
-                  ? JSON.parse(message?.response).map((startup, index) => (
-                      <div key={index}>{startup}</div>
-                    ))
-                  : message?.response?.results.length === 0 &&
-                    message?.response?.chainresult &&
-                    message?.response?.chainresult}
-              </span>
-
-              {message?.response?.results?.length > 0 && (
-                <div className="grid grid-cols-3 font-semibold text-base">
-                  <div>Startup Name</div>
-                  <div>Reason</div>
+              {message.response.response ==
+              "No specific details available." ? null : (
+                <div className="mb-2 leading-7">
+                  {message.response.response}
                 </div>
               )}
 
-              {message?.response?.results?.length > 0 &&
-                message.response.results.map(
-                  (result: any, indexofresult: number) => {
-                    const description =
-                      message?.response?.descriptions[indexofresult];
-                    let reason = "";
-                    if (description) {
-                      reason = description.split(":")[1].trim();
-                    } else if (result.startup_overview) {
-                      // Use startup_overview if description is not available
-                      reason = result.startup_overview;
-                    }
-                    return (
-                      <div
-                        key={indexofresult}
-                        className="grid grid-cols-3 mt-4 rounded shadow-md p-2 bg-blue-100 cursor-pointer"
-                        onClick={() => handleSendStartupData(result, message)}
-                      >
-                        <div className="text-sm">{result?.startup_name}</div>
-                        <div className="text-sm col-span-2">{reason}</div>
-                      </div>
-                    );
-                  }
-                )}
+              <RenderStartup
+                message={message}
+                handleSendStartupData={handleSendStartupData}
+              ></RenderStartup>
             </div>
           )}
         </div>
@@ -178,6 +173,7 @@ export default function HomePage() {
               isInputEmpty={isInputEmpty}
               setIsInputEmpty={setIsInputEmpty}
               userInfo={userInfo}
+              queryData={queryData}
             />
           </div>
         )}
@@ -194,6 +190,7 @@ export default function HomePage() {
             handleToggleRightFrame={handleToggleRightFrame}
             isInputEmpty={isInputEmpty}
             setIsInputEmpty={setIsInputEmpty}
+            saveQueryData={saveQueryData}
           />
           <div className="absolute left-2 top-2">
             <NavBar
@@ -215,6 +212,7 @@ export default function HomePage() {
               setMailData={setMailMessage}
               connectionStatus={connectionStatus}
               setConnectionStatus={setConnectionStatus}
+              queryData={queryData}
             />
           </div>
         )}
