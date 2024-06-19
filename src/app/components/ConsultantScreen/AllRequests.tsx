@@ -27,7 +27,7 @@ const AllRequests = ({
 
   useEffect(() => {
     axios
-      .get("https://theyellow.group/apipartnerconnect/")
+      .get("https://theyellow.group/api/partnerconnect/")
       .then((response) => {
         setRequests(response.data);
         console.log("Fetched requests:", response.data);

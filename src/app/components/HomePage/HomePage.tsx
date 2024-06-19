@@ -103,7 +103,7 @@ export default function HomePage() {
   const fetchConnectStatus = async (startupId: number) => {
     console.log("Fetching status for startupId:", startupId);
     if (jwtAccessToken && startupId) {
-      const url = `https://theyellow.group/apiconnects/${startupId}/`;
+      const url = `https://theyellow.group/api/connects/${startupId}/`;
       try {
         const response = await axios.get(url, {
           headers: {

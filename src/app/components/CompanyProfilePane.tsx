@@ -59,7 +59,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   const sendEmail = async () => {
     try {
       setIsLoading(true);
-      await axios.post("https://theyellow.group/apiemail/send-email/", {
+      await axios.post("https://theyellow.group/api/email/send-email/", {
         subject: "Demo",
         template_name: "email_template.html",
         context: { userInfo, mailData, companyData },
@@ -77,7 +77,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken) {
       const response = await axios.post(
-        "https://theyellow.group/apiconnects/",
+        "https://theyellow.group/api/connects/",
         {
           startup_id: companyData?.startup_id,
         },
@@ -101,7 +101,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken) {
       const response = await axios.post(
-        "https://theyellow.group/apipartnerconnect/",
+        "https://theyellow.group/api/partnerconnect/",
         {
           to_growthtechfirm: companyData?.startup_id,
           query_status: "requested",

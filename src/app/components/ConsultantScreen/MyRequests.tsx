@@ -59,7 +59,7 @@ const MyRequests: React.FC<MyRequestsProps> = ({
 
   useEffect(() => {
     axios
-      .get("https://theyellow.group/apipartnerconnect/", {
+      .get("https://theyellow.group/api/partnerconnect/", {
         params: {
           "assigned_to.email": userEmail,
         },

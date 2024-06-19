@@ -23,7 +23,7 @@ const EditModal: React.FC<EditModalProps> = ({
     if (jwtAccessToken) {
       try {
         await axios.put(
-          `https://theyellow.group/apipartnerconnect/${id}/update-query-status/`,
+          `https://theyellow.group/api/partnerconnect/${id}/update-query-status/`,
           {
             query_status: currentStatus,
           },
