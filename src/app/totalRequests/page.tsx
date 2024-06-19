@@ -15,8 +15,14 @@ const TotalRequests: React.FC = () => {
   const [completedOpen, setCompletedOpen] = useState<boolean>(true);
   const [rejectedOpen, setRejectedOpen] = useState<boolean>(true);
   const [view, setView] = useState<string>("allRequests");
+  const [userInfo, setUserInfo] = useState<any>({})
 
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUserInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+      setUserInfo(storedUserInfo);
+    }
+  }, []);
   const isSuperUser = userInfo["is_superuser"];
 
   function formatDate(dateString: string) {
