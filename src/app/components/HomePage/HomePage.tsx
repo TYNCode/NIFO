@@ -7,8 +7,14 @@ import axios from "axios";
 import CompanyProfilePane from "../CompanyProfilePane";
 import { QueryResponse, StartupType } from "../../interfaces";
 import LeftFrame from "../LeftFrame/LeftFrame";
-import api from "../Axios";
 import RenderStartup from "./RenderStartup";
+import BottomBar from "../../mobileComponents/BottomBar";
+import MobileHeader from "../../mobileComponents/MobileHeader";
+import Spotlight from "../LeftFrame/Spotlight";
+import SpotlightMobile from "../../mobileComponents/FooterComponents/SpotlightMobile";
+import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
+import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
+import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
@@ -25,6 +31,7 @@ export default function HomePage() {
   const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
   const [queryData, setQueryData] = useState<QueryResponse | null>(null);
 
+  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   console.log("queryDatainHome", queryData, inputPrompt);
 
   useEffect(() => {
@@ -161,19 +168,60 @@ export default function HomePage() {
     ));
   };
 
+  // mobileResponsiveness
+  const [activeTab, setActiveTab] = useState<string>("Spotlight");
+  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "Spotlight":
+        return (
+          <SpotlightMobile
+            activeSpotlight={activeSpotlight}
+            setActiveSpotlight={setActiveSpotlight}
+          />
+        );
+      case "Search":
+        return (
+          <SearchMobile
+            isInputEmpty={isInputEmpty}
+            inputPrompt={inputPrompt}
+            setInputPrompt={setInputPrompt}
+            setIsInputEmpty={setIsInputEmpty}
+            handleToggleRightFrame={handleToggleRightFrame}
+            handleToggleLeftFrame={handleToggleLeftFrame}
+            onSaveInput={handleSaveInput}
+            saveQueryData={saveQueryData}
+            messages={messages}
+            connectionStatus={connectionStatus}
+            setConnectionStatus={setConnectionStatus}
+          />
+        );
+      case "Trends":
+        return <TrendsMobile />;
+      case "More":
+        return <MoreMobile />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <main className="">
-      <div className="flex flex-row  w-full">
+    <main className="flex flex-col w-full">
+      {/* Desktop Responsiveness */}
+      <div className="hidden md:flex w-full flex-row">
         {open && (
           <div className="w-1/5">
             <LeftFrame
               open={open}
               inputPrompt={inputPrompt}
               setInputPrompt={setInputPrompt}
+              userInfo={userInfo}
               isInputEmpty={isInputEmpty}
               setIsInputEmpty={setIsInputEmpty}
-              userInfo={userInfo}
               queryData={queryData}
+              setIsLogoutOpen={setIsLogoutOpen}
+              isLogoutOpen={isLogoutOpen}
             />
           </div>
         )}
@@ -216,6 +264,16 @@ export default function HomePage() {
             />
           </div>
         )}
+      </div>
+
+      {/* Mobile Responsiveness */}
+      <div className="flex flex-col md:hidden">
+        <MobileHeader
+          activeSpotlight={activeSpotlight}
+          setActiveSpotlight={setActiveSpotlight}
+        />
+        {renderTabContent()}
+        <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>
     </main>
   );

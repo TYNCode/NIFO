@@ -26,6 +26,8 @@ interface LeftFrameProps {
   isInputEmpty: boolean;
   setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   queryData: QueryResponse;
+  setIsLogoutOpen: boolean;
+  isLogoutOpen: boolean;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -36,6 +38,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   isInputEmpty,
   setIsInputEmpty,
   queryData,
+  setIsLogoutOpen,
+  isLogoutOpen
 }) => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -43,7 +47,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     const savedActiveTab = localStorage.getItem("activeTab");
     return savedActiveTab ? savedActiveTab : "spotlight";
   });
-  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
+
   const [currentMenu, setCurrentMenu] = useState<string>(activeTab); // Initialize currentMenu with activeTab
   const logoutRef = useRef<HTMLDivElement>(null);
   const navigate = useRouter();
