@@ -117,6 +117,22 @@ const SearchMobile = ({
             </div>
           ))}
         </div>
+
+        <div>
+        <div className="fixed bottom-32">
+          <PromptTabMobile
+            isInputEmpty={isInputEmpty}
+            inputPrompt={inputPrompt}
+            setInputPrompt={setInputPrompt}
+            setIsInputEmpty={setIsInputEmpty}
+            handleToggleRightFrame={handleToggleRightFrame}
+            handleToggleLeftFrame={handleToggleLeftFrame}
+            onSaveInput={onSaveInput}
+            saveQueryData={saveQueryData}
+            setAnswerTab={setAnswerTab}
+          />
+        </div>
+        </div>
       </div>
     );
   };

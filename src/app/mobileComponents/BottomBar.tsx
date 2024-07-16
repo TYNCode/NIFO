@@ -11,7 +11,7 @@ const BottomBar = ({ setActiveTab, activeTab }) => {
     }`;
   return (
     <div>
-      <div className="fixed bottom-0  w-full h-28 flex items-center justify-around bg-white">
+      <div className="fixed bottom-0  w-full h-20 flex items-center justify-around bg-white">
         {/* Spotlight */}
         <div
           className={getTabClass("Spotlight")}

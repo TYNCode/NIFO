@@ -39,7 +39,7 @@ function MoreMobile() {
           Logout
         </button>
       </div>
-      <div className="flex flex-col items-start border border-gray-100 m-2 my-4 rounded-xl">
+      <div className="flex flex-col items-start border border-gray-100 m-2 rounded-xl text-sm">
         <MenuOption label="History" onClick={() => setActiveTab("History")} />
         <hr />
         <MenuOption label="Recommended Queries" onClick={() => setActiveTab("Recommendation")} />

@@ -31,22 +31,22 @@ const SpotlightMobile = ({ activeSpotlight, setActiveSpotlight }) => {
 
   const renderSpotlightFirst = () => {
     return (
-      <div className="flex flex-col justify-around gap-6 py-7 items-start mx-7 text-lg">
+      <div className="flex flex-col justify-around gap-4 py-5 items-start mx-7 text-lg">
         <div className="font-medium text-xl">SPOTLIGHT</div>
         {/* Spotlight video */}
         <div className="flex flex-col gap-4">
           <div>
             <Image
               src="/thirdai-mobile.png"
-              width={500}
-              height={500}
+              width={400}
+              height={400}
               alt="spotlight"
             />
           </div>
           <div className="font-light text-sm">{cdate}</div>
         </div>
         {/* Spot light title */}
-        <div className="leading-9 tracking-wide line-clamp-4">
+        <div className="leading-9 tracking-wide line-clamp-4 text-sm">
           How ThirdAI revolutionizes AI with sparse computing, enabling
           efficient, cost-effective deep learning on standard CPUs, driving AI
           accessibility and deployment trends
@@ -57,7 +57,7 @@ const SpotlightMobile = ({ activeSpotlight, setActiveSpotlight }) => {
           className="text-gray-700 flex items-center justify-center mx-auto cursor-pointer"
           onClick={handleSpotlight}
         >
-          <FiArrowDownCircle size={30} />
+          <FiArrowDownCircle size={26} />
         </div>
       </div>
     );
