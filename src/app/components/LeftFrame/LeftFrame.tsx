@@ -26,7 +26,7 @@ interface LeftFrameProps {
   isInputEmpty: boolean;
   setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   queryData: QueryResponse;
-  setIsLogoutOpen: boolean;
+  setIsLogoutOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isLogoutOpen: boolean;
 }
 
