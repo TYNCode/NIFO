@@ -65,7 +65,7 @@ const SpotlightMobile = ({ activeSpotlight, setActiveSpotlight }) => {
 
   const renderSpotlightSecondPage = () => {
     return (
-      <div>
+      <div className="mb-40">
         {/* Image */}
         <div>
           <Image

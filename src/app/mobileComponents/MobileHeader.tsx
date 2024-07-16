@@ -9,7 +9,7 @@ const MobileHeader = ({ activeSpotlight, setActiveSpotlight }) => {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-between h-24 border-b shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+      <div className="flex items-center justify-between h-16 border-b shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
         {/* Left Arrow */}
         {activeSpotlight ? (
           <div
@@ -26,7 +26,7 @@ const MobileHeader = ({ activeSpotlight, setActiveSpotlight }) => {
 
         {/* Centered Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Image src="/tyn-logo.png" width={135} height={135} alt="Tyn Logo" />
+          <Image src="/tyn-logo.png" width={100} height={100} alt="Tyn Logo" />
         </div>
 
         {/* Right Placeholder for balance */}

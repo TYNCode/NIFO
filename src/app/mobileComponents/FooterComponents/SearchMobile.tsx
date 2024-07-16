@@ -39,8 +39,8 @@ const SearchMobile = ({
             height={50}
             alt="Ecllipse Right"
           />
-          <div className="font-semibold text-lg flex flex-col gap-6 items-center justify-center mx-auto">
-            What problem are you trying to solve?
+          <div className="font-semibold text-lg flex flex-col gap-2 items-center justify-center mx-auto">
+            What problem are you <span className="flex justify-center items-center">trying to solve?</span>
           </div>
           <Image
             src="/ecllipseleft.png"
@@ -49,7 +49,7 @@ const SearchMobile = ({
             alt="Ecllipse Left"
           />
         </div>
-        <div>
+        <div className="">
           <PromptTabMobile
             isInputEmpty={isInputEmpty}
             inputPrompt={inputPrompt}

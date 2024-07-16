@@ -17,7 +17,7 @@ const PromptTabMobile = ({
     return (
       <div>
         {/* Text area */}
-        <div className="bg-white w-[400px] h-24 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+        <div className="bg-white w-[330px] h-24 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
           <div className="flex items-center ">
             <textarea
               className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none overflow-hidden text-[14px] placeholder:text-sm placeholder:italic italic"
