@@ -9,8 +9,10 @@ import ChatComponentMobile from "../ChatComponentMobile";
 // Utility functions
 const getInitials = (name) => name.split(" ").map(word => word[0]).join("").toUpperCase();
 
-function MoreMobile() {
-  const userName = "Rakesh Mahendran";
+function MoreMobile({
+  userInfo,
+}) {
+  const userName = userInfo?.first_name;
   const navigate = useRouter();
   const [activeTab, setActiveTab] = useState("MainMore");
 

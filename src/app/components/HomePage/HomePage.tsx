@@ -200,7 +200,9 @@ export default function HomePage() {
       case "Trends":
         return <TrendsMobile />;
       case "More":
-        return <MoreMobile />;
+        return <MoreMobile
+        userInfo={userInfo}
+        />;
       default:
         return null;
     }
