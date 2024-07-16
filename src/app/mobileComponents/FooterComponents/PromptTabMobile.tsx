@@ -15,7 +15,7 @@ const PromptTabMobile = ({
 }) => {
   const renderQuestionTab = () => {
     return (
-      <div>
+      <div className="">
         {/* Text area */}
         <div className="bg-white w-[330px] h-24 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
           <div className="flex items-center ">

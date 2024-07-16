@@ -70,7 +70,7 @@ const SearchMobile = ({
 
   const renderAnswerTab = () => {
     return (
-      <div className="pb-64 bg-gray-100">
+      <div className="pb-64">
         <div className="mx-6 flex flex-col gap-6 mt-6">
           {messages.map((message, index) => (
             <div key={index} className="flex flex-col gap-2 mb-4">
@@ -119,7 +119,7 @@ const SearchMobile = ({
         </div>
 
         <div>
-        <div className="fixed bottom-32">
+        <div className="bottom-28 left-8 fixed flex items-center justify-center">
           <PromptTabMobile
             isInputEmpty={isInputEmpty}
             inputPrompt={inputPrompt}
