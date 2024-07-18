@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { FaAngleLeft } from "react-icons/fa";
+import { TbShare2 } from "react-icons/tb";
 
 const StartupProfile = ({
   selectedStartup,
@@ -32,6 +33,15 @@ const StartupProfile = ({
             {selectedStartup.name}
           </div>
         </div>
+
+        <div className="flex gap-4 items-center justify-center">
+
+        {/* Share button */}
+        <div className="text-gray-500">
+        <TbShare2 size={26} />
+        </div>
+
+        {/* Connect button */}
         <div>
           <button
             className={`flex justify-center items-center px-4 py-1.5 bg-gray-400 rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12 ${
@@ -44,8 +54,9 @@ const StartupProfile = ({
             {connectionStatus}
           </button>
         </div>
-      </div>
 
+        </div>
+      </div>
       <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
         <div>{selectedStartup?.database_info?.startup_description}</div>
         <div className="flex flex-col gap-4 shadow-inner text-sm bg-blue-100 p-4 rounded-lg">

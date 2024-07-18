@@ -6,7 +6,7 @@ import {
 import { GrFormClose } from "react-icons/gr";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
-import Image from 'next/image'; // Assuming you are using Next.js for the Image component
+import Image from "next/image"; // Assuming you are using Next.js for the Image component
 import ConnectModal from "./CompanyProfile/ConnectModal";
 import { QueryResponse, StartupType } from "../interfaces";
 
@@ -44,7 +44,11 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log('conectionStatusLaptop',connectionStatus, companyData.startup_name)
+  console.log(
+    "conectionStatusLaptop",
+    connectionStatus,
+    companyData.startup_name
+  );
   const openPane = () => setOpenState(false);
 
   const handleConnect = async () => {

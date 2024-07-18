@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import PromptTabMobile from "./PromptTabMobile";
 import Image from "next/image";
 import StartupProfile from "../StartupProfile";
+// import { useRouter } from "next/navigation";
+
 
 const SearchMobile = ({
   isInputEmpty,
@@ -16,11 +18,14 @@ const SearchMobile = ({
   connectionStatus,
   setConnectionStatus,
 }) => {
+  // const router = useRouter();
   const [answerTab, setAnswerTab] = useState<boolean>(false);
   const [selectedStartup, setSelectedStartup] = useState<any>(null);
 
   const handleStartups = (startup: any) => {
+    console.log(startup,"selectedStartup")
     setSelectedStartup(startup);
+    // router.push(`/startups/${}`)
   };
 
   const handleBackClick = () => {
