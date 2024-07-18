@@ -22,6 +22,22 @@ const StartupProfile = ({
     return null; // Handle case where selectedStartup is not defined
   }
 
+  const handleShareClick = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: selectedStartup.name,
+          url: window.location.href
+        });
+        console.log('Successfully shared');
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      alert('Web Share API not supported');
+    }
+  };
+
   return (
     <div className="mx-6 my-4 flex flex-col gap-2 pb-32">
       <div className="flex justify-between items-center">
