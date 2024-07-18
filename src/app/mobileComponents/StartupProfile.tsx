@@ -26,8 +26,8 @@ const StartupProfile = ({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: selectedStartup.name,
-          url: window.location.href
+          title: selectedStartup?.name,
+          url: `${window.location.href}/startups/${selectedStartup?.database_info?.startup_id}`
         });
         console.log('Successfully shared');
       } catch (error) {
