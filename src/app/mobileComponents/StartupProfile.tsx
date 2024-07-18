@@ -53,7 +53,7 @@ const StartupProfile = ({
         <div className="flex gap-4 items-center justify-center">
 
         {/* Share button */}
-        <div className="text-gray-500">
+        <div className="text-gray-500" onClick={handleShareClick}>
         <TbShare2 size={26} />
         </div>
 
