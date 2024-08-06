@@ -1,42 +1,87 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { MdChevronLeft } from "react-icons/md";
+import React, { useEffect } from "react";
 import { IoChatbubbleOutline } from "react-icons/io5";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { fetchChatHistory } from "../redux/features/chatHistorySlice";
+import { Session } from "../interfaces"; 
 
-const HistoryMobile = () => {
-  const [historyData, setHistoryData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+const HistoryMobile: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  const { history, loading, error } = useAppSelector(
+    (state) => state.chatHistory
+  );
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    dispatch(fetchChatHistory());
+  }, [dispatch]);
 
-  const fetchHistory = async () => {
-    setIsLoading(true);
-    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    if (!jwtAccessToken) {
-      setError("Authentication token not found.");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await axios.get(
-        "https://theyellow.group/api/queryhistory/retrieve/",
-        {
-          headers: { Authorization: `Bearer ${jwtAccessToken}` },
-        }
-      );
-      setHistoryData(response.data);
-    } catch (error) {
-      console.error("Error fetching query history:", error);
-      setError("Failed to fetch history.");
-    }
-    setIsLoading(false);
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
   };
 
-  if (isLoading) {
+  const isPrevious7Days = (date: Date) => {
+    const today = new Date();
+    const prior7Days = new Date();
+    prior7Days.setDate(today.getDate() - 7);
+    return date >= prior7Days && date < today;
+  };
+
+  const isPast30Days = (date: Date) => {
+    const today = new Date();
+    const prior30Days = new Date();
+    prior30Days.setDate(today.getDate() - 30);
+    return date >= prior30Days && date < today;
+  };
+
+  const segregateSessions = () => {
+    const todaySessions: Session[] = [];
+    const previous7DaysSessions: Session[] = [];
+    const past30DaysSessions: Session[] = [];
+
+    history.forEach((session) => {
+      const sessionDate = new Date(session.created_time);
+
+      if (isToday(sessionDate)) {
+        todaySessions.push(session);
+      } else if (isPrevious7Days(sessionDate)) {
+        previous7DaysSessions.push(session);
+      } else if (isPast30Days(sessionDate)) {
+        past30DaysSessions.push(session);
+      }
+    });
+
+    return { todaySessions, previous7DaysSessions, past30DaysSessions };
+  };
+
+  const renderSession = (session: Session) => {
+    const firstHumanMessage = session.messages.find(
+      (message) => message.role === "human"
+    );
+    if (!firstHumanMessage) return null;
+
+    return (
+      <div
+        key={session.session_id}
+        className="mr-8 px-3 py-2.5  overflow-hidden whitespace-nowrap text-[14px] flex gap-4 items-center hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
+        onClick={() => console.log("Query clicked:", firstHumanMessage.content)}
+      >
+        <div className="text-gray-300">
+          <IoChatbubbleOutline size={22} />
+        </div>
+        <div>{firstHumanMessage.content}</div>
+      </div>
+    );
+  };
+
+  const { todaySessions, previous7DaysSessions, past30DaysSessions } =
+    segregateSessions();
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
@@ -46,40 +91,33 @@ const HistoryMobile = () => {
 
   return (
     <>
-      <div className="py-3 px-2 flex">
-        <div>
-          <MdChevronLeft size={28} />
-        </div>
-        <div className="text-blue-400 flex justify-center items-center italic text-xl font-semibold">
-          Query History
-        </div>
+      <div className="text-sm py-3 px-2 text-gray-400 font-semibold">
+        Query History
       </div>
-      <div className="px-2">
-        {Object.entries(historyData).map(
-          ([timePeriod, queries]) =>
-            Array.isArray(queries) &&
-            queries.length > 0 && (
-              <div key={timePeriod}>
-                <div className="text-base py-2 px-2 text-gray-500 font-semibold">
-                  {timePeriod}
-                </div>
-                {queries.map((query, index) => (
-                  <div
-                    key={index}
-                    className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-[14px] flex gap-4  items-center hover:bg-red-500 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
-                    onClick={() => console.log("Query clicked:", query)} // replace with actual function
-                  >
-                    <div className="text-gray-300">
-                    <IoChatbubbleOutline size={22}/>
-                    </div>
-
-                    <div>
-                    {query}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
+      <div>
+        {todaySessions.length > 0 && (
+          <>
+            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
+              Today
+            </div>
+            {todaySessions.map(renderSession)}
+          </>
+        )}
+        {previous7DaysSessions.length > 0 && (
+          <>
+            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
+              Previous 7 Days
+            </div>
+            {previous7DaysSessions.map(renderSession)}
+          </>
+        )}
+        {past30DaysSessions.length > 0 && (
+          <>
+            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
+              Past 30 Days
+            </div>
+            {past30DaysSessions.map(renderSession)}
+          </>
         )}
       </div>
     </>

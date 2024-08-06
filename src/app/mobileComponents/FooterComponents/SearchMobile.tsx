@@ -13,7 +13,7 @@ const SearchMobile = ({
   handleToggleRightFrame,
   handleToggleLeftFrame,
   onSaveInput,
-  saveQueryData,
+  // saveQueryData,
   messages,
   connectionStatus,
   setConnectionStatus,
@@ -63,7 +63,7 @@ const SearchMobile = ({
             handleToggleRightFrame={handleToggleRightFrame}
             handleToggleLeftFrame={handleToggleLeftFrame}
             onSaveInput={onSaveInput}
-            saveQueryData={saveQueryData}
+            // saveQueryData={saveQueryData}
             setAnswerTab={setAnswerTab}
           />
         </div>
@@ -133,7 +133,7 @@ const SearchMobile = ({
             handleToggleRightFrame={handleToggleRightFrame}
             handleToggleLeftFrame={handleToggleLeftFrame}
             onSaveInput={onSaveInput}
-            saveQueryData={saveQueryData}
+            // saveQueryData={saveQueryData}
             setAnswerTab={setAnswerTab}
           />
         </div>

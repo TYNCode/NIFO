@@ -10,7 +10,7 @@ const PromptTabMobile = ({
   handleToggleRightFrame,
   handleToggleLeftFrame,
   onSaveInput,
-  saveQueryData,
+  // saveQueryData,
   setAnswerTab,
 }) => {
   const renderQuestionTab = () => {
@@ -60,7 +60,7 @@ const PromptTabMobile = ({
       onSaveInput(inputPrompt);
       setInputPrompt("");
       setIsInputEmpty(true);
-      await saveQueryData(inputPrompt);
+      // await saveQueryData(inputPrompt);
       setAnswerTab(true);
       // Pass the input prompt value to saveQueryData
     }

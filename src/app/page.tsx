@@ -11,7 +11,8 @@ export default function Page() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      let userInfo = localStorage.getItem("userInfo");
+      let userInfo = localStorage.getItem("user");
+
       let parsedUserInfo = userInfo ? JSON.parse(userInfo) : null;
 
       if (parsedUserInfo) {

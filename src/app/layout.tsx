@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import StoreProvider from './redux/StoreProvider';
+import LeftFrame from "./components/LeftFrame/LeftFrame";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -16,7 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>{children}</body>
+      <StoreProvider>
+        {/* <LeftFrame/> */}
+        <body className={montserrat.className}>{children}</body>
+      </StoreProvider>
     </html>
   );
 }

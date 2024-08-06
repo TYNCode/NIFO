@@ -15,12 +15,22 @@ export interface StartupType {
   startup_country: string | null;
   startup_founders_info: string | null;
   startup_emails: string | null;
+  startup_partners: string | null;
 }
+
 
 export interface User {
   email: string;
   first_name: string;
 }
+
+export interface UserInfo {
+  email:string;
+  first_name:string;
+  is_superuser:boolean;
+  organization:string | null;
+}
+
 
 export interface Request {
   id: number;
@@ -61,10 +71,45 @@ export interface Request {
   };
 }
 
-export interface QueryResponse {
+export interface Message {
   id: number;
-  query: string;
-  category: string;
-  timestamp: string;
-  user: number;
+  role: string;
+  content: string;
+  created_time: string;
+  session: number;
 }
+
+export interface Session {
+  id: number;
+  session_id: string;
+  created_time: string;
+  messages: Message[];
+}
+
+export interface ChatHistoryResponse {
+  id: number;
+  session_id: string;
+  created_time: string;
+  messages: Message[];
+}
+
+export interface FormData {
+  first_name?: string;
+  email: string;
+  organization_name?: string;
+  password: string;
+}
+
+export interface SpotlightContent {
+  heading: string;
+  body: string;
+}
+
+export interface Spotlight {
+  id:number
+  spotlight_title: string;
+  spotlight_content: SpotlightContent[];
+  spotlight_img: string;
+  created_at: string;
+}
+

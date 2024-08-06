@@ -4,7 +4,7 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
   const renderSolutionOrchestration = () => {
     return (
       <div>
-        {message.response.steps.map((step, index) => (
+        {message?.response?.steps?.map((step, index) => (
           <div key={index}>
             {" "}
             {/* Ensure key is used on the outermost element */}
@@ -12,14 +12,14 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
               <div>Step: {step?.step_number}</div>
               <div>{step?.step_description}</div>
             </div>
-            {step.startups.map((startup, sIndex) => (
+            {step?.startups?.map((startup, sIndex) => (
               <div
                 key={sIndex}
                 className="grid grid-cols-3 mt-4 rounded shadow-md p-2 bg-blue-100 cursor-pointer"
                 onClick={() => handleSendStartupData(startup, message)}
               >
-                <div className="text-sm">{startup.name}</div>
-                <div className="text-sm col-span-2">{startup.description}</div>
+                <div className="text-sm">{startup?.name}</div>
+                <div className="text-sm col-span-2">{startup?.description}</div>
               </div>
             ))}
           </div>
@@ -31,7 +31,7 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
     const startups = message?.response?.startups;
 
     console.log("messageinrenderstartup", message);
-    if (!startups || startups.length === 0) return null;
+    if (!startups || startups?.length === 0) return null;
     console.log("startups", startups);
     return (
       <div>
@@ -46,8 +46,8 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
             className="grid grid-cols-3 mt-4 rounded shadow-md p-2 bg-blue-100 cursor-pointer"
             onClick={() => handleSendStartupData(startup, message)}
           >
-            <div className="text-sm">{startup.name}</div>
-            <div className="text-sm col-span-2">{startup.description}</div>
+            <div className="text-sm">{startup?.name}</div>
+            <div className="text-sm col-span-2">{startup?.description}</div>
           </div>
         ))}
       </div>
@@ -56,7 +56,7 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
 
   return (
     <>
-      {message.response.category == "business problem(solution orchestration)"
+      {message?.response?.category == "business problem(solution orchestration)"
         ? renderSolutionOrchestration()
         : renderOtherCategories()}
     </>

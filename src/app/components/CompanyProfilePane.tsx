@@ -8,7 +8,7 @@ import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import Image from "next/image"; // Assuming you are using Next.js for the Image component
 import ConnectModal from "./CompanyProfile/ConnectModal";
-import { QueryResponse, StartupType } from "../interfaces";
+import { ChatHistoryResponse, StartupType } from "../interfaces";
 
 interface UserInfo {
   email: string;
@@ -26,7 +26,7 @@ interface CompanyProfilePaneProps {
   setMailData: React.Dispatch<React.SetStateAction<any>>;
   connectionStatus: string;
   setConnectionStatus: React.Dispatch<React.SetStateAction<string>>;
-  queryData: QueryResponse;
+  queryData: ChatHistoryResponse;
 }
 
 const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({

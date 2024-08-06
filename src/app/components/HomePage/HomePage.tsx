@@ -1,27 +1,27 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { RxAvatar } from "react-icons/rx";
-import NavBar from "../Navbar";
-import Prompt from "../Prompt";
 import axios from "axios";
-import CompanyProfilePane from "../CompanyProfilePane";
-import { QueryResponse, StartupType } from "../../interfaces";
 import LeftFrame from "../LeftFrame/LeftFrame";
+import Prompt from "../Prompt";
+import NavBar from "../Navbar";
+import CompanyProfilePane from "../CompanyProfilePane";
 import RenderStartup from "./RenderStartup";
 import BottomBar from "../../mobileComponents/BottomBar";
 import MobileHeader from "../../mobileComponents/MobileHeader";
-import Spotlight from "../LeftFrame/Spotlight";
-import SpotlightMobile from "../../mobileComponents/FooterComponents/SpotlightMobile";
+import SpotlightMobile from "../Spotlights/SpotlightMobile";
 import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
 import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
+import { ChatHistoryResponse, StartupType } from "../../interfaces";
+import { TbShare2 } from "react-icons/tb";
+import { encryptURL } from "../../utils/shareUtils";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
   const [selectedStartup, setSelectedStartup] = useState<StartupType>();
-  const [openCompanyPane, setOpenCompanyPane] = useState<boolean>(true);
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -29,11 +29,15 @@ export default function HomePage() {
   const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true);
   const [mailMessage, setMailMessage] = useState<any>(null);
   const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
-  const [queryData, setQueryData] = useState<QueryResponse | null>(null);
+  const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("Spotlight");
+  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState<string>(() => {
+    const now = new Date();
+    return now.getSeconds().toString();
+  });
 
-  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   console.log("queryDatainHome", queryData, inputPrompt);
-
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("userInfo");
     if (userInfoFromStorage) {
@@ -43,14 +47,13 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const promptStorage = localStorage.setItem("promptStorage", inputPrompt);
-  }, []);
+    localStorage.setItem("promptStorage", inputPrompt);
+  }, [inputPrompt]);
 
   const handleToggleLeftFrameNavbar = () => {
     setOpen(!open);
   };
 
-  console.log("messages", messages);
   const handleToggleLeftFrame = () => {
     if (open) {
       setOpen(!open);
@@ -68,47 +71,87 @@ export default function HomePage() {
   };
 
   const handleSaveInput = async (input: string) => {
-    let userquery = { userquery: input };
+    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
+    const userQuery = { input, session_id: sessionId }; // Adjust session_id as needed
 
     setMessages((prevMessages) => [
       ...prevMessages,
       { question: input, response: "Loading" },
     ]);
+
     try {
       const response = await axios.post(
-        `https://theyellow.group/api/prompt/ragsearch/`,
-        userquery
-      );
-      setMessages([...messages, { question: input, response: response.data }]);
-    } catch (error) {
-      console.log("erroringettingstartups", error);
-    }
-  };
-
-  //save the data queried
-  const saveQueryData = async (query: string) => {
-    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    if (jwtAccessToken) {
-      const response = await axios.post(
-        "https://theyellow.group/api/queryhistory/save/",
-        {
-          userquery: query,
-        },
+        "http://127.0.0.1:8000/prompt/chat/",
+        userQuery,
         {
           headers: {
             Authorization: `Bearer ${jwtAccessToken}`,
           },
         }
       );
-      setQueryData(response.data);
-    } else {
-      console.error("JWT token not found in localStorage");
+
+      console.log(response, "response ===>");
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.question === input
+            ? { question: input, response: response.data }
+            : msg
+        )
+      );
+
+      // Save query data if needed
+      // await saveQueryData(input);
+    } catch (error) {
+      console.log("error in getting startups", error);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.question === input
+            ? { question: input, response: "Error fetching response" }
+            : msg
+        )
+      );
     }
   };
 
-  let jwtAccessToken = localStorage.getItem("jwtAccessToken");
+  const handleGetConvo = async () => {
+    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
+
+    if (jwtAccessToken) {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/prompt/convo/${sessionId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtAccessToken}`,
+            },
+          }
+        );
+
+        console.log("responseee==?", response.data.conversations);
+
+        if (response.status === 200) {
+          setMessages(response.data.conversations); // Adjust this to match your response structure
+        } else {
+          console.error("Failed to fetch conversation data.");
+        }
+      } catch (error) {
+        console.error(
+          "An error occurred while fetching conversation data:",
+          error
+        );
+      }
+    } else {
+      console.error("JWT token not found in localStorage.");
+    }
+  };
+
+  useEffect(() => {
+    handleGetConvo();
+  }, [sessionId]);
+
   const fetchConnectStatus = async (startupId: number) => {
     console.log("Fetching status for startupId:", startupId);
+    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken && startupId) {
       const url = `https://theyellow.group/api/connects/${startupId}/`;
       try {
@@ -135,6 +178,33 @@ export default function HomePage() {
     fetchConnectStatus(item?.database_info?.startup_id);
   };
 
+  const handleShareClick = async () => {
+    const encodedSessionID = encryptURL(sessionId);
+
+    const shareUrl: string = `${window.location.origin}/share/${encodedSessionID}`;
+    console.log(shareUrl, "shareChatUrl-->");
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Share Chat Session",
+          url: shareUrl,
+        });
+        console.log("Successfully shared");
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    } else {
+      alert("Web Share API not supported");
+    }
+  };
+
+  const handleNewChat = () => {
+    const newSessionId = `session-${Date.now()}`;
+    setSessionId(newSessionId);
+    setMessages([]);
+    setInputPrompt("");
+  };
+
   const renderMessages = () => {
     return messages.map((message: any, index: number) => (
       <div key={index} className="justify-between mb-4 text-[16px] px-6">
@@ -150,13 +220,9 @@ export default function HomePage() {
             <div>Loading..</div>
           ) : (
             <div>
-              {message.response.response ==
-              "No specific details available." ? null : (
-                <div className="mb-2 leading-7">
-                  {message.response.response}
-                </div>
-              )}
-
+              {message?.response?.response === "No specific details available."
+                ? null
+                : message?.response?.response}
               <RenderStartup
                 message={message}
                 handleSendStartupData={handleSendStartupData}
@@ -168,19 +234,10 @@ export default function HomePage() {
     ));
   };
 
-  // mobileResponsiveness
-  const [activeTab, setActiveTab] = useState<string>("Spotlight");
-  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
-
   const renderTabContent = () => {
     switch (activeTab) {
       case "Spotlight":
-        return (
-          <SpotlightMobile
-            activeSpotlight={activeSpotlight}
-            setActiveSpotlight={setActiveSpotlight}
-          />
-        );
+        return <SpotlightMobile />;
       case "Search":
         return (
           <SearchMobile
@@ -191,7 +248,7 @@ export default function HomePage() {
             handleToggleRightFrame={handleToggleRightFrame}
             handleToggleLeftFrame={handleToggleLeftFrame}
             onSaveInput={handleSaveInput}
-            saveQueryData={saveQueryData}
+            // saveQueryData={saveQueryData}
             messages={messages}
             connectionStatus={connectionStatus}
             setConnectionStatus={setConnectionStatus}
@@ -200,9 +257,7 @@ export default function HomePage() {
       case "Trends":
         return <TrendsMobile />;
       case "More":
-        return <MoreMobile
-        userInfo={userInfo}
-        />;
+        return <MoreMobile userInfo={userInfo} />;
       default:
         return null;
     }
@@ -214,17 +269,7 @@ export default function HomePage() {
       <div className="hidden md:flex w-full flex-row">
         {open && (
           <div className="w-1/5">
-            <LeftFrame
-              open={open}
-              inputPrompt={inputPrompt}
-              setInputPrompt={setInputPrompt}
-              userInfo={userInfo}
-              isInputEmpty={isInputEmpty}
-              setIsInputEmpty={setIsInputEmpty}
-              queryData={queryData}
-              setIsLogoutOpen={setIsLogoutOpen}
-              isLogoutOpen={isLogoutOpen}
-            />
+            <LeftFrame onNewChat={handleNewChat} setSessionId={setSessionId} />
           </div>
         )}
         <div className="relative flex-grow pt-12">
@@ -240,12 +285,18 @@ export default function HomePage() {
             handleToggleRightFrame={handleToggleRightFrame}
             isInputEmpty={isInputEmpty}
             setIsInputEmpty={setIsInputEmpty}
-            saveQueryData={saveQueryData}
+            // saveQueryData={saveQueryData}
           />
-          <div className="absolute left-2 top-2">
+          <div className="absolute left-2 top-2 flex items-center">
             <NavBar
               open={open}
               handleToggleLeftFrame={handleToggleLeftFrameNavbar}
+            />
+            <TbShare2
+              size={24}
+              className="ml-4 cursor-pointer"
+              onClick={handleShareClick}
+              title="Share Chat Session"
             />
           </div>
         </div>

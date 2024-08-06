@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { FaAngleLeft } from "react-icons/fa";
 import { TbShare2 } from "react-icons/tb";
+import CryptoJS from "crypto-js";
 
 const StartupProfile = ({
   selectedStartup,
@@ -10,7 +11,11 @@ const StartupProfile = ({
 }) => {
   useEffect(() => {
     // Log whenever connectionStatus changes
-    console.log("mobileConnectionStatus", connectionStatus, selectedStartup?.name);
+    console.log(
+      "mobileConnectionStatus",
+      connectionStatus,
+      selectedStartup?.name
+    );
   }, [connectionStatus, selectedStartup]);
 
   const handleButtonClick = () => {
@@ -22,19 +27,38 @@ const StartupProfile = ({
     return null; // Handle case where selectedStartup is not defined
   }
 
-  const handleShareClick = async () => {
+  const handleShareClick = async (startupId: number) => {
+    // Secret key for encryption
+    const secretKey: string = "urlencrypt";
+
+    const startupIdStr: string = startupId.toString();
+    // Encrypt the startup ID
+    let encryptedStartupId: any;
+    encryptedStartupId = CryptoJS.AES.encrypt(
+      startupIdStr,
+      secretKey
+    ).toString();
+
+    const encodedEncryptedStartupId = encodeURIComponent(encryptedStartupId);
+
+    console.log(encodedEncryptedStartupId, "Encrypted and Encoded Startup ID");
+
+    const shareUrl:string = `${window.location.href}/startups/${encodedEncryptedStartupId}`
+
+
+    console.log("shareUrl",shareUrl)
     if (navigator.share) {
       try {
         await navigator.share({
           title: selectedStartup?.name,
-          url: `${window.location.href}/startups/${selectedStartup?.database_info?.startup_id}`
+          url: shareUrl,
         });
-        console.log('Successfully shared');
+        console.log("Successfully shared");
       } catch (error) {
-        console.error('Error sharing:', error);
+        console.error("Error sharing:", error);
       }
     } else {
-      alert('Web Share API not supported');
+      alert("Web Share API not supported");
     }
   };
 
@@ -51,26 +75,29 @@ const StartupProfile = ({
         </div>
 
         <div className="flex gap-4 items-center justify-center">
-
-        {/* Share button */}
-        <div className="text-gray-500" onClick={handleShareClick}>
-        <TbShare2 size={26} />
-        </div>
-
-        {/* Connect button */}
-        <div>
-          <button
-            className={`flex justify-center items-center px-4 py-1.5 bg-gray-400 rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12 ${
-              connectionStatus === "Connect"
-                ? "hover:bg-yellow-400 cursor-pointer"
-                : "cursor-default bg-red-400"
-            }`}
-            onClick={handleButtonClick} // Handle button click to update status
+          {/* Share button */}
+          <div
+            className="text-gray-500"
+            onClick={() =>
+              handleShareClick(selectedStartup?.database_info?.startup_id)
+            }
           >
-            {connectionStatus}
-          </button>
-        </div>
+            <TbShare2 size={26} />
+          </div>
 
+          {/* Connect button */}
+          <div>
+            <button
+              className={`flex justify-center items-center px-4 py-1.5 bg-gray-400 rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12 ${
+                connectionStatus === "Connect"
+                  ? "hover:bg-yellow-400 cursor-pointer"
+                  : "cursor-default bg-red-400"
+              }`}
+              onClick={handleButtonClick} // Handle button click to update status
+            >
+              {connectionStatus}
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
