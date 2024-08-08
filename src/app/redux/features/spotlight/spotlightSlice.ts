@@ -26,7 +26,7 @@ export const fetchSpotlights = createAsyncThunk<
   'spotlights/fetchSpotlights',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await getRequest('http://localhost:8000/spotlight/getspotlight/');
+      const response = await getRequest('https://theyellow.group/api/spotlight/getspotlight/');
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error?.response?.data?.message || "Failed to fetch spotlights");
@@ -42,7 +42,7 @@ export const fetchSpotlightById = createAsyncThunk<
   'spotlights/fetchSpotlightById',
   async (spotlightId, { rejectWithValue }) => {
     try {
-      const response = await getRequest(`http://localhost:8000/spotlight/getspotlight/${spotlightId}`);
+      const response = await getRequest(`https://theyellow.group/api/spotlight/getspotlight/${spotlightId}/`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error?.response?.data?.message || "Failed to fetch spotlight");

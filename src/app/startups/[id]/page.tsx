@@ -1,16 +1,16 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaAngleLeft } from 'react-icons/fa';
-import { TbShare2 } from 'react-icons/tb';
-import MobileHeader from '../../mobileComponents/MobileHeader';
-import BottomBar from '../../mobileComponents/BottomBar';
-import { useParams } from 'next/navigation';
-import CryptoJS from 'crypto-js';
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaAngleLeft } from "react-icons/fa";
+import { TbShare2 } from "react-icons/tb";
+import MobileHeader from "../../mobileComponents/MobileHeader";
+import BottomBar from "../../mobileComponents/BottomBar";
+import { useParams } from "next/navigation";
+import CryptoJS from "crypto-js";
 
 const StartupDetails = () => {
   const [activeSpotlight, setActiveSpotlight] = useState(false);
-  const [activeTab, setActiveTab] = useState('Spotlight');
+  const [activeTab, setActiveTab] = useState("Spotlight");
   const [startupData, setStartupData] = useState(null);
 
   const params = useParams();
@@ -21,8 +21,8 @@ const StartupDetails = () => {
     startupId = startupId[0];
   }
 
-  if (typeof startupId !== 'string') {
-    console.error('Invalid ID in URL');
+  if (typeof startupId !== "string") {
+    console.error("Invalid ID in URL");
     return null;
   }
 
@@ -35,20 +35,25 @@ const StartupDetails = () => {
       const decryptedId = bytes.toString(CryptoJS.enc.Utf8);
       return decryptedId;
     } catch (error) {
-      console.error('Error decrypting startup ID:', error);
+      console.error("Error decrypting startup ID:", error);
       return null;
     }
   };
 
-  const decryptedStartupId = decryptStartupId(decodedEncryptedStartupId, secretKey);
+  const decryptedStartupId = decryptStartupId(
+    decodedEncryptedStartupId,
+    secretKey
+  );
 
   const fetchStartupDetails = async (id) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/prompt/startups/${id}/`);
+      const res = await axios.get(
+        `https://theyellow.group/api/prompt/startups/${id}/`
+      );
       setStartupData(res.data);
       console.log("Response:", res);
     } catch (error) {
-      console.error('Error fetching startup details:', error);
+      console.error("Error fetching startup details:", error);
     }
   };
 
@@ -66,26 +71,29 @@ const StartupDetails = () => {
         const encryptedId = CryptoJS.AES.encrypt(id.toString(), key).toString();
         return encodeURIComponent(encryptedId);
       } catch (error) {
-        console.error('Error encrypting startup ID:', error);
+        console.error("Error encrypting startup ID:", error);
         return null;
       }
     };
 
-    const encryptedStartupId = encryptStartupId(startupData?.startup_id, secretKey);
+    const encryptedStartupId = encryptStartupId(
+      startupData?.startup_id,
+      secretKey
+    );
 
     if (navigator.share && encryptedStartupId) {
       try {
         await navigator.share({
           title: startupData?.startup_name,
           text: startupData?.startup_description,
-          url: `${window.location.origin}/startups/${encryptedStartupId}`
+          url: `${window.location.origin}/startups/${encryptedStartupId}`,
         });
-        console.log('Successfully shared');
+        console.log("Successfully shared");
       } catch (error) {
-        console.error('Error sharing:', error);
+        console.error("Error sharing:", error);
       }
     } else {
-      alert('Web Share API not supported');
+      alert("Web Share API not supported");
     }
   };
 

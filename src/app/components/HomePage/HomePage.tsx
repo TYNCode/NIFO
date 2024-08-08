@@ -81,7 +81,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/prompt/chat/",
+        "https://theyellow.group/api/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -119,7 +119,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/prompt/convo/${sessionId}`,
+          `https://theyellow.group/api/prompt/convo/${sessionId}/`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,

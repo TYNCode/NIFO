@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { User } from '../../../interfaces';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { User } from "../../../interfaces";
 
 interface LoginState {
   loading: boolean;
@@ -22,22 +22,25 @@ interface FormData {
 }
 
 export const loginUser = createAsyncThunk(
-  'login/loginUser',
+  "login/loginUser",
   async (data: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/user/login/', data);
+      const response = await axios.post(
+        "https://theyellow.group/api/user/login/",
+        data
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
-        'Login failed. Please check your credentials.'
+          "Login failed. Please check your credentials."
       );
     }
   }
 );
 
 const loginSlice = createSlice({
-  name: 'login',
+  name: "login",
   initialState,
   reducers: {
     clearLoginState(state) {
@@ -57,10 +60,16 @@ const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.message = 'Login successful';
-        localStorage.setItem('jwtAccessToken', action.payload.tokens.access_token);
-        localStorage.setItem('jwtRefreshToken', action.payload.tokens.refresh_token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        state.message = "Login successful";
+        localStorage.setItem(
+          "jwtAccessToken",
+          action.payload.tokens.access_token
+        );
+        localStorage.setItem(
+          "jwtRefreshToken",
+          action.payload.tokens.refresh_token
+        );
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

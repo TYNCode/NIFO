@@ -30,17 +30,16 @@ const initialState: SessionMessageState = {
   error: null,
 };
 
-
 export const fetchSessionMessages = createAsyncThunk<
-  ConversationType[], 
-  string, 
+  ConversationType[],
+  string,
   { rejectValue: string }
 >(
   "sessionMessages/fetchSessionMessages",
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `http://127.0.0.1:8000/prompt/convo/${id}`
+        `https://theyellow.group/api/prompt/convo/${id}/`
       );
       const data = response.data.conversations;
       return data;

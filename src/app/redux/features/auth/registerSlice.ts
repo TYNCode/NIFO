@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { User } from '../../../interfaces/index';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { User } from "../../../interfaces/index";
 
 interface RegisterState {
   loading: boolean;
@@ -24,22 +24,25 @@ interface FormData {
 }
 
 export const registerUser = createAsyncThunk(
-  'register/registerUser',
+  "register/registerUser",
   async (data: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://0.0.0.0:8000/user/register/', data);
+      const response = await axios.post(
+        "https://theyellow.group/api/user/register/",
+        data
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message?.email[0] ||
-        'Unexpected error during registration. Please try again.'
+          "Unexpected error during registration. Please try again."
       );
     }
   }
 );
 
 const registerSlice = createSlice({
-  name: 'register',
+  name: "register",
   initialState,
   reducers: {
     clearRegisterState(state) {
@@ -60,9 +63,15 @@ const registerSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.message = action.payload.message;
-        localStorage.setItem('jwtAccessToken', action.payload.tokens.access_token);
-        localStorage.setItem('jwtRefreshToken', action.payload.tokens.refresh_token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        localStorage.setItem(
+          "jwtAccessToken",
+          action.payload.tokens.access_token
+        );
+        localStorage.setItem(
+          "jwtRefreshToken",
+          action.payload.tokens.refresh_token
+        );
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;

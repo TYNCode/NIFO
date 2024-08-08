@@ -29,11 +29,6 @@ const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
                     <IoIosArrowForward size={23} />
                 </div>
             )}
-            {/* <div
-                className='ml-8'
-                onClick={handleFeedbackIconClick}>
-                <MdFeedback size={23} />
-            </div> */}
 
         </div>
     );
