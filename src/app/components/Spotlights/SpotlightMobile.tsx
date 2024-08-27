@@ -10,6 +10,8 @@ const SpotlightMobile: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  console.log("spotlights",spotlights)
+
   useEffect(() => {
     dispatch(fetchSpotlights());
   }, [dispatch]);
@@ -17,6 +19,7 @@ const SpotlightMobile: React.FC = () => {
   const handleSpotlight = (id: number) => {
     const encodedId = encryptURL(id.toString());
     router.push(`/spotlights/${encodedId}`);
+    
   };
 
   return (

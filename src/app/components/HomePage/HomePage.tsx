@@ -31,7 +31,6 @@ export default function HomePage() {
   const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
   const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
-  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string>(() => {
     const now = new Date();
     return now.getSeconds().toString();
@@ -39,7 +38,7 @@ export default function HomePage() {
 
   console.log("queryDatainHome", queryData, inputPrompt);
   useEffect(() => {
-    const userInfoFromStorage = localStorage.getItem("userInfo");
+    const userInfoFromStorage = localStorage.getItem("user");
     if (userInfoFromStorage) {
       const parsedUserInfo = JSON.parse(userInfoFromStorage);
       setUserInfo(parsedUserInfo);
@@ -81,7 +80,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "https://theyellow.group/api/prompt/chat/",
+        "http://127.0.0.1:8000/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -119,7 +118,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `https://theyellow.group/api/prompt/convo/${sessionId}/`,
+          `http://127.0.0.1:8000/prompt/convo/${sessionId}/`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
@@ -130,7 +129,7 @@ export default function HomePage() {
         console.log("responseee==?", response.data.conversations);
 
         if (response.status === 200) {
-          setMessages(response.data.conversations); // Adjust this to match your response structure
+          setMessages(response.data.conversations);
         } else {
           console.error("Failed to fetch conversation data.");
         }
@@ -153,7 +152,7 @@ export default function HomePage() {
     console.log("Fetching status for startupId:", startupId);
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken && startupId) {
-      const url = `https://theyellow.group/api/connects/${startupId}/`;
+      const url = `http://127.0.0.1:8000/connects/${startupId}/`;
       try {
         const response = await axios.get(url, {
           headers: {
@@ -248,10 +247,12 @@ export default function HomePage() {
             handleToggleRightFrame={handleToggleRightFrame}
             handleToggleLeftFrame={handleToggleLeftFrame}
             onSaveInput={handleSaveInput}
+            handleNewChat={handleNewChat}
             // saveQueryData={saveQueryData}
             messages={messages}
             connectionStatus={connectionStatus}
             setConnectionStatus={setConnectionStatus}
+            setSessionId={setSessionId}
           />
         );
       case "Trends":
@@ -274,17 +275,18 @@ export default function HomePage() {
         )}
         <div className="relative flex-grow pt-12">
           <Prompt
+            isInputEmpty={isInputEmpty}
+            inputPrompt={inputPrompt}
+            setInputPrompt={setInputPrompt}
+            setIsInputEmpty={setIsInputEmpty}
+            handleToggleLeftFrame={handleToggleLeftFrame}
+            handleToggleRightFrame={handleToggleRightFrame}
             onSaveInput={handleSaveInput}
             defaultPrompt={defaultPrompt}
             renderMessages={renderMessages}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
             open={open}
-            handleToggleLeftFrame={handleToggleLeftFrame}
             openRightFrame={openRightFrame}
-            handleToggleRightFrame={handleToggleRightFrame}
-            isInputEmpty={isInputEmpty}
-            setIsInputEmpty={setIsInputEmpty}
+
             // saveQueryData={saveQueryData}
           />
           <div className="absolute left-2 top-2 flex items-center">
@@ -321,10 +323,7 @@ export default function HomePage() {
 
       {/* Mobile Responsiveness */}
       <div className="flex flex-col md:hidden">
-        <MobileHeader
-          activeSpotlight={activeSpotlight}
-          setActiveSpotlight={setActiveSpotlight}
-        />
+        <MobileHeader/>
         {renderTabContent()}
         <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>

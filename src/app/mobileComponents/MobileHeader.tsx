@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaAngleLeft } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
-const MobileHeader = ({ activeSpotlight, setActiveSpotlight }) => {
+const MobileHeader = () => {
+  const router = useRouter();
+  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (window.location.pathname.includes('/spotlights/')) {
+      setActiveSpotlight(true);
+    }
+  }, []);
+
+
   const handleSpotlight = () => {
     setActiveSpotlight(false);
+    router.push('/');
   };
 
   return (

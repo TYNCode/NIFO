@@ -23,6 +23,8 @@ const RegisterPage: React.FC = () => {
   const router = useRouter();
   const { loading, error, message } = useAppSelector((state) => state.register);
 
+  
+
   const handleRegister: SubmitHandler<FormData> = (data) => {
     dispatch(registerUser(data));
   };

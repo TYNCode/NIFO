@@ -48,7 +48,7 @@ const StartupDetails = () => {
   const fetchStartupDetails = async (id) => {
     try {
       const res = await axios.get(
-        `https://theyellow.group/api/prompt/startups/${id}/`
+        `http://127.0.0.1:8000/prompt/startups/${id}/`
       );
       setStartupData(res.data);
       console.log("Response:", res);
@@ -100,10 +100,7 @@ const StartupDetails = () => {
   return (
     <div>
       <div>
-        <MobileHeader
-          activeSpotlight={activeSpotlight}
-          setActiveSpotlight={setActiveSpotlight}
-        />
+        <MobileHeader />
       </div>
 
       {/* company profile component */}

@@ -27,7 +27,7 @@ const AllRequests = ({
 
   useEffect(() => {
     axios
-      .get("https://theyellow.group/api/partnerconnect/")
+      .get("http://127.0.0.1:8000/partnerconnect/")
       .then((response) => {
         setRequests(response.data);
         console.log("Fetched requests:", response.data);

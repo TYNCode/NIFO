@@ -2,8 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getRequest } from "../../hooks"; // Import the getRequest utility function
 import { Spotlight } from "../../../interfaces";
 
-
-
 interface SpotlightState {
   spotlights: Spotlight[];
   selectedSpotlight: Spotlight | null;
@@ -22,33 +20,35 @@ export const fetchSpotlights = createAsyncThunk<
   Spotlight[],
   void,
   { rejectValue: string }
->(
-  'spotlights/fetchSpotlights',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await getRequest('https://theyellow.group/api/spotlight/getspotlight/');
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error?.response?.data?.message || "Failed to fetch spotlights");
-    }
+>("spotlights/fetchSpotlights", async (_, { rejectWithValue }) => {
+  try {
+    const response = await getRequest(
+      "http://127.0.0.1:8000/spotlight/getspotlight/"
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message || "Failed to fetch spotlights"
+    );
   }
-);
+});
 
 export const fetchSpotlightById = createAsyncThunk<
   Spotlight,
   number,
   { rejectValue: string }
->(
-  'spotlights/fetchSpotlightById',
-  async (spotlightId, { rejectWithValue }) => {
-    try {
-      const response = await getRequest(`https://theyellow.group/api/spotlight/getspotlight/${spotlightId}/`);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error?.response?.data?.message || "Failed to fetch spotlight");
-    }
+>("spotlights/fetchSpotlightById", async (spotlightId, { rejectWithValue }) => {
+  try {
+    const response = await getRequest(
+      `http://127.0.0.1:8000/spotlight/getspotlight/${spotlightId}/`
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message || "Failed to fetch spotlight"
+    );
   }
-);
+});
 
 const spotlightSlice = createSlice({
   name: "spotlights",
@@ -60,10 +60,13 @@ const spotlightSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchSpotlights.fulfilled, (state, action: PayloadAction<Spotlight[]>) => {
-        state.spotlights = action.payload;
-        state.loading = false;
-      })
+      .addCase(
+        fetchSpotlights.fulfilled,
+        (state, action: PayloadAction<Spotlight[]>) => {
+          state.spotlights = action.payload;
+          state.loading = false;
+        }
+      )
       .addCase(fetchSpotlights.rejected, (state, action) => {
         state.error = action.payload || "Failed to fetch spotlights";
         state.loading = false;
@@ -73,10 +76,13 @@ const spotlightSlice = createSlice({
         state.error = null;
         state.selectedSpotlight = null;
       })
-      .addCase(fetchSpotlightById.fulfilled, (state, action: PayloadAction<Spotlight>) => {
-        state.selectedSpotlight = action.payload;
-        state.loading = false;
-      })
+      .addCase(
+        fetchSpotlightById.fulfilled,
+        (state, action: PayloadAction<Spotlight>) => {
+          state.selectedSpotlight = action.payload;
+          state.loading = false;
+        }
+      )
       .addCase(fetchSpotlightById.rejected, (state, action) => {
         state.error = action.payload || "Failed to fetch spotlight";
         state.loading = false;

@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   async (data: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://theyellow.group/api/user/login/",
+        "http://127.0.0.1:8000/user/login/",
         data
       );
       return response.data;

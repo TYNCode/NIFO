@@ -1,10 +1,18 @@
 import Image from "next/image";
 import React from "react";
 import { IoShareSocialOutline } from "react-icons/io5";
+import MobileHeader from "../../mobileComponents/MobileHeader";
 
 const SpotlightPage = ({selectedSpotlight , handleSpotlightShare}) => {
   return (
     <div>
+       
+       <div>
+        <MobileHeader/>
+       </div>
+
+
+
       <div>
         <Image
           src="/thirdai-mobile.png"

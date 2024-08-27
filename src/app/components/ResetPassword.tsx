@@ -25,7 +25,7 @@ const ResetPassword: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "https://theyellow.group/api/user/reset-password/",
+        "http://127.0.0.1:8000/user/reset-password/",
         {
           uidb64: uidb64,
           token: token,

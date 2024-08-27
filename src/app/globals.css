@@ -21,3 +21,13 @@
 .prompt-container::-webkit-scrollbar {
     display: none;
 }
+
+:root {
+    --cyan-500: #339af0; 
+  }
+  
+  .outlineChange input:focus {
+    border-color: var(--cyan-500); 
+    outline: none; 
+    box-shadow: 0 0 0 1px var(--cyan-500); 
+  }

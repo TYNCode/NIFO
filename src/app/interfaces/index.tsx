@@ -28,7 +28,8 @@ export interface UserInfo {
   email:string;
   first_name:string;
   is_superuser:boolean;
-  organization:string | null;
+  organization:number;
+  is_primary_user : boolean
 }
 
 
@@ -98,6 +99,7 @@ export interface FormData {
   email: string;
   organization_name?: string;
   password: string;
+  organization_id?: number;
 }
 
 export interface SpotlightContent {

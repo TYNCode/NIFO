@@ -34,6 +34,7 @@ export const getRequestWithAccessToken = async (url: string): Promise<AxiosRespo
   });
 };
 
+
 export const postRequestWithAccessToken = async (url: string, data: any): Promise<AxiosResponse> => {
   const token = getToken();
   if (!token) {

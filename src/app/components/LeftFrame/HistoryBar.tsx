@@ -2,9 +2,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
-import { Session } from "../../interfaces";
-
-
+import { segregateSessions } from "../../utils/historyUtils"; // Import the utility function
 
 interface HistoryBarProps {
   onSelectHistory: (sessionId: string) => void;
@@ -13,7 +11,6 @@ interface HistoryBarProps {
 const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
   const { history } = useAppSelector((state) => state.chatHistory);
 
   useEffect(() => {
@@ -27,48 +24,10 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
     // router.push(`/${session}`);
   };
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
+  const { todaySessions, previous7DaysSessions, past30DaysSessions } =
+    segregateSessions(history); // Use the utility function
 
-  const isPrevious7Days = (date: Date) => {
-    const today = new Date();
-    const prior7Days = new Date(today.setDate(today.getDate() - 7));
-    return date > prior7Days;
-  };
-
-  const isPast30Days = (date: Date) => {
-    const today = new Date();
-    const prior30Days = new Date(today.setDate(today.getDate() - 30));
-    return date > prior30Days;
-  };
-
-  const segregateSessions = () => {
-    const todaySessions: Session[] = [];
-    const previous7DaysSessions: Session[] = [];
-    const past30DaysSessions: Session[] = [];
-
-    history.forEach((session) => {
-      const sessionDate = new Date(session.created_time);
-
-      if (isToday(sessionDate)) {
-        todaySessions.push(session);
-      } else if (isPrevious7Days(sessionDate)) {
-        previous7DaysSessions.push(session);
-      } else if (isPast30Days(sessionDate)) {
-        past30DaysSessions.push(session);
-      }
-    });
-
-    return { todaySessions, previous7DaysSessions, past30DaysSessions };
-  };
-
-  const renderSession = (session: Session) => {
+  const renderSession = (session) => {
     const firstMessage = session.messages[0];
     if (!firstMessage) return null;
 
@@ -77,7 +36,6 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
         <div
           className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-[14px] hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
           onClick={() => {
-            console.log("Session clicked:", session.session_id);
             onSelectHistory(session.session_id);
             handleRenderMainSession(session.session_id);
           }}
@@ -87,8 +45,6 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
       </div>
     );
   };
-
-  const { todaySessions, previous7DaysSessions, past30DaysSessions } = segregateSessions();
 
   return (
     <>
