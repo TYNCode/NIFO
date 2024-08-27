@@ -6,7 +6,7 @@ import {
 import { GrFormClose } from "react-icons/gr";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
-import Image from "next/image"; // Assuming you are using Next.js for the Image component
+import Image from "next/image";
 import ConnectModal from "./CompanyProfile/ConnectModal";
 import { ChatHistoryResponse, StartupType } from "../interfaces";
 
@@ -70,10 +70,10 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
 
   const sendEmail = async () => {
     await axios.post("http://127.0.0.1:8000/email/send-email/", {
-      subject: "Demo",
+      subject: "This is a test email",
       template_name: "email_template.html",
       context: { userInfo, mailData, companyData },
-      recipient_list: "lathiesh@theyellow.network",
+      recipient_list: ["lathiesh@theyellow.network"],
     });
   };
 
@@ -98,7 +98,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
       "http://127.0.0.1:8000/partnerconnect/",
       {
         to_growthtechfirm: companyData?.startup_id,
-        query_status: "requested",
+        query_status: "Requested",
         user_query: queryData?.id,
       },
       { headers: { Authorization: `Bearer ${jwtAccessToken}` } }

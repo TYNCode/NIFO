@@ -35,7 +35,7 @@ const CompanyProfilePage: React.FC = () => {
       return;
     }
     if (hasMore) {
-      dispatch(fetchCompanies({ page, page_size: 9 }));
+      dispatch(fetchCompanies());
     }
   }, [dispatch, page, hasMore, initialLoad]);
 

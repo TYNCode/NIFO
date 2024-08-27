@@ -29,7 +29,7 @@ const LoginMobile: React.FC<LoginMobileProps> = ({ onSubmit, loading, message, e
             {...register("email", { required: "Email is required" })}
             id="email"
             placeholder="Email Address"
-            className="text-base px-5 py-3 outline-none rounded-lg shadow w-full"
+            className="text-base px-5 py-3 outline-none rounded-lg shadow border-none w-full"
           />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           <input
@@ -37,7 +37,7 @@ const LoginMobile: React.FC<LoginMobileProps> = ({ onSubmit, loading, message, e
             {...register("password", { required: "Password is required" })}
             id="password"
             placeholder="Password"
-            className="text-base px-5 py-3 outline-none rounded-lg shadow w-full"
+            className="text-base px-5 py-3 outline-none rounded-lg shadow border-none w-full"
           />
           {errors.password && <p className="text-red-500">{errors.password.message}</p>}
           {isSubmitted && message && (

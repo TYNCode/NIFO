@@ -122,7 +122,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
               {...register("first_name", { required: "Name is required" })}
               id="first_name"
               placeholder="Enter your Name"
-              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder-text-gray-300 border border-solid w-80"
+              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300 w-80"
             />
             {errors.first_name && (
               <p className="text-red-500 capitalize">
@@ -144,7 +144,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
                 },
               })}
               placeholder="Enter your email"
-              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder-text-gray-300 border border-solid w-80"
+              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300  w-80"
             />
             {errors.email && (
               <p className="text-red-500 capitalize">{errors.email.message}</p>
@@ -159,7 +159,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
               autoComplete="off"
               id="password"
               placeholder="Enter your password"
-              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder-text-gray-300 border border-solid w-80"
+              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300  w-80"
             />
             {errors.password && (
               <p className="text-red-500 capitalize">
@@ -178,7 +178,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
               autoComplete="off"
               id="organization"
               placeholder="Enter your organization"
-              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder-text-gray-300 border border-solid w-80"
+              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300  w-80"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />

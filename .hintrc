@@ -17,7 +17,13 @@
       }
     ],
     "button-type": "off",
-    "no-inline-styles": "off"
+    "no-inline-styles": "off",
+    "axe/parsing": [
+      "default",
+      {
+        "duplicate-id-aria": "off"
+      }
+    ]
   },
   "browserslist": [
     "defaults",

@@ -1,0 +1,100 @@
+{
+  "Energy": [
+    "Energy Equipment & Services",
+    "Oil, Gas & Consumable Fuels"
+  ],
+  "Materials": [
+    "Chemicals",
+    "Construction Materials",
+    "Containers & Packaging",
+    "Metals & Mining",
+    "Paper & Forest Products"
+  ],
+  "Industrials": [
+    "Aerospace & Defense",
+    "Building Products",
+    "Construction & Engineering",
+    "Electrical Equipment",
+    "Industrial Conglomerates",
+    "Machinery",
+    "Trading Companies & Distributors",
+    "Commercial Services & Supplies",
+    "Professional Services",
+    "Air Freight & Logistics",
+    "Passenger Airlines",
+    "Marine Transportation",
+    "Ground Transportation",
+    "Transportation Infrastructure"
+  ],
+  "Consumer Discretionary": [
+    "Automobile Components",
+    "Automobiles",
+    "Household Durables",
+    "Leisure Products",
+    "Textiles, Apparel & Luxury Goods",
+    "Hotels, Restaurants & Leisure",
+    "Diversified Consumer Services",
+    "Distributors",
+    "Internet & Direct Marketing Retail",
+    "Broadline Retail",
+    "Specialty Retail"
+  ],
+  "Consumer Staples": [
+    "Consumer Staples Distribution & Retail",
+    "Beverages",
+    "Food Products",
+    "Tobacco",
+    "Household Products",
+    "Personal Care Products"
+  ],
+  "Health Care": [
+    "Health Care Equipment & Supplies",
+    "Health Care Providers & Services",
+    "Health Care Technology",
+    "Biotechnology",
+    "Pharmaceuticals",
+    "Life Sciences Tools & Services"
+  ],
+  "Financials": [
+    "Banks",
+    "Thrifts & Mortgage Finance",
+    "Financial Services",
+    "Consumer Finance",
+    "Capital Markets",
+    "Mortgage Real Estate Investment Trusts",
+    "Insurance"
+  ],
+  "Information Technology": [
+    "IT Services",
+    "Software",
+    "Communications Equipment",
+    "Technology Hardware, Storage & Peripherals",
+    "Electronic Equipment, Instruments & Components",
+    "Semiconductors & Semiconductor Equipment"
+  ],
+  "Communication Services": [
+    "Diversified Telecommunication Services",
+    "Wireless Telecommunication Services",
+    "Media",
+    "Entertainment",
+    "Interactive Media & Services"
+  ],
+  "Utilities": [
+    "Electric Utilities",
+    "Gas Utilities",
+    "Multi-Utilities",
+    "Water Utilities",
+    "Independent Power and Renewable Electricity Producers"
+  ],
+  "Real Estate": [
+    "Diversified REITs",
+    "Industrial REITs",
+    "Hotel & Resort REITs",
+    "Office REITs",
+    "Health Care REITs",
+    "Residential REITs",
+    "Retail REITs",
+    "Specialized REITs",
+    "Real Estate Management & Development"
+  ]
+}

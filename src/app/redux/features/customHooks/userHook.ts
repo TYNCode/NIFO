@@ -1,6 +1,6 @@
 import { useEffect } from "react"
-import { useAppDispatch, useAppSelector } from "../hooks"
-import { setUserInfo } from "../features/auth/userInfoSlice"
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { setUserInfo } from "../auth/userInfoSlice"
 
 const useUserInfo = ()=> {
     const dispatch = useAppDispatch()

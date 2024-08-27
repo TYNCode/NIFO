@@ -34,7 +34,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
               {...register("email", { required: "Email is required" })}
               id="email"
               placeholder="Enter your email"
-              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300 border border-solid w-80"
+              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300  border-none w-80"
             />
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
@@ -47,7 +47,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
               {...register("password", { required: "Password is required" })}
               id="password"
               placeholder="Enter your password"
-              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300 border border-solid w-80"
+              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300  border-none w-80"
             />
             {errors.password && <p className="text-red-500">{errors.password.message}</p>}
           </div>

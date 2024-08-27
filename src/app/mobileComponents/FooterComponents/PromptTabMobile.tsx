@@ -20,7 +20,7 @@ const PromptTabMobile = ({
         <div className="bg-white w-[330px] h-24 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
           <div className="flex items-center ">
             <textarea
-              className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none overflow-hidden text-[14px] placeholder:text-sm placeholder:italic italic"
+              className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none border-none overflow-hidden text-[14px] placeholder:text-sm placeholder:italic italic"
               placeholder="Provide your problem statement to be solved..."
               rows={1}
               autoFocus
