@@ -29,7 +29,7 @@ export const fetchCompanies = createAsyncThunk<
 >("companyProfile/fetchCompanies", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `http://127.0.0.1:8000/directorysearch/companyview/`
+      `https://nifo.theyellow.network/api/directorysearch/companyview/`
     );
     return response.data;
   } catch (error: any) {
@@ -46,7 +46,7 @@ export const fetchCompanies = createAsyncThunk<
 //   async ({ page, page_size }: { page: number, page_size: number }, { rejectWithValue }) => {
 //     try {
 //       const response = await getRequestWithAccessToken(
-//         `http://127.0.0.1:8000/directorysearch/companyview/?page=${page}&page_size=${page_size}`, 
+//         `https://nifo.theyellow.network/api/directorysearch/companyview/?page=${page}&page_size=${page_size}`, 
 //       );
 
 //       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay
@@ -72,7 +72,7 @@ export const fetchCompanyById = createAsyncThunk<
 >("companyProfile/fetchCompanyById", async (id, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
+      `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`
     );
     return response.data;
   } catch (error: any) {
@@ -90,7 +90,7 @@ export const updateCompanyById = createAsyncThunk<
 >("companyProfile/updateCompanyById", async ({ id, data }, { rejectWithValue }) => {
   try {
     const response = await putRequestWithAccessToken(
-      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`,
+      `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`,
       data
     );
     return response.data;

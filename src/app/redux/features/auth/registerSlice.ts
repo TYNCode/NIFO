@@ -28,7 +28,7 @@ export const registerUser = createAsyncThunk(
   async (data: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/register/",
+        "https://nifo.theyellow.network/api/user/register/",
         data
       );
       return response.data;

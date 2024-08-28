@@ -83,7 +83,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
   
   const handleModelSubmit = async (data: { organization_name: string; website: string; description: string }) => {
     try {
-      await axios.post('http://127.0.0.1:8000/prompt/registerOrganization/', data); 
+      await axios.post('https://nifo.theyellow.network/api/prompt/registerOrganization/', data); 
       handleCloseModal();
       dispatch(fetchCompanies());
     } catch (error) {

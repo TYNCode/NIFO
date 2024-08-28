@@ -19,7 +19,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        "http://127.0.0.1:8000/prompt/session/"
+        "https://nifo.theyellow.network/api/prompt/session/"
       );
       const data = response.data;
 
