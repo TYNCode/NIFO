@@ -33,7 +33,9 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
 
   const [filteredCompanies, setFilteredCompanies] = useState<StartupType[]>([]);
   const [query, setQuery] = useState("");
-  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
+    null
+  );
 
   const { companies } = useAppSelector((state) => state.companyProfile);
 
@@ -80,10 +82,16 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     setShowModal(false);
   };
 
-  
-  const handleModelSubmit = async (data: { organization_name: string; website: string; description: string }) => {
+  const handleModelSubmit = async (data: {
+    organization_name: string;
+    website: string;
+    description: string;
+  }) => {
     try {
-      await axios.post('https://nifo.theyellow.network/api/prompt/registerOrganization/', data); 
+      await axios.post(
+        "https://nifo.theyellow.network/api/prompt/registerOrganization/",
+        data
+      );
       handleCloseModal();
       dispatch(fetchCompanies());
     } catch (error) {
@@ -240,7 +248,10 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
         </div>
       </div>
       {showModal && (
-        <RegistrationModel onClose={handleCloseModal} onSubmit={handleModelSubmit} />
+        <RegistrationModel
+          onClose={handleCloseModal}
+          onSubmit={handleModelSubmit}
+        />
       )}
     </div>
   );

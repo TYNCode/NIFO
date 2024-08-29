@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { StartupType } from "../../../interfaces";
-import { getRequest, getRequestWithAccessToken, putRequestWithAccessToken } from "../../hooks";
+import {
+  getRequest,
+  getRequestWithAccessToken,
+  putRequestWithAccessToken,
+} from "../../hooks";
 
 // Define the state shape for company profiles
 interface CompanyProfileState {
@@ -14,12 +18,11 @@ interface CompanyProfileState {
 // Initial state
 const initialState: CompanyProfileState = {
   companies: [],
-  company: null,  // New state for a single company profile
+  company: null, // New state for a single company profile
   loading: false,
   error: null,
   hasMore: true,
 };
-
 
 // Thunk to fetch all companies used in Register page
 export const fetchCompanies = createAsyncThunk<
@@ -39,14 +42,13 @@ export const fetchCompanies = createAsyncThunk<
   }
 });
 
-
 // // Thunk to fetch companies (pagination)
 // export const fetchCompanies = createAsyncThunk(
 //   'companyProfile/fetchCompanies',
 //   async ({ page, page_size }: { page: number, page_size: number }, { rejectWithValue }) => {
 //     try {
 //       const response = await getRequestWithAccessToken(
-//         `https://nifo.theyellow.network/api/directorysearch/companyview/?page=${page}&page_size=${page_size}`, 
+//         `https://nifo.theyellow.network/api/directorysearch/companyview/?page=${page}&page_size=${page_size}`,
 //       );
 
 //       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a delay
@@ -60,9 +62,6 @@ export const fetchCompanies = createAsyncThunk<
 //     }
 //   }
 // );
-
-
-
 
 // Thunk to fetch a single company by ID
 export const fetchCompanyById = createAsyncThunk<
@@ -87,25 +86,25 @@ export const updateCompanyById = createAsyncThunk<
   StartupType,
   { id: string; data: Partial<StartupType> },
   { rejectValue: string }
->("companyProfile/updateCompanyById", async ({ id, data }, { rejectWithValue }) => {
-  try {
-    const response = await putRequestWithAccessToken(
-      `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`,
-      data
-    );
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data || `Error in updating company with ID: ${id}`
-    );
+>(
+  "companyProfile/updateCompanyById",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await putRequestWithAccessToken(
+        `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`,
+        data
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || `Error in updating company with ID: ${id}`
+      );
+    }
   }
-});
-
-
-
+);
 
 const companyProfileSlice = createSlice({
-  name: 'companyProfile',
+  name: "companyProfile",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -130,7 +129,6 @@ const companyProfileSlice = createSlice({
         }
       );
 
-
     // Fetch a company by ID
     builder
       .addCase(fetchCompanyById.pending, (state) => {
@@ -152,24 +150,26 @@ const companyProfileSlice = createSlice({
         }
       );
 
-
-
     // Update a company by ID
     builder
       .addCase(updateCompanyById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateCompanyById.fulfilled, (state, action: PayloadAction<StartupType>) => {
-        state.company = action.payload; // Update the company with the new data
-        state.loading = false;
-      })
-      .addCase(updateCompanyById.rejected, (state, action: PayloadAction<string | undefined>) => {
-        state.error = action.payload || "Failed to update company";
-        state.loading = false;
-      });
-
-
+      .addCase(
+        updateCompanyById.fulfilled,
+        (state, action: PayloadAction<StartupType>) => {
+          state.company = action.payload; // Update the company with the new data
+          state.loading = false;
+        }
+      )
+      .addCase(
+        updateCompanyById.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Failed to update company";
+          state.loading = false;
+        }
+      );
 
     //  builder
     //  .addCase(fetchCompanies.pending, (state) => {
@@ -178,7 +178,7 @@ const companyProfileSlice = createSlice({
     //  .addCase(fetchCompanies.fulfilled, (state, action) => {
     //    state.loading = false;  // Ensure loading is set to false in both success and failure cases
     //    if (action.payload.length === 0) {
-    //      state.hasMore = false;  
+    //      state.hasMore = false;
     //    } else {
     //      state.companies = [...state.companies, ...action.payload];
     //    }
@@ -191,9 +191,7 @@ const companyProfileSlice = createSlice({
     //      state.error = action.error?.message || 'Something went wrong';
     //    }
     //  });
-
   },
-
 });
 
 export default companyProfileSlice.reducer;

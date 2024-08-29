@@ -323,7 +323,7 @@ export default function HomePage() {
 
       {/* Mobile Responsiveness */}
       <div className="flex flex-col md:hidden">
-        <MobileHeader/>
+        <MobileHeader />
         {renderTabContent()}
         <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>
