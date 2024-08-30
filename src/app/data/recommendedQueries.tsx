@@ -2,7 +2,7 @@ import React from 'react';
 
 interface RecommendedQuery {
     shortName: string,
-    prompt: string
+    prompt: string,
 }
 
 
