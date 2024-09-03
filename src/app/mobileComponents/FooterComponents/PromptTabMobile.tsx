@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { BsChatQuote } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 
 const PromptTabMobile = ({
@@ -10,40 +9,34 @@ const PromptTabMobile = ({
   handleToggleRightFrame,
   handleToggleLeftFrame,
   onSaveInput,
-  // saveQueryData,
   setAnswerTab,
 }) => {
   const renderQuestionTab = () => {
     return (
       <div className="">
-        {/* Text area */}
-        <div className="bg-white w-[330px] h-24 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
-          <div className="flex items-center ">
-            <textarea
-              className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none border-none overflow-hidden text-[14px] placeholder:text-sm placeholder:italic italic"
-              placeholder="Provide your problem statement to be solved..."
-              rows={1}
-              autoFocus
-              value={inputPrompt}
-              onChange={handleInputChange}
-              onClick={handleTextareaClick}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendClick();
-                }
-              }}
-            />
-          </div>
-
-          <div className="flex justify-end">
+        {/* Text area with send button inside */}
+        <div className="bg-white w-[350px] h-28 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] relative">
+          <textarea
+            className="w-full h-full focus:outline-none py-4 px-6 pr-10 rounded-md resize-none border-none overflow-y-auto text-[14px] placeholder:text-sm placeholder:italic leading-tight"
+            placeholder="Provide your problem statement to be solved..."
+            value={inputPrompt}
+            onChange={handleInputChange}
+            onClick={handleTextareaClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendClick();
+              }
+            }}
+          />
+          <div className="absolute bottom-4 right-4">
             {isInputEmpty ? (
-              <div className="px-8 opacity-10">
+              <div className="opacity-10">
                 <IoMdSend size={23} />
               </div>
             ) : (
               <div
-                className="px-8 cursor-pointer text-blue-400"
+                className="cursor-pointer text-blue-400"
                 onClick={handleSendClick}
               >
                 <IoMdSend size={23} />
@@ -60,9 +53,7 @@ const PromptTabMobile = ({
       onSaveInput(inputPrompt);
       setInputPrompt("");
       setIsInputEmpty(true);
-      // await saveQueryData(inputPrompt);
       setAnswerTab(true);
-      // Pass the input prompt value to saveQueryData
     }
   };
 

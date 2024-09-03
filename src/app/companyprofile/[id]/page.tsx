@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { fetchCompanyById, updateCompanyById } from "../../redux/features/companyprofile/companyProfile";
+import {
+  fetchCompanyById,
+  updateCompanyById,
+} from "../../redux/features/companyprofile/companyProfileSlice";
 import { decryptURL } from "../../utils/shareUtils";
 import { getUserInfo } from "../../utils/localStorageUtils";
 import CompanyProfile from "../../components/CompanyProfile/CompanyProfile";
@@ -30,7 +33,7 @@ const CompanyProfilePage: React.FC = () => {
     startup_company_stage: "",
     startup_country: "",
     startup_founders_info: "",
-    startup_emails: ""
+    startup_emails: "",
   });
 
   const [toastVisible, setToastVisible] = useState(false);
@@ -68,14 +71,16 @@ const CompanyProfilePage: React.FC = () => {
         startup_company_stage: company.startup_company_stage,
         startup_country: company.startup_country,
         startup_founders_info: company.startup_founders_info,
-        startup_emails: company.startup_emails
+        startup_emails: company.startup_emails,
       });
     }
   }, [company]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({ ...prevState, [name]: value }));
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleEdit = () => {
@@ -96,7 +101,7 @@ const CompanyProfilePage: React.FC = () => {
       startup_company_stage: company?.startup_company_stage || "",
       startup_country: company?.startup_country || "",
       startup_founders_info: company?.startup_founders_info || "",
-      startup_emails: company?.startup_emails || ""
+      startup_emails: company?.startup_emails || "",
     });
   };
 
@@ -107,8 +112,7 @@ const CompanyProfilePage: React.FC = () => {
         setToastVisible(true);
         setTimeout(() => setToastVisible(false), 3000); // Hide toast after 3 seconds
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   const user = getUserInfo();
@@ -126,7 +130,6 @@ const CompanyProfilePage: React.FC = () => {
   }
 
   return (
-    
     <div className="container mx-auto p-4 max-w-screen-lg">
       {toastVisible && (
         <Toast className="mx-auto my-0">
@@ -156,8 +159,6 @@ const CompanyProfilePage: React.FC = () => {
           <CompanyProfile company={company} />
         )}
       </div>
-
-      
     </div>
   );
 };

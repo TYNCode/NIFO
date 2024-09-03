@@ -1,31 +1,44 @@
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import type { RootState, AppDispatch } from './store';
-import axios, { AxiosResponse } from 'axios';
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "./store";
+import axios, { AxiosResponse } from "axios";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
 
 export const getRequest = async (url: string): Promise<AxiosResponse> => {
   return axios.get(url);
 };
 
-
-export const postRequest = async (url: string, data: any): Promise<AxiosResponse> => {
+export const postRequest = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
   return axios.post(url, data);
 };
 
+export const putRequest = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
+  return axios.put(url, data);
+};
+
+export const deleteRequest = async (url: string): Promise<AxiosResponse> => {
+  return axios.delete(url);
+};
 
 export const getToken = (): string | null => {
-  const  token = localStorage.getItem('jwtAccessToken')
+  const token = localStorage.getItem("jwtAccessToken");
   // console.log(`Access Token : ${token}`)
   return token;
 };
 
-export const getRequestWithAccessToken = async (url: string): Promise<AxiosResponse> => {
+export const getRequestWithAccessToken = async (
+  url: string
+): Promise<AxiosResponse> => {
   const token = getToken();
   if (!token) {
-    throw new Error('Access token not provided');
+    throw new Error("Access token not provided");
   }
   return axios.get(url, {
     headers: {
@@ -34,11 +47,13 @@ export const getRequestWithAccessToken = async (url: string): Promise<AxiosRespo
   });
 };
 
-
-export const postRequestWithAccessToken = async (url: string, data: any): Promise<AxiosResponse> => {
+export const postRequestWithAccessToken = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
   const token = getToken();
   if (!token) {
-    throw new Error('Access token not provided');
+    throw new Error("Access token not provided");
   }
   return axios.post(url, data, {
     headers: {
@@ -47,10 +62,13 @@ export const postRequestWithAccessToken = async (url: string, data: any): Promis
   });
 };
 
-export const putRequestWithAccessToken = async (url: string, data: any): Promise<AxiosResponse> => {
+export const putRequestWithAccessToken = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
   const token = getToken();
   if (!token) {
-    throw new Error('Access token not provided');
+    throw new Error("Access token not provided");
   }
   return axios.put(url, data, {
     headers: {
@@ -59,10 +77,12 @@ export const putRequestWithAccessToken = async (url: string, data: any): Promise
   });
 };
 
-export const deleteRequestWithAccessToken = async (url: string): Promise<AxiosResponse> => {
+export const deleteRequestWithAccessToken = async (
+  url: string
+): Promise<AxiosResponse> => {
   const token = getToken();
   if (!token) {
-    throw new Error('Access token not provided');
+    throw new Error("Access token not provided");
   }
   return axios.delete(url, {
     headers: {
@@ -70,4 +90,3 @@ export const deleteRequestWithAccessToken = async (url: string): Promise<AxiosRe
     },
   });
 };
-

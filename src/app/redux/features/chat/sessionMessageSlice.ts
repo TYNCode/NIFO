@@ -39,7 +39,7 @@ export const fetchSessionMessages = createAsyncThunk<
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `https://nifo.theyellow.network/api/prompt/convo/${id}/`
+        `http://127.0.0.1:8000/prompt/convo/${id}/`
       );
       const data = response.data.conversations;
       return data;

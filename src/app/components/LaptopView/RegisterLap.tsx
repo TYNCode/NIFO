@@ -4,9 +4,8 @@ import { FormData, StartupType } from "../../interfaces";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { fetchCompanies } from "../../redux/features/companyprofile/companyProfile";
 import RegistrationModel from "../RegisterModel/RegisterModel";
-import axios from "axios"; // Added for API requests
+import { fetchAllCompanies } from "../../redux/features/companyprofile/companyProfileSlice";
 
 interface RegisterLapProps {
   onSubmit: SubmitHandler<FormData>;
@@ -36,25 +35,27 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     null
   );
+  const [showModal, setShowModal] = useState(false);
 
   const { companies } = useAppSelector((state) => state.companyProfile);
 
   useEffect(() => {
-    dispatch(fetchCompanies());
+    dispatch(fetchAllCompanies());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (query && companies.length > 0) {
-      const filtered = companies
-        .filter((company) =>
-          company.startup_name.toLowerCase().includes(query.toLowerCase())
-        )
-        .slice(0, 4);
-      setFilteredCompanies(filtered);
-    } else {
-      setFilteredCompanies([]);
-    }
-  }, [query, companies]);
+useEffect(() => {
+  if (query && companies.length > 0) {
+    const filtered = companies
+      .filter((company) =>
+        company.startup_name?.toLowerCase().includes(query.toLowerCase())
+      )
+      .slice(0, 4);
+    setFilteredCompanies(filtered);
+  } else {
+    setFilteredCompanies([]);
+  }
+}, [query, companies]);
+
 
   const handleCompanySelect = (company: StartupType) => {
     setQuery(company.startup_name);
@@ -67,36 +68,19 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     if (selectedCompanyId) {
       data.organization_id = selectedCompanyId;
     }
-    delete data.organization_name;
+    delete data.organization_name; 
     console.log("Data to submit:", data);
     onSubmit(data);
   };
 
-  const [showModal, setShowModal] = useState(false);
-
-  const handleOpenModal = () => {
+  const handleOpenModal = (event: React.MouseEvent) => {
+    event.preventDefault();
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-  };
-
-  const handleModelSubmit = async (data: {
-    organization_name: string;
-    website: string;
-    description: string;
-  }) => {
-    try {
-      await axios.post(
-        "https://nifo.theyellow.network/api/prompt/registerOrganization/",
-        data
-      );
-      handleCloseModal();
-      dispatch(fetchCompanies());
-    } catch (error) {
-      console.error("Error submitting organization:", error);
-    }
+    dispatch(fetchAllCompanies());
   };
 
   return (
@@ -247,12 +231,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
           </span>
         </div>
       </div>
-      {showModal && (
-        <RegistrationModel
-          onClose={handleCloseModal}
-          onSubmit={handleModelSubmit}
-        />
-      )}
+      {showModal && <RegistrationModel onClose={handleCloseModal} />}
     </div>
   );
 };

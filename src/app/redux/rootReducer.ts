@@ -5,7 +5,9 @@ import sessionMessageSlice from "./features/chat/sessionMessageSlice";
 import loginSlice from "./features/auth/loginSlice";
 import registerSlice from "./features/auth/registerSlice";
 import spotlightSlice from "./features/spotlight/spotlightSlice";
-import companyProfileSlice from "./features/companyprofile/companyProfile";
+import partnerConnectSlice from "./features/connection/connectionSlice"
+import companyProfileSlice from "./features/companyprofile/companyProfileSlice";
+
 
 const rootReducer = combineReducers({
  chatHistory: chatHistorySlice,
@@ -14,7 +16,8 @@ const rootReducer = combineReducers({
  login: loginSlice,
  register: registerSlice,
  spotlight:spotlightSlice,
- companyProfile: companyProfileSlice,
+ partnerConnect: partnerConnectSlice,
+ companyProfile:companyProfileSlice
 });
 
 export default rootReducer;

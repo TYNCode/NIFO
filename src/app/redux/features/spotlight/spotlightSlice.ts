@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getRequest } from "../../hooks"; // Import the getRequest utility function
+import { getRequest } from "../../hooks";
 import { Spotlight } from "../../../interfaces";
 
 interface SpotlightState {
@@ -23,7 +23,7 @@ export const fetchSpotlights = createAsyncThunk<
 >("spotlights/fetchSpotlights", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      "https://nifo.theyellow.network/api/spotlight/getspotlight/"
+      "http://127.0.0.1:8000/spotlight/getspotlight/"
     );
     return response.data;
   } catch (error: any) {
@@ -40,7 +40,7 @@ export const fetchSpotlightById = createAsyncThunk<
 >("spotlights/fetchSpotlightById", async (spotlightId, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://nifo.theyellow.network/api/spotlight/getspotlight/${spotlightId}/`
+      `http://127.0.0.1:8000/spotlight/getspotlight/${spotlightId}/`
     );
     return response.data;
   } catch (error: any) {

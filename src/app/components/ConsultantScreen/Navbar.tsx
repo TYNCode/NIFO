@@ -9,7 +9,7 @@ const NavBar: React.FC = () => {
     return (
         <div className="py-5 px-6 flex items-center justify-between bg-white shadow-md z-10">
             <Image
-                src='/tyn-logo.png'
+                src='/nifoimage.png'
                 alt='The Yellow Network'
                 height={0}
                 width={180}

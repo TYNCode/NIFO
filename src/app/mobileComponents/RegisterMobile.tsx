@@ -4,9 +4,8 @@ import { FormData, StartupType } from "../interfaces";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { fetchCompanies } from "../redux/features/companyprofile/companyProfile";
 import RegistrationModel from "../components/RegisterModel/RegisterModel";
-import axios from "axios";
+import { fetchAllCompanies } from "../redux/features/companyprofile/companyProfileSlice";
 
 interface RegisterMobileProps {
   onSubmit: SubmitHandler<FormData>;
@@ -41,14 +40,14 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
   const { companies } = useAppSelector((state) => state.companyProfile);
 
   useEffect(() => {
-    dispatch(fetchCompanies());
+    dispatch(fetchAllCompanies());
   }, [dispatch]);
 
   useEffect(() => {
-    if (query) {
+    if (query && companies.length > 0) {
       const filtered = companies
         .filter((company) =>
-          company.startup_name.toLowerCase().includes(query.toLowerCase())
+          company.startup_name?.toLowerCase().includes(query.toLowerCase())
         )
         .slice(0, 4);
       setFilteredCompanies(filtered);
@@ -64,7 +63,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
     setValue("organization_id", company.startup_id);
   };
 
-  const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+  const handleFormSubmit: SubmitHandler<FormData> = (data) => {
     if (selectedCompanyId) {
       data.organization_id = selectedCompanyId;
     }
@@ -72,24 +71,9 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
   };
 
   const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
-  const handleModelSubmit = async (data: {
-    organization_name: string;
-    website: string;
-    description: string;
-  }) => {
-    try {
-      await axios.post(
-        "https://nifo.theyellow.network/api/prompt/registerOrganization/",
-        data
-      );
-      handleCloseModal();
-      dispatch(fetchCompanies());
-      setQuery("");
-    } catch (error) {
-      console.error("Error submitting organization:", error);
-    }
+  const handleCloseModal = () => {
+    setShowModal(false);
+    dispatch(fetchAllCompanies()); // Refresh company list after modal closes
   };
 
   const showAddOrganizationButton =
@@ -159,7 +143,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
               <p className="text-red-500">{errors.password.message}</p>
             )}
           </div>
-          <div className="flex flex-col items-start justify-start gap-2 w-full">
+          <div className="flex flex-col items-center justify-start gap-2 w-full">
             <input
               type="text"
               {...register("organization_name", {
@@ -184,13 +168,13 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
                 ))}
               </ul>
             )}
-            {showAddOrganizationButton && (
-              <button
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg"
-                onClick={handleOpenModal}
-              >
-                Company not found? Add it here!
-              </button>
+            {showAddOrganizationButton && (     
+                <button
+                  className="mt-2 bg-blue-500 text-white font-medium uppercase text-sm px-4 py-2 rounded-md"
+                  onClick={handleOpenModal}
+                >
+                  Company not found? Add it here!
+                </button>
             )}
             {errors.organization_name && (
               <p className="text-red-500">{errors.organization_name.message}</p>
@@ -222,12 +206,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
           </div>
         </form>
       </div>
-      {showModal && (
-        <RegistrationModel
-          onClose={handleCloseModal}
-          onSubmit={handleModelSubmit}
-        />
-      )}
+      {showModal && <RegistrationModel onClose={handleCloseModal} />}
     </div>
   );
 };

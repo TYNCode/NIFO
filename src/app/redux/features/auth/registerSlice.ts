@@ -28,13 +28,13 @@ export const registerUser = createAsyncThunk(
   async (data: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/user/register/",
+        "http://127.0.0.1:8000/user/register/",
         data
       );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message?.email[0] ||
+        error.response?.data?.email[0] ||
           "Unexpected error during registration. Please try again."
       );
     }

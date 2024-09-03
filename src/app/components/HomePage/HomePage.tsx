@@ -14,8 +14,10 @@ import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
 import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
 import { ChatHistoryResponse, StartupType } from "../../interfaces";
-import { TbShare2 } from "react-icons/tb";
 import { encryptURL } from "../../utils/shareUtils";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
+import { IoShareSocialOutline } from "react-icons/io5";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
@@ -28,13 +30,15 @@ export default function HomePage() {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true);
   const [mailMessage, setMailMessage] = useState<any>(null);
-  const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
+  // const [connectionStatus, setConnectionStatus] = useState<string>("Connect");
   const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
   const [sessionId, setSessionId] = useState<string>(() => {
     const now = new Date();
     return now.getSeconds().toString();
   });
+
+  const [requestQuery, setRequestQuery] = useState<string>();
 
   console.log("queryDatainHome", queryData, inputPrompt);
   useEffect(() => {
@@ -69,10 +73,14 @@ export default function HomePage() {
     }
   };
 
+  const dispatch = useAppDispatch();
+  // const { connectionStatus, loading, error, successMessage } = useAppSelector(
+  //   (state) => state.partnerConnect
+  // );
+
   const handleSaveInput = async (input: string) => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    const userQuery = { input, session_id: sessionId }; // Adjust session_id as needed
-
+    const userQuery = { input, session_id: sessionId }; 
     setMessages((prevMessages) => [
       ...prevMessages,
       { question: input, response: "Loading" },
@@ -80,7 +88,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/prompt/chat/",
+        "http://127.0.0.1:8000/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -118,7 +126,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `https://nifo.theyellow.network/api/prompt/convo/${sessionId}/`,
+          `http://127.0.0.1:8000/prompt/convo/${sessionId}/`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
@@ -149,29 +157,13 @@ export default function HomePage() {
   }, [sessionId]);
 
   const fetchConnectStatus = async (startupId: number) => {
-    console.log("Fetching status for startupId:", startupId);
-    const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    if (jwtAccessToken && startupId) {
-      const url = `https://nifo.theyellow.network/api/connects/${startupId}/`;
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${jwtAccessToken}`,
-          },
-        });
-        console.log("Fetching status response", response.data.status);
-        setConnectionStatus(response.data.status);
-      } catch (error) {
-        console.error("Error fetching connection status:", error);
-      }
-    } else {
-      console.error("Missing JWT token or startup ID");
-    }
+    dispatch(fetchPartnerConnectsByOrg(startupId));
   };
 
   const handleSendStartupData = (item: any, message: any) => {
-    console.log("itemofhandlem", item);
+    console.log("itemofhandlem", message);
     setMailMessage(message);
+    setRequestQuery(message.question);
     setSelectedStartup(item?.database_info);
     setOpenRightFrame(true);
     fetchConnectStatus(item?.database_info?.startup_id);
@@ -250,8 +242,8 @@ export default function HomePage() {
             handleNewChat={handleNewChat}
             // saveQueryData={saveQueryData}
             messages={messages}
-            connectionStatus={connectionStatus}
-            setConnectionStatus={setConnectionStatus}
+            // connectionStatus={connectionStatus}
+            // setConnectionStatus={setConnectionStatus}
             setSessionId={setSessionId}
           />
         );
@@ -263,6 +255,8 @@ export default function HomePage() {
         return null;
     }
   };
+
+
 
   return (
     <main className="flex flex-col w-full">
@@ -294,7 +288,7 @@ export default function HomePage() {
               open={open}
               handleToggleLeftFrame={handleToggleLeftFrameNavbar}
             />
-            <TbShare2
+            <IoShareSocialOutline
               size={24}
               className="ml-4 cursor-pointer"
               onClick={handleShareClick}
@@ -302,7 +296,7 @@ export default function HomePage() {
             />
           </div>
         </div>
-        {openRightFrame && selectedStartup && (
+        {/* {openRightFrame && selectedStartup && (
           <div className={`${expanded ? "" : "w-1/4"}`}>
             <CompanyProfilePane
               companyData={selectedStartup}
@@ -313,12 +307,12 @@ export default function HomePage() {
               toggleWidth={toggleWidth}
               mailData={mailMessage}
               setMailData={setMailMessage}
-              connectionStatus={connectionStatus}
-              setConnectionStatus={setConnectionStatus}
+               connectionStatus={connectionStatus}
               queryData={queryData}
+              requestQuery={requestQuery}
             />
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Mobile Responsiveness */}

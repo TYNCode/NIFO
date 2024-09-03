@@ -42,7 +42,7 @@ const Trends: React.FC<TrendsProps> = () => {
   return (
     <div className="flex flex-col items-center">
       <div>
-        <img src="tyn-logo.png" alt="The Yellow Network" className="w-48" />
+        <img src="nifoimage.png" alt="The Yellow Network" className="w-48" />
       </div>
 
       <div className="bg-white shadow-xl px-8 py-2 rounded-md mt-16">

@@ -29,7 +29,6 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
   };
   const renderOtherCategories = () => {
     const startups = message?.response?.startups;
-
     console.log("messageinrenderstartup", message);
     if (!startups || startups?.length === 0) return null;
     console.log("startups", startups);

@@ -81,7 +81,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
   return (
     <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
       <div className="flex justify-center items-center bg-white shadow-md p-4 z-20">
-        <img src="/tyn-logo.png" alt="The Yellow Network" width={160} />
+        <img src="/nifoimage.png" alt="The Yellow Network" width={160} />
       </div>
       <div className="flex-grow overflow-y-auto scrollbar-thin">
         <div className="flex flex-row justify-between mx-4 mt-6 mb-3">

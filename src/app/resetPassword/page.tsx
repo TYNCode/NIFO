@@ -1,14 +1,22 @@
 "use client";
 
 import React, { Suspense } from "react";
-import ResetPassword from "../components/ResetPassword";
+import ResetPasswordLap from "../components/ResetPasswordLap";
+import ResetPasswordMobile from "../mobileComponents/ResetPasswordMobile";
 
-const SearchResetPassword = () => {
+const ResetPasswordPage: React.FC = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ResetPassword />
+      <div>
+        <div className="hidden md:block">
+          <ResetPasswordLap />
+        </div>
+        <div className="block md:hidden">
+          <ResetPasswordMobile />
+        </div>
+      </div>
     </Suspense>
   );
 };
 
-export default SearchResetPassword;
+export default ResetPasswordPage;

@@ -20,7 +20,7 @@ const ChangePassword: React.FC = () => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/user/forgot-password/",
+        "http://127.0.0.1:8000/user/forgot-password/",
         {
           email: data.email,
         }
@@ -32,68 +32,62 @@ const ChangePassword: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="h-screen flex justify-evenly items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
-        <div className="w-7/12 h-screen flex items-center justify-center">
-          <div>
-            <Image
-              src="/tyn-login.png"
-              alt="tyn-login"
-              width={400}
-              height={400}
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
+      <div className="w-full flex justify-center mt-10">
+        <Image
+          src="/tyn-login.png"
+          alt="Login Image"
+          width={150}
+          height={150}
+        />
+      </div>
+      <div className="text-4xl text-white font-semibold px-14 py-4">
+        Reset Password
+      </div>
+      <div className="w-full h-screen bg-white py-8 rounded-t-3xl shadow-lg mt-8 flex flex-col items-center">
+        <p className="font-light text-lg text-gray-400 px-10 text-center">
+          Enter your email address here
+        </p>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 px-10 mt-4 w-full"
+        >
+          <div className="flex flex-col items-start gap-2 w-full">
+            <input
+              type="email"
+              autoComplete="off"
+              id="email"
+              placeholder="Enter your email"
+              className="text-base px-5 py-3 outline-none rounded-lg shadow border-none w-full"
+              {...register("email", { required: "Email is required" })}
             />
+            {errors.email && (
+              <span className="text-red-500">{errors.email.message}</span>
+            )}
           </div>
-        </div>
-        <div className="w-5/12 h-full bg-white">
-          <div className="flex items-start justify-start flex-col gap-4 px-10 pt-20">
-            <h2 className="font-bold text-5xl">Reset Password</h2>
-            <p className="font-light text-xl text-gray-400">
-              Enter your email address here
-            </p>
-          </div>
-          <form
-            className="flex flex-col gap-8 px-10 justify-center items-center pt-8"
-            onSubmit={handleSubmit(onSubmit)}
+
+          <button
+            type="submit"
+            className="rounded-md bg-blue-500 text-sm px-4 py-2 text-white flex items-center justify-center uppercase font-semibold w-full"
           >
-            <div className="flex flex-col items-start justify-start gap-2">
-              <label htmlFor="email">Your Email</label>
-              <input
-                type="email"
-                autoComplete="off"
-                id="email"
-                placeholder="Enter your email"
-                className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300 border border-solid w-80"
-                {...register("email", { required: "Email is required" })}
-              />
-              {errors.email && (
-                <span className="text-red-500">{errors.email.message}</span>
-              )}
-            </div>
+            Submit
+          </button>
+        </form>
 
-            <button
-              type="submit"
-              className="rounded-md bg-blue-500 text-sm px-4 py-2 text-white flex items-center justify-center uppercase font-semibold"
-            >
-              Submit
-            </button>
-          </form>
-
-          {/* Display any success or error message */}
-          {message && (
-            <div className="mt-4 text-center text-lg text-blue-600">
-              {message}
-            </div>
-          )}
-
-          <div className="flex justify-center items-center gap-2 mt-8">
-            <div>Not a member?</div>
-            <Link href="/register" className="underline">
-              Sign-up
-            </Link>
+        {message && (
+          <div className="mt-4 text-center text-sm text-blue-600">
+            {message}
           </div>
+        )}
+
+        <div className="flex justify-center items-center gap-2 mt-8 text-sm">
+          <div>Not a member?</div>
+          <Link href="/register" className="underline">
+            Sign-up
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

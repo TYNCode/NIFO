@@ -1,59 +1,107 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaAngleLeft } from "react-icons/fa";
-import { TbShare2 } from "react-icons/tb";
 import CryptoJS from "crypto-js";
-
-const StartupProfile = ({
-  selectedStartup,
-  onBackClick,
-  connectionStatus,
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
   setConnectionStatus,
-}) => {
-  useEffect(() => {
-    // Log whenever connectionStatus changes
-    console.log(
-      "mobileConnectionStatus",
-      connectionStatus,
-      selectedStartup?.name
-    );
-  }, [connectionStatus, selectedStartup]);
+  createPartnerConnect,
+  ConnectionStatus,
+} from "../redux/features/connection/connectionSlice";
+import { IoShareSocialOutline } from "react-icons/io5";
+import { fetchPartnerConnectsByOrg } from "../redux/features/connection/connectionSlice";
 
-  const handleButtonClick = () => {
-    // Example of updating connection status locally
-    setConnectionStatus("Requested"); // Update based on your logic
-  };
+const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
+
+  console.log("queryForConnect",queryForConnect);
+  const [loading, setLoading] = useState(false);
+  const { connections, connectionStatuses } = useAppSelector(
+    (state) => state.partnerConnect
+  );
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (selectedStartup) {
+      dispatch(
+        fetchPartnerConnectsByOrg(selectedStartup?.database_info?.startup_id)
+      )
+        .unwrap()
+        .then((response) => {
+          if (response.length > 0) {
+            dispatch(
+              setConnectionStatus({
+                startupId: selectedStartup.database_info.startup_id,
+                status: response[0].request_status as ConnectionStatus,
+              })
+            );
+          } else {
+            dispatch(
+              setConnectionStatus({
+                startupId: selectedStartup.database_info.startup_id,
+                status: "Connect",
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching connections:", error);
+        });
+    }
+  }, [selectedStartup, dispatch]);
 
   if (!selectedStartup) {
-    return null; // Handle case where selectedStartup is not defined
+    return null;
   }
 
-  const handleShareClick = async (startupId: number) => {
-    // Secret key for encryption
-    const secretKey: string = "urlencrypt";
+  const connectionStatus =
+    connectionStatuses[selectedStartup.database_info.startup_id] || "Connect";
 
+  const handleButtonClick = () => {
+    if (connectionStatus === "Connect") {
+      setLoading(true);
+      const payload = {
+        consultant_email: "consultant@example.com",
+        query: queryForConnect, 
+        request_status: "requested",
+        requested_org: selectedStartup.database_info.startup_id,
+      };
+
+      dispatch(createPartnerConnect(payload))
+        .unwrap()
+        .then(() => {
+          dispatch(
+            setConnectionStatus({
+              startupId: selectedStartup.database_info.startup_id,
+              status: "requested",
+            })
+          );
+        })
+        .catch((error) => {
+          console.error("Error creating partner connect:", error);
+        })
+        .finally(() => setLoading(false));
+    }
+  };
+
+  const handleShareClick = async (startupId: number) => {
+    const secretKey: string = "urlencrypt";
     const startupIdStr: string = startupId.toString();
-    // Encrypt the startup ID
     let encryptedStartupId: any;
+
     encryptedStartupId = CryptoJS.AES.encrypt(
       startupIdStr,
       secretKey
     ).toString();
-
     const encodedEncryptedStartupId = encodeURIComponent(encryptedStartupId);
 
-    console.log(encodedEncryptedStartupId, "Encrypted and Encoded Startup ID");
+    const shareUrl: string = `${window.location.href}/startups/${encodedEncryptedStartupId}`;
 
-    const shareUrl:string = `${window.location.href}/startups/${encodedEncryptedStartupId}`
-
-
-    console.log("shareUrl",shareUrl)
     if (navigator.share) {
       try {
         await navigator.share({
           title: selectedStartup?.name,
           url: shareUrl,
         });
-        console.log("Successfully shared");
       } catch (error) {
         console.error("Error sharing:", error);
       }
@@ -75,31 +123,31 @@ const StartupProfile = ({
         </div>
 
         <div className="flex gap-4 items-center justify-center">
-          {/* Share button */}
           <div
             className="text-gray-500"
             onClick={() =>
               handleShareClick(selectedStartup?.database_info?.startup_id)
             }
           >
-            <TbShare2 size={26} />
+            <IoShareSocialOutline size={26} />
           </div>
 
-          {/* Connect button */}
           <div>
             <button
-              className={`flex justify-center items-center px-4 py-1.5 bg-gray-400 rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12 ${
+              className={`flex justify-center items-center px-4 py-1.5 capitalize ${
                 connectionStatus === "Connect"
-                  ? "hover:bg-yellow-400 cursor-pointer"
-                  : "cursor-default bg-red-400"
-              }`}
-              onClick={handleButtonClick} // Handle button click to update status
+                  ? "bg-yellow-400 hover:bg-yellow-500 cursor-pointer"
+                  : "bg-red-400 cursor-default"
+              } rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12`}
+              onClick={handleButtonClick}
+              disabled={connectionStatus !== "Connect" || loading}
             >
-              {connectionStatus}
+              {loading ? "Processing..." : connectionStatus}
             </button>
           </div>
         </div>
       </div>
+
       <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
         <div>{selectedStartup?.database_info?.startup_description}</div>
         <div className="flex flex-col gap-4 shadow-inner text-sm bg-blue-100 p-4 rounded-lg">

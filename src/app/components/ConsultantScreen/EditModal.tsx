@@ -23,7 +23,7 @@ const EditModal: React.FC<EditModalProps> = ({
     if (jwtAccessToken) {
       try {
         await axios.put(
-          `https://nifo.theyellow.network/api/partnerconnect/${id}/update-query-status/`,
+          `http://127.0.0.1:8000/partnerconnect/${id}/update-query-status/`,
           {
             query_status: currentStatus,
           },
