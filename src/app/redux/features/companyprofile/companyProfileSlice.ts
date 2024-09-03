@@ -35,7 +35,7 @@ export const fetchCompaniesByPagination = createAsyncThunk<
   async ({ page, page_size }, { rejectWithValue }) => {
     try {
       const response = await getRequest(
-        `http://127.0.0.1:8000/directorysearch/companyview/?page=${page}&page_size=${page_size}/`
+        `https://nifo.theyellow.network/api/directorysearch/companyview/?page=${page}&page_size=${page_size}/`
       );
       return response.data.results;
     } catch (error: any) {
@@ -54,7 +54,7 @@ export const fetchAllCompanies = createAsyncThunk<
 >("companyProfile/fetchAllCompanies", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `http://127.0.0.1:8000/directorysearch/companyregistrationsearch/`
+      `https://nifo.theyellow.network/api/directorysearch/companyregistrationsearch/`
     );
     return response.data;
   } catch (error: any) {
@@ -72,7 +72,7 @@ export const fetchCompanyById = createAsyncThunk<
 >("companyProfile/fetchCompanyById", async (id, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
+      `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`
     );
     return response.data;
   } catch (error: any) {
@@ -92,7 +92,7 @@ export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(
     );
     try {
       const response = await postRequest(
-        `http://127.0.0.1:8000/directorysearch/companyview/`,
+        `https://nifo.theyellow.network/api/directorysearch/companyview/`,
         newCompanyData
       );
       return response.data;
@@ -114,7 +114,7 @@ export const updateCompanyById = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await putRequest(
-        `http://127.0.0.1:8000/directorysearch/companyview/${id}/`,
+        `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`,
         data
       );
       return response.data;
@@ -134,7 +134,7 @@ export const deleteCompanyById = createAsyncThunk<
 >("companyProfile/deleteCompanyById", async (id, { rejectWithValue }) => {
   try {
     await deleteRequest(
-      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
+      `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`
     );
     return id;
   } catch (error: any) {

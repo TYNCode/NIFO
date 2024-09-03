@@ -80,7 +80,7 @@ export default function HomePage() {
 
   const handleSaveInput = async (input: string) => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
-    const userQuery = { input, session_id: sessionId }; 
+    const userQuery = { input, session_id: sessionId };
     setMessages((prevMessages) => [
       ...prevMessages,
       { question: input, response: "Loading" },
@@ -88,7 +88,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/prompt/chat/",
+        "https://nifo.theyellow.network/api/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -126,7 +126,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/prompt/convo/${sessionId}/`,
+          `https://nifo.theyellow.network/api/prompt/convo/${sessionId}/`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
@@ -255,8 +255,6 @@ export default function HomePage() {
         return null;
     }
   };
-
-
 
   return (
     <main className="flex flex-col w-full">

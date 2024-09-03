@@ -20,7 +20,7 @@ const ChangePassword: React.FC = () => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/user/forgot-password/",
+        "https://nifo.theyellow.network/api/user/forgot-password/",
         {
           email: data.email,
         }

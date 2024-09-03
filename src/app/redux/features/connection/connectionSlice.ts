@@ -6,8 +6,11 @@ import {
   postRequestWithAccessToken,
 } from "../../hooks"; // Import the request utility functions
 
-export type ConnectionStatus = "requested" | "rejected" | "connected" | "Connect";
-
+export type ConnectionStatus =
+  | "requested"
+  | "rejected"
+  | "connected"
+  | "Connect";
 
 interface PartnerConnectPayload {
   consultant_email: string;
@@ -33,9 +36,8 @@ interface PartnerConnectState {
   error: string | null;
   loading: boolean;
   successMessage: string | null;
-  connectionStatuses: { [startupId: number]: ConnectionStatus }; 
+  connectionStatuses: { [startupId: number]: ConnectionStatus };
 }
-
 
 const initialState: PartnerConnectState = {
   connections: [],
@@ -43,7 +45,7 @@ const initialState: PartnerConnectState = {
   error: null,
   loading: false,
   successMessage: null,
-  connectionStatuses: {}, 
+  connectionStatuses: {},
 };
 
 export const createPartnerConnect = createAsyncThunk<
@@ -53,10 +55,10 @@ export const createPartnerConnect = createAsyncThunk<
 >(
   "partnerConnect/createPartnerConnect",
   async (payload, { rejectWithValue }) => {
-    console.log("PAYLOAD",payload);
+    console.log("PAYLOAD", payload);
     try {
       const response = await postRequestWithAccessToken(
-        "http://127.0.0.1:8000/partnerconnect/connects/",
+        "https://nifo.theyellow.network/api/partnerconnect/connects/",
         payload
       );
       return response.data;
@@ -75,7 +77,7 @@ export const fetchPartnerConnects = createAsyncThunk<
 >("partnerConnect/fetchPartnerConnects", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      "http://127.0.0.1:8000/partnerconnect/connects/"
+      "https://nifo.theyellow.network/api/partnerconnect/connects/"
     );
     return response.data;
   } catch (error: any) {
@@ -94,7 +96,7 @@ export const fetchPartnerConnectsByOrg = createAsyncThunk<
   async (orgId, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `http://127.0.0.1:8000/partnerconnect/connects/?requested_org=${orgId}`
+        `https://nifo.theyellow.network/api/partnerconnect/connects/?requested_org=${orgId}`
       );
       return response.data;
     } catch (error: any) {

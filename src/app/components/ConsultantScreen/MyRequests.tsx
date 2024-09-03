@@ -59,7 +59,7 @@ const MyRequests: React.FC<MyRequestsProps> = ({
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/partnerconnect/", {
+      .get("https://nifo.theyellow.network/api/partnerconnect/", {
         params: {
           "assigned_to.email": userEmail,
         },
