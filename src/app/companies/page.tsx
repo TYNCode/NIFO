@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { fetchCompanies } from "../redux/features/companyprofile/companyProfileSlice";
+// import { fetchCompanies } from "../redux/features/companyprofile/companyProfileSlice";
 import { Button, TextInput } from "flowbite-react";
 import { IoSearchOutline } from "react-icons/io5";
 import ViewType from "../components/Company/CardListToggle";
@@ -33,15 +33,15 @@ const CompanyProfilePage: React.FC = () => {
 
   const [initialLoad, setInitialLoad] = useState(true);
 
-  useEffect(() => {
-    if (initialLoad) {
-      setInitialLoad(false);
-      return;
-    }
-    if (hasMore) {
-      dispatch(fetchCompanies());
-    }
-  }, [dispatch, page, hasMore, initialLoad]);
+  // useEffect(() => {
+  //   if (initialLoad) {
+  //     setInitialLoad(false);
+  //     return;
+  //   }
+  //   if (hasMore) {
+  //     dispatch(fetchCompanies());
+  //   }
+  // }, [dispatch, page, hasMore, initialLoad]);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastCompanyElementRef = useCallback(
