@@ -8,24 +8,23 @@ const MobileHeader = () => {
   const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
 
   useEffect(() => {
-    if (window.location.pathname.includes('/spotlights/')) {
+    if (window.location.pathname.includes("/spotlights/")) {
       setActiveSpotlight(true);
     }
   }, []);
 
-
   const handleSpotlight = () => {
     setActiveSpotlight(false);
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-between h-16 border-b shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+      <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-50 flex items-center justify-between px-4">
         {/* Left Arrow */}
         {activeSpotlight ? (
           <div
-            className="flex items-center justify-start pl-4 text-gray-700 cursor-pointer"
+            className="text-gray-700 cursor-pointer"
             onClick={handleSpotlight}
             role="button"
             aria-label="Go back"

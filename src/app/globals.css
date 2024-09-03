@@ -31,3 +31,20 @@
     outline: none; 
     box-shadow: 0 0 0 1px var(--cyan-500); 
   }
+
+  /* CSS for the sliding animation */
+
+  .enter {
+      transform: translateX(0);
+      transition: transform 0.5s ease-in-out;
+  }
+
+  .exit-left {
+      transform: translateX(-100%);
+      transition: transform 0.5s ease-in-out;
+  }
+
+  .exit-right {
+      transform: translateX(100%);
+      transition: transform 0.5s ease-in-out;
+  }

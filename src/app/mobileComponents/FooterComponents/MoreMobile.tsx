@@ -47,7 +47,7 @@ function MoreMobile({ userInfo }) {
 
   const renderMainMore = () => (
     <div>
-      <div className="flex flex-col gap-10 items-start mt-4 bg-gray-50 p-6 border border-gray-200 m-2 rounded-xl">
+      <div className="flex flex-col gap-10 items-start mt-20 bg-gray-50 p-6 border border-gray-200 m-2 rounded-xl">
         <div className="flex items-center">
           <div className="bg-blue-400 text-white rounded-full h-10 w-10 flex items-center justify-center">
             {getInitials(userName)}

@@ -15,6 +15,7 @@ const StartupDetails = () => {
   const params = useParams();
   let startupId = params.id;
 
+  console.log("startupid from params", startupId);
   // Ensure startupId is a string
   if (Array.isArray(startupId)) {
     startupId = startupId[0];
@@ -25,7 +26,7 @@ const StartupDetails = () => {
     return null;
   }
 
-  const secretKey = "urlencrypt";
+  const secretKey = "secret-key";
   const decodedEncryptedStartupId = decodeURIComponent(startupId);
 
   const decryptStartupId = (encryptedId, key) => {
@@ -47,7 +48,7 @@ const StartupDetails = () => {
   const fetchStartupDetails = async (id) => {
     try {
       const res = await axios.get(
-        `https://nifo.theyellow.network/api/prompt/startups/${id}/`
+        `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`
       );
       setStartupData(res.data);
       console.log("Response:", res);
@@ -103,7 +104,7 @@ const StartupDetails = () => {
       </div>
 
       {/* company profile component */}
-      <div className="mx-6 my-4 flex flex-col gap-2 pb-32">
+      <div className="mx-6 my-4 mt-20 flex flex-col gap-2 pb-32">
         <>
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
@@ -158,7 +159,7 @@ const StartupDetails = () => {
         </>
       </div>
 
-      <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
+      {/* <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} /> */}
     </div>
   );
 };

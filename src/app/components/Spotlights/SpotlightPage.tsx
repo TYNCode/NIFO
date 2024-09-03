@@ -1,17 +1,81 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoShareSocialOutline } from "react-icons/io5";
 import MobileHeader from "../../mobileComponents/MobileHeader";
+import {
+  createPartnerConnect,
+  fetchPartnerConnectsByOrg,
+  setConnectionStatus,
+} from "../../redux/features/connection/connectionSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { ConnectionStatus } from "../../redux/features/connection/connectionSlice";
 
-const SpotlightPage = ({selectedSpotlight , handleSpotlightShare}) => {
+const SpotlightPage = ({ selectedSpotlight, handleSpotlightShare }) => {
+  console.log("selectedSpotlight", selectedSpotlight);
+
+  const dispatch = useAppDispatch();
+  const connectionStatuses = useAppSelector(
+    (state) => state.partnerConnect.connectionStatuses
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedSpotlight?.spotlight_startup_id) {
+      dispatch(
+        fetchPartnerConnectsByOrg(selectedSpotlight.spotlight_startup_id)
+      ).then((action) => {
+        if (fetchPartnerConnectsByOrg.fulfilled.match(action)) {
+          const connections = action.payload;
+          const status: ConnectionStatus =
+            connections.length > 0
+              ? (connections[0].request_status as ConnectionStatus)
+              : "Connect";
+
+          dispatch(
+            setConnectionStatus({
+              startupId: selectedSpotlight.spotlight_startup_id,
+              status: status,
+            })
+          );
+        }
+      });
+    }
+  }, [dispatch, selectedSpotlight?.spotlight_startup_id]);
+
+  const handleConnectOfSpotlight = async () => {
+    const connectionStatus =
+      connectionStatuses[selectedSpotlight?.spotlight_startup_id];
+
+    if (connectionStatus === null || connectionStatus === "Connect") {
+      setIsLoading(true); 
+      try {
+        await dispatch(
+          createPartnerConnect({
+            consultant_email: "consultant@example.com",
+            query: "Spotlight connect: From the spotlight connect", 
+            request_status: "requested", 
+            requested_org: selectedSpotlight?.spotlight_startup_id,
+          })
+        );
+        dispatch(
+          setConnectionStatus({
+            startupId: selectedSpotlight.spotlight_startup_id,
+            status: "requested",
+          })
+        );
+      } catch (error) {
+        console.error("Spotlight Connection Error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div>
-       
-       <div>
-        <MobileHeader/>
-       </div>
-
-
+      <div>
+        <MobileHeader />
+      </div>
 
       <div>
         <Image
@@ -31,7 +95,7 @@ const SpotlightPage = ({selectedSpotlight , handleSpotlightShare}) => {
       </div>
 
       {/* Export Icons */}
-      <div className="flex justify-between  px-6 py-4">
+      <div className="flex justify-between px-6 py-4">
         <div className="flex gap-8">
           {/* Share button */}
           <div
@@ -43,18 +107,17 @@ const SpotlightPage = ({selectedSpotlight , handleSpotlightShare}) => {
             </div>
             <div>Share</div>
           </div>
-          {/* Download button */}
-          {/* <div className="flex flex-col gap-1 text-xs items-center">
-    <div>
-      <MdOutlineFileDownload size={24} />
-    </div>
-    <div>Download</div>
-  </div> */}
         </div>
 
         {/* Connect button */}
-        <div className="bg-blue-400 rounded text-sm uppercase font-medium p-2 text-white flex items-center">
-          Connect
+        <div
+          className="bg-blue-400 rounded text-sm uppercase font-medium p-2 text-white flex items-center cursor-pointer"
+          onClick={handleConnectOfSpotlight}
+        >
+          {isLoading
+            ? "Connecting..."
+            : connectionStatuses[selectedSpotlight?.spotlight_startup_id] ||
+              "Connect"}
         </div>
       </div>
 

@@ -15,7 +15,7 @@ interface SearchMobileProps {
   onSaveInput: any;
   messages: any[];
   setSessionId: (id: any) => void;
-  handleNewChat: any
+  handleNewChat: any;
 }
 
 const SearchMobile: React.FC<SearchMobileProps> = ({
@@ -28,7 +28,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
   onSaveInput,
   messages,
   setSessionId,
-  handleNewChat
+  handleNewChat,
 }) => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [answerTab, setAnswerTab] = useState(false);
@@ -36,13 +36,11 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [queryForConnect, setQueryForConnect] = useState();
 
-
-  console.log("messages in mobile", messages);
   const handleAccordian = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
 
-  const handleStartups = (startup: any, message:any) => {
+  const handleStartups = (startup: any, message: any) => {
     setSelectedStartup(startup);
     setQueryForConnect(message.question);
   };
@@ -125,14 +123,41 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
             <div className="border-l-2 border-orange-100 pl-4 py-2 font-medium leading-relaxed">
               {message?.question}
             </div>
+
             <div className="font-light leading-relaxed border-l-2 border-blue-100 pl-4 py-2 pb-2">
               {message?.response === "Loading" ? (
                 <div>Loading...</div>
-              ) : message.response.response !==
-                "No specific details available." ? (
+              ) : typeof message?.response?.response === "string" ? (
                 <div>{message.response.response}</div>
+              ) : message?.response?.success === false ? (
+                <div className="text-red-500">
+                  Connection error: Please ensure you are connected to the
+                  internet securely.
+                </div>
+              ) : message?.response?.response &&
+                typeof message?.response?.response === "object" ? (
+                <div>
+                  {/* Iterate over the object keys and render them, skipping the "response" key */}
+                  {Object.entries(message.response.response).map(
+                    ([key, value], idx) =>
+                      key !== "response" ? (
+                        <div key={idx}>
+                          <strong>{key}:</strong>{" "}
+                          {typeof value === "string" ||
+                          typeof value === "number" ? (
+                            value
+                          ) : (
+                            <pre>{JSON.stringify(value, null, 2)}</pre>
+                          )}
+                        </div>
+                      ) : (
+                        <div key={idx}>{value as React.ReactNode}</div>
+                      )
+                  )}
+                </div>
               ) : null}
             </div>
+
             {message?.response?.startups?.length > 0 && (
               <div className="grid grid-flow-row gap-2 border-l-2 border-blue-100 pl-4 py-2 pb-2">
                 <div className="flex font-medium gap-6">
@@ -147,7 +172,9 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
                   >
                     <div className="w-1/4">
                       <Image
-                        src={startup?.database_info?.startup_logo || "/nologo.png"}
+                        src={
+                          startup?.database_info?.startup_logo || "/nologo.png"
+                        }
                         alt={`${startup?.name || "Startup"} Logo`}
                         width={200}
                         height={50}
@@ -183,7 +210,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
   );
 
   return (
-    <div>
+    <div className="mt-20">
       {selectedStartup ? (
         <StartupProfile
           selectedStartup={selectedStartup}

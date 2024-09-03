@@ -84,7 +84,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
   };
 
   const handleShareClick = async (startupId: number) => {
-    const secretKey: string = "urlencrypt";
+    const secretKey: string = "secret-key";
     const startupIdStr: string = startupId.toString();
     let encryptedStartupId: any;
 
