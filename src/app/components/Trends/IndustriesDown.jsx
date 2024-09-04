@@ -134,8 +134,8 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
                   }
                 >
                   <div
-                    className={`absolute right-full mr-4 text-black text-sm w-32 text-right ${
-                      isHighlighted ? "font-semibold text-base" : ""
+                    className={`absolute right-full mr-2 bottom-2 text-sm w-32 text-right ${
+                      isHighlighted ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
                     }`}
                   >
                     {displayedTechnologies[index]}

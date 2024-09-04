@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
 const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
-  const radius1 = 220; // Radius of the first arc
-  const radius2 = 339; // Radius of the second arc
-  const centerX1 = 213; // Center the first arc's topmost dot horizontally
-  const centerY1 = 1; // Y position for the first arc's topmost dot
-  const centerX2 = 330; // Center the second arc's topmost dot horizontally
+  const radius1 = 165; // Radius of the first arc
+  const radius2 = 285; // Radius of the second arc
+  const centerX1 = 155; // Center the first arc's topmost dot horizontally
+  const centerY1 = 0; // Y position for the first arc's topmost dot
+  const centerX2 = 278; // Center the second arc's topmost dot horizontally
   const centerY2 = 1; // Y position for the second arc's topmost dot
 
   // Find the selected industry's data within the sectors
@@ -174,22 +174,22 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
 
   return (
     <div>
-      <div className="relative flex justify-end items-start select-none">
+      <div className="relative flex justify-end items-start select-none mt-16">
         {/* First Arc */}
         <div
           onTouchStart={handleTouchStartArc1}
           onTouchMove={handleTouchMoveArc1}
           onTouchEnd={handleTouchEndArc1}
         >
-          <img src="/circleup1.svg" alt="" className="w-40" />
+          <img src="/circleup1.svg" alt="" className="w-32" />
         </div>
 
         <div className="absolute">
-          <div className="relative w-60">
+          <div className="relative w-44">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-60" />
+              <img src="/circleup2.svg" alt="" className="w-44" />
               {/* Add BFSI text inside the innermost arc */}
-              <div className="absolute top-20 right-4 flex justify-center items-center">
+              <div className="absolute top-10 right-4 flex justify-center items-center">
                 <span className="text-lg font-semibold uppercase text-gray-700">
                   BFSI
                 </span>
@@ -211,12 +211,12 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
                     className={`relative rounded-full shadow-lg ${
                       isMiddleDot
                         ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
-                        : "bg-[#D8D8D8] w-6 h-6"
+                        : "bg-[#D8D8D8] w-5 h-5"
                     }`}
                   >
                     <div
-                      className={`absolute right-full mr-4 text-black text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base" : ""
+                      className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
+                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
                       }`}
                     >
                       {
@@ -240,9 +240,9 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
           onTouchMove={handleTouchMoveArc2}
           onTouchEnd={handleTouchEndArc2}
         >
-          <div className="relative w-[360px]">
+          <div className="relative w-[300px]">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-[360px]" />
+              <img src="/circleup2.svg" alt="" className="w-[300px]" />
             </div>
             {fixedAnglesArc2.map((angle, index) => {
               const isMiddleDot = index === 1; // Middle dot is at index 1
@@ -260,12 +260,12 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
                     className={`relative rounded-full shadow-lg ${
                       isMiddleDot
                         ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
-                        : "bg-[#D8D8D8] w-6 h-6"
+                        : "bg-[#D8D8D8] w-5 h-5"
                     }`}
                   >
                     <div
-                      className={`absolute right-full mr-4 text-black text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base" : ""
+                      className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
+                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
                       }`}
                     >
                       {
