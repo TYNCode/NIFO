@@ -8,7 +8,7 @@ const Industries = ({
   onTechnologyClick,
 }) => {
   return (
-    <div className="relative h-screen flex flex-col justify-between bg-gray-100">
+    <div className="relative h-screen flex flex-col justify-between bg-gray-100 overflow-hidden">
       {/* IndustriesUp at the top */}
       <div className="flex-grow-0">
         <IndustriesUp selectedIndustry={selectedIndustry} />

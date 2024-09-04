@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
-import { loginUser } from './../../redux/features/auth/loginSlice';
 
 const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
- const radius = 160;
- const centerX = 150;
- const centerY = 150;
+  const radius = 160;
+  const centerX = 150;
+  const centerY = 150;
+
   // Find the selected industry's data within the sectors
   const selectedSector = sectorsData.sectors.find((sector) =>
     sector.industries.some(
@@ -19,12 +19,22 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
       )
     : null;
 
-  // Extract technology names based on the selected industry
+  // Extract technology names based on the selected industry and loop if less than 8
   const technologyNames = selectedIndustryData
     ? selectedIndustryData.technologies.map((tech) => tech.technologyName)
     : ["No Technologies Available"];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Fill the remaining positions with repeated values to ensure 8 items are displayed
+  const totalPositions = 8;
+  const displayedTechnologies = Array.from(
+    { length: totalPositions },
+    (_, i) => technologyNames[i % technologyNames.length]
+  );
+
+  const highlightedPosition = Math.floor(totalPositions / 2); // Middle dot
+
+  const [currentIndex, setCurrentIndex] = useState(7);
+  const [rotationOffset, setRotationOffset] = useState(0);
   const [startX, setStartX] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -38,11 +48,9 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
 
     const deltaX = e.touches[0].clientX - startX;
 
-    if (deltaX > 50) {
-      handleScroll("prev");
-      setStartX(e.touches[0].clientX);
-    } else if (deltaX < -50) {
-      handleScroll("next");
+    if (Math.abs(deltaX) > 20) {
+      // Swiping right (positive deltaX) should move to "next"
+      handleScroll(deltaX > 0 ? "next" : "prev");
       setStartX(e.touches[0].clientX);
     }
   };
@@ -52,20 +60,27 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
   };
 
   const handleScroll = (direction) => {
+    if (isAnimating) return;
     setIsAnimating(true);
 
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) =>
-        direction === "next"
-          ? (prevIndex + 1) % technologyNames.length
-          : (prevIndex - 1 + technologyNames.length) % technologyNames.length
+    if (direction === "next") {
+      setRotationOffset(
+        (prevOffset) => prevOffset - (2 * Math.PI) / totalPositions
       );
-      setIsAnimating(false);
-    }, 500);
-  };
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % totalPositions);
+    } else if (direction === "prev") {
+      setRotationOffset(
+        (prevOffset) => prevOffset + (2 * Math.PI) / totalPositions
+      );
+      setCurrentIndex(
+        (prevIndex) => (prevIndex - 1 + totalPositions) % totalPositions
+      );
+    }
 
-  const fixedAngles = [Math.PI, (3 * Math.PI) / 4, Math.PI / 2];
-  const middleIndex = Math.floor(fixedAngles.length / 2);
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 500); // Match this duration with the CSS transition duration
+  };
 
   return (
     <div
@@ -74,7 +89,7 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div>
+      <div className="z-10">
         <img src="/circle.svg" alt="" className="w-32" />
       </div>
 
@@ -82,18 +97,25 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
         <div className="relative w-44">
           <div>
             <img src="/circle2.svg" alt="" className="w-44" />
-            {/* Add the currently selected technology name here */}
-            <div className="absolute bottom-10 right-2 flex justify-center items-center">
+            {/* Add the updated technology trend text with stacked words */}
+            <div className="absolute bottom-7 right-2 flex justify-center items-center flex-col z-20">
               <span className="text-[12px] font-semibold uppercase text-gray-700">
-                SUB INDUSTRY
+                Technology
+              </span>
+              <span className="text-[12px] font-semibold uppercase text-gray-700">
+                Trend
               </span>
             </div>
           </div>
-          {fixedAngles.map((angle, index) => {
-            const isMiddleDot = index === middleIndex; // Check if this is the middle dot
-            const newAngle = angle + (isAnimating ? Math.PI / 4 : 0);
-            const x = centerX + radius * Math.cos(newAngle);
-            const y = centerY - radius * Math.sin(newAngle);
+          {Array.from({ length: totalPositions }).map((_, index) => {
+            const angle =
+              (index / totalPositions) * 2 * Math.PI + rotationOffset;
+            const x = centerX + radius * Math.cos(angle);
+            const y = centerY - radius * Math.sin(angle);
+
+            // Highlight the dot based on the current index
+            const isHighlighted =
+              index === (currentIndex + highlightedPosition) % totalPositions;
 
             return (
               <div
@@ -103,28 +125,20 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
               >
                 <div
                   className={`relative rounded-full shadow-lg ${
-                    isMiddleDot
+                    isHighlighted
                       ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
                       : "bg-[#D8D8D8] w-6 h-6"
                   }`}
                   onClick={() =>
-                    onTechnologyClick(
-                      technologyNames[
-                        (currentIndex + index) % technologyNames.length
-                      ]
-                    )
+                    onTechnologyClick(displayedTechnologies[index])
                   }
                 >
                   <div
                     className={`absolute right-full mr-4 text-black text-sm w-32 text-right ${
-                      isMiddleDot ? "font-semibold text-base" : ""
+                      isHighlighted ? "font-semibold text-base" : ""
                     }`}
                   >
-                    {
-                      technologyNames[
-                        (currentIndex + index) % technologyNames.length
-                      ]
-                    }
+                    {displayedTechnologies[index]}
                   </div>
                 </div>
               </div>

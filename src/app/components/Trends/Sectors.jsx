@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
 const Sectors = ({ onSectorClick }) => {
-  const radius = 174; // Radius of the circle
-  const centerX = 166; // Center of the circle on x-axis
-  const centerY = 164; // Center of the circle on y-axis
+  const radius = 180; // Radius of the circle
+  const centerX = 170; // Center of the circle on x-axis
+  const centerY = 170; // Center of the circle on y-axis
 
-  // Extract sector names from the sectors data
-  const sectorNames = sectorsData.sectors.map((sector) => sector.sectorName);
+  // Extract sector names from the sectors data and limit to the first 8 items
+  const sectorNames = sectorsData.sectors
+    .map((sector) => sector.sectorName)
+    .slice(0, 8);
 
   const totalPositions = sectorNames.length; // Use the actual number of sectors
   const highlightedPosition = Math.floor(totalPositions / 2); // Middle position or close to it
 
-  const [currentIndex, setCurrentIndex] = useState(4); // Index of the highlighted dot
+  const [currentIndex, setCurrentIndex] = useState(3); // Index of the highlighted dot
   const [rotationOffset, setRotationOffset] = useState(0); // Track rotation
   const [isAnimating, setIsAnimating] = useState(false);
   const [startX, setStartX] = useState(null); // Initialize startX state
@@ -28,8 +30,8 @@ const Sectors = ({ onSectorClick }) => {
     const deltaX = e.touches[0].clientX - startX;
 
     if (Math.abs(deltaX) > 20) {
-      // Adjust sensitivity as needed
-      handleScroll(deltaX > 0 ? "prev" : "next");
+      // Invert the logic here
+      handleScroll(deltaX > 0 ? "next" : "prev"); // Inverted logic: Right swipe (positive deltaX) should go to "next"
       setStartX(e.touches[0].clientX); // Update startX
     }
   };
@@ -62,7 +64,7 @@ const Sectors = ({ onSectorClick }) => {
   };
 
   return (
-    <div className="relative flex flex-col justify-between h-screen overflow-hidden">
+    <div className="relative flex flex-col justify-between h-screen overflow-hidden bg-gray-100">
       <div>
         <div className="">
           <img src="/sector_default.png" alt="" className="" />
@@ -78,7 +80,7 @@ const Sectors = ({ onSectorClick }) => {
       </div>
 
       <div
-        className="relative w-screen  flex justify-end items-end select-none pb-20 "
+        className="relative w-screen flex justify-end items-end select-none pb-20"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -123,17 +125,17 @@ const Sectors = ({ onSectorClick }) => {
                   }}
                 >
                   <div
-                    className={`relative rounded-full  shadow-lg ${
+                    className={`relative rounded-full shadow-lg ${
                       isHighlighted
                         ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
-                        : "bg-[#D8D8D8] w-6 h-6"
+                        : "bg-[#D8D8D8] w-5 h-5"
                     }`}
                   >
                     <div
-                      className={`absolute right-full mr-4 text-black text-sm w-32 text-right  ${
+                      className={`absolute right-full mr-2 bottom-2 text-sm w-32 text-right ${
                         isHighlighted
-                          ? "font-semibold text-base text-[#3AB8FF]"
-                          : ""
+                          ? "font-semibold text-base text-[#4C4C4C]"
+                          : "text-[#797979]"
                       } cursor-pointer`}
                       onClick={() => onSectorClick(sectorName)}
                     >

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
 const CurvedLineUp = ({ selectedSector }) => {
-  const radius = 224; // Radius of the curve
-  const centerX = 226; // Center the topmost dot horizontally
-  const centerY = 10; // Y position for the topmost dot (you can adjust this for your design)
+  const radius = 164; // Radius of the curve
+  const centerX = 168; // Center the topmost dot horizontally
+  const centerY = 12; // Y position for the topmost dot (you can adjust this for your design)
 
   // Extract sector names from the JSON data
   const sectorNames = sectorsData.sectors.map((sector) => sector.sectorName);
@@ -78,21 +78,21 @@ const CurvedLineUp = ({ selectedSector }) => {
 
   return (
     <div
-      className="relative bg-gray-100 flex justify-end items-start select-none"
+      className="relative bg-gray-100 flex justify-end items-start select-none mt-16"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <div>
-        <img src="/circleup1.svg" alt="" className="w-40" />
+        <img src="/circleup1.svg" alt="" className="w-32" />
       </div>
 
       <div className="absolute">
-        <div className="relative w-60">
+        <div className="relative w-44">
           <div>
-            <img src="/circleup2.svg" alt="" className="w-60" />
+            <img src="/circleup2.svg" alt="" className="w-44" />
             {/* Add the selected sector name inside the innermost circle */}
-            <div className="absolute top-20 right-4 flex justify-center items-center">
+            <div className="absolute top-10 right-4 flex justify-center items-center">
               <span className="text-base font-semibold uppercase text-gray-700">
                 SECTOR
               </span>
@@ -116,12 +116,14 @@ const CurvedLineUp = ({ selectedSector }) => {
                   className={`relative rounded-full shadow-lg ${
                     isMiddleDot
                       ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
-                      : "bg-[#D8D8D8] w-6 h-6"
+                      : "bg-[#D8D8D8] w-5 h-5"
                   }`}
                 >
                   <div
-                    className={`absolute right-full mr-4 text-black text-sm w-32 text-right ${
-                      isMiddleDot ? "font-semibold text-base" : ""
+                    className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
+                      isMiddleDot
+                        ? "font-semibold text-base text-[#4C4C4C]"
+                        : "text-[#797979]"
                     }`}
                   >
                     {displayedSectors[index]}
