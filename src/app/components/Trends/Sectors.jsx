@@ -64,7 +64,7 @@ const Sectors = ({ onSectorClick }) => {
   };
 
   return (
-    <div className="relative flex flex-col justify-between h-screen overflow-hidden bg-gray-100">
+    <div className="relative flex flex-col justify-between overflow-hidden bg-gray-100">
       <div>
         <div className="">
           <img src="/sector_default.png" alt="" className="" />
@@ -80,10 +80,13 @@ const Sectors = ({ onSectorClick }) => {
       </div>
 
       <div
-        className="relative w-screen flex justify-end items-end select-none pb-20"
+        className="relative w-screen flex justify-end items-end select-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        style={{
+          paddingBottom: "5rem", // Adjust bottom padding to ensure it's above the bottom bar
+        }}
       >
         {/* Sector image, positioned independently */}
         <div className="">

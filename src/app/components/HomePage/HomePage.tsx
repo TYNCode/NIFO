@@ -103,6 +103,7 @@ export default function HomePage() {
     }
   };
 
+
   const dispatch = useAppDispatch();
 
   const handleSaveInput = async (input: string) => {
@@ -345,7 +346,8 @@ export default function HomePage() {
       <div className="flex flex-col md:hidden h-screen">
         {/* Mobile Header */}
         <MobileHeader
-        // handleBack={handleBack}
+        handleBack={handleBack}
+        activeTab={activeTab}
         />
 
         {/* Content Area */}
