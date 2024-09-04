@@ -32,4 +32,3 @@ const TrendsMobileHeader = ({ handleBack }) => {
 };
 
 export default TrendsMobileHeader;
-np
