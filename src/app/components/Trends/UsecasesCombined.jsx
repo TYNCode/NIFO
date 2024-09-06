@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import UsecasesArc from "./UsecasesArc";
 import Usecases from "./Usecases";
 
-const CombinedComponent = ({ selectedIndustry, selectedTechnology ,technologyNames}) => {
-  console.log("Usecase combined technology names", technologyNames)
+const CombinedComponent = ({
+  selectedIndustry,
+  selectedTechnology,
+  technologyNames,
+  onUsecaseClick, // Pass the handler from TrendsMobile
+}) => {
   return (
     <div className="flex flex-col justify-between h-screen">
-      {/* UsecasesArc arc at the top */}
-      <div className="flex-grow-0 ">
+      {/* UsecasesArc at the top */}
+      <div className="flex-grow-0">
         <UsecasesArc
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
@@ -20,6 +24,7 @@ const CombinedComponent = ({ selectedIndustry, selectedTechnology ,technologyNam
         <Usecases
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
+          onUsecaseClick={onUsecaseClick} // Pass handler to receive selected use case
         />
       </div>
     </div>

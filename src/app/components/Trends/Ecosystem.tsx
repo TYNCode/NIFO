@@ -7,20 +7,15 @@ import { TbLocation } from "react-icons/tb";
 import Image from "next/image";
 import { encryptURL } from "../../utils/shareUtils";
 
-const EcosystemContent: React.FC = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const useCaseTitle = searchParams.get("usecase");
-  const description = searchParams.get("usecaseDescription");
+// Receive startups as props
+const EcosystemContent: React.FC<{
+  startups: any[];
+  usecase: string;
+  usecaseDescription: string;
+}> = ({ startups, usecase, usecaseDescription }) => {
 
-  // Parse startups safely
-  let startups = [];
-  try {
-    startups = JSON.parse(searchParams.get("startups") || "[]");
-  } catch (error) {
-    console.error("Failed to parse startups:", error);
-    startups = [];
-  }
+  console.log("Ecosystem pagee",startups, usecase, usecaseDescription)
+  const router = useRouter();
 
   const handleExploreClick = async (startupName: string) => {
     try {
@@ -43,14 +38,14 @@ const EcosystemContent: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mt-12">
       {/* Main content section */}
       <div className="bg-[#005585] p-4 w-full z-50 mt-4">
         <div className="text-lg font-semibold text-white">
-          {useCaseTitle || "Ecosystem Overview"}
+          {usecase|| "Ecosystem Overview"}
         </div>
         <div className="text-base mt-4 text-white">
-          {description ||
+          {usecaseDescription ||
             "Learn about the startups and technologies revolutionizing the industry."}
         </div>
       </div>
@@ -65,11 +60,13 @@ const EcosystemContent: React.FC = () => {
             >
               <div className="font-bold">{startup.name}</div>
               <div className="flex items-center justify-between mt-2">
-                <div className="text-sm">{startup.description}</div>
+                <div className="text-sm">
+                  {startup.description || "No description available."}
+                </div>
                 <div className="relative -mt-7 flex justify-center">
                   <Image
-                    src="/placeholder-image.png"
-                    alt="placeholder"
+                    src={startup.logo || "/placeholder-image.png"}
+                    alt="Startup Logo"
                     width={50}
                     height={50}
                   />
@@ -97,10 +94,19 @@ const EcosystemContent: React.FC = () => {
   );
 };
 
-const Ecosystem: React.FC = () => {
+// Ecosystem component that receives startups and other details as props
+const Ecosystem: React.FC<{
+  startups: any[];
+  usecase: string;
+  usecaseDescription: string;
+}> = ({ startups, usecase, usecaseDescription }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <EcosystemContent />
+      <EcosystemContent
+        startups={startups}
+        usecase={usecase}
+        usecaseDescription={usecaseDescription}
+      />
     </Suspense>
   );
 };

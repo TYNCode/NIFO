@@ -42,6 +42,7 @@ export default function HomePage() {
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
+  const [currentStep, setCurrentStep] = useState("trends"); 
 
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("user");
@@ -65,31 +66,39 @@ export default function HomePage() {
     }
   };
 
-  const handleBack = () => {
-    if (selectedTechnology) {
-      setSelectedTechnology(null); // Go back to Industries
-    } else if (selectedIndustry) {
-      setSelectedIndustry(null); // Go back to SubSectors
-    } else if (selectedSector) {
-      setSelectedSector(null); // Go back to Sectors
-    } else {
-      setActiveTab("Spotlight"); // Go back to Spotlight if at the root of Trends
-    }
-  };
+const handleBack = () => {
+if (currentStep === "ecosystem") {
+setCurrentStep("usecaseDescription"); 
+} else if (currentStep === "usecaseDescription") {
+setCurrentStep("usecasesCombined"); 
+} else if (currentStep === "usecasesCombined") {
+setCurrentStep("industries"); 
+} else if (currentStep === "industries") {
+setCurrentStep("subSectors"); 
+} else if (currentStep === "subSectors") {
+setCurrentStep("sectors"); 
+} else {
+setCurrentStep("trends"); 
+}
+
+};
 
   const handleSectorClick = (sectorName) => {
     setSelectedSector(sectorName);
     setSelectedIndustry(null); // Reset industry and technology
     setSelectedTechnology(null);
+    setCurrentStep("subSectors")
   };
 
   const handleIndustryClick = (industryName) => {
     setSelectedIndustry(industryName);
-    setSelectedTechnology(null); // Reset technology
-  };
+    setSelectedTechnology(null); 
+    setCurrentStep("industries");
+    };
 
   const handleTechnologyClick = (technologyName) => {
     setSelectedTechnology(technologyName);
+    setCurrentStep("usecasesCombined")
   };
 
   const toggleWidth = () => {
@@ -293,6 +302,8 @@ export default function HomePage() {
             handleSectorClick={handleSectorClick}
             handleIndustryClick={handleIndustryClick}
             handleTechnologyClick={handleTechnologyClick}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
           />
         );
       case "More":

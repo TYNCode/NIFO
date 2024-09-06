@@ -1,11 +1,7 @@
 import React from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
-const UsecasesArc = ({
-  selectedIndustry,
-  selectedTechnology,
-  OriginalTechnologyNames,
-}) => {
+const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
   const radius1 = 165; // Radius of the first arc
   const radius2 = 285; // Radius of the second arc
   const centerX1 = 155; // Center the first arc's topmost dot horizontally
@@ -26,31 +22,33 @@ const UsecasesArc = ({
       )
     : null;
 
+  const allIndustries = selectedSector
+    ? selectedSector.industries.map((industry) => industry.industryName)
+    : [];
+
   const technologyNames = selectedIndustryData
     ? selectedIndustryData.technologies.map((tech) => tech.technologyName)
     : [];
 
   // Find the index of the selected industry and technology
-  const selectedIndustryIndex = selectedIndustryData
-    ? selectedSector.industries
-        .map((industry) => industry.industryName)
-        .indexOf(selectedIndustry)
+  const selectedIndustryIndex = allIndustries.length
+    ? allIndustries.indexOf(selectedIndustry)
     : -1;
 
-  const selectedTechnologyIndex = technologyNames.indexOf(selectedTechnology);
+  const selectedTechnologyIndex = technologyNames.length
+    ? technologyNames.indexOf(selectedTechnology)
+    : -1;
 
   // Determine the industries and technologies to display along with their neighbors
   const displayedIndustries =
     selectedIndustryIndex !== -1
       ? [
-          OriginalTechnologyNames[
-            (selectedIndustryIndex - 1 + OriginalTechnologyNames.length) %
-              OriginalTechnologyNames.length
+          allIndustries[
+            (selectedIndustryIndex - 1 + allIndustries.length) %
+              allIndustries.length
           ],
           selectedIndustry,
-          OriginalTechnologyNames[
-            (selectedIndustryIndex + 1) % OriginalTechnologyNames.length
-          ],
+          allIndustries[(selectedIndustryIndex + 1) % allIndustries.length],
         ]
       : [
           "No Industries Available",
@@ -92,7 +90,7 @@ const UsecasesArc = ({
   return (
     <div>
       <div className="relative flex justify-end items-start select-none mt-16">
-        {/* First Arc */}
+        {/* First Arc - Industries */}
         <div className="absolute">
           <img src="/circleup1.svg" alt="Arc 1" className="w-32" />
         </div>
@@ -103,7 +101,7 @@ const UsecasesArc = ({
               <img src="/circleup2.svg" alt="Arc 2" className="w-44" />
               <div className="absolute top-10 right-4 flex justify-center items-center">
                 <span className="text-lg font-semibold uppercase text-gray-700">
-                  BFSI
+                  {"BFSI"}
                 </span>
               </div>
             </div>
@@ -132,12 +130,7 @@ const UsecasesArc = ({
                           : "text-[#797979]"
                       }`}
                     >
-                      {
-                        displayedIndustries[
-                          (selectedIndustryIndex + index) %
-                            displayedIndustries.length
-                        ]
-                      }
+                      {displayedIndustries[index]}
                     </div>
                   </div>
                 </div>
@@ -146,7 +139,7 @@ const UsecasesArc = ({
           </div>
         </div>
 
-        {/* Second Arc */}
+        {/* Second Arc - Technologies */}
         <div>
           <div className="relative w-[300px]">
             <div>
@@ -179,10 +172,7 @@ const UsecasesArc = ({
                     >
                       {isMiddleDot
                         ? selectedTechnology
-                        : displayedTechnologies[
-                            (selectedTechnologyIndex + index) %
-                              displayedTechnologies.length
-                          ]}
+                        : displayedTechnologies[index]}
                     </div>
                   </div>
                 </div>

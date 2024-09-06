@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import Sectors from "../../components/Trends/Sectors";
 import SubSectors from "../../components/Trends/SubSectors";
 import Industries from "../../components/Trends/Industries";
-import UseCasesCombined from "../../components/Trends/UsecasesCombined";
-import UsecaseDescription from "../../components/Trends/UsecaseDescription";
+import CombinedComponent from "../../components/Trends/UsecasesCombined";
 import Ecosystem from "../../components/Trends/Ecosystem";
+import UsecaseDescription from "../../components/Trends/UsecaseDescription"; // Import UsecaseDescription
 
 const TrendsMobile = ({
   selectedSector,
@@ -13,59 +13,68 @@ const TrendsMobile = ({
   handleSectorClick,
   handleIndustryClick,
   handleTechnologyClick,
+  currentStep,
+  setCurrentStep,
 }) => {
   const [technologyNames, setTechnologyNames] = useState([]);
-  const [currentStep, setCurrentStep] = useState("trends"); // Track the current step
+  const [ecosystemData, setEcosystemData] = useState([]); // Store startups for Ecosystem
   const [selectedUseCase, setSelectedUseCase] = useState(null); // Track selected use case
 
-  // Function to handle technology selection and move to UseCasesCombined
-  const handleTechnologySelection = (technology) => {
-    handleTechnologyClick(technology); // Call the original handler
-    setCurrentStep("useCasesCombined"); // Move to UseCasesCombined step
+  // Handler for when a use case is clicked
+  const handleUsecaseClick = (usecase) => {
+    setSelectedUseCase(usecase);
+    setCurrentStep("usecaseDescription");
   };
 
-  // Function to handle use case selection and move to UsecaseDescription
-  const handleUseCaseSelection = (usecase) => {
-    setSelectedUseCase(usecase); // Store the selected use case
-    setCurrentStep("usecaseDescription"); // Move to UsecaseDescription step
+  const handleEcosystem = ({ usecase, usecaseDescription, startups }) => {
+    setEcosystemData({
+      usecase,
+      usecaseDescription,
+      startups,
+    });
+    setCurrentStep("ecosystem");
   };
 
-  // Function to move to the Ecosystem step
-  const handleUsecaseDescriptionComplete = () => {
-    setCurrentStep("ecosystem"); // Move to Ecosystem step
-  };
-
-  // Function to handle exploring the ecosystem
-  const handleEcosystem = () => {
-    console.log("handleExploreEcosystem called");
+  const handleBackToUsecases = () => {
+    setCurrentStep("usecasesCombined");
   };
 
   return (
     <div>
       {currentStep === "ecosystem" ? (
-        <Ecosystem selectedTechnology={selectedTechnology} />
+        <Ecosystem
+          usecase={ecosystemData.usecase}
+          usecaseDescription={ecosystemData.usecaseDescription}
+          startups={ecosystemData.startups}
+        />
       ) : currentStep === "usecaseDescription" ? (
         <UsecaseDescription
-          selectedTechnology={selectedTechnology}
-          selectedUseCase={selectedUseCase} // Pass the selected use case to the description
-          onComplete={handleUsecaseDescriptionComplete} // Callback to move to Ecosystem
-          handleEcosystem={handleEcosystem} // Pass the explore ecosystem handler
+          usecase={selectedUseCase.usecase}
+          usecaseDescription={selectedUseCase.usecaseDescription}
+          enhancement={selectedUseCase.Enhancement || ""}
+          measureOfImpact={selectedUseCase["Measure of Impact"] || ""}
+          startups={selectedUseCase.startups}
+          onComplete={handleBackToUsecases}
+          handleEcosystem={handleEcosystem}
         />
-      ) : currentStep === "useCasesCombined" ? (
-        <UseCasesCombined
-          selectedTechnology={selectedTechnology}
+      ) : currentStep === "usecasesCombined" ? (
+        <CombinedComponent
           selectedIndustry={selectedIndustry}
-          technologyNames={technologyNames} // Pass technologyNames here
-          onUseCaseClick={handleUseCaseSelection} // Trigger transition to UsecaseDescription
+          selectedTechnology={selectedTechnology}
+          technologyNames={technologyNames}
+          onUsecaseClick={handleUsecaseClick} // Pass handler for use case selection
         />
-      ) : selectedIndustry ? (
+      ) : currentStep === "industries" ? (
         <Industries
           selectedSector={selectedSector}
           selectedIndustry={selectedIndustry}
-          onTechnologyClick={handleTechnologySelection} // Trigger transition to UseCasesCombined
-          setTechnologyNames={setTechnologyNames} // Pass the updater function here
+          onTechnologyClick={(technology) => {
+            handleTechnologyClick(technology);
+            setCurrentStep("usecasesCombined");
+          }}
+          setTechnologyNames={setTechnologyNames}
         />
-      ) : selectedSector ? (
+      ) : currentStep === "subSectors" ? (
         <SubSectors
           selectedSector={selectedSector}
           onIndustryClick={handleIndustryClick}
