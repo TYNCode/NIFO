@@ -14,6 +14,9 @@ import ActionButtons from "../../components/CompanyProfile/ActionButtons";
 import { ClipLoader } from "react-spinners";
 import { Toast } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
+import Image from "next/image";
+import { FaAngleLeft } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 const CompanyProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -129,10 +132,43 @@ const CompanyProfilePage: React.FC = () => {
     return <div className="p-4 text-red-500">Error: {error}</div>;
   }
 
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.push("/");
+  };
+
   return (
-    <div className="container mx-auto p-4 max-w-screen-lg">
+    <div className=" container mx-auto px-2 max-w-screen-lg">
+      <div className="relative">
+        <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-50 flex items-center justify-between px-4">
+          {/* Left Arrow */}
+          <div
+            className="text-gray-700 cursor-pointer"
+            onClick={handleBack} // Trigger the back function when clicked
+            role="button"
+            aria-label="Go back"
+          >
+            <FaAngleLeft size={24} />
+          </div>
+
+          {/* Centered Logo */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <Image
+              src="/nifoimage.png"
+              width={100}
+              height={100}
+              alt="Tyn Logo"
+            />
+          </div>
+
+          {/* Right Placeholder for balance */}
+          <div className="w-8"></div>
+        </div>
+      </div>
+
       {toastVisible && (
-        <Toast className="mx-auto my-0">
+        <Toast className="mx-auto my-0 bg-red-500">
           <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
             <HiCheck className="h-5 w-5" />
           </div>
@@ -141,7 +177,7 @@ const CompanyProfilePage: React.FC = () => {
         </Toast>
       )}
 
-      <div className="mt-10 flex justify-end">
+      <div className="mt-20 flex justify-end">
         {user?.is_primary_user && (
           <ActionButtons
             isEditing={isEditing}
@@ -152,7 +188,7 @@ const CompanyProfilePage: React.FC = () => {
         )}
       </div>
 
-      <div className="bg-white p-8 rounded-md">
+      <div className=" rounded-md">
         {isEditing ? (
           <CompanyForm formData={formData} onInputChange={handleInputChange} />
         ) : (

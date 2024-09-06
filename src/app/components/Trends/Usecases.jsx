@@ -83,7 +83,7 @@ const Usecases = ({ selectedIndustry, selectedTechnology }) => {
 
   const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null;
 
-  console.log(currentUseCase)
+
 const handleUsecaseClick = () => {
   if (currentUseCase) {
     const query = new URLSearchParams({

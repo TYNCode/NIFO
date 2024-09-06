@@ -2,9 +2,8 @@ import React from "react";
 import UsecasesArc from "./UsecasesArc";
 import Usecases from "./Usecases";
 
-const CombinedComponent = ({ selectedIndustry, selectedTechnology }) => {
-
-  console.log("CombinedComponent", selectedIndustry, selectedTechnology)
+const CombinedComponent = ({ selectedIndustry, selectedTechnology ,technologyNames}) => {
+  console.log("Usecase combined technology names", technologyNames)
   return (
     <div className="flex flex-col justify-between h-screen">
       {/* UsecasesArc arc at the top */}
@@ -12,6 +11,7 @@ const CombinedComponent = ({ selectedIndustry, selectedTechnology }) => {
         <UsecasesArc
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
+          OriginalTechnologyNames={technologyNames}
         />
       </div>
 

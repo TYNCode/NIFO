@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
-const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
+const UsecasesArc = ({
+  selectedIndustry,
+  selectedTechnology,
+  OriginalTechnologyNames,
+}) => {
   const radius1 = 165; // Radius of the first arc
   const radius2 = 285; // Radius of the second arc
   const centerX1 = 155; // Center the first arc's topmost dot horizontally
@@ -39,14 +43,14 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
   const displayedIndustries =
     selectedIndustryIndex !== -1
       ? [
-          selectedSector.industries[
-            (selectedIndustryIndex - 1 + selectedSector.industries.length) %
-              selectedSector.industries.length
-          ].industryName,
+          OriginalTechnologyNames[
+            (selectedIndustryIndex - 1 + OriginalTechnologyNames.length) %
+              OriginalTechnologyNames.length
+          ],
           selectedIndustry,
-          selectedSector.industries[
-            (selectedIndustryIndex + 1) % selectedSector.industries.length
-          ].industryName,
+          OriginalTechnologyNames[
+            (selectedIndustryIndex + 1) % OriginalTechnologyNames.length
+          ],
         ]
       : [
           "No Industries Available",
@@ -72,17 +76,6 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
           "No Technologies Available",
         ];
 
-  const [currentIndexArc1, setCurrentIndexArc1] = useState(
-    selectedIndustryIndex
-  );
-  const [currentIndexArc2, setCurrentIndexArc2] = useState(
-    selectedTechnologyIndex
-  );
-  const [startXArc1, setStartXArc1] = useState(null);
-  const [startXArc2, setStartXArc2] = useState(null);
-  const [isAnimatingArc1, setIsAnimatingArc1] = useState(false);
-  const [isAnimatingArc2, setIsAnimatingArc2] = useState(false);
-
   // Define the fixed positions for the three dots along each arc
   const fixedAnglesArc1 = [
     -Math.PI / 2, // Top center (90°)
@@ -92,103 +85,22 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
 
   const fixedAnglesArc2 = [
     -Math.PI / 2, // Top center (90°)
-    -Math.PI / 4, // Middle right (30°)
+    -Math.PI / 4, // Middle right (45°)
     0, // Bottom right (0°)
   ];
-
-  // Handlers for the first arc
-  const handleTouchStartArc1 = (e) => {
-    if (isAnimatingArc1) return;
-    setStartXArc1(e.touches[0].clientX);
-  };
-
-  const handleTouchMoveArc1 = (e) => {
-    if (startXArc1 === null || isAnimatingArc1) return;
-
-    const deltaX = e.touches[0].clientX - startXArc1;
-
-    if (deltaX > 50) {
-      handleScrollArc1("prev");
-      setStartXArc1(e.touches[0].clientX);
-    } else if (deltaX < -50) {
-      handleScrollArc1("next");
-      setStartXArc1(e.touches[0].clientX);
-    }
-  };
-
-  const handleTouchEndArc1 = () => {
-    setStartXArc1(null);
-  };
-
-  const handleScrollArc1 = (direction) => {
-    setIsAnimatingArc1(true);
-
-    setTimeout(() => {
-      setCurrentIndexArc1((prevIndex) =>
-        direction === "next"
-          ? (prevIndex + 1) % displayedIndustries.length
-          : (prevIndex - 1 + displayedIndustries.length) %
-            displayedIndustries.length
-      );
-      setIsAnimatingArc1(false);
-    }, 500);
-  };
-
-  // Handlers for the second arc
-  const handleTouchStartArc2 = (e) => {
-    if (isAnimatingArc2) return;
-    setStartXArc2(e.touches[0].clientX);
-  };
-
-  const handleTouchMoveArc2 = (e) => {
-    if (startXArc2 === null || isAnimatingArc2) return;
-
-    const deltaX = e.touches[0].clientX - startXArc2;
-
-    if (deltaX > 50) {
-      handleScrollArc2("prev");
-      setStartXArc2(e.touches[0].clientX);
-    } else if (deltaX < -50) {
-      handleScrollArc2("next");
-      setStartXArc2(e.touches[0].clientX);
-    }
-  };
-
-  const handleTouchEndArc2 = () => {
-    setStartXArc2(null);
-  };
-
-  const handleScrollArc2 = (direction) => {
-    setIsAnimatingArc2(true);
-
-    setTimeout(() => {
-      setCurrentIndexArc2((prevIndex) =>
-        direction === "next"
-          ? (prevIndex + 1) % displayedTechnologies.length
-          : (prevIndex - 1 + displayedTechnologies.length) %
-            displayedTechnologies.length
-      );
-      setIsAnimatingArc2(false);
-    }, 500);
-  };
 
   return (
     <div>
       <div className="relative flex justify-end items-start select-none mt-16">
         {/* First Arc */}
-        <div
-          onTouchStart={handleTouchStartArc1}
-          onTouchMove={handleTouchMoveArc1}
-          onTouchEnd={handleTouchEndArc1}
-        >
-          <img src="/circleup1.svg" alt="" className="w-32" />
+        <div className="absolute">
+          <img src="/circleup1.svg" alt="Arc 1" className="w-32" />
         </div>
 
         <div className="absolute">
           <div className="relative w-44">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-44" />
-              {/* Add BFSI text inside the innermost arc */}
+              <img src="/circleup2.svg" alt="Arc 2" className="w-44" />
               <div className="absolute top-10 right-4 flex justify-center items-center">
                 <span className="text-lg font-semibold uppercase text-gray-700">
                   BFSI
@@ -197,9 +109,8 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
             </div>
             {fixedAnglesArc1.map((angle, index) => {
               const isMiddleDot = index === 1; // Middle dot is at index 1
-              const newAngle = angle + (isAnimatingArc1 ? Math.PI / 4 : 0);
-              const x = centerX1 + radius1 * Math.sin(newAngle);
-              const y = centerY1 + radius1 * Math.cos(newAngle);
+              const x = centerX1 + radius1 * Math.sin(angle);
+              const y = centerY1 + radius1 * Math.cos(angle);
 
               return (
                 <div
@@ -216,12 +127,14 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
                   >
                     <div
                       className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                        isMiddleDot
+                          ? "font-semibold text-base text-[#4C4C4C]"
+                          : "text-[#797979]"
                       }`}
                     >
                       {
                         displayedIndustries[
-                          (currentIndexArc1 + index) %
+                          (selectedIndustryIndex + index) %
                             displayedIndustries.length
                         ]
                       }
@@ -234,26 +147,20 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
         </div>
 
         {/* Second Arc */}
-        <div
-          className="absolute"
-          onTouchStart={handleTouchStartArc2}
-          onTouchMove={handleTouchMoveArc2}
-          onTouchEnd={handleTouchEndArc2}
-        >
+        <div>
           <div className="relative w-[300px]">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-[300px]" />
+              <img src="/circleup2.svg" alt="Arc 2" className="w-[300px]" />
             </div>
             {fixedAnglesArc2.map((angle, index) => {
               const isMiddleDot = index === 1; // Middle dot is at index 1
-              const newAngle = angle + (isAnimatingArc2 ? Math.PI / 4 : 0);
-              const x = centerX2 + radius2 * Math.sin(newAngle);
-              const y = centerY2 + radius2 * Math.cos(newAngle);
+              const x = centerX2 + radius2 * Math.sin(angle);
+              const y = centerY2 + radius2 * Math.cos(angle);
 
               return (
                 <div
                   key={index}
-                  className={`absolute transition-all duration-500 ease-in-out`}
+                  className="absolute transition-all duration-500 ease-in-out"
                   style={{ left: `${x}px`, top: `${y}px` }}
                 >
                   <div
@@ -265,15 +172,17 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
                   >
                     <div
                       className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                        isMiddleDot
+                          ? "font-semibold text-base text-[#4C4C4C]"
+                          : "text-[#797979]"
                       }`}
                     >
-                      {
-                        displayedTechnologies[
-                          (currentIndexArc2 + index) %
-                            displayedTechnologies.length
-                        ]
-                      }
+                      {isMiddleDot
+                        ? selectedTechnology
+                        : displayedTechnologies[
+                            (selectedTechnologyIndex + index) %
+                              displayedTechnologies.length
+                          ]}
                     </div>
                   </div>
                 </div>

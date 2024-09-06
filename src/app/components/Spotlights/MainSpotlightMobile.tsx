@@ -1,6 +1,6 @@
 import React from "react";
-import Image from "next/image";
 import { Spotlight } from "../../interfaces";
+import Image from "next/image";
 
 interface MainSpotlightMobileProps {
   spotlights: Spotlight[];
@@ -18,13 +18,13 @@ const MainSpotlightMobile: React.FC<MainSpotlightMobileProps> = ({
   }
 
   return (
-    <div className="mb-32">
+    <div className="mt-20 mb-32">
       <div className="flex flex-col justify-around gap-4 py-5 items-start mx-7 text-lg">
         <div className="font-medium text-xl">SPOTLIGHT</div>
         <div className="flex flex-col gap-4">
           <div>
             <Image
-              src="/thirdai-mobile.png"
+              src={lastSpotlight?.spotlight_img}
               width={500}
               height={200}
               alt="spotlight"
@@ -33,7 +33,7 @@ const MainSpotlightMobile: React.FC<MainSpotlightMobileProps> = ({
           <div className="font-light text-sm">{lastSpotlight.created_at}</div>
         </div>
         <div className="leading-9 tracking-wide line-clamp-4 text-sm">
-          {lastSpotlight.spotlight_title}
+          {lastSpotlight?.spotlight_title}
         </div>
         <div
           className="text-white font-semibold px-2 py-2 bg-blue-400 rounded-md flex items-center justify-center mx-auto cursor-pointer"

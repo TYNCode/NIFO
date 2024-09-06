@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  getRequest,
   getRequestWithAccessToken,
-  postRequest,
   postRequestWithAccessToken,
-} from "../../hooks"; // Import the request utility functions
+  patchRequestWithAccessToken,
+} from "../../hooks";
 
 export type ConnectionStatus =
   | "requested"
@@ -21,17 +20,29 @@ interface PartnerConnectPayload {
 
 interface PartnerConnectResponse {
   id: number;
-  user: number;
-  consultant_email: string;
+  user: {
+    id: number;
+    first_name: string;
+    email: string;
+    organization: {
+      startup_id: number;
+      startup_name: string;
+    };
+  };
   query: string;
   request_status: string;
   created_at: string;
   updated_at: string;
-  requested_org: number;
+  requested_org: {
+    startup_id: number;
+    startup_name: string;
+  };
 }
 
 interface PartnerConnectState {
-  connections: PartnerConnectResponse[];
+  connectionsMade: PartnerConnectResponse[];
+  connectionsReceived: PartnerConnectResponse[];
+  connectionsByOrg: PartnerConnectResponse[];
   selectedConnection: PartnerConnectResponse | null;
   error: string | null;
   loading: boolean;
@@ -40,52 +51,15 @@ interface PartnerConnectState {
 }
 
 const initialState: PartnerConnectState = {
-  connections: [],
+  connectionsMade: [],
+  connectionsReceived: [],
+  connectionsByOrg: [],
   selectedConnection: null,
   error: null,
   loading: false,
   successMessage: null,
   connectionStatuses: {},
 };
-
-export const createPartnerConnect = createAsyncThunk<
-  PartnerConnectResponse,
-  PartnerConnectPayload,
-  { rejectValue: string }
->(
-  "partnerConnect/createPartnerConnect",
-  async (payload, { rejectWithValue }) => {
-    console.log("PAYLOAD", payload);
-    try {
-      const response = await postRequestWithAccessToken(
-        "https://nifo.theyellow.network/api/partnerconnect/connects/",
-        payload
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.response?.data?.message || "Failed to create partner connect"
-      );
-    }
-  }
-);
-
-export const fetchPartnerConnects = createAsyncThunk<
-  PartnerConnectResponse[],
-  void,
-  { rejectValue: string }
->("partnerConnect/fetchPartnerConnects", async (_, { rejectWithValue }) => {
-  try {
-    const response = await getRequestWithAccessToken(
-      "https://nifo.theyellow.network/api/partnerconnect/connects/"
-    );
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(
-      error?.response?.data?.message || "Failed to fetch partner connects"
-    );
-  }
-});
 
 export const fetchPartnerConnectsByOrg = createAsyncThunk<
   PartnerConnectResponse[],
@@ -108,6 +82,86 @@ export const fetchPartnerConnectsByOrg = createAsyncThunk<
   }
 );
 
+export const fetchPartnerConnectsMade = createAsyncThunk<
+  PartnerConnectResponse[],
+  void,
+  { rejectValue: string }
+>("partnerConnect/fetchPartnerConnectsMade", async (_, { rejectWithValue }) => {
+  try {
+    const response = await getRequestWithAccessToken(
+      "https://nifo.theyellow.network/api/partnerconnect/connects/made/"
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error?.response?.data?.message || "Failed to fetch partner connects made"
+    );
+  }
+});
+
+export const fetchPartnerConnectsReceived = createAsyncThunk<
+  PartnerConnectResponse[],
+  void,
+  { rejectValue: string }
+>(
+  "partnerConnect/fetchPartnerConnectsReceived",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getRequestWithAccessToken(
+        "https://nifo.theyellow.network/api/partnerconnect/connects/received/"
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data?.message ||
+          "Failed to fetch partner connects received"
+      );
+    }
+  }
+);
+
+export const createPartnerConnect = createAsyncThunk<
+  PartnerConnectResponse,
+  PartnerConnectPayload,
+  { rejectValue: string }
+>(
+  "partnerConnect/createPartnerConnect",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await postRequestWithAccessToken(
+        "https://nifo.theyellow.network/api/partnerconnect/connects/create-update/",
+        payload
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data?.message || "Failed to create partner connect"
+      );
+    }
+  }
+);
+
+export const updatePartnerConnectStatus = createAsyncThunk<
+  PartnerConnectResponse,
+  { id: number; request_status: string },
+  { rejectValue: string }
+>(
+  "partnerConnect/updatePartnerConnectStatus",
+  async ({ id, request_status }, { rejectWithValue }) => {
+    try {
+      const response = await patchRequestWithAccessToken(
+        "https://nifo.theyellow.network/api/partnerconnect/connects/create-update/",
+        { id, request_status }
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error?.response?.data?.message || "Failed to update partner connect"
+      );
+    }
+  }
+);
+
 const partnerConnectSlice = createSlice({
   name: "partnerConnect",
   initialState,
@@ -120,9 +174,62 @@ const partnerConnectSlice = createSlice({
       state.connectionStatuses[startupId] = status;
     },
   },
-
   extraReducers: (builder) => {
     builder
+      // Handle fetching connections made
+      .addCase(fetchPartnerConnectsMade.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchPartnerConnectsMade.fulfilled,
+        (state, action: PayloadAction<PartnerConnectResponse[]>) => {
+          state.connectionsMade = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(fetchPartnerConnectsMade.rejected, (state, action) => {
+        state.error = action.payload || "Failed to fetch partner connects made";
+        state.loading = false;
+      })
+
+      // Handle fetching connections received
+      .addCase(fetchPartnerConnectsReceived.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchPartnerConnectsReceived.fulfilled,
+        (state, action: PayloadAction<PartnerConnectResponse[]>) => {
+          state.connectionsReceived = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(fetchPartnerConnectsReceived.rejected, (state, action) => {
+        state.error =
+          action.payload || "Failed to fetch partner connects received";
+        state.loading = false;
+      })
+
+      // Handle fetching connections by organization
+      .addCase(fetchPartnerConnectsByOrg.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchPartnerConnectsByOrg.fulfilled,
+        (state, action: PayloadAction<PartnerConnectResponse[]>) => {
+          state.connectionsByOrg = action.payload;
+          state.loading = false;
+        }
+      )
+      .addCase(fetchPartnerConnectsByOrg.rejected, (state, action) => {
+        state.error =
+          action.payload || "Failed to fetch partner connects by org";
+        state.loading = false;
+      })
+
+      // Handle creating new connections
       .addCase(createPartnerConnect.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -131,7 +238,7 @@ const partnerConnectSlice = createSlice({
       .addCase(
         createPartnerConnect.fulfilled,
         (state, action: PayloadAction<PartnerConnectResponse>) => {
-          state.connections.push(action.payload);
+          state.connectionsMade.push(action.payload);
           state.loading = false;
           state.successMessage = "Partner connect created successfully";
         }
@@ -140,35 +247,32 @@ const partnerConnectSlice = createSlice({
         state.error = action.payload || "Failed to create partner connect";
         state.loading = false;
       })
-      .addCase(fetchPartnerConnects.pending, (state) => {
+
+      // Handle updating connection status
+      .addCase(updatePartnerConnectStatus.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchPartnerConnects.fulfilled,
-        (state, action: PayloadAction<PartnerConnectResponse[]>) => {
-          state.connections = action.payload;
+        updatePartnerConnectStatus.fulfilled,
+        (state, action: PayloadAction<PartnerConnectResponse>) => {
+          const index = state.connectionsMade.findIndex(
+            (connection) => connection.id === action.payload.id
+          );
+          if (index !== -1) {
+            state.connectionsMade[index] = action.payload;
+          }
           state.loading = false;
+          state.successMessage = "Connection status updated successfully";
         }
       )
-      .addCase(fetchPartnerConnects.rejected, (state, action) => {
-        state.error = action.payload || "Failed to fetch partner connects";
-        state.loading = false;
-      })
-      .addCase(fetchPartnerConnectsByOrg.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        fetchPartnerConnectsByOrg.fulfilled,
-        (state, action: PayloadAction<PartnerConnectResponse[]>) => {
-          state.connections = action.payload;
-          state.loading = false;
-        }
-      )
-      .addCase(fetchPartnerConnectsByOrg.rejected, (state, action) => {
+      .addCase(updatePartnerConnectStatus.rejected, (state, action) => {
+        console.error(
+          "updatePartnerConnectStatusSlice Rejected",
+          action.payload
+        );
         state.error =
-          action.payload || "Failed to fetch partner connects by org";
+          action.payload || "Failed to update partner connect status";
         state.loading = false;
       });
   },

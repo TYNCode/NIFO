@@ -30,7 +30,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
           if (response.length > 0) {
             dispatch(
               setConnectionStatus({
-                startupId: selectedStartup.database_info.startup_id,
+                startupId: selectedStartup?.database_info?.startup_id,
                 status: response[0].request_status as ConnectionStatus,
               })
             );

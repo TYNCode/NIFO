@@ -1,7 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
-const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
+// Helper function to duplicate array until it reaches a specified length
+const duplicateArrayUntilLength = (arr, targetLength) => {
+  const result = [];
+  while (result.length < targetLength) {
+    result.push(...arr);
+  }
+  return result.slice(0, targetLength);
+};
+
+const IndustriesDown = ({
+  selectedIndustry,
+  onTechnologyClick,
+  onTechnologiesUpdate,
+}) => {
   const radius = 160;
   const centerX = 150;
   const centerY = 150;
@@ -19,21 +32,26 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
       )
     : null;
 
-  // Extract technology names based on the selected industry and loop if less than 8
+  // Extract technology names based on the selected industry
   const technologyNames = selectedIndustryData
     ? selectedIndustryData.technologies.map((tech) => tech.technologyName)
     : ["No Technologies Available"];
 
-  // Fill the remaining positions with repeated values to ensure 8 items are displayed
+  console.log("Technology Trends", technologyNames)
+
+  // Duplicate the array to ensure it has exactly 8 elements
   const totalPositions = 8;
-  const displayedTechnologies = Array.from(
-    { length: totalPositions },
-    (_, i) => technologyNames[i % technologyNames.length]
+  const duplicatedTechnologies = duplicateArrayUntilLength(
+    technologyNames,
+    totalPositions
   );
 
-  const highlightedPosition = Math.floor(totalPositions / 2); // Middle dot
+  // Notify parent about updated technology names
+  useEffect(() => {
+    onTechnologiesUpdate(technologyNames); 
+  }, []);
 
-  const [currentIndex, setCurrentIndex] = useState(7);
+  const [currentIndex, setCurrentIndex] = useState(7); // Start with the first index
   const [rotationOffset, setRotationOffset] = useState(0);
   const [startX, setStartX] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -49,7 +67,6 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
     const deltaX = e.touches[0].clientX - startX;
 
     if (Math.abs(deltaX) > 20) {
-      // Swiping right (positive deltaX) should move to "next"
       handleScroll(deltaX > 0 ? "next" : "prev");
       setStartX(e.touches[0].clientX);
     }
@@ -82,6 +99,8 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
     }, 500); // Match this duration with the CSS transition duration
   };
 
+  const highlightedPosition = Math.floor(totalPositions / 2); // Middle dot index
+
   return (
     <div
       className="relative bg-gray-100 flex justify-end items-end select-none mb-20"
@@ -107,15 +126,15 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
               </span>
             </div>
           </div>
-          {Array.from({ length: totalPositions }).map((_, index) => {
+          {duplicatedTechnologies.map((tech, index) => {
             const angle =
               (index / totalPositions) * 2 * Math.PI + rotationOffset;
             const x = centerX + radius * Math.cos(angle);
             const y = centerY - radius * Math.sin(angle);
 
-            // Highlight the dot based on the current index
+            // Calculate the index to highlight the middle dot
             const isHighlighted =
-              index === (currentIndex + highlightedPosition) % totalPositions;
+              (currentIndex + highlightedPosition) % totalPositions === index;
 
             return (
               <div
@@ -124,21 +143,21 @@ const IndustriesDown = ({ selectedIndustry, onTechnologyClick }) => {
                 style={{ left: `${x}px`, top: `${y}px` }}
               >
                 <div
-                  className={`relative rounded-full shadow-lg ${
+                  className={`relative rounded-full shadow-lg cursor-pointer ${
                     isHighlighted
                       ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
                       : "bg-[#D8D8D8] w-6 h-6"
                   }`}
-                  onClick={() =>
-                    onTechnologyClick(displayedTechnologies[index])
-                  }
+                  onClick={() => onTechnologyClick(tech)}
                 >
                   <div
                     className={`absolute right-full mr-2 bottom-2 text-sm w-32 text-right ${
-                      isHighlighted ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                      isHighlighted
+                        ? "font-semibold text-base text-[#4C4C4C]"
+                        : "text-[#797979]"
                     }`}
                   >
-                    {displayedTechnologies[index]}
+                    {tech}
                   </div>
                 </div>
               </div>

@@ -77,9 +77,9 @@ const SpotlightPage = ({ selectedSpotlight, handleSpotlightShare }) => {
         <MobileHeader />
       </div>
 
-      <div>
+      <div className="mt-20">
         <Image
-          src="/thirdai-mobile.png"
+          src={selectedSpotlight?.spotlight_img}
           width={540}
           height={200}
           alt="spotlight"
@@ -125,7 +125,9 @@ const SpotlightPage = ({ selectedSpotlight, handleSpotlightShare }) => {
       <div className="mx-10 flex flex-col gap-6 leading-8 py-4">
         {selectedSpotlight.spotlight_content.map((content, index) => (
           <div key={index}>
-            <span className="font-semibold">{content.heading}</span>{" "}
+            <span className="font-semibold">
+              {content.heading} {" : "}
+            </span>
             {content.body}
           </div>
         ))}

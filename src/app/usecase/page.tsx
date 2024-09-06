@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { FaAngleLeft } from "react-icons/fa";
@@ -17,10 +17,17 @@ const UsecaseDescription: React.FC = () => {
   const measureOfImpact = searchParams.get("MeasureOfImpact") || "";
   const startups = JSON.parse(searchParams.get("startups") || "[]");
 
+  // Handle Go Back
   const handleGoBack = () => {
-    router.back();
+    // Retrieve the navigation history from sessionStorage
+    const history = JSON.parse(sessionStorage.getItem('navigationHistory') || "[]");
+    const previousPath = history[history.length - 2] || "/";
+    
+    // Navigate to the previous path
+    router.push(previousPath);
   };
 
+  // Handle Explore Ecosystem
   const handleExploreEcosystem = () => {
     const query = new URLSearchParams({
       usecase,
@@ -32,6 +39,18 @@ const UsecaseDescription: React.FC = () => {
 
     router.push(`/ecosystem?${query}`);
   };
+
+  // Track navigation history
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    let history = JSON.parse(sessionStorage.getItem('navigationHistory') || "[]");
+
+    // Avoid adding the current path if it's already the latest
+    if (history[history.length - 1] !== currentPath) {
+      history.push(currentPath);
+      sessionStorage.setItem('navigationHistory', JSON.stringify(history));
+    }
+  }, [router]);
 
   return (
     <div>
@@ -56,36 +75,45 @@ const UsecaseDescription: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col bg-[#005585] px-4 justify-center items-center text-center gap-8 py-8 mt-16">
-        <div className="font-semibold text-white text-3xl">
-          {usecase || "No Use Case Title Available"}
-        </div>
-        <div
-          className="text-54 text-lg font-medium bg-white mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
-          onClick={handleExploreEcosystem}
-        >
-          Explore Ecosystem
-        </div>
-      </div>
+     <div className="relative flex flex-col justify-center items-center text-center  py-8 mt-16 bg-[#005585] ">
+  {/* Background Image */}
+  <div className="absolute inset-0 z-0 opacity-15">
+    <img src="bg-usecase.png" alt="Background" className="object-cover w-full h-full" />
+  </div>
 
-      <div className="mx-4 py-4 leading-9 text-xl">
+  {/* Text Container */}
+  <div className="relative z-10 text-white font-semibold text-2xl px-4 py-8">
+    {usecase || "No Use Case Title Available"}
+  </div>
+
+  {/* Explore Ecosystem Button */}
+  <div
+    className="relative z-10 text-sm font-medium bg-white mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
+    onClick={handleExploreEcosystem}
+  >
+    Explore Ecosystem
+  </div>
+</div>
+
+
+      <div className="mx-4 py-4 leading-9 text-lg">
         {usecaseDescription && (
           <div>
-            <div className="font-semibold text-xl mb-2">Description</div>
+            <div className="font-semibold text-lg mb-2">Description</div>
             <div className="text-base">{usecaseDescription}</div>
           </div>
         )}
 
         {enhancement && (
           <div className="mt-4">
-            <div className="font-semibold text-xl mb-2">Enhancement</div>
+            <div className="font-semibold text-lg mb-2">Enhancement</div>
             <div className="text-base">{enhancement}</div>
           </div>
         )}
 
         {measureOfImpact && (
           <div className="mt-4">
-            <div className="font-semibold text-xl mb-2">Measure of Impact</div>
+            <div className="font-semibold text-lg mb-2">Measure of Impact</div>
             <div className="text-base">{measureOfImpact}</div>
           </div>
         )}
@@ -96,9 +124,9 @@ const UsecaseDescription: React.FC = () => {
 
 const UsecaseDescriptionPage = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <React.Suspense fallback={<div>Loading...</div>}>
       <UsecaseDescription />
-    </Suspense>
+    </React.Suspense>
   );
 };
 
