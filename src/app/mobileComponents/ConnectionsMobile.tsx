@@ -98,9 +98,9 @@ const ConnectionsMobile: React.FC = () => {
                     <p className="text-base font-medium">
                       {connection?.user?.organization?.startup_name || "N/A"}
                     </p>
-                    <p className="text-sm text-gray-600 capitalize">
+                    {/* <p className="text-sm text-gray-600 capitalize">
                       From: {connection?.user?.first_name || "Requester"}
-                    </p>
+                    </p> */}
                     <p className="text-sm text-gray-600 capitalize">
                       Status: {connection.request_status}
                     </p>

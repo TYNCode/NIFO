@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MdOutlineKeyboardDoubleArrowLeft,
   MdOutlineKeyboardDoubleArrowRight,
@@ -6,13 +6,13 @@ import {
 import { GrFormClose } from "react-icons/gr";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
-import Image from "next/image";
 import ConnectModal from "./CompanyProfile/ConnectModal";
 import { ChatHistoryResponse, StartupType } from "../interfaces";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   createPartnerConnect,
   setConnectionStatus,
+  fetchPartnerConnectsByOrg,
 } from "../redux/features/connection/connectionSlice";
 
 interface UserInfo {
@@ -29,9 +29,7 @@ interface CompanyProfilePaneProps {
   toggleWidth: () => void;
   mailData: any;
   setMailData: React.Dispatch<React.SetStateAction<any>>;
-  connectionStatus: string;
   queryData: ChatHistoryResponse;
-  requestQuery: string;
 }
 
 const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
@@ -42,41 +40,48 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   expanded,
   toggleWidth,
   mailData,
-  connectionStatus,
   queryData,
-  requestQuery,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log("companyDataa-->", companyData);
-  const dispatch = useAppDispatch();
-  console.log(
-    "conectionStatusLaptop",
-    connectionStatus,
-    companyData.startup_name
+  const connectionStatus = useAppSelector(
+    (state) => state.partnerConnect.connectionStatuses[companyData?.startup_id]
   );
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (companyData?.startup_id) {
+      dispatch(fetchPartnerConnectsByOrg(companyData?.startup_id));
+    }
+  }, [dispatch, companyData?.startup_id]);
+
   const openPane = () => setOpenState(false);
+
   const handleConnect = async () => {
-    if (connectionStatus === null || connectionStatus === "Connect") {
+    if (!connectionStatus || connectionStatus === "Connect") {
       setIsLoading(true);
       try {
-        await sendEmail();
-
-        // Dispatch the action to create a partner connect
-        await dispatch(
+        const connectResponse = await dispatch(
           createPartnerConnect({
-            consultant_email: "consultant@example.com",
-            query: requestQuery,
+            consultant_email: userInfo.email,
+            query: mailData.question,
             request_status: "requested",
             requested_org: companyData?.startup_id,
           })
+        ).unwrap();
+
+        dispatch(
+          setConnectionStatus({
+            startupId: companyData?.startup_id,
+            status: "requested",
+          })
         );
 
-        // Open a modal if the operations were successful
         setIsModalOpen(true);
       } catch (error) {
-        console.error("Connection Error:", error);
+        console.error("Error in creating partner connect:", error);
       } finally {
         setIsLoading(false);
       }
@@ -84,12 +89,16 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
   };
 
   const sendEmail = async () => {
-    await axios.post("https://nifo.theyellow.network/api/email/send-email/", {
-      subject: "This is a test email",
-      template_name: "email_template.html",
-      context: { userInfo, mailData, companyData },
-      recipient_list: ["lathiesh@theyellow.network"],
-    });
+    try {
+      await axios.post("https://nifo.theyellow.network/api/email/send-email/", {
+        subject: "This is a test email",
+        template_name: "email_template.html",
+        context: { userInfo, mailData, companyData },
+        recipient_list: ["lathiesh@theyellow.network"],
+      });
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
   };
 
   const closeModal = () => setIsModalOpen(false);
@@ -122,17 +131,15 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
                 <div
                   className={`flex justify-center items-center px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer capitalize ${
                     connectionStatus === "requested"
-                      ? "bg-gray-400 hover:bg-yellow-400 cursor-pointer"
-                      : "bg-blue-400 cursor-default"
+                      ? "bg-gray-400 cursor-default"
+                      : "bg-blue-400 hover:bg-yellow-400"
                   }`}
                   onClick={handleConnect}
                 >
                   {isLoading ? (
                     <FaSpinner className="animate-spin" />
-                  ) : connectionStatus == null ? (
-                    "Connect"
                   ) : (
-                    connectionStatus
+                    connectionStatus || "Connect"
                   )}
                 </div>
                 {isModalOpen && <ConnectModal closeModal={closeModal} />}
@@ -143,6 +150,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
             </div>
           </div>
 
+          {/* Render company details */}
           <div className="flex flex-col gap-2 px-8">
             {companyData?.startup_industry && (
               <div className="flex flex-col">
@@ -175,6 +183,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
                   href={companyData?.startup_url}
                   target="_blank"
                   className="pl-4 underline text-blue-500"
+                  rel="noopener noreferrer"
                 >
                   {companyData?.startup_url}
                 </a>

@@ -42,7 +42,7 @@ export default function HomePage() {
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
-  const [currentStep, setCurrentStep] = useState("trends"); 
+  const [currentStep, setCurrentStep] = useState("trends");
 
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("user");
@@ -66,39 +66,38 @@ export default function HomePage() {
     }
   };
 
-const handleBack = () => {
-if (currentStep === "ecosystem") {
-setCurrentStep("usecaseDescription"); 
-} else if (currentStep === "usecaseDescription") {
-setCurrentStep("usecasesCombined"); 
-} else if (currentStep === "usecasesCombined") {
-setCurrentStep("industries"); 
-} else if (currentStep === "industries") {
-setCurrentStep("subSectors"); 
-} else if (currentStep === "subSectors") {
-setCurrentStep("sectors"); 
-} else {
-setCurrentStep("trends"); 
-}
-
-};
+  const handleBack = () => {
+    if (currentStep === "ecosystem") {
+      setCurrentStep("usecaseDescription");
+    } else if (currentStep === "usecaseDescription") {
+      setCurrentStep("usecasesCombined");
+    } else if (currentStep === "usecasesCombined") {
+      setCurrentStep("industries");
+    } else if (currentStep === "industries") {
+      setCurrentStep("subSectors");
+    } else if (currentStep === "subSectors") {
+      setCurrentStep("sectors");
+    } else {
+      setCurrentStep("trends");
+    }
+  };
 
   const handleSectorClick = (sectorName) => {
     setSelectedSector(sectorName);
     setSelectedIndustry(null); // Reset industry and technology
     setSelectedTechnology(null);
-    setCurrentStep("subSectors")
+    setCurrentStep("subSectors");
   };
 
   const handleIndustryClick = (industryName) => {
     setSelectedIndustry(industryName);
-    setSelectedTechnology(null); 
+    setSelectedTechnology(null);
     setCurrentStep("industries");
-    };
+  };
 
   const handleTechnologyClick = (technologyName) => {
     setSelectedTechnology(technologyName);
-    setCurrentStep("usecasesCombined")
+    setCurrentStep("usecasesCombined");
   };
 
   const toggleWidth = () => {
@@ -349,6 +348,22 @@ setCurrentStep("trends");
             />
           </div>
         </div>
+
+        {openRightFrame && selectedStartup && (
+          <div className={`${expanded ? "" : "w-1/4"}`}>
+            <CompanyProfilePane
+              companyData={selectedStartup}
+              setOpenState={setOpenRightFrame}
+              openState={openRightFrame}
+              userInfo={userInfo}
+              expanded={expanded}
+              toggleWidth={toggleWidth}
+              mailData={mailMessage}
+              setMailData={setMailMessage}
+              queryData={queryData}
+            />
+          </div>
+        )}
       </div>
 
       {/* Mobile Responsiveness */}

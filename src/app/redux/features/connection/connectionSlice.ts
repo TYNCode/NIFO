@@ -192,7 +192,6 @@ const partnerConnectSlice = createSlice({
         state.loading = false;
       })
 
-    
       .addCase(fetchPartnerConnectsReceived.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -227,7 +226,6 @@ const partnerConnectSlice = createSlice({
         state.loading = false;
       })
 
-    
       .addCase(createPartnerConnect.pending, (state) => {
         state.loading = true;
         state.error = null;

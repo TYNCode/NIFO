@@ -13,8 +13,7 @@ const EcosystemContent: React.FC<{
   usecase: string;
   usecaseDescription: string;
 }> = ({ startups, usecase, usecaseDescription }) => {
-
-  console.log("Ecosystem pagee",startups, usecase, usecaseDescription)
+  console.log("Ecosystem pagee", startups, usecase, usecaseDescription);
   const router = useRouter();
 
   const handleExploreClick = async (startupName: string) => {
@@ -42,7 +41,7 @@ const EcosystemContent: React.FC<{
       {/* Main content section */}
       <div className="bg-[#005585] p-4 w-full z-50 mt-4">
         <div className="text-lg font-semibold text-white">
-          {usecase|| "Ecosystem Overview"}
+          {usecase || "Ecosystem Overview"}
         </div>
         <div className="text-base mt-4 text-white">
           {usecaseDescription ||
