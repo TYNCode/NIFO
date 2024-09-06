@@ -14,7 +14,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
 
   console.log("queryForConnect",queryForConnect);
   const [loading, setLoading] = useState(false);
-  const { connections, connectionStatuses } = useAppSelector(
+  const { connectionStatuses } = useAppSelector(
     (state) => state.partnerConnect
   );
 

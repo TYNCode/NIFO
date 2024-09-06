@@ -13,32 +13,29 @@ const ConnectionsMobile: React.FC = () => {
   const { connectionsMade, connectionsReceived, loading, error } =
     useAppSelector((state) => state.partnerConnect);
 
-  // Local state to manage status updates and button background changes
   const [selectedStatus, setSelectedStatus] = useState<{
     [key: number]: "connected" | "rejected" | null;
   }>({});
 
-  // Fetch connections on initial load
   useEffect(() => {
     dispatch(fetchPartnerConnectsMade());
     dispatch(fetchPartnerConnectsReceived());
   }, [dispatch]);
 
-  // Function to handle status updates
   const handleUpdateStatus = async (
     id: number,
     status: "connected" | "rejected"
   ) => {
-    // Update the status in the backend
+   
     await dispatch(updatePartnerConnectStatus({ id, request_status: status }));
 
-    // Update the local state for visual feedback
+    
     setSelectedStatus((prevStatus) => ({
       ...prevStatus,
       [id]: status,
     }));
 
-    // Refetch the connections to get updated data
+  
     dispatch(fetchPartnerConnectsMade());
     dispatch(fetchPartnerConnectsReceived());
   };

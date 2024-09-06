@@ -176,7 +176,6 @@ const partnerConnectSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Handle fetching connections made
       .addCase(fetchPartnerConnectsMade.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -193,7 +192,7 @@ const partnerConnectSlice = createSlice({
         state.loading = false;
       })
 
-      // Handle fetching connections received
+    
       .addCase(fetchPartnerConnectsReceived.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -211,7 +210,6 @@ const partnerConnectSlice = createSlice({
         state.loading = false;
       })
 
-      // Handle fetching connections by organization
       .addCase(fetchPartnerConnectsByOrg.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -229,7 +227,7 @@ const partnerConnectSlice = createSlice({
         state.loading = false;
       })
 
-      // Handle creating new connections
+    
       .addCase(createPartnerConnect.pending, (state) => {
         state.loading = true;
         state.error = null;
