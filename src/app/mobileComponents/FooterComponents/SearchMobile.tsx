@@ -1,9 +1,10 @@
+import { FaBars } from "react-icons/fa6";
 import React, { useState } from "react";
 import PromptTabMobile from "./PromptTabMobile";
 import Image from "next/image";
 import StartupProfile from "../StartupProfile";
-import { FaBars } from "react-icons/fa6";
 import HistoryMobile from "../HistoryMobile";
+import StartupList from "../../components/SearchMobile/StartupList";
 
 interface SearchMobileProps {
   isInputEmpty: any;
@@ -30,23 +31,13 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
   setSessionId,
   handleNewChat,
 }) => {
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [answerTab, setAnswerTab] = useState(false);
   const [selectedStartup, setSelectedStartup] = useState<any>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [queryForConnect, setQueryForConnect] = useState();
+  const [queryForConnect, setQueryForConnect] = useState<string>();
 
-  const handleAccordian = () => {
-    setIsAccordionOpen(!isAccordionOpen);
-  };
-
-  const handleStartups = (startup: any, message: any) => {
+  const handleStartups = (startup: any) => {
     setSelectedStartup(startup);
-    setQueryForConnect(message.question);
-  };
-
-  const handleBackClick = () => {
-    setSelectedStartup(null);
+    setQueryForConnect(startup.name);
   };
 
   const toggleHistory = () => {
@@ -57,47 +48,6 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
     setSessionId(sessionId);
     setIsHistoryOpen(false);
   };
-
-  const renderMainContent = () => (
-    <div className="relative flex flex-col items-center justify-center h-[80vh]">
-      <div
-        className="absolute top-0 left-0 m-4 text-blue-500 cursor-pointer"
-        onClick={toggleHistory}
-      >
-        <FaBars size={24} />
-      </div>
-
-      <div className="flex gap-10 items-center justify-center">
-        <Image
-          src="/ecllipseright.png"
-          width={50}
-          height={50}
-          alt="Ecllipse Right"
-        />
-        <div className="font-semibold text-lg text-center">
-          What problem are you trying to solve?
-        </div>
-        <Image
-          src="/ecllipseleft.png"
-          width={50}
-          height={50}
-          alt="Ecllipse Left"
-        />
-      </div>
-      <div>
-        <PromptTabMobile
-          isInputEmpty={isInputEmpty}
-          inputPrompt={inputPrompt}
-          setInputPrompt={setInputPrompt}
-          setIsInputEmpty={setIsInputEmpty}
-          handleToggleRightFrame={handleToggleRightFrame}
-          handleToggleLeftFrame={handleToggleLeftFrame}
-          onSaveInput={onSaveInput}
-          setAnswerTab={setAnswerTab}
-        />
-      </div>
-    </div>
-  );
 
   const renderAnswerTab = () => (
     <div className="pb-64">
@@ -111,7 +61,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
 
         <div
           className="p-2 rounded-md bg-blue-500 text-white mt-4 mr-4 text-sm font-semibold"
-          onClick={() => handleNewChat()}
+          onClick={handleNewChat}
         >
           New Chat
         </div>
@@ -127,84 +77,77 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
             <div className="font-light leading-relaxed border-l-2 border-blue-100 pl-4 py-2 pb-2">
               {message?.response === "Loading" ? (
                 <div>Loading...</div>
-              ) : typeof message?.response?.response === "string" ? (
-                <div>{message.response.response}</div>
               ) : message?.response?.success === false ? (
                 <div className="text-red-500">
                   Connection error: Please ensure you are connected to the
                   internet securely.
                 </div>
-              ) : message?.response?.response &&
-                typeof message?.response?.response === "object" ? (
-                <div>
-                  {/* Iterate over the object keys and render them, skipping the "response" key */}
-                  {Object.entries(message.response.response).map(
-                    ([key, value], idx) =>
-                      key !== "response" ? (
-                        <div key={idx}>
-                          <strong>{key}:</strong>{" "}
-                          {typeof value === "string" ||
-                          typeof value === "number" ? (
-                            value
-                          ) : (
-                            <pre>{JSON.stringify(value, null, 2)}</pre>
+              ) : (
+                <>
+                  <div>
+                    {message?.response?.trends?.length > 0
+                      ? ""
+                      : message?.response?.response}
+                  </div>
+                  {/* Handle 'startups' for direct user query */}
+                  {message?.response?.startups?.length > 0 && (
+                    <StartupList
+                      startups={message.response.startups}
+                      handleStartups={handleStartups}
+                    />
+                  )}
+
+                  {/* Handle 'trends' category */}
+                  {message?.response?.trends?.length > 0 && (
+                    <div className="grid grid-flow-row gap-4 pl-4 py-2 pb-2">
+                      {message.response.trends.map((trend, trendIndex) => (
+                        <div key={trendIndex} className="cursor-pointer">
+                          <div className="text-blue-400 underline font-bold text-lg mb-2">
+                            {trend.name}
+                          </div>
+                          <div className="text-sm font-light mb-2 text-gray-600">
+                            {trend.description}
+                          </div>
+
+                          {trend.example && (
+                            <div className="text-sm font-medium italic text-gray-800">
+                              <span className="text-black font-semibold">
+                                Example:{" "}
+                              </span>{" "}
+                              {trend.example}
+                            </div>
+                          )}
+
+                          {/* Use StartupList inside each trend */}
+                          {trend.startups?.length > 0 && (
+                            <StartupList
+                              startups={trend.startups}
+                              handleStartups={handleStartups}
+                            />
                           )}
                         </div>
-                      ) : (
-                        <div key={idx}>{value as React.ReactNode}</div>
-                      )
+                      ))}
+                    </div>
                   )}
-                </div>
-              ) : null}
+                </>
+              )}
             </div>
-
-            {message?.response?.startups?.length > 0 && (
-              <div className="grid grid-flow-row gap-2 border-l-2 border-blue-100 pl-4 py-2 pb-2">
-                <div className="flex font-medium gap-6">
-                  <div className="w-1/4">Startups</div>
-                  <div className="w-3/4">Reason</div>
-                </div>
-                {message?.response?.startups.map((startup, index) => (
-                  <div
-                    key={index}
-                    className="flex gap-6 rounded-lg p-1 shadow-[0_3px_10px_rgb(0,0,0,0.2)] cursor-pointer"
-                    onClick={() => handleStartups(startup, message)}
-                  >
-                    <div className="w-1/4">
-                      <Image
-                        src={
-                          startup?.database_info?.startup_logo || "/nologo.png"
-                        }
-                        alt={`${startup?.name || "Startup"} Logo`}
-                        width={200}
-                        height={50}
-                      />
-                    </div>
-                    <div className="w-3/4">
-                      <div className="font-semibold">{startup.name}</div>
-                      <div className="text-sm">{startup.description}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         ))}
       </div>
 
-      <div>
-        <div className="bottom-28 left-8 fixed flex items-center justify-center">
-          <PromptTabMobile
-            isInputEmpty={isInputEmpty}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
-            handleToggleRightFrame={handleToggleRightFrame}
-            handleToggleLeftFrame={handleToggleLeftFrame}
-            onSaveInput={onSaveInput}
-            setAnswerTab={setAnswerTab}
-          />
-        </div>
+      {/* Include PromptTabMobile at the bottom */}
+      <div className="fixed bottom-20 left-5 right-5 bg-white shadow-lg z-50">
+        <PromptTabMobile
+          isInputEmpty={isInputEmpty}
+          inputPrompt={inputPrompt}
+          setInputPrompt={setInputPrompt}
+          setIsInputEmpty={setIsInputEmpty}
+          handleToggleRightFrame={handleToggleRightFrame}
+          handleToggleLeftFrame={handleToggleLeftFrame}
+          onSaveInput={onSaveInput}
+          setAnswerTab={() => {}}
+        />
       </div>
     </div>
   );
@@ -214,14 +157,49 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
       {selectedStartup ? (
         <StartupProfile
           selectedStartup={selectedStartup}
-          onBackClick={handleBackClick}
+          onBackClick={() => setSelectedStartup(null)}
           queryForConnect={queryForConnect}
         />
       ) : messages.length > 0 ? (
         renderAnswerTab()
       ) : (
-        renderMainContent()
+        <div className="relative flex flex-col items-center justify-center h-[80vh]">
+          <div
+            className="absolute top-0 left-0 m-4 text-blue-500 cursor-pointer"
+            onClick={toggleHistory}
+          >
+            <FaBars size={24} />
+          </div>
+          <div className="flex gap-10 items-center justify-center">
+            <Image
+              src="/ecllipseright.png"
+              width={50}
+              height={50}
+              alt="Ecllipse Right"
+            />
+            <div className="font-semibold text-lg text-center">
+              What problem are you trying to solve?
+            </div>
+            <Image
+              src="/ecllipseleft.png"
+              width={50}
+              height={50}
+              alt="Ecllipse Left"
+            />
+          </div>
+          <PromptTabMobile
+            isInputEmpty={isInputEmpty}
+            inputPrompt={inputPrompt}
+            setInputPrompt={setInputPrompt}
+            setIsInputEmpty={setIsInputEmpty}
+            handleToggleRightFrame={handleToggleRightFrame}
+            handleToggleLeftFrame={handleToggleLeftFrame}
+            onSaveInput={onSaveInput}
+            setAnswerTab={() => {}}
+          />
+        </div>
       )}
+
       {isHistoryOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
