@@ -40,8 +40,7 @@ const StartupList = ({ startups, handleStartups }) => {
             </div>
           </div>
 
-          {startup?.relevance &&
-            startup.relevance !== "No relevance available." && (
+          {startup?.relevance && (
               <div className="text-sm italic text-gray-600">
                 <span className="text-black font-semibold">Why: </span>
                 {startup.relevance}
