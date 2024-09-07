@@ -95,9 +95,9 @@ export interface ChatHistoryResponse {
 }
 
 export interface FormData {
-  first_name?: string;
+  first_name: string;
   email: string;
-  organization_name?: string;
+  organization_name:string;
   password: string;
   organization_id?: number;
 }
