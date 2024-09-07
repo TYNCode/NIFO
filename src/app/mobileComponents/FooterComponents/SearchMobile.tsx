@@ -55,27 +55,28 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
     return startups.some((startup) => startup?.name);
   };
 
-  const renderDynamicSection = (response: any, key: string, title: string) => {
-    if (!response[key]) return null;
+const renderDynamicSection = (response: any, key: string, title: string) => {
+  if (!response || !response[key]) return null;
 
-    return (
-      <>
-        <h3 className="font-bold text-lg">{title}</h3>
-        {Array.isArray(response[key]) ? (
-          response[key].map((item: any, index: number) => (
-            <div key={index} className="mb-2">
-              {item.point && item.point !== "No point available" && (
-                <div className="font-semibold">{item.point}</div>
-              )}
-              <div>{item.description}</div>
-            </div>
-          ))
-        ) : (
-          <div className="mb-2">{response[key]}</div>
-        )}
-      </>
-    );
-  };
+  return (
+    <>
+      <h3 className="font-bold text-lg">{title}</h3>
+      {Array.isArray(response[key]) ? (
+        response[key].map((item: any, index: number) => (
+          <div key={index} className="mb-2">
+            {item.point && item.point !== "No point available" && (
+              <div className="font-semibold">{item.point}</div>
+            )}
+            <div>{item.description}</div>
+          </div>
+        ))
+      ) : (
+        <div className="mb-2">{response[key]}</div>
+      )}
+    </>
+  );
+};
+
 
   const renderAnswerTab = () => (
     <div className="pb-64">
