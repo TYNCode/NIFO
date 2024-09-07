@@ -77,7 +77,7 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
             </label>
             <input
               type="url"
-              placeholder="Website"
+              placeholder="Ex :  https://nifo.theyellow.network/"
               {...register("website", {
                 required: "Website is required",
                 pattern: {

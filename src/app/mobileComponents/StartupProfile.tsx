@@ -11,8 +11,7 @@ import { IoShareSocialOutline } from "react-icons/io5";
 import { fetchPartnerConnectsByOrg } from "../redux/features/connection/connectionSlice";
 
 const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
-
-  console.log("queryForConnect",queryForConnect);
+  console.log("queryForConnect", queryForConnect);
   const [loading, setLoading] = useState(false);
   const { connectionStatuses } = useAppSelector(
     (state) => state.partnerConnect
@@ -61,7 +60,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
       setLoading(true);
       const payload = {
         consultant_email: "consultant@example.com",
-        query: queryForConnect, 
+        query: queryForConnect,
         request_status: "requested",
         requested_org: selectedStartup.database_info.startup_id,
       };
@@ -110,6 +109,16 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
     }
   };
 
+  const renderIfAvailable = (label: string, value: any) => {
+    if (!value) return null;
+    return (
+      <div className="flex flex-col leading-7 tracking-wide">
+        <div className="font-semibold">{label}</div>
+        <div>{value}</div>
+      </div>
+    );
+  };
+
   return (
     <div className="mx-6 my-4 flex flex-col gap-2 pb-32">
       <div className="flex justify-between items-center">
@@ -149,37 +158,42 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
       </div>
 
       <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
-        <div>{selectedStartup?.database_info?.startup_description}</div>
+        {renderIfAvailable(
+          "Description",
+          selectedStartup?.database_info?.startup_description
+        )}
+
         <div className="flex flex-col gap-4 shadow-inner text-sm bg-blue-100 p-4 rounded-lg">
           <div className="flex justify-between gap-3 w-full">
-            <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-              <div className="font-semibold">Industry</div>
-              <div>{selectedStartup?.database_info?.startup_industry}</div>
-            </div>
-            <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-              <div className="font-semibold">Technology</div>
-              <div>{selectedStartup?.database_info?.startup_technology}</div>
-            </div>
+            {renderIfAvailable(
+              "Industry",
+              selectedStartup?.database_info?.startup_industry
+            )}
+            {renderIfAvailable(
+              "Technology",
+              selectedStartup?.database_info?.startup_technology
+            )}
           </div>
           <div className="flex justify-between gap-3 w-full">
-            <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-              <div className="font-semibold">Country</div>
-              <div>{selectedStartup?.database_info?.startup_country}</div>
-            </div>
-            <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-              <div className="font-semibold">Funding Stage</div>
-              <div>{selectedStartup?.database_info?.startup_company_stage}</div>
-            </div>
+            {renderIfAvailable(
+              "Country",
+              selectedStartup?.database_info?.startup_country
+            )}
+            {renderIfAvailable(
+              "Funding Stage",
+              selectedStartup?.database_info?.startup_company_stage
+            )}
           </div>
         </div>
-        <div className="flex flex-col leading-7 tracking-wide">
-          <div className="font-semibold ">Solution</div>
-          <div>{selectedStartup?.database_info?.startup_solutions}</div>
-        </div>
-        <div className="flex flex-col leading-7 tracking-wide">
-          <div className="font-semibold">Usecases</div>
-          <div>{selectedStartup?.database_info?.startup_usecases}</div>
-        </div>
+
+        {renderIfAvailable(
+          "Solution",
+          selectedStartup?.database_info?.startup_solutions
+        )}
+        {renderIfAvailable(
+          "Usecases",
+          selectedStartup?.database_info?.startup_usecases
+        )}
       </div>
     </div>
   );

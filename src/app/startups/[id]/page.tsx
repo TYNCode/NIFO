@@ -97,6 +97,16 @@ const StartupDetails = () => {
     }
   };
 
+  const renderIfAvailable = (label: string, value: any) => {
+    if (!value) return null;
+    return (
+      <div className="flex flex-col leading-7 tracking-wide">
+        <div className="font-semibold">{label}</div>
+        <div>{value}</div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div>
@@ -124,37 +134,27 @@ const StartupDetails = () => {
             </div>
           </div>
           <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
-            <div>{startupData?.startup_description}</div>
+            {renderIfAvailable("Description", startupData?.startup_description)}
+
             <div className="flex flex-col gap-4 shadow-inner text-sm bg-blue-100 p-4 rounded-lg">
               <div className="flex justify-between gap-3 w-full">
-                <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-                  <div className="font-semibold">Industry</div>
-                  <div>{startupData?.startup_industry}</div>
-                </div>
-                <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-                  <div className="font-semibold">Technology</div>
-                  <div>{startupData?.startup_technology}</div>
-                </div>
+                {renderIfAvailable("Industry", startupData?.startup_industry)}
+                {renderIfAvailable(
+                  "Technology",
+                  startupData?.startup_technology
+                )}
               </div>
               <div className="flex justify-between gap-3 w-full">
-                <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-                  <div className="font-semibold">Country</div>
-                  <div>{startupData?.startup_country}</div>
-                </div>
-                <div className="flex flex-col w-1/2 leading-7 tracking-wide">
-                  <div className="font-semibold">Funding Stage</div>
-                  <div>{startupData?.startup_company_stage}</div>
-                </div>
+                {renderIfAvailable("Country", startupData?.startup_country)}
+                {renderIfAvailable(
+                  "Funding Stage",
+                  startupData?.startup_company_stage
+                )}
               </div>
             </div>
-            <div className="flex flex-col leading-7 tracking-wide">
-              <div className="font-semibold">Solution</div>
-              <div>{startupData?.startup_solutions}</div>
-            </div>
-            <div className="flex flex-col leading-7 tracking-wide">
-              <div className="font-semibold">Usecases</div>
-              <div>{startupData?.startup_usecases}</div>
-            </div>
+
+            {renderIfAvailable("Solution", startupData?.startup_solutions)}
+            {renderIfAvailable("Usecases", startupData?.startup_usecases)}
           </div>
         </>
       </div>

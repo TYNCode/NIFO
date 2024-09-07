@@ -21,7 +21,7 @@ function MoreMobile({ userInfo }) {
   const [isConnectionsOpen, setIsConnectionsOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
+    localStorage.removeItem("user");
     navigate.push("/login");
   };
 

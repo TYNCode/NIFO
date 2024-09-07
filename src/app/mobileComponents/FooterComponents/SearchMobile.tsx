@@ -49,6 +49,34 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
     setIsHistoryOpen(false);
   };
 
+  // Check if the startups array has valid startups with a "name" field.
+  const hasValidStartups = (startups: any[]) => {
+    if (!Array.isArray(startups)) return false;
+    return startups.some((startup) => startup?.name);
+  };
+
+  const renderDynamicSection = (response: any, key: string, title: string) => {
+    if (!response[key]) return null;
+
+    return (
+      <>
+        <h3 className="font-bold text-lg">{title}</h3>
+        {Array.isArray(response[key]) ? (
+          response[key].map((item: any, index: number) => (
+            <div key={index} className="mb-2">
+              {item.point && item.point !== "No point available" && (
+                <div className="font-semibold">{item.point}</div>
+              )}
+              <div>{item.description}</div>
+            </div>
+          ))
+        ) : (
+          <div className="mb-2">{response[key]}</div>
+        )}
+      </>
+    );
+  };
+
   const renderAnswerTab = () => (
     <div className="pb-64">
       <div className="flex justify-between items-center">
@@ -84,13 +112,43 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
                 </div>
               ) : (
                 <>
-                  <div>
-                    {message?.response?.trends?.length > 0
-                      ? ""
-                      : message?.response?.response}
-                  </div>
-                  {/* Handle 'startups' for direct user query */}
-                  {message?.response?.startups?.length > 0 && (
+                  {/* Only render "No response available" if no valid response */}
+                  {message?.response?.response &&
+                  message?.response?.response !== "No response available" ? (
+                    <div>{message?.response?.response}</div>
+                  ) : null}
+
+                  {/* Render "use cases" properly */}
+                  {renderDynamicSection(
+                    message?.response,
+                    "use_cases",
+                    "Use Cases"
+                  )}
+
+                  {/* Render "usp" (unique selling proposition) properly */}
+                  {renderDynamicSection(message?.response, "usp", "USP")}
+
+                  {/* Render "success stories" properly */}
+                  {renderDynamicSection(
+                    message?.response,
+                    "success_stories",
+                    "Success Stories"
+                  )}
+
+                  {/* Map through startups if they don't have names (render as descriptions) */}
+                  {message?.response?.startups &&
+                    !hasValidStartups(message?.response?.startups) &&
+                    message?.response?.startups.map(
+                      (startup: any, index: number) => (
+                        <div key={index} className="mb-4">
+                          <h4 className="font-semibold">Description:</h4>
+                          <div>{startup.description}</div>
+                        </div>
+                      )
+                    )}
+
+                  {/* Handle 'startups' with valid names for direct user query */}
+                  {hasValidStartups(message?.response?.startups) && (
                     <StartupList
                       startups={message.response.startups}
                       handleStartups={handleStartups}
@@ -118,8 +176,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
                             </div>
                           )}
 
-                          {/* Use StartupList inside each trend */}
-                          {trend.startups?.length > 0 && (
+                          {hasValidStartups(trend.startups) && (
                             <StartupList
                               startups={trend.startups}
                               handleStartups={handleStartups}
@@ -136,8 +193,8 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
         ))}
       </div>
 
-      {/* Include PromptTabMobile at the bottom */}
-      <div className="fixed bottom-20 left-5 right-5 bg-white shadow-lg z-50">
+
+      <div className="fixed bottom-24 left-7 right-5 shadow-lg z-50">
         <PromptTabMobile
           isInputEmpty={isInputEmpty}
           inputPrompt={inputPrompt}
@@ -163,7 +220,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
       ) : messages.length > 0 ? (
         renderAnswerTab()
       ) : (
-        <div className="relative flex flex-col items-center justify-center h-[80vh]">
+        <div className="relative flex flex-col gap-10 justify-center h-[80vh]">
           <div
             className="absolute top-0 left-0 m-4 text-blue-500 cursor-pointer"
             onClick={toggleHistory}
@@ -187,16 +244,18 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
               alt="Ecllipse Left"
             />
           </div>
-          <PromptTabMobile
-            isInputEmpty={isInputEmpty}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
-            handleToggleRightFrame={handleToggleRightFrame}
-            handleToggleLeftFrame={handleToggleLeftFrame}
-            onSaveInput={onSaveInput}
-            setAnswerTab={() => {}}
-          />
+          <div className="mx-10">
+            <PromptTabMobile
+              isInputEmpty={isInputEmpty}
+              inputPrompt={inputPrompt}
+              setInputPrompt={setInputPrompt}
+              setIsInputEmpty={setIsInputEmpty}
+              handleToggleRightFrame={handleToggleRightFrame}
+              handleToggleLeftFrame={handleToggleLeftFrame}
+              onSaveInput={onSaveInput}
+              setAnswerTab={() => {}}
+            />
+          </div>
         </div>
       )}
 

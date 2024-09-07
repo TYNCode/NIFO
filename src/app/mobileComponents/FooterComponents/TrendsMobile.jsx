@@ -4,8 +4,7 @@ import SubSectors from "../../components/Trends/SubSectors";
 import Industries from "../../components/Trends/Industries";
 import CombinedComponent from "../../components/Trends/UsecasesCombined";
 import Ecosystem from "../../components/Trends/Ecosystem";
-import UsecaseDescription from "../../components/Trends/UsecaseDescription"; // Import UsecaseDescription
-
+import UsecaseDescription from "../../components/Trends/UsecaseDescription"; 
 const TrendsMobile = ({
   selectedSector,
   selectedIndustry,
@@ -17,8 +16,8 @@ const TrendsMobile = ({
   setCurrentStep,
 }) => {
   const [technologyNames, setTechnologyNames] = useState([]);
-  const [ecosystemData, setEcosystemData] = useState([]); // Store startups for Ecosystem
-  const [selectedUseCase, setSelectedUseCase] = useState(null); // Track selected use case
+  const [ecosystemData, setEcosystemData] = useState([]);
+  const [selectedUseCase, setSelectedUseCase] = useState(null); 
 
   // Handler for when a use case is clicked
   const handleUsecaseClick = (usecase) => {
@@ -48,21 +47,27 @@ const TrendsMobile = ({
           startups={ecosystemData.startups}
         />
       ) : currentStep === "usecaseDescription" ? (
-        <UsecaseDescription
-          usecase={selectedUseCase.usecase}
-          usecaseDescription={selectedUseCase.usecaseDescription}
-          enhancement={selectedUseCase.Enhancement || ""}
-          measureOfImpact={selectedUseCase["Measure of Impact"] || ""}
-          startups={selectedUseCase.startups}
-          onComplete={handleBackToUsecases}
-          handleEcosystem={handleEcosystem}
-        />
+        selectedUseCase ? (
+          <UsecaseDescription
+            usecase={selectedUseCase.usecase || "No Usecase Available"}
+            usecaseDescription={
+              selectedUseCase.usecaseDescription || "No Description Available"
+            }
+            enhancement={selectedUseCase.Enhancement || ""}
+            measureOfImpact={selectedUseCase["Measure of Impact"] || ""}
+            startups={selectedUseCase.startups || []}
+            onComplete={handleBackToUsecases}
+            handleEcosystem={handleEcosystem}
+          />
+        ) : (
+          <div>No use case selected. Please select a use case.</div>
+        )
       ) : currentStep === "usecasesCombined" ? (
         <CombinedComponent
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
           technologyNames={technologyNames}
-          onUsecaseClick={handleUsecaseClick} // Pass handler for use case selection
+          onUsecaseClick={handleUsecaseClick} 
         />
       ) : currentStep === "industries" ? (
         <Industries
