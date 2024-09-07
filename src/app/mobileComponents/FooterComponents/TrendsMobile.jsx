@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import React, { useState, useEffect } from "react";
 import Sectors from "../../components/Trends/Sectors";
 import SubSectors from "../../components/Trends/SubSectors";
 import Industries from "../../components/Trends/Industries";
