@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { IoShareSocialOutline } from "react-icons/io5";
 import LeftFrame from "../LeftFrame/LeftFrame";
 import Prompt from "../Prompt";
 import NavBar from "../Navbar";
@@ -13,18 +14,20 @@ import SpotlightMobile from "../Spotlights/SpotlightMobile";
 import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
 import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
+import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader";
 import { ChatHistoryResponse, StartupType } from "../../interfaces";
 import { encryptURL } from "../../utils/shareUtils";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
-import { IoShareSocialOutline } from "react-icons/io5";
-import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader"; // Add this line
+import { v4 as uuidv4 } from "uuid"; // Import uuid for unique session IDs
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
-  const [selectedStartup, setSelectedStartup] = useState<StartupType>();
+  const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
+    null
+  ); // Initialize as null
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -33,10 +36,7 @@ export default function HomePage() {
   const [mailMessage, setMailMessage] = useState<any>(null);
   const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
-  const [sessionId, setSessionId] = useState<string>(() => {
-    const now = new Date();
-    return now.getSeconds().toString();
-  });
+  const [sessionId, setSessionId] = useState<string>(() => uuidv4()); // Use uuid for unique session IDs
 
   const [requestQuery, setRequestQuery] = useState<string>();
   const [selectedSector, setSelectedSector] = useState(null);
@@ -84,7 +84,7 @@ export default function HomePage() {
 
   const handleSectorClick = (sectorName) => {
     setSelectedSector(sectorName);
-    setSelectedIndustry(null); // Reset industry and technology
+    setSelectedIndustry(null);
     setSelectedTechnology(null);
     setCurrentStep("subSectors");
   };
@@ -174,8 +174,6 @@ export default function HomePage() {
           }
         );
 
-        console.log("responseee==?", response.data.conversations);
-
         if (response.status === 200) {
           setMessages(response.data.conversations);
         } else {
@@ -201,7 +199,7 @@ export default function HomePage() {
   };
 
   const handleSendStartupData = (item: any, message: any) => {
-    console.log("itemofhandlem", message);
+    console.log("Selected startup:", message);
     setMailMessage(message);
     setRequestQuery(message.question);
     setSelectedStartup(item?.database_info);
@@ -230,7 +228,7 @@ export default function HomePage() {
   };
 
   const handleNewChat = () => {
-    const newSessionId = `session-${Date.now()}`;
+    const newSessionId = uuidv4();
     setSessionId(newSessionId);
     setMessages([]);
     setInputPrompt("");

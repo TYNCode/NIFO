@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import Spotlight from "../Spotlights/Spotlight";
+import { v4 as uuidv4 } from "uuid"; 
 
 interface LeftFrameProps {
   onNewChat: () => void;
@@ -31,6 +32,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
   const { history } = useAppSelector((state) => state.chatHistory);
   const logoutRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
 
   useEffect(() => {
     dispatch(fetchChatHistory());
@@ -80,13 +82,20 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
 
   return (
     <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
+
       <div className="flex justify-center items-center bg-white shadow-md p-4 z-20">
         <img src="/nifoimage.png" alt="The Yellow Network" width={160} />
       </div>
+
+
       <div className="flex-grow overflow-y-auto scrollbar-thin">
         <div className="flex flex-row justify-between mx-4 mt-6 mb-3">
           {[
-            { icon: BsFillSearchHeartFill, tab: "recommended", title: "Recommended Queries" },
+            {
+              icon: BsFillSearchHeartFill,
+              tab: "recommended",
+              title: "Recommended Queries",
+            },
             { icon: FaHistory, tab: "history", title: "Chat History" },
             { icon: LuLampDesk, tab: "spotlight", title: "Startup Spotlight" },
             { icon: FiLink, tab: "connects", title: "Connects" },
@@ -94,7 +103,9 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
           ].map(({ icon: Icon, tab, title }) => (
             <div
               key={tab}
-              className={`cursor-pointer ${activeTab === tab ? "text-yellow-500" : "text-gray-500"}`}
+              className={`cursor-pointer ${
+                activeTab === tab ? "text-yellow-500" : "text-gray-500"
+              }`}
               onClick={() => handleTabClick(tab)}
               title={title}
             >
@@ -102,16 +113,23 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
             </div>
           ))}
         </div>
+
+        {/* Tab Content */}
         <div>
           {(() => {
             switch (activeTab) {
               case "recommended":
-                return <RecommendedQueries onSelectHistory={handleHistorySelect} />;
+                return (
+                  <RecommendedQueries onSelectHistory={handleHistorySelect} />
+                );
               case "history":
                 return (
                   <>
                     <div className="text-sm py-3 px-2 bg-white font-semibold cursor-pointer flex justify-center">
-                      <button className="bg-yellow-400 p-2 rounded-lg text-white" onClick={onNewChat}>
+                      <button
+                        className="bg-yellow-400 p-2 rounded-lg text-white"
+                        onClick={onNewChat}
+                      >
                         New Chat
                       </button>
                     </div>
@@ -130,6 +148,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
           })()}
         </div>
       </div>
+
       <div
         className="px-8 py-3 shadow-md flex items-center justify-between z-20 cursor-pointer border"
         onClick={() => setIsLogoutOpen(!isLogoutOpen)}

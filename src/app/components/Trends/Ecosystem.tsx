@@ -3,26 +3,30 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CiGlobe } from "react-icons/ci";
-import { TbLocation } from "react-icons/tb";
 import Image from "next/image";
 import { encryptURL } from "../../utils/shareUtils";
+import StartupProfile from "../../mobileComponents/StartupProfile";
+
 
 interface Startup {
   name: string;
   description: string;
-  logo?: string; // Optional because it may not exist in initial data
-  startup_id?: string; // Will be fetched from the API
+  logo?: string;
+  startup_id?: string;
 }
 
 const EcosystemContent: React.FC<{
-  startups: Startup[]; // Startup names are provided as input
+  startups: any;
   usecase: string;
   usecaseDescription: string;
-}> = ({ startups: initialStartups, usecase, usecaseDescription }) => {
-  const [detailedStartups, setDetailedStartups] = useState<Startup[]>([]);
-  const router = useRouter();
-
-  console.log("detailedStartups", detailedStartups);
+  handleExploreClick: (selectedStartup: any) => void; // New prop to handle navigation
+}> = ({
+  startups: initialStartups,
+  usecase,
+  usecaseDescription,
+  handleExploreClick,
+}) => {
+  const [detailedStartups, setDetailedStartups] = useState<any[]>([]);
 
   const fetchStartupDetails = async (startupName: string) => {
     try {
@@ -36,6 +40,7 @@ const EcosystemContent: React.FC<{
           description: data[0]?.startup_description,
           logo: data[0]?.startup_logo,
           startup_id: data[0]?.startup_id,
+          database_info: data[0], // Pass all information into a database_info object
         };
       }
     } catch (error) {
@@ -44,7 +49,6 @@ const EcosystemContent: React.FC<{
     return null;
   };
 
-  // Fetch details for all startups on page load
   useEffect(() => {
     const fetchDetails = async () => {
       const promises = initialStartups.map((startup) =>
@@ -57,14 +61,9 @@ const EcosystemContent: React.FC<{
     fetchDetails();
   }, [initialStartups]);
 
-  const handleExploreClick = (startupId: string) => {
-    const encryptedId = encryptURL(startupId);
-    router.push(`/startups/${encryptedId}`);
-  };
-
   return (
     <div className="flex flex-col gap-4 mt-12">
-      <div className="bg-[#005585] p-4 w-full z-50 mt-4">
+      <div className="bg-[#005585] p-4 w-full mt-4">
         <div className="text-lg font-semibold text-white">
           {usecase || "Ecosystem Overview"}
         </div>
@@ -98,14 +97,10 @@ const EcosystemContent: React.FC<{
               <div className="flex justify-between mt-3">
                 <button
                   className="inline-flex items-center text-[#0081CA] py-1 px-2 rounded border border-[#0081CA]"
-                  onClick={() => handleExploreClick(startup.startup_id!)}
+                  onClick={() => handleExploreClick(startup)}
                 >
                   Explore <CiGlobe className="ml-2" />
                 </button>
-                {/* 
-                <button className="bg-[#0081CA] text-white py-1 px-2 rounded inline-flex items-center">
-                  Connect <TbLocation className="ml-2" />
-                </button> */}
               </div>
             </div>
           ))
@@ -122,14 +117,33 @@ const Ecosystem: React.FC<{
   usecase: string;
   usecaseDescription: string;
 }> = ({ startups, usecase, usecaseDescription }) => {
-  return (
-    <div>
-      <EcosystemContent
-        startups={startups}
-        usecase={usecase}
-        usecaseDescription={usecaseDescription}
+  const [selectedStartup, setSelectedStartup] = useState<any | null>(null); // State to store selected startup
+
+  const router = useRouter();
+
+  const handleExploreClick = (selectedStartup: any) => {
+    setSelectedStartup(selectedStartup); // Set selected startup and navigate to StartupProfile
+  };
+
+  const handleBackClick = () => {
+    setSelectedStartup(null); // Reset selected startup to navigate back to Ecosystem
+  };
+
+  return selectedStartup ? (
+    <div className="mt-20">
+      <StartupProfile
+        selectedStartup={selectedStartup}
+        onBackClick={handleBackClick}
+        queryForConnect="From trends"
       />
     </div>
+  ) : (
+    <EcosystemContent
+      startups={startups}
+      usecase={usecase}
+      usecaseDescription={usecaseDescription}
+      handleExploreClick={handleExploreClick}
+    />
   );
 };
 

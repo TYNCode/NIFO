@@ -7,16 +7,16 @@ import HistoryMobile from "../HistoryMobile";
 import StartupList from "../../components/SearchMobile/StartupList";
 
 interface SearchMobileProps {
-  isInputEmpty: any;
-  inputPrompt: any;
-  setIsInputEmpty: (isEmpty: any) => void;
-  setInputPrompt: (prompt: any) => void;
+  isInputEmpty: boolean;
+  inputPrompt: string;
+  setIsInputEmpty: (isEmpty: boolean) => void;
+  setInputPrompt: (prompt: string) => void;
   handleToggleRightFrame: () => void;
   handleToggleLeftFrame: () => void;
-  onSaveInput: any;
-  messages: any[];
-  setSessionId: (id: any) => void;
-  handleNewChat: any;
+  onSaveInput: (input: string) => void;
+  messages: { question: string; response: any }[];
+  setSessionId: (id: string) => void;
+  handleNewChat: () => void;
 }
 
 const SearchMobile: React.FC<SearchMobileProps> = ({
@@ -33,7 +33,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
 }) => {
   const [selectedStartup, setSelectedStartup] = useState<any>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [queryForConnect, setQueryForConnect] = useState<string>();
+  const [queryForConnect, setQueryForConnect] = useState<string>("");
 
   const handleStartups = (startup: any) => {
     setSelectedStartup(startup);
@@ -49,34 +49,32 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
     setIsHistoryOpen(false);
   };
 
-  // Check if the startups array has valid startups with a "name" field.
-  const hasValidStartups = (startups: any[]) => {
+  const hasValidStartups = (startups: any[]): boolean => {
     if (!Array.isArray(startups)) return false;
     return startups.some((startup) => startup?.name);
   };
 
-const renderDynamicSection = (response: any, key: string, title: string) => {
-  if (!response || !response[key]) return null;
+  const renderDynamicSection = (response: any, key: string, title: string) => {
+    if (!response || !response[key]) return null;
 
-  return (
-    <>
-      <h3 className="font-bold text-lg">{title}</h3>
-      {Array.isArray(response[key]) ? (
-        response[key].map((item: any, index: number) => (
-          <div key={index} className="mb-2">
-            {item.point && item.point !== "No point available" && (
-              <div className="font-semibold">{item.point}</div>
-            )}
-            <div>{item.description}</div>
-          </div>
-        ))
-      ) : (
-        <div className="mb-2">{response[key]}</div>
-      )}
-    </>
-  );
-};
-
+    return (
+      <>
+        <h3 className="font-bold text-lg">{title}</h3>
+        {Array.isArray(response[key]) ? (
+          response[key].map((item: any, index: number) => (
+            <div key={index} className="mb-2">
+              {item.point && item.point !== "No point available" && (
+                <div className="font-semibold">{item.point}</div>
+              )}
+              <div>{item.description}</div>
+            </div>
+          ))
+        ) : (
+          <div className="mb-2">{response[key]}</div>
+        )}
+      </>
+    );
+  };
 
   const renderAnswerTab = () => (
     <div className="pb-64">
@@ -113,13 +111,21 @@ const renderDynamicSection = (response: any, key: string, title: string) => {
                 </div>
               ) : (
                 <>
-                  {/* Only render "No response available" if no valid response */}
-                  {message?.response?.response &&
-                  message?.response?.response !== "No response available" ? (
+                  {/* Check for specific category like "greetings" or "non-sense question" */}
+                  {message?.response?.category === "greetings" ? (
+                    <div>Hi! How can I help you?</div>
+                  ) : message?.response?.category === "non-sense question" ? (
+                    <div>
+                      I appreciate the sentiment, but I'm here to assist you
+                      with information and queries related to startups and
+                      technology! How can I help you today?
+                    </div>
+                  ) : message?.response?.response &&
+                    message?.response?.response !== "No response available." ? (
                     <div>{message?.response?.response}</div>
                   ) : null}
 
-                  {/* Render "use cases" properly */}
+                  {/* Render "use cases" if available */}
                   {renderDynamicSection(
                     message?.response,
                     "use_cases",
@@ -136,7 +142,7 @@ const renderDynamicSection = (response: any, key: string, title: string) => {
                     "Success Stories"
                   )}
 
-                  {/* Map through startups if they don't have names (render as descriptions) */}
+                  {/* Handle startups without valid names */}
                   {message?.response?.startups &&
                     !hasValidStartups(message?.response?.startups) &&
                     message?.response?.startups.map(
@@ -148,7 +154,7 @@ const renderDynamicSection = (response: any, key: string, title: string) => {
                       )
                     )}
 
-                  {/* Handle 'startups' with valid names for direct user query */}
+                  {/* Handle startups with valid names */}
                   {hasValidStartups(message?.response?.startups) && (
                     <StartupList
                       startups={message.response.startups}
@@ -156,7 +162,7 @@ const renderDynamicSection = (response: any, key: string, title: string) => {
                     />
                   )}
 
-                  {/* Handle 'trends' category */}
+                  {/* Handle trends category */}
                   {message?.response?.trends?.length > 0 && (
                     <div className="grid grid-flow-row gap-4 pl-4 py-2 pb-2">
                       {message.response.trends.map((trend, trendIndex) => (
@@ -193,7 +199,6 @@ const renderDynamicSection = (response: any, key: string, title: string) => {
           </div>
         ))}
       </div>
-
 
       <div className="fixed bottom-24 left-7 right-5 shadow-lg z-50">
         <PromptTabMobile

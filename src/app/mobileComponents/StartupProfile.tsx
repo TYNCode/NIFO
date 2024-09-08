@@ -6,12 +6,12 @@ import {
   setConnectionStatus,
   createPartnerConnect,
   ConnectionStatus,
+  fetchPartnerConnectsByOrg,
 } from "../redux/features/connection/connectionSlice";
 import { IoShareSocialOutline } from "react-icons/io5";
-import { fetchPartnerConnectsByOrg } from "../redux/features/connection/connectionSlice";
 
 const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
-  console.log("queryForConnect", queryForConnect);
+  console.log("selectedStartup",selectedStartup);
   const [loading, setLoading] = useState(false);
   const { connectionStatuses } = useAppSelector(
     (state) => state.partnerConnect
@@ -36,7 +36,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
           } else {
             dispatch(
               setConnectionStatus({
-                startupId: selectedStartup.database_info.startup_id,
+                startupId: selectedStartup?.database_info?.startup_id,
                 status: "Connect",
               })
             );
@@ -48,12 +48,8 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
     }
   }, [selectedStartup, dispatch]);
 
-  if (!selectedStartup) {
-    return null;
-  }
-
   const connectionStatus =
-    connectionStatuses[selectedStartup.database_info.startup_id] || "Connect";
+    connectionStatuses[selectedStartup?.database_info?.startup_id] || "Connect";
 
   const handleButtonClick = () => {
     if (connectionStatus === "Connect") {
@@ -62,7 +58,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
         consultant_email: "consultant@example.com",
         query: queryForConnect,
         request_status: "requested",
-        requested_org: selectedStartup.database_info.startup_id,
+        requested_org: selectedStartup?.database_info?.startup_id,
       };
 
       dispatch(createPartnerConnect(payload))
@@ -70,7 +66,7 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
         .then(() => {
           dispatch(
             setConnectionStatus({
-              startupId: selectedStartup.database_info.startup_id,
+              startupId: selectedStartup?.database_info?.startup_id,
               status: "requested",
             })
           );
@@ -83,22 +79,20 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
   };
 
   const handleShareClick = async (startupId: number) => {
-    const secretKey: string = "secret-key";
-    const startupIdStr: string = startupId.toString();
-    let encryptedStartupId: any;
-
-    encryptedStartupId = CryptoJS.AES.encrypt(
+    const secretKey = "secret-key";
+    const startupIdStr = startupId.toString();
+    const encryptedStartupId = CryptoJS.AES.encrypt(
       startupIdStr,
       secretKey
     ).toString();
     const encodedEncryptedStartupId = encodeURIComponent(encryptedStartupId);
 
-    const shareUrl: string = `${window.location.href}/startups/${encodedEncryptedStartupId}`;
+    const shareUrl = `${window.location.href}/startups/${encodedEncryptedStartupId}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: selectedStartup?.name,
+          title: selectedStartup?.database_info?.startup_name,
           url: shareUrl,
         });
       } catch (error) {
@@ -120,14 +114,14 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
   };
 
   return (
-    <div className="mx-6 my-4 flex flex-col gap-2 pb-32">
+    <div className="mx-6 my-4 flex flex-col gap-2 pb-32 ">
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
           <div onClick={onBackClick}>
             <FaAngleLeft size={24} />
           </div>
           <div className="uppercase font-medium text-blue-500 text-lg">
-            {selectedStartup.name}
+            {selectedStartup?.database_info?.startup_name}
           </div>
         </div>
 
@@ -141,19 +135,17 @@ const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
             <IoShareSocialOutline size={26} />
           </div>
 
-          <div>
-            <button
-              className={`flex justify-center items-center px-4 py-1.5 capitalize ${
-                connectionStatus === "Connect"
-                  ? "bg-yellow-400 hover:bg-yellow-500 cursor-pointer"
-                  : "bg-red-400 cursor-default"
-              } rounded-md text-white font-semibold lg:w-5/12 xl:text-xl xl:w-5/12`}
-              onClick={handleButtonClick}
-              disabled={connectionStatus !== "Connect" || loading}
-            >
-              {loading ? "Processing..." : connectionStatus}
-            </button>
-          </div>
+          <button
+            className={`flex justify-center items-center px-4 py-1.5 capitalize ${
+              connectionStatus === "Connect"
+                ? "bg-yellow-400 hover:bg-yellow-500 cursor-pointer"
+                : "bg-red-400 cursor-default"
+            } rounded-md text-white font-semibold`}
+            onClick={handleButtonClick}
+            disabled={connectionStatus !== "Connect" || loading}
+          >
+            {loading ? "Processing..." : connectionStatus}
+          </button>
         </div>
       </div>
 
