@@ -43,24 +43,29 @@ const MainSpotlightMobile: React.FC<MainSpotlightMobileProps> = ({
         </div>
       </div>
 
-
       <div>
         <div className="mx-4 uppercase my-4">More Spotlights</div>
-      {spotlights.slice(0, -1).map((spotlight: Spotlight, index: number) => {
-        return (
-          <div className="p-2 flex gap-4 text-xs border border-gray-200 m-2 overflow-hidden max-w-full" key={index} onClick={()=> handleSpotlight(spotlight.id)}>
-            <div className="w-1/5 flex items-center">
-              <img
-                src={spotlight.spotlight_img}
-                alt="Spotlight Logo"
-                className="w-full h-auto object-contain"
-              />
-            </div>
+        {spotlights.slice(0, -1).map((spotlight: Spotlight, index: number) => {
+          return (
+            <div
+              className="p-2 mx-3 flex items-center gap-4 text-xs border border-gray-200 m-2 overflow-hidden max-w-full"
+              key={index}
+              onClick={() => handleSpotlight(spotlight.id)}
+            >
+              <div className="w-16 h-16 flex-shrink-0">
+                <Image
+                  src={spotlight?.spotlight_img}
+                  alt="Spotlight Logo"
+                  width={64}
+                  height={64}
+                  className="object-contain w-full h-full"
+                />
+              </div>
 
-            <div className="w-4/5">{spotlight.spotlight_title}</div>
-          </div>
-        );
-      })}
+              <div className="flex-1">{spotlight?.spotlight_title}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
