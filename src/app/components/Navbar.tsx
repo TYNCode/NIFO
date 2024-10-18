@@ -3,17 +3,20 @@ import { BsGraphUpArrow } from "react-icons/bs";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MdFeedback } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { IoTrendingUpSharp } from "react-icons/io5";
 interface NavbarProps {
   open: boolean;
   handleToggleLeftFrame: () => void;
 }
 
 const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
-
-
+  const router = useRouter();
+  const handleTrendsRoute = () => {
+    router.push("/trends");
+  };
     return (
         <div
-            className={`flex bg-white items-center flex-row  cursor-pointer transition-all`}
+            className={`flex bg-white items-center flex-col gap-8  cursor-pointer transition-all`}
         >
             {open ? (
                 <div
@@ -30,42 +33,12 @@ const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
                     <IoIosArrowForward size={23} />
                 </div>
             )}
+            <div className="hover:text-blue-500" onClick={handleTrendsRoute}>
+              <IoTrendingUpSharp size={23}/>
+            </div>
 
         </div>
     );
-  const router = useRouter();
-  const handleTrendsRoute = () => {
-    router.push("/trends");
-  };
-  return (
-    <div
-      className={`bg-white ${
-        !open ? "shadow-xl" : ""
-      } h-screen px-3 items-center flex-row  cursor-pointer transition-all`}
-    >
-      {open ? (
-        <div className={`${open ? "" : "hidden"}`}>
-          <div onClick={handleToggleLeftFrame}>
-            <IoIosArrowBack size={23} />
-          </div>
-        </div>
-      ) : (
-        <div className={`${!open ? "" : "hidden"} flex flex-col gap-y-16`}>
-          <div onClick={handleToggleLeftFrame}>
-            <IoIosArrowForward size={23} />
-          </div>
-          <div className="text-blue-400" onClick={handleTrendsRoute}>
-            <BsGraphUpArrow size={23} />
-          </div>
-        </div>
-      )}
-      {/* <div
-                className='ml-8'
-                onClick={handleFeedbackIconClick}>
-                <MdFeedback size={23} />
-            </div> */}
-    </div>
-  );
 };
 
 export default NavBar;
