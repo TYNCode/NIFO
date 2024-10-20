@@ -1,22 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/sector_data.json";
 
-const WebSubIndustries = ({ selectedSector, onDotClick }) => {
+const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
+  const sectors = sectorData.sectors;
+
+  console.log("sleected datasss-->", selectedSector, selectedIndustry)
   const getInitialIndustryData = () => {
-    const sector = sectorData.sectors.find(
-      (sec) => sec.sectorName === selectedSector
+    const selectedSectorData = sectors.find(
+      (sector) => sector.sectorName === selectedSector
     );
-    return sector
-      ? sector.industries.slice(0, 8).map((industry) => ({
+    return selectedSectorData
+      ? selectedSectorData.industries.slice(0, 8).map((industry) => ({
+          sectorName: selectedSectorData.sectorName,
           industryName: industry.industryName,
+          technologies: industry.technologies || [],
         }))
       : [];
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(getInitialIndustryData());
+  const [outerCircleData, setOuterCircleData] = useState(
+    getInitialIndustryData()
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
-  const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
+
+  const selectedIndustryIndex = outerCircleData.findIndex(
+    (data) => data.industryName === selectedIndustry
+  );
+
+  const [angleOffset, setAngleOffset] = useState(
+    Math.PI / 2 - selectedIndustryIndex * anglePerDot
+  );
+
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const circleRef = useRef(null);
@@ -67,7 +82,8 @@ const WebSubIndustries = ({ selectedSector, onDotClick }) => {
       ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;

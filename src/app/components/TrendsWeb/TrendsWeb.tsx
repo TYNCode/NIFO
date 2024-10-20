@@ -29,21 +29,25 @@ const TrendsWeb = () => {
     <div>
       {showInCombined ? (
         showCircleThree ? (
-          <WebTechUsecase />
+          <WebUsecases 
+          selectedIndustry={selectedIndustry}
+          selectedSector = {selectedSector}
+          />
         ) : (
           <WebInCombined
             onWebTechnologyClick={handleWebTechnologyClick}
-            selectedIndustry={selectedIndustry} />
+            selectedIndustry={selectedIndustry}
+            selectedSector={selectedSector}
+          />
         )
       ) : (
-        <WebIndustries 
-        onWebCircleTwoClick={handleWebCircleTwoClick} 
-        handleSectorClick={handleSectorClick}
-        selectedSector={selectedSector}
-        showIndustryCircle={showIndustryCircle}
+        <WebIndustries
+          onWebCircleTwoClick={handleWebCircleTwoClick}
+          handleSectorClick={handleSectorClick}
+          selectedSector={selectedSector}
+          showIndustryCircle={showIndustryCircle}
         />
       )}
-      <WebUsecases />
     </div>
   );
 };

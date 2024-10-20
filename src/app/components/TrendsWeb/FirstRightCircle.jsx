@@ -3,7 +3,6 @@ import sectorData from "../../data/sector_data.json";
 
 const FirstRightCircle = ({ selectedSector , onDotClick}) => {
   const sectors = sectorData.sectors;
-  console.log("selectttttttt---->", selectedSector);
   const getInitialIndustryData = () => {
     const selectedSectorData = sectors.find(
       (sector) => sector.sectorName === selectedSector

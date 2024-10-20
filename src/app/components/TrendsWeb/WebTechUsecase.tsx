@@ -1,212 +1,330 @@
 import React, { useState, useEffect, useRef } from "react";
+import sectorData from "../../data/sector_data.json";
 
-const WebCircleThree = () => {
-  // Parameters for the larger circles
-  const largeRadius = 330; // Radius for positioning the larger circles
-  const centerXLarge = -4; // X position for the center of the main large circle
-  const centerYLarge = 345; // Y position for the center of the main large circle
+const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
+  const sectors = sectorData.sectors;
 
-  // Parameters for the smaller dots
-  const smallDotRadius = 192; // Radius for positioning the smaller dots
-  const centerXSmall = -12; // X position for the center of the smaller dots
-  const centerYSmall = 350; // Y position for the center of the smaller dots
+   const getInitialTechnologyData = () => {
+     const selectedSectorData = sectors.find(
+       (sector) => sector.sectorName === selectedSector
+     );
+     const selectedIndustryData = selectedSectorData?.industries.find(
+       (industry) => industry.industryName === selectedIndustry
+     );
 
-  const numCircles = 8; // Number of circles/dots around each center
+     return selectedIndustryData
+       ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
+           sectorName: selectedSectorData.sectorName,
+           industryName: selectedIndustryData.industryName,
+           technologyName: technology.technologyName,
+         }))
+       : [];
+   };
 
-  // State for larger circles and smaller dots
-  const [currentAngleLarge, setCurrentAngleLarge] = useState(0);
-  const [currentAngleSmall, setCurrentAngleSmall] = useState(0);
-
-  // Track dragging states separately for larger and smaller dots
-  const [isDraggingLarge, setIsDraggingLarge] = useState(false);
-  const [isDraggingSmall, setIsDraggingSmall] = useState(false);
-
-  // References to start positions when dragging
-  const startYLarge = useRef(null);
-  const startYSmall = useRef(null);
-
-  const [highlightedIndex, setHighlightedIndex] = useState(0); // Highlight the larger circle
-
-  // Array of names for the large circles
-  const circleNames = [
-    "Sector 1",
-    "Sector 2",
-    "Sector 3",
-    "Sector 4",
-    "Sector 5",
-    "Sector 6",
-    "Sector 7",
-    "Sector 8",
-  ];
-
-  // Array of names for the smaller dots
-  const smallDotNames = [
-    "Dot 1",
-    "Dot 2",
-    "Dot 3",
-    "Dot 4",
-    "Dot 5",
-    "Dot 6",
-    "Dot 7",
-    "Dot 8",
-  ];
-
-  // Generate positions for larger circles
-  const largeCirclePositions = Array.from({ length: numCircles }, (_, i) => {
-    const angle = currentAngleLarge + (i * 2 * Math.PI) / numCircles;
-    const x = centerXLarge + largeRadius * Math.cos(angle);
-    const y = centerYLarge + largeRadius * Math.sin(angle);
-    return { x, y };
-  });
-
-  // Generate positions for smaller dots
-  const smallDotPositions = Array.from({ length: numCircles }, (_, i) => {
-    const angle = currentAngleSmall + (i * 2 * Math.PI) / numCircles;
-    const x = centerXSmall + smallDotRadius * Math.cos(angle);
-    const y = centerYSmall + smallDotRadius * Math.sin(angle);
-    return { x, y };
-  });
-
-  // Update highlighted index for larger circles
-  const updateHighlightedIndex = () => {
-    const topCircleIndex =
-      Math.round((currentAngleLarge / (2 * Math.PI)) * numCircles) % numCircles;
-    setHighlightedIndex((topCircleIndex + numCircles) % numCircles);
+   const getInitialIndustryData = () => {
+    const selectedSectorData = sectors.find(
+      (sector) => sector.sectorName === selectedSector
+    );
+    return selectedSectorData
+      ? selectedSectorData.industries.slice(0, 8).map((industry) => ({
+          sectorName: selectedSectorData.sectorName,
+          industryName: industry.industryName,
+          technologies: industry.technologies || [],
+        }))
+      : [];
   };
 
-  // Dragging logic for larger circles
-  const handleMouseDownLarge = (e) => {
-    setIsDraggingLarge(true);
-    startYLarge.current = e.clientY;
-  };
+  const [outerCircleData, setOuterCircleData] = useState(
+    getInitialTechnologyData()
+  );
+  const [innerCircleData, setInnerCircleData] = useState(
+    getInitialIndustryData()
+  );
+  const totalOuterDots = outerCircleData.length;
+  const totalInnerDots = innerCircleData.length;
+  const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
+  const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
-  const handleMouseMoveLarge = (e) => {
-    if (!isDraggingLarge) return;
-    const deltaY = e.clientY - startYLarge.current;
-    setCurrentAngleLarge((prev) => prev + deltaY * 0.01);
-    startYLarge.current = e.clientY;
-    updateHighlightedIndex();
-  };
+  const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
+  const [isDraggingOuter, setIsDraggingOuter] = useState(false);
+  const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
 
-  const handleMouseUpLarge = () => {
-    setIsDraggingLarge(false);
-    updateHighlightedIndex();
-  };
+  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2);
+  const [isDraggingInner, setIsDraggingInner] = useState(false);
+  const [lastMouseYInner, setLastMouseYInner] = useState(null);
 
-  // Dragging logic for smaller dots
-  const handleMouseDownSmall = (e) => {
-    setIsDraggingSmall(true);
-    startYSmall.current = e.clientY;
-  };
-
-  const handleMouseMoveSmall = (e) => {
-    if (!isDraggingSmall) return;
-    const deltaY = e.clientY - startYSmall.current;
-    setCurrentAngleSmall((prev) => prev + deltaY * 0.005);
-    startYSmall.current = e.clientY;
-  };
-
-  const handleMouseUpSmall = () => {
-    setIsDraggingSmall(false);
-  };
-
-  // Add event listeners for dragging large circles
+  const circleRefOuter = useRef(null);
+  const circleRefInner = useRef(null);
+  const radiusXOuter = 330;
+  const radiusYOuter = 330;
+  const radiusXInner = 200;
+  const radiusYInner = 220;
+  
   useEffect(() => {
-    if (isDraggingLarge) {
-      window.addEventListener("mousemove", handleMouseMoveLarge);
-      window.addEventListener("mouseup", handleMouseUpLarge);
-    } else {
-      window.removeEventListener("mousemove", handleMouseMoveLarge);
-      window.removeEventListener("mouseup", handleMouseUpLarge);
-    }
+    const handleMouseMoveOuter = (event) => {
+      if (isDraggingOuter) {
+        handleMouseMoveHandlerOuter(event);
+      }
+    };
+
+    const handleMouseMoveInner = (event) => {
+      if (isDraggingInner) {
+        handleMouseMoveHandlerInner(event);
+      }
+    };
+
+    const handleMouseUpOuter = () => {
+      setIsDraggingOuter(false);
+      setLastMouseYOuter(null);
+    };
+
+    const handleMouseUpInner = () => {
+      setIsDraggingInner(false);
+      setLastMouseYInner(null);
+    };
+
+    window.addEventListener("mousemove", handleMouseMoveOuter);
+    window.addEventListener("mousemove", handleMouseMoveInner);
+    window.addEventListener("mouseup", handleMouseUpOuter);
+    window.addEventListener("mouseup", handleMouseUpInner);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMoveLarge);
-      window.removeEventListener("mouseup", handleMouseMoveLarge);
+      window.removeEventListener("mousemove", handleMouseMoveOuter);
+      window.removeEventListener("mousemove", handleMouseMoveInner);
+      window.removeEventListener("mouseup", handleMouseUpOuter);
+      window.removeEventListener("mouseup", handleMouseUpInner);
     };
-  }, [isDraggingLarge]);
+  }, [isDraggingOuter, isDraggingInner, lastMouseYOuter, lastMouseYInner]);
 
-  // Add event listeners for dragging smaller dots
-  useEffect(() => {
-    if (isDraggingSmall) {
-      window.addEventListener("mousemove", handleMouseMoveSmall);
-      window.addEventListener("mouseup", handleMouseUpSmall);
-    } else {
-      window.removeEventListener("mousemove", handleMouseMoveSmall);
-      window.removeEventListener("mouseup", handleMouseUpSmall);
+  // Handle mouse move events for outer circle (upper)
+  const handleMouseMoveHandlerOuter = (event) => {
+    const { clientY } = event;
+    if (lastMouseYOuter !== null) {
+      const deltaY = clientY - lastMouseYOuter;
+      const rotationSpeed = 0.005;
+      setAngleOffsetOuter((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
+    setLastMouseYOuter(clientY);
+  };
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMoveSmall);
-      window.removeEventListener("mouseup", handleMouseUpSmall);
-    };
-  }, [isDraggingSmall]);
+  // Handle mouse move events for inner circle (lower)
+  const handleMouseMoveHandlerInner = (event) => {
+    const { clientY } = event;
+    if (lastMouseYInner !== null) {
+      const deltaY = clientY - lastMouseYInner;
+      const rotationSpeed = 0.005;
+      setAngleOffsetInner((prevOffset) => prevOffset - deltaY * rotationSpeed);
+    }
+    setLastMouseYInner(clientY);
+  };
+
+  // Handle mouse down events for outer circle (upper)
+  const handleMouseDownOuter = (event) => {
+    if (
+      circleRefOuter.current &&
+      circleRefOuter.current.contains(event.target)
+    ) {
+      setIsDraggingOuter(true);
+      setLastMouseYOuter(event.clientY);
+    }
+  };
+
+  // Handle mouse down events for inner circle (lower)
+  const handleMouseDownInner = (event) => {
+    if (
+      circleRefInner.current &&
+      circleRefInner.current.contains(event.target)
+    ) {
+      setIsDraggingInner(true);
+      setLastMouseYInner(event.clientY);
+    }
+  };
+
+  // Handle dot click events for outer circle (upper)
+  const handleDotClickOuter = (dotIndex) => {
+    const normalizedAngleOffset =
+      ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    const currentCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
+    );
+
+    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
+    const shortestDistance =
+      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const angleDifference = shortestDistance * anglePerDot;
+
+    setAngleOffsetOuter((prevOffset) => prevOffset - angleDifference);
+
+    console.log("sectorName", outerCircleData[dotIndex].sectorName);
+  };
+
+  // Handle dot click events for inner circle (lower)
+  const handleDotClickInner = (dotIndex) => {
+    const normalizedAngleOffset =
+      ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    const currentCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
+    );
+
+    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
+    const shortestDistance =
+      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const angleDifference = shortestDistance * anglePerDot;
+
+    setAngleOffsetInner((prevOffset) => prevOffset - angleDifference);
+
+    console.log("sectorName", outerCircleData[dotIndex].sectorName);
+  };
+
+  // Calculate positions for outer circle (upper)
+  const dotsOuter = Array.from({ length: totalDots }).map((_, index) => {
+    const angle = (index / totalDots) * Math.PI * 2 + angleOffsetOuter;
+    const x = radiusXOuter * Math.sin(angle);
+    const y = radiusYOuter * Math.cos(angle);
+    return { x, y, index };
+  });
+
+  // Calculate positions for inner circle (lower)
+  const dotsInner = Array.from({ length: totalDots }).map((_, index) => {
+    const angle = (index / totalDots) * Math.PI * 2 + angleOffsetInner;
+    const x = radiusXInner * Math.sin(angle);
+    const y = radiusYInner * Math.cos(angle);
+    return { x, y, index };
+  });
+
+  // Get center indexes
+  const centerIndexOuter = Math.round(
+    ((Math.PI / 2 - angleOffsetOuter) / anglePerDot + totalDots) % totalDots
+  );
+  const centerIndexInner = Math.round(
+    ((Math.PI / 2 - angleOffsetInner) / anglePerDot + totalDots) % totalDots
+  );
 
   return (
-    <div className="flex items-center w-1/2 relative select-none ">
-      {/* Main circle */}
-      <img src="/round1.png" alt="" className="h-[250px]" />
-      <div className="absolute">
-        <img src="innercircle1.png" alt="" className="h-[400px]" />
-      </div>
+    <div className="flex items-center justify-start h-screen w-1/2 relative">
+      <img src="/round1.png" alt="Background" className="h-[260px]" />
+
       <div className="absolute left-8">
-        <img src="innercircle1.png" alt="" className="h-[650px]" />
+        <img
+          src="innercircle1.png"
+          alt="Inner Circle"
+          className="h-[650px] w-80"
+        />
       </div>
 
-      {/* Render 8 larger circles with text next to each circle */}
-      {largeCirclePositions.map((pos, index) => (
-        <div
-          key={index}
-          className="absolute pointer"
-          onMouseDown={handleMouseDownLarge}
-          onClick={() => setHighlightedIndex(index)}
-          style={{
-            left: `${pos.x}px`,
-            top: `${pos.y}px`,
-            cursor: "pointer",
-          }}
-        >
-          <div
-            className={`rounded-full transition-all duration-200 ease-in-out ${
-              index === highlightedIndex
-                ? "bg-[#3AB8FF] border-[#FFEFA7] border-2 w-10 h-10"
-                : "bg-[#D8D8D8] w-8 h-8"
-            } relative`}
-          ></div>
+      <div className="absolute left-2">
+        <img
+          src="innercircle1.png"
+          alt="Inner Circle"
+          className="h-[450px] w-52"
+        />
+      </div>
 
-          <div className="absolute top-1/2 transform -translate-y-1/2 left-full ml-4 text-sm font-medium text-black">
-            {circleNames[index]}
-          </div>
-        </div>
-      ))}
+      <div
+        ref={circleRefOuter}
+        onMouseDown={handleMouseDownOuter}
+        className="absolute"
+      >
+        {dotsOuter.map((dot) => {
+          const isMiddleDotOuter = dot.index === centerIndexOuter;
+          return (
+            <div
+              key={`outer-${dot.index}`}
+              className="absolute flex flex-col items-center justify-center cursor-pointer"
+              style={{
+                left: `${dot.x}px`,
+                top: `${dot.y - 10}px`,
+                userSelect: "none",
+              }}
+              onClick={() => handleDotClickOuter(dot.index)}
+            >
+              <div
+                className={`flex flex-row items-center justify-center ${
+                  isMiddleDotOuter ? "border-blue-500" : "border-black"
+                }`}
+              >
+                <div
+                  className={`rounded-full ${
+                    isMiddleDotOuter
+                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                      : "bg-[#D8D8D8]"
+                  }`}
+                  style={{
+                    width: isMiddleDotOuter ? "40px" : "32px",
+                    height: isMiddleDotOuter ? "40px" : "32px",
+                  }}
+                ></div>
+                <div
+                  className={`text-sm w-32 ${
+                    isMiddleDotOuter
+                      ? "font-semibold text-base text-[#4C4C4C]"
+                      : "text-[#797979]"
+                  }`}
+                  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+                >
+                  {outerCircleData[dot.index].sectorName || "N/A"}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Render 8 smaller dots with text next to each dot */}
-      {smallDotPositions.map((pos, index) => (
-        <div
-          key={`small-dot-${index}`}
-          className="absolute"
-          onMouseDown={handleMouseDownSmall}
-          style={{
-            left: `${pos.x}px`,
-            top: `${pos.y}px`,
-            cursor: "pointer",
-          }}
-        >
-          <div
-            className={`rounded-full transition-all duration-200 ease-in-out ${
-              index === highlightedIndex
-                ? "bg-[#3AB8FF] border-[#FFEFA7] border-2 w-10 h-10"
-                : "bg-[#D8D8D8] w-8 h-8"
-            } relative`}
-          ></div>
-
-          <div className="absolute top-1/2 transform -translate-y-1/2 left-full ml-2 text-xs font-medium text-black w-32">
-            {smallDotNames[index]}
-          </div>
-        </div>
-      ))}
+      <div
+        ref={circleRefInner}
+        onMouseDown={handleMouseDownInner}
+        className="absolute"
+      >
+        {dotsInner.map((dot) => {
+          const isMiddleDotInner = dot.index === centerIndexInner;
+          return (
+            <div
+              key={`inner-${dot.index}`}
+              className="absolute flex flex-col items-center justify-center cursor-pointer"
+              style={{
+                left: `${dot.x}px`,
+                top: `${dot.y - 10}px`,
+                userSelect: "none",
+              }}
+              onClick={() => handleDotClickInner(dot.index)}
+            >
+              <div
+                className={`flex flex-row gap-2 items-center justify-center ${
+                  isMiddleDotInner ? "border-blue-500" : "border-black"
+                }`}
+              >
+                <div
+                  className={`rounded-full ${
+                    isMiddleDotInner
+                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                      : "bg-[#D8D8D8]"
+                  }`}
+                  style={{
+                    width: isMiddleDotInner ? "28px" : "20px",
+                    height: isMiddleDotInner ? "28px" : "20px",
+                  }}
+                ></div>
+                <div
+                  className={`w-24 ${
+                    isMiddleDotInner
+                      ? "font-semibold text-[12px] text-[#4C4C4C]"
+                      : "text-[#797979] text-[12px]"
+                  }`}
+                  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+                >
+                  {outerCircleData[dot.index].sectorName || "N/A"}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-export default WebCircleThree;
+export default WebTechUsecase;
