@@ -4,7 +4,7 @@ import EcosystemWeb from "./EcosystemWeb";
 import StartupsWeb from "./StartupsWeb";
 import Usecase from "./Usecase";
 
-const WebUsecases = ({selectedIndustry , selectedSector}) => {
+const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) => {
   const [currentView, setCurrentView] = useState("usecase"); 
   const [selectedEcosystem, setSelectedEcosystem] = useState(null);
 
@@ -23,13 +23,16 @@ const WebUsecases = ({selectedIndustry , selectedSector}) => {
 
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
-      <WebTechUsecase 
-      selectedIndustry = {selectedIndustry}
-      selectedSector = {selectedSector}
+      <WebTechUsecase
+        selectedIndustry={selectedIndustry}
+        selectedSector={selectedSector}
       />
 
       {currentView === "usecase" && (
-        <Usecase onSelectUsecase={handleSelectUsecase} />
+        <Usecase
+          onSelectUsecase={handleSelectUsecase}
+          selectedTechnology={selectedTechnology}
+        />
       )}
 
       {currentView === "ecosystem" && (

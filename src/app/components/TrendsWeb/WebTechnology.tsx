@@ -12,7 +12,6 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       (industry) => industry.industryName === selectedIndustry
     );
 
-    // If the selected industry exists, return the technologies; otherwise, return an empty array
     return selectedIndustryData
       ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
           sectorName: selectedSectorData.sectorName,
@@ -36,7 +35,6 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const radiusY = 320;
 
   useEffect(() => {
-    // Update technologies when the selected sector or industry changes
     setOuterCircleData(getInitialTechnologyData());
   }, [selectedSector, selectedIndustry]);
 
@@ -59,7 +57,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, lastMouseY]);
+  }, [isDragging]);
 
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
@@ -131,15 +129,11 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer "
+            className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               right: `${dot.x}px`,
               top: `${dot.y + 346}px`,
               userSelect: "none",
-            }}
-            onMouseDown={() => {
-              setIsDragging(true);
-              setLastMouseY(null);
             }}
             onClick={() => handleDotClick(dot.index)}
           >
@@ -152,9 +146,9 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
               <div
                 className={`rounded-full flex items-center justify-center ${
                   isMiddleDot
-                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2 "
+                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
                     : "bg-[#D8D8D8]"
-                }  ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
+                } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
                 style={{ flexShrink: 0 }}
               ></div>
               <div

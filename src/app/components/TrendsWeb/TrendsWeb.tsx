@@ -10,7 +10,9 @@ const TrendsWeb = () => {
   const [selectedSector, setSelectedSector] = useState(null);
   const [showIndustryCircle, setShowIndustryCircle] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [selectedTechnology, setSelectedTechnology] = useState(null);
 
+ 
    const handleSectorClick = (sector) => {
      setSelectedSector(sector);
      setShowIndustryCircle(true);
@@ -21,7 +23,8 @@ const TrendsWeb = () => {
     setShowInCombined(true);
   };
 
-  const handleWebTechnologyClick = () => {
+  const handleWebTechnologyClick = (technology) => {
+    setSelectedTechnology(technology)
     setShowCircleThree(true);
   };
 
@@ -32,6 +35,7 @@ const TrendsWeb = () => {
           <WebUsecases 
           selectedIndustry={selectedIndustry}
           selectedSector = {selectedSector}
+          selectedTechnology={selectedTechnology}
           />
         ) : (
           <WebInCombined

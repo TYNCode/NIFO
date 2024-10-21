@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/sector_data.json";
 
-const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
+const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
   const sectors = sectorData.sectors;
 
-   const getInitialTechnologyData = () => {
-     const selectedSectorData = sectors.find(
-       (sector) => sector.sectorName === selectedSector
-     );
-     const selectedIndustryData = selectedSectorData?.industries.find(
-       (industry) => industry.industryName === selectedIndustry
-     );
+  const getInitialTechnologyData = () => {
+    const selectedSectorData = sectors.find(
+      (sector) => sector.sectorName === selectedSector
+    );
+    const selectedIndustryData = selectedSectorData?.industries.find(
+      (industry) => industry.industryName === selectedIndustry
+    );
 
-     return selectedIndustryData
-       ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
-           sectorName: selectedSectorData.sectorName,
-           industryName: selectedIndustryData.industryName,
-           technologyName: technology.technologyName,
-         }))
-       : [];
-   };
+    return selectedIndustryData
+      ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
+          sectorName: selectedSectorData.sectorName,
+          industryName: selectedIndustryData.industryName,
+          technologyName: technology.technologyName,
+        }))
+      : [];
+  };
 
-   const getInitialIndustryData = () => {
+  const getInitialIndustryData = () => {
     const selectedSectorData = sectors.find(
       (sector) => sector.sectorName === selectedSector
     );
@@ -59,7 +59,7 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
   const radiusYOuter = 330;
   const radiusXInner = 200;
   const radiusYInner = 220;
-  
+
   useEffect(() => {
     const handleMouseMoveOuter = (event) => {
       if (isDraggingOuter) {
@@ -96,7 +96,6 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
     };
   }, [isDraggingOuter, isDraggingInner, lastMouseYOuter, lastMouseYInner]);
 
-  // Handle mouse move events for outer circle (upper)
   const handleMouseMoveHandlerOuter = (event) => {
     const { clientY } = event;
     if (lastMouseYOuter !== null) {
@@ -107,7 +106,6 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
     setLastMouseYOuter(clientY);
   };
 
-  // Handle mouse move events for inner circle (lower)
   const handleMouseMoveHandlerInner = (event) => {
     const { clientY } = event;
     if (lastMouseYInner !== null) {
@@ -118,7 +116,6 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
     setLastMouseYInner(clientY);
   };
 
-  // Handle mouse down events for outer circle (upper)
   const handleMouseDownOuter = (event) => {
     if (
       circleRefOuter.current &&
@@ -129,7 +126,6 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
     }
   };
 
-  // Handle mouse down events for inner circle (lower)
   const handleMouseDownInner = (event) => {
     if (
       circleRefInner.current &&
@@ -140,68 +136,66 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
     }
   };
 
-  // Handle dot click events for outer circle (upper)
   const handleDotClickOuter = (dotIndex) => {
-    const normalizedAngleOffset =
+    const normalizedAngleOuterOffset =
       ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-
-    const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+    const currentOuterCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
+        totalOuterDots) %
+        totalOuterDots
     );
-
-    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
-    const angleDifference = shortestDistance * anglePerDot;
-
-    setAngleOffsetOuter((prevOffset) => prevOffset - angleDifference);
-
-    console.log("sectorName", outerCircleData[dotIndex].sectorName);
+    const outerDistance =
+      (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
+    const shortestOuterDistance =
+      outerDistance <= totalOuterDots / 2
+        ? outerDistance
+        : outerDistance - totalOuterDots;
+    const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
+    setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
   };
 
-  // Handle dot click events for inner circle (lower)
   const handleDotClickInner = (dotIndex) => {
-    const normalizedAngleOffset =
+    const normalizedAngleInnerOffset =
       ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-
-    const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+    const currentInnerCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
+        totalInnerDots) %
+        totalInnerDots
     );
-
-    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
-    const angleDifference = shortestDistance * anglePerDot;
-
-    setAngleOffsetInner((prevOffset) => prevOffset - angleDifference);
-
-    console.log("sectorName", outerCircleData[dotIndex].sectorName);
+    const innerDistance =
+      (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
+    const shortestInnerDistance =
+      innerDistance <= totalInnerDots / 2
+        ? innerDistance
+        : innerDistance - totalInnerDots;
+    const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
+    setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
   };
 
-  // Calculate positions for outer circle (upper)
-  const dotsOuter = Array.from({ length: totalDots }).map((_, index) => {
-    const angle = (index / totalDots) * Math.PI * 2 + angleOffsetOuter;
-    const x = radiusXOuter * Math.sin(angle);
-    const y = radiusYOuter * Math.cos(angle);
+  // Rendering dots for both outer and inner circles
+  const dotsOuter = Array.from({ length: totalOuterDots }).map((_, index) => {
+    const outerAngle =
+      (index / totalOuterDots) * Math.PI * 2 + angleOffsetOuter;
+    const x = radiusXOuter * Math.sin(outerAngle);
+    const y = radiusYOuter * Math.cos(outerAngle);
     return { x, y, index };
   });
 
-  // Calculate positions for inner circle (lower)
-  const dotsInner = Array.from({ length: totalDots }).map((_, index) => {
-    const angle = (index / totalDots) * Math.PI * 2 + angleOffsetInner;
-    const x = radiusXInner * Math.sin(angle);
-    const y = radiusYInner * Math.cos(angle);
+  const dotsInner = Array.from({ length: totalInnerDots }).map((_, index) => {
+    const innerAngle =
+      (index / totalInnerDots) * Math.PI * 2 + angleOffsetInner;
+    const x = radiusXInner * Math.sin(innerAngle);
+    const y = radiusYInner * Math.cos(innerAngle);
     return { x, y, index };
   });
 
-  // Get center indexes
   const centerIndexOuter = Math.round(
-    ((Math.PI / 2 - angleOffsetOuter) / anglePerDot + totalDots) % totalDots
+    ((Math.PI / 2 - angleOffsetOuter) / anglePerOuterDot + totalOuterDots) %
+      totalOuterDots
   );
   const centerIndexInner = Math.round(
-    ((Math.PI / 2 - angleOffsetInner) / anglePerDot + totalDots) % totalDots
+    ((Math.PI / 2 - angleOffsetInner) / anglePerInnerDot + totalInnerDots) %
+      totalInnerDots
   );
 
   return (
@@ -234,40 +228,34 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
           return (
             <div
               key={`outer-${dot.index}`}
-              className="absolute flex flex-col items-center justify-center cursor-pointer"
+              className="absolute flex flex-row gap-2 items-center justify-center cursor-pointer"
+              onClick={() => handleDotClickOuter(dot.index)}
               style={{
                 left: `${dot.x}px`,
                 top: `${dot.y - 10}px`,
                 userSelect: "none",
               }}
-              onClick={() => handleDotClickOuter(dot.index)}
             >
               <div
-                className={`flex flex-row items-center justify-center ${
-                  isMiddleDotOuter ? "border-blue-500" : "border-black"
+                className={`rounded-full ${
+                  isMiddleDotOuter
+                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                    : "bg-[#D8D8D8]"
                 }`}
+                style={{
+                  width: isMiddleDotOuter ? "40px" : "32px",
+                  height: isMiddleDotOuter ? "40px" : "32px",
+                }}
+              />
+              <div
+                className={`text-sm w-32 ${
+                  isMiddleDotOuter
+                    ? "font-semibold text-base text-[#4C4C4C]"
+                    : "text-[#797979]"
+                }`}
+                style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                <div
-                  className={`rounded-full ${
-                    isMiddleDotOuter
-                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
-                      : "bg-[#D8D8D8]"
-                  }`}
-                  style={{
-                    width: isMiddleDotOuter ? "40px" : "32px",
-                    height: isMiddleDotOuter ? "40px" : "32px",
-                  }}
-                ></div>
-                <div
-                  className={`text-sm w-32 ${
-                    isMiddleDotOuter
-                      ? "font-semibold text-base text-[#4C4C4C]"
-                      : "text-[#797979]"
-                  }`}
-                  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
-                >
-                  {outerCircleData[dot.index].sectorName || "N/A"}
-                </div>
+                {outerCircleData[dot.index].technologyName || "N/A"}
               </div>
             </div>
           );
@@ -284,40 +272,34 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry}) => {
           return (
             <div
               key={`inner-${dot.index}`}
-              className="absolute flex flex-col items-center justify-center cursor-pointer"
+              className="absolute flex flex-row gap-2 items-center justify-center cursor-pointer"
+              onClick={() => handleDotClickInner(dot.index)}
               style={{
                 left: `${dot.x}px`,
                 top: `${dot.y - 10}px`,
                 userSelect: "none",
               }}
-              onClick={() => handleDotClickInner(dot.index)}
             >
               <div
-                className={`flex flex-row gap-2 items-center justify-center ${
-                  isMiddleDotInner ? "border-blue-500" : "border-black"
+                className={`rounded-full ${
+                  isMiddleDotInner
+                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                    : "bg-[#D8D8D8]"
                 }`}
+                style={{
+                  width: isMiddleDotInner ? "28px" : "20px",
+                  height: isMiddleDotInner ? "28px" : "20px",
+                }}
+              />
+              <div
+                className={`w-24 ${
+                  isMiddleDotInner
+                    ? "font-semibold text-[12px] text-[#4C4C4C]"
+                    : "text-[#797979] text-[12px]"
+                }`}
+                style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                <div
-                  className={`rounded-full ${
-                    isMiddleDotInner
-                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
-                      : "bg-[#D8D8D8]"
-                  }`}
-                  style={{
-                    width: isMiddleDotInner ? "28px" : "20px",
-                    height: isMiddleDotInner ? "28px" : "20px",
-                  }}
-                ></div>
-                <div
-                  className={`w-24 ${
-                    isMiddleDotInner
-                      ? "font-semibold text-[12px] text-[#4C4C4C]"
-                      : "text-[#797979] text-[12px]"
-                  }`}
-                  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
-                >
-                  {outerCircleData[dot.index].sectorName || "N/A"}
-                </div>
+                {innerCircleData[dot.index].industryName || "N/A"}
               </div>
             </div>
           );
