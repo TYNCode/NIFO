@@ -35,7 +35,7 @@ const Usecase = ({
       console.log("No use cases found");
       return [];
     }
-    
+
     return technology.useCases.map((usecase) => usecase.useCase);
   };
 

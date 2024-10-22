@@ -5,12 +5,7 @@ import StartupsWeb from "./StartupsWeb";
 import Usecase from "./Usecase";
 import StartupDetailsWeb from "./StartupDetailsWeb";
 
-const WebUsecases = ({
-  selectedIndustry,
-  selectedSector,
-  selectedTechnology,
-  handleGoSector,
-}) => {
+const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , selectedTechnology, setSelectedTechnology}) => {
   const [currentView, setCurrentView] = useState("usecase");
   const [selectedEcosystem, setSelectedEcosystem] = useState(null);
 
@@ -35,19 +30,25 @@ const WebUsecases = ({
     setCurrentView("usecase");
   };
 
+  // Handle technology dot click
+  const handleTechnologyClick = (technology) => {
+    setSelectedTechnology(technology); // Update selected technology
+  };
+
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
       <WebTechUsecase
         selectedIndustry={selectedIndustry}
         selectedSector={selectedSector}
         handleGoSector={handleGoSector}
+        onTechnologyClick={handleTechnologyClick} // Pass handler to WebTechUsecase
       />
 
       {currentView === "usecase" && (
         <Usecase
           selectedSector={selectedSector}
           onSelectUsecase={handleSelectUsecase}
-          selectedTechnology={selectedTechnology}
+          selectedTechnology={selectedTechnology} // Pass the updated selectedTechnology
           selectedIndustry={selectedIndustry}
         />
       )}

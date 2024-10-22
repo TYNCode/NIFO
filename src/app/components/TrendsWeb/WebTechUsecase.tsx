@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) => {
+const WebTechUsecase = ({
+  selectedSector,
+  selectedIndustry: propSelectedIndustry, 
+  handleGoSector,
+  onTechnologyClick
+}) => {
   const sectors = sectorData.sectors;
+
+  const [selectedIndustry, setSelectedIndustry] = useState(propSelectedIndustry);
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
@@ -32,12 +39,8 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
       : [];
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialTechnologyData()
-  );
-  const [innerCircleData, setInnerCircleData] = useState(
-    getInitialSubSectorsData()
-  );
+  const [outerCircleData, setOuterCircleData] = useState([]);
+  const [innerCircleData, setInnerCircleData] = useState([]);
 
   const totalOuterDots = outerCircleData.length;
   const totalInnerDots = innerCircleData.length;
@@ -58,6 +61,17 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
   const radiusYOuter = 330;
   const radiusXInner = 200;
   const radiusYInner = 220;
+
+  useEffect(() => {
+    setOuterCircleData(getInitialTechnologyData());
+    setInnerCircleData(getInitialSubSectorsData());
+  }, [selectedSector, selectedIndustry]);
+
+  useEffect(() => {
+    if (propSelectedIndustry) {
+      setSelectedIndustry(propSelectedIndustry);
+    }
+  }, [propSelectedIndustry]);
 
   useEffect(() => {
     const handleMouseMoveOuter = (event) => {
@@ -135,13 +149,32 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
     }
   };
 
+  const handleDotClickInner = (dotIndex) => {
+    const normalizedAngleInnerOffset =
+      ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const currentInnerCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
+        totalInnerDots) % totalInnerDots
+    );
+    const innerDistance =
+      (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
+    const shortestInnerDistance =
+      innerDistance <= totalInnerDots / 2
+        ? innerDistance
+        : innerDistance - totalInnerDots;
+    const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
+    setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
+
+    const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
+    setSelectedIndustry(newSelectedIndustry); 
+  };
+
   const handleDotClickOuter = (dotIndex) => {
     const normalizedAngleOuterOffset =
       ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentOuterCenterIndex = Math.round(
       ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
-        totalOuterDots) %
-        totalOuterDots
+        totalOuterDots) % totalOuterDots
     );
     const outerDistance =
       (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
@@ -153,25 +186,6 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
     setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
   };
 
-  const handleDotClickInner = (dotIndex) => {
-    const normalizedAngleInnerOffset =
-      ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-    const currentInnerCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
-        totalInnerDots) %
-        totalInnerDots
-    );
-    const innerDistance =
-      (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
-    const shortestInnerDistance =
-      innerDistance <= totalInnerDots / 2
-        ? innerDistance
-        : innerDistance - totalInnerDots;
-    const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
-    setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
-  };
-
-  // Rendering dots for both outer and inner circles
   const dotsOuter = Array.from({ length: totalOuterDots }).map((_, index) => {
     const outerAngle =
       (index / totalOuterDots) * Math.PI * 2 + angleOffsetOuter;
@@ -202,7 +216,10 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
       <div className="relative">
         <img src="/round1.png" alt="Background" className="h-[250px]" />
         <div className="absolute inset-0  left-2 right-2 flex items-center justify-center">
-          <div className="text-sm font-semibold text-gray-700 cursor-pointer z-10" onClick={handleGoSector}>
+          <div
+            className="text-sm font-semibold text-gray-700 cursor-pointer z-10"
+            onClick={handleGoSector}
+          >
             {selectedSector}
           </div>
         </div>
@@ -260,7 +277,7 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) =>
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {outerCircleData[dot.index].technologyTrend || "N/A"}
+                {outerCircleData[dot.index]?.technologyTrend || "N/A"}
               </div>
             </div>
           );

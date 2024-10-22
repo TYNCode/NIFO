@@ -2,31 +2,33 @@ import React, { useState, useEffect } from "react";
 import WebSubIndustries from "./WebSubIndustries";
 import WebTechnology from "./WebTechnology";
 
-const WebInCombined = ({ onWebTechnologyClick, selectedIndustry, selectedSector, handleGoSector }) => {
-  const [showCircleTwo, setShowCircleTwo] = useState(false);
-
-
-  const handleDotClick = () => {
-    setShowCircleTwo(true);
+const WebInCombined = ({
+  onWebTechnologyClick,
+  selectedSector,
+  handleGoSector,
+  selectedIndustry,
+  setSelectedIndustry
+}) => {
+ 
+  const handleDotClick = (subSectorName) => {
+    setSelectedIndustry(subSectorName);
   };
-
-  useEffect(() => {
-    console.log("Selected Industry in WebInCombined:", selectedIndustry);
-  }, [selectedIndustry]); 
 
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
-      <WebSubIndustries 
-      onDotClick={handleDotClick} 
-      selectedIndustry={selectedIndustry}
-      selectedSector={selectedSector}
-      handleGoSector={handleGoSector}
+      <WebSubIndustries
+        onDotClick={handleDotClick} 
+        selectedIndustry={selectedIndustry} 
+        selectedSector={selectedSector}
+        handleGoSector={handleGoSector}
       />
-      <WebTechnology 
-      onDotClick={onWebTechnologyClick} 
-      selectedSector={selectedSector}
-      selectedIndustry={selectedIndustry}
-      />
+      {selectedIndustry && (
+        <WebTechnology
+          onDotClick={onWebTechnologyClick}
+          selectedSector={selectedSector}
+          selectedIndustry={selectedIndustry} 
+        />
+      )}
     </div>
   );
 };
