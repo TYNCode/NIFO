@@ -338,12 +338,12 @@ export default function HomePage() {
               open={open}
               handleToggleLeftFrame={handleToggleLeftFrameNavbar}
             />
-            <IoShareSocialOutline
+            {/* <IoShareSocialOutline
               size={24}
               className="ml-4 cursor-pointer"
               onClick={handleShareClick}
               title="Share Chat Session"
-            />
+            /> */}
           </div>
         </div>
 

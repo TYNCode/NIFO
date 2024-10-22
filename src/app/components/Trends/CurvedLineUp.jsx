@@ -4,16 +4,12 @@ import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 const CurvedLineUp = ({ selectedSector }) => {
   const radius = 164; // Radius of the curve
   const centerX = 168; // Center the topmost dot horizontally
-  const centerY = 12; // Y position for the topmost dot (you can adjust this for your design)
-
-  // Extract sector names from the JSON data
+  const centerY = 12; 
   const sectorNames = sectorsData.sectors.map((sector) => sector.sectorName);
-
-  // Define the fixed positions for the three dots along the curve
   const fixedAngles = [
-    -Math.PI / 2, // Top center (90°)
-    -Math.PI / 4, // Middle right (45°)
-    0, // Bottom right (0°)
+    -Math.PI / 2, 
+    -Math.PI / 4, 
+    0, 
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,10 +17,7 @@ const CurvedLineUp = ({ selectedSector }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const middleIndex = Math.floor(fixedAngles.length / 2);
 
-  // Find the index of the selected sector
   const selectedIndex = sectorNames.indexOf(selectedSector);
-
-  // Determine the sectors to display
   const displayedSectors =
     selectedIndex !== -1
       ? [
