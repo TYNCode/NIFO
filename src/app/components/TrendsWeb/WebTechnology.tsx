@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/sector_data.json";
+import sectorData from "../../data/data_sector.json";
 
 const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const sectors = sectorData.sectors;
 
   const getInitialTechnologyData = () => {
-    const selectedSectorData = sectors.find(
-      (sector) => sector.sectorName === selectedSector
-    );
-    const selectedIndustryData = selectedSectorData?.industries.find(
-      (industry) => industry.industryName === selectedIndustry
-    );
+     const selectedSectorData = sectors.find(
+       (sector) => sector.sector === selectedSector
+     );
+    const selectedIndustryData =
+      selectedSectorData?.subSectors[selectedIndustry];
 
-    return selectedIndustryData
-      ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
-          sectorName: selectedSectorData.sectorName,
-          industryName: selectedIndustryData.industryName,
-          technologyName: technology.technologyName,
-        }))
-      : [];
+    if (!selectedIndustryData) return [];
+
+    return selectedIndustryData.map((technology) => ({
+      sectorName: selectedSectorData.sector,
+      industryName: selectedIndustry,
+      technologyTrend: technology.technologyTrend,
+      useCases: technology.useCases.slice(0, 2), 
+    }));
   };
 
   const [outerCircleData, setOuterCircleData] = useState(
@@ -93,7 +93,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
     if (onDotClick) {
-      onDotClick(outerCircleData[dotIndex].technologyName);
+      onDotClick(outerCircleData[dotIndex].technologyTrend);
     }
   };
 
@@ -159,7 +159,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {outerCircleData[dot.index].technologyName || "N/A"}
+                {outerCircleData[dot.index]?.technologyTrend || "N/A"}
               </div>
             </div>
           </div>

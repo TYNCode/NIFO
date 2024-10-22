@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/sector_data.json";
+import sectorData from "../../data/data_sector.json"; // Ensure JSON file path is correct
 
-const FirstRightCircle = ({ selectedSector , onDotClick}) => {
+const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const sectors = sectorData.sectors;
-  const getInitialIndustryData = () => {
+
+  const getInitialSubSectorData = () => {
     const selectedSectorData = sectors.find(
-      (sector) => sector.sectorName === selectedSector
+      (sector) => sector.sector === selectedSector
     );
-    return selectedSectorData
-      ? selectedSectorData.industries.slice(0, 8).map((industry) => ({
-          sectorName: selectedSectorData.sectorName,
-          industryName: industry.industryName,
-          technologies: industry.technologies || [],
-        }))
-      : [];
+
+    if (!selectedSectorData) return [];
+    return Object.keys(selectedSectorData.subSectors).map((subSectorName) => ({
+      subSectorName,
+      technologyTrends: selectedSectorData.subSectors[subSectorName],
+    }));
   };
 
   const [outerCircleData, setOuterCircleData] = useState(
-    getInitialIndustryData()
+    getInitialSubSectorData()
   );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
@@ -30,29 +30,8 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
   const radiusY = 320;
 
   useEffect(() => {
-    setOuterCircleData(getInitialIndustryData());
+    setOuterCircleData(getInitialSubSectorData());
   }, [selectedSector]);
-
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      if (isDragging) {
-        handleMouseMoveHandler(event);
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      setLastMouseY(null);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, lastMouseY]);
 
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
@@ -62,13 +41,6 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
       setAngleOffset((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
     setLastMouseY(clientY);
-  };
-
-  const handleMouseDown = (event) => {
-    if (circleRef.current && circleRef.current.contains(event.target)) {
-      setIsDragging(true);
-      setLastMouseY(event.clientY);
-    }
   };
 
   const handleDotClick = (dotIndex) => {
@@ -87,8 +59,8 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
-     if (onDotClick) {
-      onDotClick(outerCircleData[dotIndex].industryName);
+    if (onDotClick) {
+      onDotClick(outerCircleData[dotIndex].subSectorName);
     }
   };
 
@@ -107,7 +79,9 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
     <div
       className="flex items-center justify-end h-screen w-1/2 relative"
       ref={circleRef}
-      onMouseDown={handleMouseDown}
+      onMouseDown={() => setIsDragging(true)}
+      onMouseUp={() => setIsDragging(false)}
+      onMouseMove={(e) => isDragging && handleMouseMoveHandler(e)}
       onClick={(event) => event.stopPropagation()}
     >
       <img src="/round2.png" alt="Background" className="h-[450px]" />
@@ -124,15 +98,11 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer "
+            className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               right: `${dot.x}px`,
               top: `${dot.y + 346}px`,
               userSelect: "none",
-            }}
-            onMouseDown={() => {
-              setIsDragging(true);
-              setLastMouseY(null);
             }}
             onClick={() => handleDotClick(dot.index)}
           >
@@ -145,7 +115,7 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
               <div
                 className={`rounded-full flex items-center justify-center ${
                   isMiddleDot
-                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2 "
+                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
                     : "bg-[#D8D8D8]"
                 }  ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
                 style={{ flexShrink: 0 }}
@@ -158,7 +128,7 @@ const FirstRightCircle = ({ selectedSector , onDotClick}) => {
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {outerCircleData[dot.index].industryName || "N/A"}
+                {outerCircleData[dot.index].subSectorName || "N/A"}
               </div>
             </div>
           </div>

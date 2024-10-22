@@ -3,6 +3,7 @@ import WebTechUsecase from "./WebTechUsecase";
 import EcosystemWeb from "./EcosystemWeb";
 import StartupsWeb from "./StartupsWeb";
 import Usecase from "./Usecase";
+import StartupDetailsWeb from "./StartupDetailsWeb";
 
 const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) => {
   const [currentView, setCurrentView] = useState("usecase"); 
@@ -21,6 +22,10 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
     setCurrentView("ecosystem"); 
   };
 
+  const handleStartupDetails = ()=>{
+    setCurrentView("startupdetail");
+  }
+
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
       <WebTechUsecase
@@ -30,8 +35,10 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
 
       {currentView === "usecase" && (
         <Usecase
+          selectedSector={selectedSector}
           onSelectUsecase={handleSelectUsecase}
           selectedTechnology={selectedTechnology}
+          selectedIndustry={selectedIndustry}
         />
       )}
 
@@ -43,7 +50,15 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
       )}
 
       {currentView === "startups" && (
-        <StartupsWeb handleEcosystem={handleExploreUsecases} />
+        <StartupsWeb
+          handleEcosystem={handleExploreUsecases}
+          handleExploreClick={handleStartupDetails}
+          selectedEcosystem={selectedEcosystem}
+        />
+      )}
+
+      {currentView === "startupdetail" && (
+        <StartupDetailsWeb selectedEcosystem={selectedEcosystem} />
       )}
     </div>
   );
