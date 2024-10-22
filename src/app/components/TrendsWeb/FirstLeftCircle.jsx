@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const FirstLeftCircle = ({ onDotClick }) => {
+const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
@@ -98,7 +98,16 @@ const FirstLeftCircle = ({ onDotClick }) => {
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
-      <img src="/round1.png" alt="Background" className="h-[450px]" />
+      <div className="relative inline-block">
+        <img src="/round1.png" alt="Background" className="h-[450px]" />
+        <div
+          className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10"
+          onClick={handleGoSector}
+        >
+          SECTOR
+        </div>
+      </div>
+
       <div className="absolute left-8">
         <img
           src="innercircle1.png"

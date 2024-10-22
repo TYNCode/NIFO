@@ -5,7 +5,8 @@ const WebTechUsecase = ({
   selectedSector,
   selectedIndustry: propSelectedIndustry, 
   handleGoSector,
-  onTechnologyClick
+  onTechnologyClick,
+  selectedTechnology
 }) => {
   const sectors = sectorData.sectors;
 
@@ -169,22 +170,27 @@ const WebTechUsecase = ({
     setSelectedIndustry(newSelectedIndustry); 
   };
 
-  const handleDotClickOuter = (dotIndex) => {
-    const normalizedAngleOuterOffset =
-      ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-    const currentOuterCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
-        totalOuterDots) % totalOuterDots
-    );
-    const outerDistance =
-      (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
-    const shortestOuterDistance =
-      outerDistance <= totalOuterDots / 2
-        ? outerDistance
-        : outerDistance - totalOuterDots;
-    const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
-    setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
-  };
+const handleDotClickOuter = (dotIndex) => {
+  const normalizedAngleOuterOffset =
+    ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const currentOuterCenterIndex = Math.round(
+    ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
+      totalOuterDots) %
+      totalOuterDots
+  );
+  const outerDistance =
+    (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
+  const shortestOuterDistance =
+    outerDistance <= totalOuterDots / 2
+      ? outerDistance
+      : outerDistance - totalOuterDots;
+  const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
+  setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
+
+  const selectedTechnologyData = outerCircleData[dotIndex];
+  onTechnologyClick(selectedTechnologyData);
+};
+
 
   const dotsOuter = Array.from({ length: totalOuterDots }).map((_, index) => {
     const outerAngle =
