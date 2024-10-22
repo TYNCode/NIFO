@@ -59,7 +59,7 @@ const WebTechUsecase = ({
   const circleRefOuter = useRef(null);
   const circleRefInner = useRef(null);
   const radiusXOuter = 330;
-  const radiusYOuter = 330;
+  const radiusYOuter = 325;
   const radiusXInner = 170;
   const radiusYInner = 170;
 
@@ -218,7 +218,7 @@ const handleDotClickOuter = (dotIndex) => {
   );
 
   return (
-    <div className="flex items-center justify-start h-screen w-1/2 relative">
+    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative">
       <div className="relative">
         <img src="/round1.png" alt="Background" className="h-[250px]" />
         <div className="absolute inset-0  left-2 right-2 flex items-center justify-center">
@@ -260,7 +260,7 @@ const handleDotClickOuter = (dotIndex) => {
               onClick={() => handleDotClickOuter(dot.index)}
               style={{
                 left: `${dot.x}px`,
-                top: `${dot.y - 10}px`,
+                top: `${dot.y - 16}px`,
                 userSelect: "none",
               }}
             >

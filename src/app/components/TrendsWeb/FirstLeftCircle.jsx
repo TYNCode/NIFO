@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
+const FirstLeftCircle = ({ onDotClick}) => {
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
@@ -18,8 +18,8 @@ const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
   const [lastMouseY, setLastMouseY] = useState(null);
   const circleRef = useRef(null);
 
-  const radiusX = 330;
-  const radiusY = 325;
+  const radiusX = 290;
+  const radiusY = 290;
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -93,17 +93,14 @@ const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
 
   return (
     <div
-      className="flex items-center justify-start h-screen w-1/2 relative"
+      className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
       ref={circleRef}
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
-        <img src="/round1.png" alt="Background" className="h-[450px]" />
-        <div
-          className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10"
-          onClick={handleGoSector}
-        >
+        <img src="/round1.png" alt="Background" className="h-[400px]" />
+        <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR
         </div>
       </div>
@@ -112,7 +109,7 @@ const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
         <img
           src="innercircle1.png"
           alt="Inner Circle"
-          className="h-[650px] w-80"
+          className="h-[580px] "
         />
       </div>
       {dots.map((dot) => {
@@ -124,7 +121,7 @@ const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               left: `${dot.x}px`,
-              top: `${dot.y + 346}px`,
+              top: `${dot.y + 315}px`,
               userSelect: "none",
             }}
             onMouseDown={() => {

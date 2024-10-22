@@ -4,7 +4,6 @@ import sectorData from "../../data/data_sector.json";
 const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handleGoSector }) => {
   const sectors = sectorData.sectors;
 
-  // Get initial subSector data for the selected sector
   const getInitialSubSectorData = () => {
     const selectedSectorData = sectors.find(
       (sector) => sector.sector === selectedSector
@@ -35,8 +34,8 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handle
   const [lastMouseY, setLastMouseY] = useState(null);
   const circleRef = useRef(null);
 
-  const radiusX = 330;
-  const radiusY = 325;
+  const radiusX = 290;
+  const radiusY = 290;
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -111,30 +110,31 @@ const handleDotClick = (dotIndex) => {
 
   return (
     <div
-      className="flex items-center justify-start h-screen w-1/2 relative"
+      className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
       ref={circleRef}
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
-      <div className="relative">
-        <img src="/round1.png" alt="Background" className="h-[450px]" />
+      <div className="relative inline-block">
+        <img src="/round1.png" alt="Background" className="h-[400px]" />
         <div className="absolute inset-0  left-6 flex items-center justify-center">
-          <div className="text-lg font-semibold text-gray-700 cursor-pointer z-10" onClick={handleGoSector}>
+          <div
+            className="text-lg font-semibold text-gray-700 cursor-pointer z-10"
+            onClick={handleGoSector}
+          >
             {selectedSector}
           </div>
         </div>
       </div>
 
-      {/* Inner Circle */}
       <div className="absolute left-8">
         <img
           src="innercircle1.png"
           alt="Inner Circle"
-          className="h-[650px] w-80"
+          className="h-[580px]"
         />
       </div>
 
-      {/* Dots for subSectors */}
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
 
@@ -144,7 +144,7 @@ const handleDotClick = (dotIndex) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               left: `${dot.x}px`,
-              top: `${dot.y + 346}px`,
+              top: `${dot.y + 320}px`,
               userSelect: "none",
             }}
             onMouseDown={() => {
