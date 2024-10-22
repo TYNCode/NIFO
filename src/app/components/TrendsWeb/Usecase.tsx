@@ -8,9 +8,6 @@ const Usecase = ({
   selectedTechnology,
 }) => {
   const [usecases, setUsecases] = useState([]);
-
-  console.log("All details bruh" ,selectedSector, " summah summah", selectedIndustry,"spaces indha",  selectedTechnology)
-
   useEffect(() => {
     if (selectedSector && selectedIndustry && selectedTechnology) {
       const sector = sectorData.sectors.find(
@@ -60,14 +57,14 @@ const Usecase = ({
   return (
     <div>
       <div className="flex flex-col gap-8">
-        <div className="border flex mx-auto w-max border-t-0 rounded-md px-8 py-3 -mt-2 border-blue-500">
+        <div className="border flex mx-auto w-max border-t-0 rounded-md px-8 py-3 bg-blue shadow-md bg-blue-400 text-white font-medium text-lg border-blue-400">
           Usecases
         </div>
         <div className="flex flex-col gap-y-12 justify-center items-center">
           {usecases.length > 0 ? (
             usecases.map((usecase, index) => (
               <div
-                className="bg-white shadow-md rounded-sm shadow-gray-300 p-4 w-[500px] cursor-pointer"
+                className="bg-white shadow-md rounded-sm shadow-gray-300 p-4 w-[500px] cursor-pointer hover:text-white hover:bg-blue-400"
                 key={index}
                 onClick={() => handleUsecaseClick(usecase)}
               >
