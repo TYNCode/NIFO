@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const FirstLeftCircle = ({ onDotClick }) => {
+const FirstLeftCircle = ({ onDotClick, handleGoSector }) => {
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
