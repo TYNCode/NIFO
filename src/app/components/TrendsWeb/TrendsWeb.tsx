@@ -44,6 +44,7 @@ const TrendsWeb = () => {
             selectedSector={selectedSector}
             selectedTechnology={selectedTechnology}
             handleGoSector={handleGoSector}
+            setSelectedTechnology={setSelectedTechnology}
           />
         ) : (
           <WebInCombined
@@ -51,6 +52,7 @@ const TrendsWeb = () => {
             selectedIndustry={selectedIndustry}
             selectedSector={selectedSector}
             handleGoSector={handleGoSector}
+            setSelectedIndustry={setSelectedIndustry}
           />
         )
       ) : (

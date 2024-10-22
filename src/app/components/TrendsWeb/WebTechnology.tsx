@@ -38,6 +38,8 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
     setOuterCircleData(getInitialTechnologyData());
   }, [selectedSector, selectedIndustry]);
 
+  console.log("selected Detailas:", selectedSector, selectedIndustry);
+
   useEffect(() => {
     const handleMouseMove = (event) => {
       if (isDragging) {
