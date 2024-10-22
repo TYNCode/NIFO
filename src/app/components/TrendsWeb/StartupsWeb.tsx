@@ -1,8 +1,9 @@
 import React from "react";
 import { FaGlobe } from "react-icons/fa";
 import sectorData from "../../data/data_sector.json";
+import { IoClose } from "react-icons/io5";
 
-const StartupsWeb = ({ handleEcosystem, selectedEcosystem , handleExploreClick }) => {
+const StartupsWeb = ({ handleEcosystem, selectedEcosystem , handleExploreClick , handleClose}) => {
   const findUseCaseData = (ecosystemName) => {
     for (const sector of sectorData.sectors) {
       for (const subSector in sector.subSectors) {
@@ -27,6 +28,9 @@ const StartupsWeb = ({ handleEcosystem, selectedEcosystem , handleExploreClick }
     <div className="mx-auto w-[400px] flex justify-center items-center h-screen">
       <div className="flex flex-col gap-8 justify-center items-center bg-white">
         <div className="relative flex flex-col justify-center items-center gap-8 mx-4 bg-blue-400 h-[200px] overflow-hidden">
+          <div className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10" onClick={handleClose}>
+            <IoClose size={23} color="white"/>
+          </div>
           <img
             src="ecosystembg.png"
             alt="Background"
@@ -55,7 +59,7 @@ const StartupsWeb = ({ handleEcosystem, selectedEcosystem , handleExploreClick }
                   <div className="flex flex-col gap-2">
                     <div className="font-medium">{startup.name}</div>
                     <div>{startup.description}</div>
-                    <div className="flex flex-row justify-center gap-2 items-center rounded-md p-1.5 border-2 border-black w-max" onClick={handleExploreClick}>
+                    <div className="flex flex-row justify-center gap-2 items-center rounded-md p-1.5 border-2 border-black w-max cursor-pointer" onClick={handleExploreClick}>
                       <div>Explore</div>
                       <div>
                         <FaGlobe />

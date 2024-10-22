@@ -11,46 +11,58 @@ const TrendsWeb = () => {
   const [showIndustryCircle, setShowIndustryCircle] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
+  const [currentCircleView, setCurrentCircleView] = useState("sector");
 
- 
-   const handleSectorClick = (sector) => {
-     setSelectedSector(sector);
-     setShowIndustryCircle(true);
-   };
+  const handleSectorClick = (sector) => {
+    setSelectedSector(sector);
+    setShowIndustryCircle(true);
+  };
 
   const handleWebCircleTwoClick = (industry) => {
-    setSelectedIndustry(industry); 
+    setSelectedIndustry(industry);
     setShowInCombined(true);
   };
 
   const handleWebTechnologyClick = (technology) => {
-    setSelectedTechnology(technology)
+    setSelectedTechnology(technology);
     setShowCircleThree(true);
+  };
+
+  const handleGoSector = () => {
+    setCurrentCircleView("sector");
+    setShowInCombined(false);
+    setShowCircleThree(false);
+    setShowIndustryCircle(false);
   };
 
   return (
     <div>
       {showInCombined ? (
         showCircleThree ? (
-          <WebUsecases 
-          selectedIndustry={selectedIndustry}
-          selectedSector = {selectedSector}
-          selectedTechnology={selectedTechnology}
+          <WebUsecases
+            selectedIndustry={selectedIndustry}
+            selectedSector={selectedSector}
+            selectedTechnology={selectedTechnology}
+            handleGoSector={handleGoSector}
           />
         ) : (
           <WebInCombined
             onWebTechnologyClick={handleWebTechnologyClick}
             selectedIndustry={selectedIndustry}
             selectedSector={selectedSector}
+            handleGoSector={handleGoSector}
           />
         )
       ) : (
-        <WebIndustries
-          onWebCircleTwoClick={handleWebCircleTwoClick}
-          handleSectorClick={handleSectorClick}
-          selectedSector={selectedSector}
-          showIndustryCircle={showIndustryCircle}
-        />
+        currentCircleView === "sector" && (
+          <WebIndustries
+            onWebCircleTwoClick={handleWebCircleTwoClick}
+            handleSectorClick={handleSectorClick}
+            selectedSector={selectedSector}
+            showIndustryCircle={showIndustryCircle}
+            currentCircleView={currentCircleView}
+          />
+        )
       )}
     </div>
   );

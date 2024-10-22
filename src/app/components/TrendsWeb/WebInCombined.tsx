@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import WebSubIndustries from "./WebSubIndustries";
 import WebTechnology from "./WebTechnology";
 
-const WebInCombined = ({ onWebTechnologyClick, selectedIndustry, selectedSector }) => {
+const WebInCombined = ({ onWebTechnologyClick, selectedIndustry, selectedSector, handleGoSector }) => {
   const [showCircleTwo, setShowCircleTwo] = useState(false);
+
 
   const handleDotClick = () => {
     setShowCircleTwo(true);
@@ -19,6 +20,7 @@ const WebInCombined = ({ onWebTechnologyClick, selectedIndustry, selectedSector 
       onDotClick={handleDotClick} 
       selectedIndustry={selectedIndustry}
       selectedSector={selectedSector}
+      handleGoSector={handleGoSector}
       />
       <WebTechnology 
       onDotClick={onWebTechnologyClick} 

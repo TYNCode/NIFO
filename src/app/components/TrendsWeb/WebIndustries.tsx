@@ -7,14 +7,18 @@ const WebIndustries = ({
   handleSectorClick,
   selectedSector,
   showIndustryCircle,
+  currentCircleView
 }) => {
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
-      <FirstLeftCircle onDotClick={handleSectorClick} />
+      {currentCircleView === "sector" && (
+        <FirstLeftCircle onDotClick={handleSectorClick} />
+      )}
+
       {showIndustryCircle && (
         <FirstRightCircle
           selectedSector={selectedSector}
-          onDotClick={onWebCircleTwoClick} 
+          onDotClick={onWebCircleTwoClick}
         />
       )}
     </div>
