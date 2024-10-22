@@ -117,7 +117,12 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
-      <img src="/round2.png" alt="Background" className="h-[450px]" />
+      <div className="relative inline-block">
+        <img src="/round2.png" alt="Background" className="h-[450px]" />
+        <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
+          INDUSTRY
+        </div>
+      </div>
       <div className="absolute right-8">
         <img
           src="innercircle2.png"

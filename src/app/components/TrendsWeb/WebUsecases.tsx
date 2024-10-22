@@ -41,14 +41,15 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
         selectedIndustry={selectedIndustry}
         selectedSector={selectedSector}
         handleGoSector={handleGoSector}
-        onTechnologyClick={handleTechnologyClick} // Pass handler to WebTechUsecase
+        onTechnologyClick={handleTechnologyClick} 
+        selectedTechnology={selectedTechnology}
       />
 
       {currentView === "usecase" && (
         <Usecase
           selectedSector={selectedSector}
           onSelectUsecase={handleSelectUsecase}
-          selectedTechnology={selectedTechnology} // Pass the updated selectedTechnology
+          selectedTechnology={selectedTechnology} 
           selectedIndustry={selectedIndustry}
         />
       )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/data_sector.json"; // Ensure JSON file path is correct
+import sectorData from "../../data/data_sector.json"; 
 
 const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const sectors = sectorData.sectors;
@@ -84,7 +84,14 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
       onMouseMove={(e) => isDragging && handleMouseMoveHandler(e)}
       onClick={(event) => event.stopPropagation()}
     >
-      <img src="/round2.png" alt="Background" className="h-[450px]" />
+      <div className="relative inline-block">
+        <img src="/round2.png" alt="Background" className="h-[450px]" />
+        <div
+          className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10"
+        >
+          INDUSTRY
+        </div>
+      </div>
       <div className="absolute right-8">
         <img
           src="innercircle2.png"
