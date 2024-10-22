@@ -60,8 +60,8 @@ const WebTechUsecase = ({
   const circleRefInner = useRef(null);
   const radiusXOuter = 330;
   const radiusYOuter = 330;
-  const radiusXInner = 200;
-  const radiusYInner = 220;
+  const radiusXInner = 170;
+  const radiusYInner = 170;
 
   useEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
@@ -187,10 +187,10 @@ const handleDotClickOuter = (dotIndex) => {
   const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
   setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
 
-  const selectedTechnologyData = outerCircleData[dotIndex];
+
+  const selectedTechnologyData = outerCircleData[dotIndex].technologyTrend;
   onTechnologyClick(selectedTechnologyData);
 };
-
 
   const dotsOuter = Array.from({ length: totalOuterDots }).map((_, index) => {
     const outerAngle =
@@ -242,7 +242,7 @@ const handleDotClickOuter = (dotIndex) => {
         <img
           src="innercircle1.png"
           alt="Inner Circle"
-          className="h-[450px] w-52"
+          className="h-[360px] w-44"
         />
       </div>
 

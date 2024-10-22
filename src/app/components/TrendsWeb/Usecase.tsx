@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const Usecase = ({
@@ -7,45 +7,55 @@ const Usecase = ({
   selectedIndustry,
   selectedTechnology,
 }) => {
-  const sectors = sectorData.sectors;
+  const [usecases, setUsecases] = useState([]);
 
-  const getInitialUsecaseData = () => {
-    const sector = sectors.find((s) => s.sector === selectedSector);
-    if (!sector) {
-      console.log("Sector not found");
-      return [];
+  console.log("All details bruh" ,selectedSector, " summah summah", selectedIndustry,"spaces indha",  selectedTechnology)
+
+  useEffect(() => {
+    if (selectedSector && selectedIndustry && selectedTechnology) {
+      const sector = sectorData.sectors.find(
+        (s) => s.sector === selectedSector
+      );
+      if (!sector) {
+        console.log("Sector not found");
+        setUsecases([]);
+        return;
+      }
+
+      const subSector = sector.subSectors[selectedIndustry];
+      if (!subSector) {
+        console.log("Sub-sector not found");
+        setUsecases([]);
+        return;
+      }
+
+      const technology = subSector.find(
+        (tech) => tech.technologyTrend === selectedTechnology
+      );
+
+      if (!technology) {
+        console.log("Technology not found");
+        setUsecases([]);
+        return;
+      }
+
+      if (!technology.useCases || technology.useCases.length === 0) {
+        console.log("No use cases found");
+        setUsecases([]);
+        return;
+      }
+
+      // Extracting the use cases
+      const fetchedUsecases = technology.useCases.map(
+        (usecase) => usecase.useCase
+      );
+      setUsecases(fetchedUsecases);
     }
-
-    const subSector = sector.subSectors[selectedIndustry];
-    if (!subSector) {
-      console.log("Sub-sector not found");
-      return [];
-    }
-
-    const technology = subSector.find(
-      (tech) => tech.technologyTrend === selectedTechnology
-    );
-
-    if (!technology) {
-      console.log("Technology not found");
-      return [];
-    }
-
-    if (!technology.useCases) {
-      console.log("No use cases found");
-      return [];
-    }
-
-    return technology.useCases.map((usecase) => usecase.useCase);
-  };
-
-  const usecases = getInitialUsecaseData();
+  }, [selectedSector, selectedIndustry, selectedTechnology]);
 
   const handleUsecaseClick = (usecase) => {
-    onSelectUsecase(usecase);
+    onSelectUsecase(usecase); // Notify the parent component of the selected use case
   };
-
-  console.log("usecases___>", usecases);
 
   return (
     <div>
