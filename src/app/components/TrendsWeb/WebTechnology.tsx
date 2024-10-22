@@ -31,8 +31,8 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const [lastMouseY, setLastMouseY] = useState(null);
   const circleRef = useRef(null);
 
-  const radiusX = 327;
-  const radiusY = 320;
+  const radiusX = 280;
+  const radiusY = 280;
 
   useEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
@@ -65,7 +65,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
     const { clientY } = event;
     if (lastMouseY !== null) {
       const deltaY = clientY - lastMouseY;
-      const rotationSpeed = 0.005;
+      const rotationSpeed = 0.0003;
       setAngleOffset((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
     setLastMouseY(clientY);
@@ -112,22 +112,22 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
 
   return (
     <div
-      className="flex items-center justify-end h-screen w-1/2 relative"
+      className="flex items-center justify-end h-[calc(100vh-64px)] w-1/2 relative"
       ref={circleRef}
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
-        <img src="/round2.png" alt="Background" className="h-[450px]" />
+        <img src="/round2.png" alt="Background" className="h-[400px]" />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           INDUSTRY
         </div>
       </div>
-      <div className="absolute right-8">
+      <div className="absolute right-12">
         <img
           src="innercircle2.png"
           alt="Inner Circle"
-          className="h-[650px] w-80"
+          className="h-[580px]"
         />
       </div>
       {dots.map((dot) => {
@@ -139,7 +139,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               right: `${dot.x}px`,
-              top: `${dot.y + 346}px`,
+              top: `${dot.y + 315}px`,
               userSelect: "none",
             }}
             onClick={() => handleDotClick(dot.index)}

@@ -10,7 +10,7 @@ const WebIndustries = ({
   currentCircleView
 }) => {
   return (
-    <div className="flex h-screen relative overflow-hidden select-none">
+    <div className="flex h-screen relative  overflow-hidden select-none">
       {currentCircleView === "sector" && (
         <FirstLeftCircle onDotClick={handleSectorClick} />
       )}
