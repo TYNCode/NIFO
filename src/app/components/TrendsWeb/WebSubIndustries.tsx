@@ -1,31 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/sector_data.json";
+import sectorData from "../../data/data_sector.json";
 
 const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
   const sectors = sectorData.sectors;
 
-  console.log("sleected datasss-->", selectedSector, selectedIndustry)
-  const getInitialIndustryData = () => {
-    const selectedSectorData = sectors.find(
-      (sector) => sector.sectorName === selectedSector
-    );
+  // Get initial subSector data for the selected sector
+  const getInitialSubSectorData = () => {
+     const selectedSectorData = sectors.find(
+       (sector) => sector.sector === selectedSector
+     );
     return selectedSectorData
-      ? selectedSectorData.industries.slice(0, 8).map((industry) => ({
-          sectorName: selectedSectorData.sectorName,
-          industryName: industry.industryName,
-          technologies: industry.technologies || [],
+      ? Object.keys(selectedSectorData.subSectors).map((subSectorName) => ({
+          subSectorName,
+          technologies: selectedSectorData.subSectors[subSectorName] || [],
         }))
       : [];
   };
 
   const [outerCircleData, setOuterCircleData] = useState(
-    getInitialIndustryData()
+    getInitialSubSectorData()
   );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
 
   const selectedIndustryIndex = outerCircleData.findIndex(
-    (data) => data.industryName === selectedIndustry
+    (data) => data.subSectorName === selectedIndustry
   );
 
   const [angleOffset, setAngleOffset] = useState(
@@ -94,7 +93,7 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
     if (onDotClick) {
-      onDotClick(outerCircleData[dotIndex].industryName);
+      onDotClick(outerCircleData[dotIndex].subSectorName);
     }
   };
 
@@ -164,7 +163,7 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {outerCircleData[dot.index].industryName || "N/A"}
+                {outerCircleData[dot.index].subSectorName || "N/A"}
               </div>
             </div>
           </div>

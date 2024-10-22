@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/sector_data.json";
+import sectorData from "../../data/data_sector.json";
 
 const FirstLeftCircle = ({ onDotClick }) => {
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
     return sectors.slice(0, 8).map((sector) => ({
-      sectorName: sector.sectorName,
+      sectorName: sector.sector,
     }));
   };
 

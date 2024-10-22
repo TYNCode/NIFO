@@ -1,35 +1,33 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/sector_data.json";
+import sectorData from "../../data/data_sector.json";
 
 const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
   const sectors = sectorData.sectors;
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
-      (sector) => sector.sectorName === selectedSector
+      (sector) => sector.sector === selectedSector
     );
-    const selectedIndustryData = selectedSectorData?.industries.find(
-      (industry) => industry.industryName === selectedIndustry
-    );
+    const selectedIndustryData =
+      selectedSectorData?.subSectors[selectedIndustry];
 
     return selectedIndustryData
-      ? selectedIndustryData.technologies.slice(0, 8).map((technology) => ({
-          sectorName: selectedSectorData.sectorName,
-          industryName: selectedIndustryData.industryName,
-          technologyName: technology.technologyName,
+      ? selectedIndustryData.map((technology) => ({
+          sectorName: selectedSectorData.sector,
+          industryName: selectedIndustry,
+          technologyTrend: technology.technologyTrend,
         }))
       : [];
   };
 
-  const getInitialIndustryData = () => {
+  const getInitialSubSectorsData = () => {
     const selectedSectorData = sectors.find(
-      (sector) => sector.sectorName === selectedSector
+      (sector) => sector.sector === selectedSector
     );
     return selectedSectorData
-      ? selectedSectorData.industries.slice(0, 8).map((industry) => ({
-          sectorName: selectedSectorData.sectorName,
-          industryName: industry.industryName,
-          technologies: industry.technologies || [],
+      ? Object.keys(selectedSectorData.subSectors).map((subSector) => ({
+          sectorName: selectedSectorData.sector,
+          subSectorName: subSector,
         }))
       : [];
   };
@@ -38,8 +36,9 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
     getInitialTechnologyData()
   );
   const [innerCircleData, setInnerCircleData] = useState(
-    getInitialIndustryData()
+    getInitialSubSectorsData()
   );
+
   const totalOuterDots = outerCircleData.length;
   const totalInnerDots = innerCircleData.length;
   const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
@@ -255,7 +254,7 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {outerCircleData[dot.index].technologyName || "N/A"}
+                {outerCircleData[dot.index].technologyTrend || "N/A"}
               </div>
             </div>
           );
@@ -299,7 +298,7 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
                 }`}
                 style={{ wordWrap: "break-word", whiteSpace: "normal" }}
               >
-                {innerCircleData[dot.index].industryName || "N/A"}
+                {innerCircleData[dot.index].subSectorName || "N/A"}
               </div>
             </div>
           );
