@@ -54,6 +54,8 @@ const Usecase = ({
     onSelectUsecase(usecase); // Notify the parent component of the selected use case
   };
 
+  console.log("usecases___>", usecases);
+
   return (
     <div>
       <div className="flex flex-col gap-8">
