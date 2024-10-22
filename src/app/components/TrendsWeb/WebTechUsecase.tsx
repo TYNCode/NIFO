@@ -171,8 +171,7 @@ const WebTechUsecase = ({
       ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentOuterCenterIndex = Math.round(
       ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
-        totalOuterDots) %
-        totalOuterDots
+        totalOuterDots) % totalOuterDots
     );
     const outerDistance =
       (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;

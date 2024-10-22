@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const WebSubIndustries = ({
-  selectedSector,
-  selectedIndustry,
-  onDotClick,
-  handleGoSector,
-}) => {
+const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handleGoSector }) => {
   const sectors = sectorData.sectors;
 
   const getInitialSubSectorData = () => {
@@ -94,26 +89,27 @@ const WebSubIndustries = ({
     }
   };
 
-  const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset =
-      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+const handleDotClick = (dotIndex) => {
+  const normalizedAngleOffset =
+    ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-    const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
-    );
+  const currentCenterIndex = Math.round(
+    ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+      totalDots
+  );
 
-    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
-    const angleDifference = shortestDistance * anglePerDot;
+  const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
+  const shortestDistance =
+    distance <= totalDots / 2 ? distance : distance - totalDots;
+  const angleDifference = shortestDistance * anglePerDot;
 
-    setAngleOffset((prevOffset) => prevOffset - angleDifference);
+  setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
-    if (onDotClick) {
-      onDotClick(outerCircleData[dotIndex].subSectorName);
-    }
-  };
+  if (onDotClick) {
+    onDotClick(outerCircleData[dotIndex].subSectorName); 
+  }
+};
+
 
   const dots = Array.from({ length: totalDots }).map((_, index) => {
     const angle = (index / totalDots) * Math.PI * 2 + angleOffset;
