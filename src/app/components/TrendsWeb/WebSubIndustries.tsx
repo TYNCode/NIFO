@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
+const WebSubIndustries = ({
+  selectedSector,
+  selectedIndustry,
+  onDotClick,
+  handleGoSector,
+}) => {
   const sectors = sectorData.sectors;
 
   // Get initial subSector data for the selected sector
   const getInitialSubSectorData = () => {
-     const selectedSectorData = sectors.find(
-       (sector) => sector.sector === selectedSector
-     );
+    const selectedSectorData = sectors.find(
+      (sector) => sector.sector === selectedSector
+    );
     return selectedSectorData
       ? Object.keys(selectedSectorData.subSectors).map((subSectorName) => ({
           subSectorName,
@@ -115,7 +120,19 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
-      <img src="/round1.png" alt="Background" className="h-[450px]" />
+      <div className="relative">
+        <img src="/round1.png" alt="Background" className="h-[450px]" />
+        <div className="absolute inset-0  left-6 flex items-center justify-center">
+          <div
+            className="text-lg font-semibold text-gray-700 cursor-pointer z-10"
+            onClick={handleGoSector}
+          >
+            {selectedSector}
+          </div>
+        </div>
+      </div>
+
+      {/* Inner Circle */}
       <div className="absolute left-8">
         <img
           src="innercircle1.png"
@@ -123,6 +140,8 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick }) => {
           className="h-[650px] w-80"
         />
       </div>
+
+      {/* Dots for subSectors */}
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
 

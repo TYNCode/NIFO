@@ -5,8 +5,13 @@ import StartupsWeb from "./StartupsWeb";
 import Usecase from "./Usecase";
 import StartupDetailsWeb from "./StartupDetailsWeb";
 
-const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) => {
-  const [currentView, setCurrentView] = useState("usecase"); 
+const WebUsecases = ({
+  selectedIndustry,
+  selectedSector,
+  selectedTechnology,
+  handleGoSector,
+}) => {
+  const [currentView, setCurrentView] = useState("usecase");
   const [selectedEcosystem, setSelectedEcosystem] = useState(null);
 
   const handleExploreEcosystem = () => {
@@ -18,19 +23,24 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
   };
 
   const handleSelectUsecase = (ecosystem) => {
-    setSelectedEcosystem(ecosystem); 
-    setCurrentView("ecosystem"); 
+    setSelectedEcosystem(ecosystem);
+    setCurrentView("ecosystem");
   };
 
-  const handleStartupDetails = ()=>{
+  const handleStartupDetails = () => {
     setCurrentView("startupdetail");
-  }
+  };
+
+  const handleClose = () => {
+    setCurrentView("usecase");
+  };
 
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
       <WebTechUsecase
         selectedIndustry={selectedIndustry}
         selectedSector={selectedSector}
+        handleGoSector={handleGoSector}
       />
 
       {currentView === "usecase" && (
@@ -46,6 +56,7 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
         <EcosystemWeb
           handleExploreClick={handleExploreEcosystem}
           selectedEcosystem={selectedEcosystem}
+          handleClose={handleClose}
         />
       )}
 
@@ -54,11 +65,15 @@ const WebUsecases = ({selectedIndustry , selectedSector , selectedTechnology}) =
           handleEcosystem={handleExploreUsecases}
           handleExploreClick={handleStartupDetails}
           selectedEcosystem={selectedEcosystem}
+          handleClose={handleClose}
         />
       )}
 
       {currentView === "startupdetail" && (
-        <StartupDetailsWeb selectedEcosystem={selectedEcosystem} />
+        <StartupDetailsWeb
+          selectedEcosystem={selectedEcosystem}
+          handleClose={handleClose}
+        />
       )}
     </div>
   );

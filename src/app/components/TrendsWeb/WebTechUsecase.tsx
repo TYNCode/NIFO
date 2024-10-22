@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
+const WebTechUsecase = ({ selectedSector, selectedIndustry, handleGoSector }) => {
   const sectors = sectorData.sectors;
 
   const getInitialTechnologyData = () => {
@@ -199,8 +199,14 @@ const WebTechUsecase = ({ selectedSector, selectedIndustry }) => {
 
   return (
     <div className="flex items-center justify-start h-screen w-1/2 relative">
-      <img src="/round1.png" alt="Background" className="h-[260px]" />
-
+      <div className="relative">
+        <img src="/round1.png" alt="Background" className="h-[250px]" />
+        <div className="absolute inset-0  left-2 right-2 flex items-center justify-center">
+          <div className="text-sm font-semibold text-gray-700 cursor-pointer z-10" onClick={handleGoSector}>
+            {selectedSector}
+          </div>
+        </div>
+      </div>
       <div className="absolute left-8">
         <img
           src="innercircle1.png"

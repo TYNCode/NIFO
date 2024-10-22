@@ -1,7 +1,8 @@
 import React from "react";
 import sectorData from "../../data/data_sector.json"; 
+import { IoClose } from "react-icons/io5";
 
-const EcosystemWeb = ({ handleExploreClick, selectedEcosystem }) => {
+const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) => {
   const findUseCaseData = (ecosystemName) => {
     for (const sector of sectorData.sectors) {
       for (const subSector in sector.subSectors) {
@@ -32,6 +33,12 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem }) => {
     <div className="mx-auto w-[400px] h-[83vh] flex mt-8">
       <div className="flex flex-col gap-8 justify-around items-center bg-white shadow-lg px-5 rounded py-8 overflow-y-auto w-full h-full scrollbar-thin">
         <div className="relative flex flex-col gap-8 py-6 px-4 w-full bg-blue-400">
+          <div
+            className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10"
+            onClick={handleClose}
+          >
+            <IoClose size={23} color="white" />
+          </div>
           <img
             src="ecosystembg.png"
             alt="Ecosystem Background"
