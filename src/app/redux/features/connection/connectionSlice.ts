@@ -70,7 +70,7 @@ export const fetchPartnerConnectsByOrg = createAsyncThunk<
   async (orgId, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `https://nifo.theyellow.network/api/partnerconnect/connects/?requested_org=${orgId}`
+        `https://tyn-server.azurewebsites.net/partnerconnect/connects/?requested_org=${orgId}`
       );
       return response.data;
     } catch (error: any) {
@@ -89,7 +89,7 @@ export const fetchPartnerConnectsMade = createAsyncThunk<
 >("partnerConnect/fetchPartnerConnectsMade", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      "https://nifo.theyellow.network/api/partnerconnect/connects/made/"
+      "https://tyn-server.azurewebsites.net/partnerconnect/connects/made/"
     );
     return response.data;
   } catch (error: any) {
@@ -108,7 +108,7 @@ export const fetchPartnerConnectsReceived = createAsyncThunk<
   async (_, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        "https://nifo.theyellow.network/api/partnerconnect/connects/received/"
+        "https://tyn-server.azurewebsites.net/partnerconnect/connects/received/"
       );
       return response.data;
     } catch (error: any) {
@@ -129,7 +129,7 @@ export const createPartnerConnect = createAsyncThunk<
   async (payload, { rejectWithValue }) => {
     try {
       const response = await postRequestWithAccessToken(
-        "https://nifo.theyellow.network/api/partnerconnect/connects/create-update/",
+        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
         payload
       );
       return response.data;
@@ -150,7 +150,7 @@ export const updatePartnerConnectStatus = createAsyncThunk<
   async ({ id, request_status }, { rejectWithValue }) => {
     try {
       const response = await patchRequestWithAccessToken(
-        "https://nifo.theyellow.network/api/partnerconnect/connects/create-update/",
+        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
         { id, request_status }
       );
       return response.data;

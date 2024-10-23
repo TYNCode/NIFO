@@ -8,6 +8,7 @@ import StartupDetailsWeb from "./StartupDetailsWeb";
 const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , selectedTechnology, setSelectedTechnology}) => {
   const [currentView, setCurrentView] = useState("usecase");
   const [selectedEcosystem, setSelectedEcosystem] = useState(null);
+  const [selectedStartup, setSelectedStartup] = useState(null);  // For holding the selected startup details
 
   const handleExploreEcosystem = () => {
     setCurrentView("startups");
@@ -22,7 +23,8 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
     setCurrentView("ecosystem");
   };
 
-  const handleStartupDetails = () => {
+  const handleStartupDetails = (startup) => {
+    setSelectedStartup(startup);  // Pass the selected startup data
     setCurrentView("startupdetail");
   };
 
@@ -65,7 +67,7 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
       {currentView === "startups" && (
         <StartupsWeb
           handleEcosystem={handleExploreUsecases}
-          handleExploreClick={handleStartupDetails}
+          handleExploreClick={handleStartupDetails}  // Pass selected startup on click
           selectedEcosystem={selectedEcosystem}
           handleClose={handleClose}
         />
@@ -73,7 +75,7 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
 
       {currentView === "startupdetail" && (
         <StartupDetailsWeb
-          selectedEcosystem={selectedEcosystem}
+          selectedStartup={selectedStartup} 
           handleClose={handleClose}
         />
       )}

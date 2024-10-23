@@ -27,7 +27,7 @@ const AllRequests = ({
 
   useEffect(() => {
     axios
-      .get("https://nifo.theyellow.network/api/partnerconnect/")
+      .get("https://tyn-server.azurewebsites.net/partnerconnect/")
       .then((response) => {
         setRequests(response.data);
         console.log("Fetched requests:", response.data);

@@ -25,7 +25,7 @@ const ResetPasswordLap: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/user/reset-password/",
+        "https://tyn-server.azurewebsites.net/user/reset-password/",
         {
           uidb64: uidb64,
           token: token,

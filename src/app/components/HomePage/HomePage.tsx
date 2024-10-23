@@ -122,7 +122,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/prompt/chat/",
+        "https://tyn-server.azurewebsites.net/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -166,7 +166,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `https://nifo.theyellow.network/api/prompt/convo/${sessionId}/`,
+          `https://tyn-server.azurewebsites.net/prompt/convo/${sessionId}/`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
