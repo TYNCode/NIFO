@@ -112,21 +112,30 @@ const EcosystemContent: React.FC<{
   );
 };
 
-const Ecosystem: React.FC<{
-  startups: any[];
-  usecase: string;
-  usecaseDescription: string;
-}> = ({ startups, usecase, usecaseDescription }) => {
-  const [selectedStartup, setSelectedStartup] = useState<any | null>(null); // State to store selected startup
 
-  const router = useRouter();
+type EcosystemData = {
+  useCase: string;
+  useCaseDescription: string;
+  enhancement: string;
+  measureOfImpact: string;
+  startups: Startup[];
+};
 
-  const handleExploreClick = (selectedStartup: any) => {
-    setSelectedStartup(selectedStartup); // Set selected startup and navigate to StartupProfile
+type EcosystemProps = {
+  ecosystemData: EcosystemData;
+};
+
+const Ecosystem: React.FC<EcosystemProps> = ({ ecosystemData }) => {
+  const startups = ecosystemData.startups;
+  const usecase = ecosystemData?.useCase;
+  const [selectedStartup, setSelectedStartup] = useState<Startup | null>(null);
+
+  const handleExploreClick = (selectedStartup: Startup) => {
+    setSelectedStartup(selectedStartup);
   };
 
   const handleBackClick = () => {
-    setSelectedStartup(null); // Reset selected startup to navigate back to Ecosystem
+    setSelectedStartup(null);
   };
 
   return selectedStartup ? (
@@ -141,7 +150,7 @@ const Ecosystem: React.FC<{
     <EcosystemContent
       startups={startups}
       usecase={usecase}
-      usecaseDescription={usecaseDescription}
+      usecaseDescription={ecosystemData.useCaseDescription}
       handleExploreClick={handleExploreClick}
     />
   );

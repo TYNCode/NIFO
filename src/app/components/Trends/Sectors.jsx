@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import sectorsData from "../../data/sector_data.json"; // Import the JSON data
+import sectorData from "../../data/sector_data.json";
+import sectorsData from "../../data/data_sector.json";
 
 const Sectors = ({ onSectorClick }) => {
-  const radius = 180; // Radius of the circle
-  const centerX = 170; // Center of the circle on x-axis
-  const centerY = 170; // Center of the circle on y-axis
+  const radius = 180;
+  const centerX = 170;
+  const centerY = 170;
 
-  // Extract sector names from the sectors data and limit to the first 8 items
-  const sectorNames = sectorsData.sectors
-    .map((sector) => sector.sectorName)
-    .slice(0, 8);
+  const sectors = sectorsData.sectors;
 
-  const totalPositions = sectorNames.length; // Use the actual number of sectors
-  const highlightedPosition = Math.floor(totalPositions / 2); // Middle position or close to it
+  const getInitialSectorData = ()=>{
+     return sectors.slice(0, 8).map((sector) => ({
+      sectorName: sector.sector,
+     }));
+  }
 
-  const [currentIndex, setCurrentIndex] = useState(3); // Index of the highlighted dot
-  const [rotationOffset, setRotationOffset] = useState(0); // Track rotation
+  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
+
+  const sectorNames = outerCircleData.map((item)=>item.sectorName)
+  const totalPositions = sectorNames.length;
+  const highlightedPosition = Math.floor(totalPositions / 2);
+
+  const [currentIndex, setCurrentIndex] = useState(3);
+  const [rotationOffset, setRotationOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [startX, setStartX] = useState(null); // Initialize startX state
+  const [startX, setStartX] = useState(null);
 
   const handleTouchStart = (e) => {
-    if (isAnimating) return; // Prevent interaction during animation
+    if (isAnimating) return;
     setStartX(e.touches[0].clientX);
   };
 
@@ -30,9 +37,8 @@ const Sectors = ({ onSectorClick }) => {
     const deltaX = e.touches[0].clientX - startX;
 
     if (Math.abs(deltaX) > 20) {
-      // Invert the logic here
-      handleScroll(deltaX > 0 ? "next" : "prev"); // Inverted logic: Right swipe (positive deltaX) should go to "next"
-      setStartX(e.touches[0].clientX); // Update startX
+      handleScroll(deltaX > 0 ? "next" : "prev");
+      setStartX(e.touches[0].clientX);
     }
   };
 
@@ -60,7 +66,7 @@ const Sectors = ({ onSectorClick }) => {
 
     setTimeout(() => {
       setIsAnimating(false);
-    }, 500); // Match this duration with the CSS transition duration
+    }, 500);
   };
 
   return (
@@ -85,12 +91,10 @@ const Sectors = ({ onSectorClick }) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Sector image, positioned independently */}
         <div className="">
           <img src="/circle.svg" alt="Sector" className="w-32" />
         </div>
 
-        {/* Dots rotating around the center */}
         <div className="absolute">
           <div className="relative w-48">
             <div className="relative">
@@ -111,7 +115,6 @@ const Sectors = ({ onSectorClick }) => {
               const x = centerX + radius * Math.cos(angle);
               const y = centerY - radius * Math.sin(angle);
 
-              // Highlight the dot based on the current index
               const isHighlighted = index === currentIndex;
 
               return (

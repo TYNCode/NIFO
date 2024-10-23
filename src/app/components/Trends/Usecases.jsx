@@ -1,38 +1,37 @@
 "use client";
 
 import React, { useState } from "react";
-import sectorsData from "../../data/sector_data.json"; // Import the JSON data
+import sectorsData from "../../data/data_sector.json";
 import { BsArrowRight } from "react-icons/bs";
 
-const Usecases = ({ selectedIndustry, selectedTechnology, onUsecaseClick }) => {
+const Usecases = ({
+  selectedIndustry,
+  selectedTechnology,
+  onUsecaseClick,
+  selectedSector,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
-  const [slide, setSlide] = useState("enter"); // 'enter', 'exit-left', 'exit-right'
-  const [touchStartX, setTouchStartX] = useState(0); // Initialize touchStartX state
+  const [direction, setDirection] = useState(0);
+  const [slide, setSlide] = useState("enter");
+  const [touchStartX, setTouchStartX] = useState(0);
 
-  const selectedSector = sectorsData.sectors.find((sector) =>
-    sector.industries.some(
-      (industry) => industry.industryName === selectedIndustry
-    )
+  const selectedSectorData = sectorsData.sectors.find(
+    (sector) => sector.sector === selectedSector
   );
 
-  const selectedIndustryData = selectedSector
-    ? selectedSector.industries.find(
-        (industry) => industry.industryName === selectedIndustry
+  const selectedIndustryData = selectedSectorData
+    ? selectedSectorData.subSectors[selectedIndustry]
+    : null;
+
+  const technologyTrendsData = selectedIndustryData
+    ? selectedIndustryData.find(
+        (technologyTrend) =>
+          technologyTrend.technologyTrend === selectedTechnology
       )
     : null;
 
-  const selectedTechnologyData = selectedIndustryData
-    ? selectedIndustryData.technologies.find(
-        (tech) => tech.technologyName === selectedTechnology
-      )
-    : null;
-
-  const useCases = selectedTechnologyData
-    ? selectedTechnologyData.useCases
-    : [];
-
+  const useCases = technologyTrendsData ? technologyTrendsData.useCases : [];
   const handleNextUsecase = () => {
     if (isAnimating || useCases.length <= 1) return;
     setDirection(-1);
@@ -58,9 +57,9 @@ const Usecases = ({ selectedIndustry, selectedTechnology, onUsecaseClick }) => {
     const swipeDistance = touchStartX - touchEndX;
 
     if (swipeDistance > 50) {
-      handleNextUsecase(); // Swipe left
+      handleNextUsecase();
     } else if (swipeDistance < -50) {
-      handlePreviousUsecase(); // Swipe right
+      handlePreviousUsecase();
     }
   };
 
@@ -78,11 +77,11 @@ const Usecases = ({ selectedIndustry, selectedTechnology, onUsecaseClick }) => {
     setIsAnimating(false);
   };
 
-  const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null;
+  const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null
 
   const handleUsecaseClick = () => {
     if (currentUseCase) {
-      setTimeout(() => onUsecaseClick(currentUseCase), 0); // Delay state update to avoid rendering issues
+      onUsecaseClick(currentUseCase); 
     }
   };
 
@@ -100,12 +99,12 @@ const Usecases = ({ selectedIndustry, selectedTechnology, onUsecaseClick }) => {
 
       {currentUseCase && (
         <div
-          key={currentUseCase.usecase}
+          key={currentUseCase.useCase}
           className={`flex flex-col justify-between border shadow-xl px-7 py-4 rounded-md text-center w-full h-24 cursor-pointer ${slide}`}
           onClick={handleUsecaseClick}
           onTransitionEnd={handleTransitionEnd}
         >
-          <div>{currentUseCase.usecase}</div>
+          <div>{currentUseCase.useCase}</div>
           <div className="flex text-[#0081CA] justify-end">
             <BsArrowRight size={24} />
           </div>

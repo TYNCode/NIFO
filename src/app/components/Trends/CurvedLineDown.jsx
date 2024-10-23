@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import sectorsData from "../../data/sector_data.json"; // Import the JSON data
+import sectorsData from "../../data/data_sector.json";
 
 const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
   const radius = 164;
   const centerX = 154;
   const centerY = 154;
 
-  // Find the selected sector's data
   const selectedSectorData = sectorsData.sectors.find(
-    (sector) => sector.sectorName === selectedSector
+    (sector) => sector.sector === selectedSector
   );
 
-  // Extract the first 8 industry names based on the selected sector
+
   const industryNames = selectedSectorData
-    ? selectedSectorData.industries
-        .map((industry) => industry.industryName)
-        .slice(0, 8)
+    ? Object.keys(selectedSectorData.subSectors).slice(0, 8) // Limit to 8 industries
     : ["No Industries Found"];
 
-  const totalPositions = industryNames.length; // Total positions are now limited to 8
+  const totalPositions = industryNames.length;
   const highlightedPosition = Math.floor(totalPositions / 2); // Middle position
 
   const [currentIndex, setCurrentIndex] = useState(7);
@@ -37,7 +34,6 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
     const deltaX = e.touches[0].clientX - startX;
 
     if (Math.abs(deltaX) > 20) {
-      // Correct the logic here: swiping right (positive deltaX) should move to "next"
       handleScroll(deltaX > 0 ? "next" : "prev");
       setStartX(e.touches[0].clientX);
     }
@@ -72,7 +68,7 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
 
   return (
     <div
-      className="relative bg-gray-100 flex justify-end items-end select-none mb-20 "
+      className="relative bg-gray-100 flex justify-end items-end select-none mb-20"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

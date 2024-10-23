@@ -6,22 +6,25 @@ const Industries = ({
   selectedSector,
   selectedIndustry,
   onTechnologyClick,
-  setTechnologyNames, // Add this prop
+  setTechnologyNames, 
 }) => {
+
   const handleTechnologyUpdate = (technologies) => {
-    setTechnologyNames(technologies); // Pass the technologies up
+    setTechnologyNames(technologies); 
   };
 
   return (
     <div className="relative h-screen flex flex-col justify-between bg-gray-100 overflow-hidden">
-      {/* IndustriesUp at the top */}
       <div className="flex-grow-0">
-        <IndustriesUp selectedIndustry={selectedIndustry} />
+        <IndustriesUp
+        selectedIndustry={selectedIndustry}
+        selectedSector={selectedSector} 
+      />
       </div>
 
-      {/* IndustriesDown at the bottom */}
       <div className="flex-grow-0">
         <IndustriesDown
+          selectedSector={selectedSector}
           selectedIndustry={selectedIndustry}
           onTechnologyClick={onTechnologyClick}
           onTechnologiesUpdate={handleTechnologyUpdate} // Pass down the handler
