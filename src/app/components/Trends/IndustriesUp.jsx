@@ -89,8 +89,11 @@ const IndustriesUp = ({ selectedIndustry, selectedSector }) => {
           <div>
             <img src="/circleup2.svg" alt="" className="w-44" />
             <div className="absolute top-10 right-4 flex justify-center items-center">
-              <span className="text-lg font-semibold uppercase text-gray-700">
-                BFSI
+              <span
+                className="text-lg font-semibold uppercase text-gray-700 cursor-pointer"
+                title={selectedSector} 
+              >
+                {selectedSector?.slice(0, 4)}
               </span>
             </div>
           </div>
