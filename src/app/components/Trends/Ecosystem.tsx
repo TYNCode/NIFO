@@ -62,7 +62,7 @@ const EcosystemContent: React.FC<{
   }, [initialStartups]);
 
   return (
-    <div className="flex flex-col gap-4 mt-12">
+    <div className="flex flex-col gap-4 mt-12 h-[calc(100vh-8rem)]">
       <div className="bg-[#005585] p-4 w-full mt-4">
         <div className="text-lg font-semibold text-white">
           {usecase || "Ecosystem Overview"}
@@ -73,7 +73,7 @@ const EcosystemContent: React.FC<{
         </div>
       </div>
 
-      <div className="mx-3 flex flex-col gap-8">
+      <div className="mx-3 flex flex-col gap-8 overflow-y-scroll h-full">
         {detailedStartups.length > 0 ? (
           detailedStartups.map((startup, index) => (
             <div

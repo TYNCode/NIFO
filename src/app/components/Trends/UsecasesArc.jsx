@@ -94,8 +94,11 @@ const UsecasesArc = ({
             <div>
               <img src="/circleup2.svg" alt="Arc 2" className="w-44" />
               <div className="absolute top-10 right-4 flex justify-center items-center">
-                <span className="text-lg font-semibold uppercase text-gray-700">
-                  {selectedSector}
+                <span
+                  className="text-lg font-semibold uppercase text-gray-700 cursor-pointer"
+                  title={selectedSector}
+                >
+                  {selectedSector?.slice(0, 4)}
                 </span>
               </div>
             </div>
@@ -118,7 +121,7 @@ const UsecasesArc = ({
                     }`}
                   >
                     <div
-                      className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
+                      className={`absolute right-full mr-2 top-2 text-sm w-24 text-right ${
                         isMiddleDot
                           ? "font-semibold text-base text-[#4C4C4C]"
                           : "text-[#797979]"
@@ -157,7 +160,7 @@ const UsecasesArc = ({
                     }`}
                   >
                     <div
-                      className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
+                      className={`absolute right-full mr-2 top-2 text-sm w-[100px] text-right ${
                         isMiddleDot
                           ? "font-semibold text-base text-[#4C4C4C]"
                           : "text-[#797979]"
