@@ -102,42 +102,36 @@ const StartupDetailsWeb = ({ selectedStartup, handleClose }) => {
   };
 
   return (
-    <div className="w-[800px] min-h-[600px] flex justify-center items-center ">
-      <div className="bg-white flex flex-col gap-4 justify-center items-center shadow-lg overflow-auto w-full p-4">
-        <div className="bg-blue-800 flex flex-col gap-3 w-full">
-          <div className="absolute right-2 text-white flex justify-end cursor-pointer mt-3 mr-3" onClick={handleClose}>
-            <IoClose size={23} />
+    <div className="w-[800px] min-h-[600px] flex justify-center items-center">
+      <div className="bg-white flex flex-col shadow-lg w-full p-4">
+        {/* Header with Connect Button */}
+        <div className="bg-blue-800 text-white flex flex-col gap-3 w-full sticky top-0 z-50">
+          <div className="flex justify-between px-4 py-2">
+            <div className="font-semibold text-xl">{startupDetails?.startup_name}</div>
+            <div className="bg-blue-500 text-white flex gap-4 mx-6 px-3 capitalize py-1 rounded-md justify-center items-center w-max" onClick={handleButtonClick}>
+              <div>{loading ? "Loading.." : connectionStatus}</div>
+            </div>
+            <div className="absolute right-2 top-2 cursor-pointer" onClick={handleClose}>
+              <IoClose size={23} />
+            </div>
           </div>
-        <div className="flex justify-between mx-2 mt-12">
-           
-          <div className="text-white font-semibold text-xl mt-2">
-            {startupDetails?.startup_name}
-          </div>
-
-          <div className="bg-blue-500 text-white flex gap-4 px-3 py-1 rounded-md justify-center items-center w-max mt-2">
-            <div onClick={handleButtonClick}>Connect</div>
-            <BiSend />
-          </div>
-        </div>
-
-
-
-          <div className="text-base text-white px-2 pb-2">
+          <div className="text-base px-4 pb-2 leading-5">
             {selectedStartup?.description || "No description available"}
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 px-2 pb-6 overflow-y-auto w-full">
+        {/* Scrollable Content */}
+        <div className="flex flex-col gap-4 px-4 pb-6 overflow-y-auto h-[70vh]">
           {startupDetails && (
             <>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-10">
                 {renderIfAvailable("Analyst Rated", startupDetails?.startup_analyst_rating)}
                 {renderIfAvailable("Industry", startupDetails?.startup_industry)}
                 {renderIfAvailable("Customers", startupDetails?.startup_customers)}
                 {renderIfAvailable("Technology", startupDetails?.startup_technology)}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mb-20">
                 {renderIfAvailable("Country", startupDetails?.startup_country)}
                 {renderIfAvailable("Company Stage", startupDetails?.startup_company_stage)}
                 {renderIfAvailable("Solutions", startupDetails?.startup_solutions)}
