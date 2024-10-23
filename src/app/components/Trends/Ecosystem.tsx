@@ -31,7 +31,7 @@ const EcosystemContent: React.FC<{
   const fetchStartupDetails = async (startupName: string) => {
     try {
       const response = await fetch(
-        `https://nifo.theyellow.network/api/directorysearch/companysearch/?startup_name=${startupName}`
+        `https://tyn-server.azurewebsites.net/directorysearch/companysearch/?startup_name=${startupName}`
       );
       const data = await response.json();
       if (data.length > 0) {
@@ -40,7 +40,7 @@ const EcosystemContent: React.FC<{
           description: data[0]?.startup_description,
           logo: data[0]?.startup_logo,
           startup_id: data[0]?.startup_id,
-          database_info: data[0], // Pass all information into a database_info object
+          database_info: data[0],
         };
       }
     } catch (error) {

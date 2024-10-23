@@ -23,7 +23,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({
     if (jwtAccessToken) {
       try {
         const response = await axios.post(
-          "https://nifo.theyellow.network/api/feedback/",
+          "https://tyn-server.azurewebsites.net/feedback/",
           {
             message: feedback,
           },

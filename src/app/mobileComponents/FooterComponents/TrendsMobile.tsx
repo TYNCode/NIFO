@@ -18,13 +18,11 @@ const TrendsMobile = ({
 }) => {
   const [technologyNames, setTechnologyNames] = useState([]);
   const [ecosystemData, setEcosystemData] = useState(() => {
-    // Retrieve data from localStorage on component mount
     const savedEcosystemData = localStorage.getItem("ecosystemData");
     return savedEcosystemData ? JSON.parse(savedEcosystemData) : [];
   });
 
   const [selectedUseCase, setSelectedUseCase] = useState(() => {
-    // Retrieve data from localStorage on component mount
     const savedUseCase = localStorage.getItem("selectedUseCase");
     return savedUseCase ? JSON.parse(savedUseCase) : null;
   });

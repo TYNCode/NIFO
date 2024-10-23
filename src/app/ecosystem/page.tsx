@@ -32,7 +32,7 @@ const EcosystemContent: React.FC = () => {
   ): Promise<string | null> => {
     try {
       const response = await fetch(
-        `https://nifo.theyellow.network/api/directorysearch/companysearch/?startup_name=${startupName}`
+        `https://tyn-server.azurewebsites.net/directorysearch/companysearch/?startup_name=${startupName}`
       );
       const data = await response.json();
 

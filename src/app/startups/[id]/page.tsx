@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MobileHeader from "../../mobileComponents/MobileHeader";
-import BottomBar from "../../mobileComponents/BottomBar";
 import { useParams } from "next/navigation";
 import CryptoJS from "crypto-js";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -48,7 +47,7 @@ const StartupDetails = () => {
   const fetchStartupDetails = async (id) => {
     try {
       const res = await axios.get(
-        `https://nifo.theyellow.network/api/directorysearch/companyview/${id}/`
+        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
       );
       setStartupData(res.data);
       console.log("Response:", res);
