@@ -74,7 +74,6 @@ const FirstLeftCircle = ({ onDotClick}) => {
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
-    console.log("sectorName", outerCircleData[dotIndex].sectorName);
     if (onDotClick) {
       onDotClick(outerCircleData[dotIndex].sectorName);
     }

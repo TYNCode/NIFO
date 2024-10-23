@@ -1,6 +1,5 @@
 "use client";
 import React, { Suspense, useState } from "react";
-import Trends from "../components/Trends/Trends";
 import BottomBar from "../mobileComponents/BottomBar";
 import MobileHeader from "../mobileComponents/MobileHeader";
 import TrendsWeb from "../components/TrendsWeb/TrendsWeb";
@@ -12,13 +11,12 @@ const PageContent: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col sm:hidden">
+      {/* <div className="flex flex-col sm:hidden">
         <MobileHeader />
         <Trends />
         <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
-      </div>
+      </div> */}
       <div className="hidden sm:flex flex-col h-screen relative overflow-hidden select-none">
-        
         <div className="">
           <NavbarTrend/>
           <TrendsWeb/>

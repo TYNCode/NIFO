@@ -1,26 +1,20 @@
 import React, { useState } from "react";
-import sectorsData from "../../data/sector_data.json"; // Import the JSON data
+import sectorsData from "../../data/data_sector.json";
 
-const IndustriesUp = ({ selectedIndustry }) => {
-  const radius = 164; // Radius of the curve
-  const centerX = 168; // Center the topmost dot horizontally
-  const centerY = 12; // Y position for the topmost dot (you can adjust this for your design)
+const IndustriesUp = ({ selectedIndustry, selectedSector }) => {
+  const radius = 164;
+  const centerX = 168;
+  const centerY = 12;
 
-  // Find the selected industry within the data
-  const sector = sectorsData.sectors.find((sector) =>
-    sector.industries.some(
-      (industry) => industry.industryName === selectedIndustry
-    )
+  const sector = sectorsData.sectors.find(
+    (sector) => sector.sector === selectedSector
   );
 
-  const industryNames = sector
-    ? sector.industries.map((industry) => industry.industryName)
-    : ["No Industries Available"];
 
-  // Find the index of the selected industry
+  const industryNames = sector ? Object.keys(sector.subSectors) : ["No Industries Available"];
+
   const selectedIndex = industryNames.indexOf(selectedIndustry);
 
-  // Determine the industries to display
   const displayedIndustries =
     selectedIndex !== -1
       ? [
@@ -42,7 +36,7 @@ const IndustriesUp = ({ selectedIndustry }) => {
   const middleIndex = Math.floor(displayedIndustries.length / 2);
 
   const handleTouchStart = (e) => {
-    if (isAnimating) return; // Prevent interaction during animation
+    if (isAnimating) return;
     setStartX(e.touches[0].clientX);
   };
 
@@ -53,10 +47,10 @@ const IndustriesUp = ({ selectedIndustry }) => {
 
     if (deltaX > 50) {
       handleScroll("prev");
-      setStartX(e.touches[0].clientX); // Reset startX to the new position
+      setStartX(e.touches[0].clientX);
     } else if (deltaX < -50) {
       handleScroll("next");
-      setStartX(e.touches[0].clientX); // Reset startX to the new position
+      setStartX(e.touches[0].clientX);
     }
   };
 
@@ -74,15 +68,10 @@ const IndustriesUp = ({ selectedIndustry }) => {
           : (currentIndex - 1 + industryNames.length) % industryNames.length;
       setCurrentIndex(newIndex);
       setIsAnimating(false);
-    }, 500); // Match this duration with the CSS transition duration
+    }, 500);
   };
 
-  // Adjusted angles for better design positioning
-  const fixedAngles = [
-    -Math.PI / 2, // Top center (90°)
-    -Math.PI / 4, // Middle right (45°)
-    0, // Bottom right (0°)
-  ];
+  const fixedAngles = [-Math.PI / 2, -Math.PI / 4, 0];
 
   return (
     <div
@@ -99,7 +88,6 @@ const IndustriesUp = ({ selectedIndustry }) => {
         <div className="relative w-44">
           <div>
             <img src="/circleup2.svg" alt="" className="w-44" />
-            {/* Add BFSI text inside the innermost circle */}
             <div className="absolute top-10 right-4 flex justify-center items-center">
               <span className="text-lg font-semibold uppercase text-gray-700">
                 BFSI
@@ -107,7 +95,7 @@ const IndustriesUp = ({ selectedIndustry }) => {
             </div>
           </div>
           {displayedIndustries.map((industry, index) => {
-            const isMiddleDot = index === middleIndex; // Check if this is the middle dot
+            const isMiddleDot = index === middleIndex;
             const angle = fixedAngles[index];
             const x =
               centerX + radius * Math.sin(angle) - (isMiddleDot ? 14 : 12);
@@ -129,7 +117,9 @@ const IndustriesUp = ({ selectedIndustry }) => {
                 >
                   <div
                     className={`absolute right-full mr-2 top-2  text-sm w-32 text-right ${
-                      isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                      isMiddleDot
+                        ? "font-semibold text-base text-[#4C4C4C]"
+                        : "text-[#797979]"
                     }`}
                   >
                     {industry}

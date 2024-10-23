@@ -2,33 +2,36 @@ import React, { useState } from "react";
 import UsecasesArc from "./UsecasesArc";
 import Usecases from "./Usecases";
 
-const CombinedComponent = ({
+const UsecasesCombined = ({
+  selectedSector, 
   selectedIndustry,
   selectedTechnology,
   technologyNames,
-  onUsecaseClick, // Pass the handler from TrendsMobile
+  onUsecaseClick, 
+  selectedUsecase, 
+  setSelectedUseCase
 }) => {
   return (
     <div className="flex flex-col justify-between h-screen">
-      {/* UsecasesArc at the top */}
       <div className="flex-grow-0">
         <UsecasesArc
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
           OriginalTechnologyNames={technologyNames}
+          selectedSector={selectedSector}
         />
       </div>
 
-      {/* Usecases component at the bottom */}
       <div className="flex-grow-0 pb-16">
         <Usecases
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}
-          onUsecaseClick={onUsecaseClick} // Pass handler to receive selected use case
+          onUsecaseClick={onUsecaseClick} 
+          selectedSector={selectedSector}
         />
       </div>
     </div>
   );
 };
 
-export default CombinedComponent;
+export default UsecasesCombined;
