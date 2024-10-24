@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
 import data from '../../data/recommendedQueries'
-import { clearLoginState } from '../../redux/features/auth/loginSlice';
 
 interface RecommendedQueriesProps {
     setInputPrompt: Dispatch<SetStateAction<string>>;
