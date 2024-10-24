@@ -12,6 +12,7 @@ const WebTechUsecase = ({
 
   const [selectedIndustry, setSelectedIndustry] =
     useState(propSelectedIndustry);
+  const [screenWidth, setScreenWidth] = useState(1024); // Track screen width
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
@@ -45,21 +46,44 @@ const WebTechUsecase = ({
   const [innerCircleData, setInnerCircleData] = useState([]);
 
   const totalOuterDots = outerCircleData.length;
+  const totalInnerDots = innerCircleData.length;
   const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
+  const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
   const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
+  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2); // For inner circle
+
   const [isDraggingOuter, setIsDraggingOuter] = useState(false);
+  const [isDraggingInner, setIsDraggingInner] = useState(false);
+
   const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
+  const [lastMouseYInner, setLastMouseYInner] = useState(null);
 
   const circleRefOuter = useRef(null);
-  const radiusXOuter = 330;
-  const radiusYOuter = 325;
-  const radiusXInner = 170;
-  const radiusYInner = 170;
+  const circleRefInner = useRef(null);
+
+  // Adjust the circle radii dynamically based on screen size
+  const radiusXOuter =
+    screenWidth >= 1536 ? 330 : screenWidth >= 1024 ? 252 : 180;
+  const radiusYOuter = radiusXOuter;
+  const radiusXInner =
+    screenWidth >= 1536 ? 170 : screenWidth >= 1024 ? 125 : 90;
+  const radiusYInner = radiusXInner;
 
   useEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
     setInnerCircleData(getInitialSubSectorsData());
+
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+      };
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, [selectedSector, selectedIndustry]);
 
   useEffect(() => {
@@ -112,6 +136,23 @@ const WebTechUsecase = ({
   const handleDotClickInner = (dotIndex) => {
     const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
     setSelectedIndustry(newSelectedIndustry);
+
+    // Adjust the inner circle offset to center the selected industry
+    const normalizedAngleInnerOffset =
+      ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const currentInnerCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
+        totalInnerDots) %
+        totalInnerDots
+    );
+    const innerDistance =
+      (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
+    const shortestInnerDistance =
+      innerDistance <= totalInnerDots / 2
+        ? innerDistance
+        : innerDistance - totalInnerDots;
+    const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
+    setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
   };
 
   const handleDotClickOuter = (dotIndex) => {
@@ -145,7 +186,8 @@ const WebTechUsecase = ({
 
   const dotsInner = Array.from({ length: innerCircleData.length }).map(
     (_, index) => {
-      const innerAngle = (index / innerCircleData.length) * Math.PI * 2;
+      const innerAngle =
+        (index / innerCircleData.length) * Math.PI * 2 + angleOffsetInner;
       const x = radiusXInner * Math.sin(innerAngle);
       const y = radiusYInner * Math.cos(innerAngle);
       return { x, y, index };
@@ -156,12 +198,16 @@ const WebTechUsecase = ({
     ((Math.PI / 2 - angleOffsetOuter) / anglePerOuterDot + totalOuterDots) %
       totalOuterDots
   );
+  const centerIndexInner = Math.round(
+    ((Math.PI / 2 - angleOffsetInner) / anglePerInnerDot + totalInnerDots) %
+      totalInnerDots
+  );
 
   return (
     <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative">
       <div className="relative">
-        <img src="/round1.png" alt="Background" className="h-[250px]" />
-        <div className="absolute inset-0  left-2 right-2 flex items-center justify-center">
+        <img src="/round1.png" alt="Background" className="h-[216px]" />
+        <div className="absolute inset-0 left-2 right-2 flex items-center justify-center">
           <div
             className="text-sm font-semibold text-gray-700 cursor-pointer z-10"
             onClick={handleGoSector}
@@ -171,19 +217,11 @@ const WebTechUsecase = ({
         </div>
       </div>
       <div className="absolute left-8">
-        <img
-          src="innercircle1.png"
-          alt="Inner Circle"
-          className="h-[650px] w-80"
-        />
+        <img src="innercircle1.png" alt="Inner Circle" className="h-[500px]" />
       </div>
 
       <div className="absolute left-2">
-        <img
-          src="innercircle1.png"
-          alt="Inner Circle"
-          className="h-[360px] w-44"
-        />
+        <img src="innercircle1.png" alt="Inner Circle" className="h-[260px]" />
       </div>
 
       <div
@@ -232,7 +270,7 @@ const WebTechUsecase = ({
 
       <div className="absolute">
         {dotsInner.map((dot) => {
-          const isMiddleDotInner = dot.index === 0; 
+          const isMiddleDotInner = dot.index === centerIndexInner;
           return (
             <div
               key={`inner-${dot.index}`}

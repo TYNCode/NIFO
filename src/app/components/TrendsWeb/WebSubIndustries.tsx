@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handleGoSector }) => {
+const WebSubIndustries = ({
+  selectedSector,
+  selectedIndustry,
+  onDotClick,
+  handleGoSector,
+}) => {
   const sectors = sectorData.sectors;
 
   const getInitialSubSectorData = () => {
@@ -32,10 +37,12 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handle
 
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
 
-  const radiusX = 290;
-  const radiusY = 290;
+  // Dynamic radius based on screen size
+  const radiusX = screenWidth >= 1536 ? 290 : screenWidth >= 1024 ? 222 : 160;
+  const radiusY = radiusX;
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -49,12 +56,18 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handle
       setLastMouseY(null);
     };
 
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("resize", handleResize); // Listen for window resizing
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("resize", handleResize); // Clean up listener
     };
   }, [isDragging, lastMouseY]);
 
@@ -75,27 +88,26 @@ const WebSubIndustries = ({ selectedSector, selectedIndustry, onDotClick, handle
     }
   };
 
-const handleDotClick = (dotIndex) => {
-  const normalizedAngleOffset =
-    ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const handleDotClick = (dotIndex) => {
+    const normalizedAngleOffset =
+      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-  const currentCenterIndex = Math.round(
-    ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-      totalDots
-  );
+    const currentCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
+    );
 
-  const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-  const shortestDistance =
-    distance <= totalDots / 2 ? distance : distance - totalDots;
-  const angleDifference = shortestDistance * anglePerDot;
+    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
+    const shortestDistance =
+      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const angleDifference = shortestDistance * anglePerDot;
 
-  setAngleOffset((prevOffset) => prevOffset - angleDifference);
+    setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
-  if (onDotClick) {
-    onDotClick(outerCircleData[dotIndex].subSectorName); 
-  }
-};
-
+    if (onDotClick) {
+      onDotClick(outerCircleData[dotIndex].subSectorName);
+    }
+  };
 
   const dots = Array.from({ length: totalDots }).map((_, index) => {
     const angle = (index / totalDots) * Math.PI * 2 + angleOffset;
@@ -115,9 +127,14 @@ const handleDotClick = (dotIndex) => {
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
+      {/* Sector Background and Label */}
       <div className="relative inline-block">
-        <img src="/round1.png" alt="Background" className="h-[400px]" />
-        <div className="absolute inset-0  left-6 flex items-center justify-center">
+        <img
+          src="/round1.png"
+          alt="Background"
+          className="2xl:h-[400px] lg:h-[300px]"
+        />
+        <div className="absolute inset-0 left-6 flex items-center justify-center">
           <div
             className="text-lg font-semibold text-gray-700 cursor-pointer z-10"
             onClick={handleGoSector}
@@ -129,9 +146,9 @@ const handleDotClick = (dotIndex) => {
 
       <div className="absolute left-8">
         <img
-          src="innercircle1.png"
+          src="innerarc1.svg"
           alt="Inner Circle"
-          className="h-[580px]"
+          className="2xl:h-[580px] lg:h-[450px]"
         />
       </div>
 
@@ -144,7 +161,10 @@ const handleDotClick = (dotIndex) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               left: `${dot.x}px`,
-              top: `${dot.y + 320}px`,
+              top: `${
+                dot.y +
+                (screenWidth >= 1536 ? 320 : screenWidth >= 1024 ? 250 : 240)
+              }px`, 
               userSelect: "none",
             }}
             onMouseDown={() => {

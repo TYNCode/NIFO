@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import sectorData from "../../data/data_sector.json"; 
+import sectorData from "../../data/data_sector.json";
 
 const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const sectors = sectorData.sectors;
@@ -24,13 +24,26 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
 
-  const radiusX = 280;
-  const radiusY = 280;
+  // Dynamically adjust radius based on screen size
+  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1024 ? 224 : 150;
+  const radiusY = radiusX;
 
   useEffect(() => {
     setOuterCircleData(getInitialSubSectorData());
+
+    // Update screen width on resize
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [selectedSector]);
 
   const handleMouseMoveHandler = (event) => {
@@ -85,13 +98,21 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
-        <img src="/round2.png" alt="Background" className="h-[400px]" />
+        <img
+          src="/round2.png"
+          alt="Background"
+          className="2xl:h-[400px] lg:h-[300px]"
+        />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           INDUSTRY
         </div>
       </div>
       <div className="absolute right-12">
-        <img src="innercircle2.png" alt="Inner Circle" className="h-[580px]" />
+        <img
+          src="innercircle2.png"
+          alt="Inner Circle"
+          className="2xl:h-[580px] lg:h-[450px]"
+        />
       </div>
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
@@ -102,7 +123,10 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               right: `${dot.x}px`,
-              top: `${dot.y + 320}px`,
+              top: `${
+                dot.y +
+                (screenWidth >= 1536 ? 320 : screenWidth >= 1024 ? 250 : 240)
+              }px`,
               userSelect: "none",
             }}
             onClick={() => handleDotClick(dot.index)}
@@ -118,7 +142,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
                   isMiddleDot
                     ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
                     : "bg-[#D8D8D8]"
-                }  ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
+                } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
                 style={{ flexShrink: 0 }}
               ></div>
               <div
