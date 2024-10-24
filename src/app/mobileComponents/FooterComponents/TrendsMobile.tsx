@@ -27,21 +27,14 @@ const TrendsMobile = ({
     return savedUseCase ? JSON.parse(savedUseCase) : null;
   });
 
-  // Handler for when a use case is clicked
   const handleUsecaseClick = (usecase) => {
     setSelectedUseCase(usecase);
-    localStorage.setItem("selectedUseCase", JSON.stringify(usecase)); // Save to localStorage
     setCurrentStep("usecaseDescription");
   };
 
-  const handleEcosystem = ({ usecase, usecaseDescription, startups }) => {
-    const ecosystemDataToSave = {
-      usecase,
-      usecaseDescription,
-      startups,
-    };
-    setEcosystemData(ecosystemDataToSave);
-    localStorage.setItem("ecosystemData", JSON.stringify(ecosystemDataToSave)); // Save to localStorage
+  const handleEcosystem = ({ selectedUseCase }) => {
+    const ecosystemDataToSave = {selectedUseCase};
+    setEcosystemData(selectedUseCase);
     setCurrentStep("ecosystem");
   };
 
@@ -53,21 +46,12 @@ const TrendsMobile = ({
     <div>
       {currentStep === "ecosystem" ? (
         <Ecosystem
-          usecase={ecosystemData.usecase}
-          usecaseDescription={ecosystemData.usecaseDescription}
-          startups={ecosystemData.startups}
+          ecosystemData={ecosystemData}
         />
       ) : currentStep === "usecaseDescription" ? (
-        selectedUseCase ? (
+        selectedUseCase ? ( 
           <UsecaseDescription
-            usecase={selectedUseCase?.usecase || "No Usecase Available"}
-            usecaseDescription={
-              selectedUseCase?.usecaseDescription || "No Description Available"
-            }
-            enhancement={selectedUseCase?.Enhancement || ""}
-            measureOfImpact={selectedUseCase?.["Measure of Impact"] || ""}
-            startups={selectedUseCase?.startups || []}
-            onComplete={handleBackToUsecases}
+            selectedUseCase={selectedUseCase}
             handleEcosystem={handleEcosystem}
           />
         ) : (
@@ -79,6 +63,9 @@ const TrendsMobile = ({
           selectedTechnology={selectedTechnology}
           technologyNames={technologyNames}
           onUsecaseClick={handleUsecaseClick}
+          selectedSector={selectedSector}
+          selectedUsecase={selectedUseCase}
+          setSelectedUseCase={setSelectedUseCase}  
         />
       ) : currentStep === "industries" ? (
         <Industries

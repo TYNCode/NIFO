@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import sectorsData from "../../data/sector_data.json"; // Import the JSON data
+import React, { useState, useEffect, useRef } from "react";
+import sectorsData from "../../data/data_sector.json";
 
-// Helper function to duplicate array until it reaches a specified length
 const duplicateArrayUntilLength = (arr, targetLength) => {
   const result = [];
   while (result.length < targetLength) {
@@ -12,6 +11,7 @@ const duplicateArrayUntilLength = (arr, targetLength) => {
 
 const IndustriesDown = ({
   selectedIndustry,
+  selectedSector,
   onTechnologyClick,
   onTechnologiesUpdate,
 }) => {
@@ -19,39 +19,32 @@ const IndustriesDown = ({
   const centerX = 150;
   const centerY = 150;
 
-  // Find the selected industry's data within the sectors
-  const selectedSector = sectorsData.sectors.find((sector) =>
-    sector.industries.some(
-      (industry) => industry.industryName === selectedIndustry
-    )
+  const sector = sectorsData.sectors.find(
+    (sector) => sector.sector === selectedSector
   );
 
-  const selectedIndustryData = selectedSector
-    ? selectedSector.industries.find(
-        (industry) => industry.industryName === selectedIndustry
-      )
-    : null;
+ const subSector = sector ? sector.subSectors[selectedIndustry] : null;
+ const technologyTrend = subSector ? subSector.map(technologyTrend => technologyTrend) : "No Technology Trends Available";
+ const technologyNames = technologyTrend.length
+  ? technologyTrend.map((tech) => tech.technologyTrend)
+  : ["No Technology Trends Available"];
 
-  // Extract technology names based on the selected industry
-  const technologyNames = selectedIndustryData
-    ? selectedIndustryData.technologies.map((tech) => tech.technologyName)
-    : ["No Technologies Available"];
 
-  console.log("Technology Trends", technologyNames)
+ const totalPositions = 8;
+ const duplicatedTechnologies = duplicateArrayUntilLength( technologyNames, totalPositions);
+  const prevTechnologyNames = useRef(technologyNames);
 
-  // Duplicate the array to ensure it has exactly 8 elements
-  const totalPositions = 8;
-  const duplicatedTechnologies = duplicateArrayUntilLength(
-    technologyNames,
-    totalPositions
-  );
-
-  // Notify parent about updated technology names
   useEffect(() => {
-    onTechnologiesUpdate(technologyNames); 
-  }, []);
+    if (
+      JSON.stringify(prevTechnologyNames.current) !==
+      JSON.stringify(technologyNames)
+    ) {
+      onTechnologiesUpdate(technologyNames);
+      prevTechnologyNames.current = technologyNames;
+    }
+  }, [technologyNames, onTechnologiesUpdate]);
 
-  const [currentIndex, setCurrentIndex] = useState(7); // Start with the first index
+  const [currentIndex, setCurrentIndex] = useState(7);
   const [rotationOffset, setRotationOffset] = useState(0);
   const [startX, setStartX] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -96,10 +89,10 @@ const IndustriesDown = ({
 
     setTimeout(() => {
       setIsAnimating(false);
-    }, 500); // Match this duration with the CSS transition duration
+    }, 500); 
   };
 
-  const highlightedPosition = Math.floor(totalPositions / 2); // Middle dot index
+  const highlightedPosition = Math.floor(totalPositions / 2);
 
   return (
     <div
@@ -116,7 +109,6 @@ const IndustriesDown = ({
         <div className="relative w-44">
           <div>
             <img src="/circle2.svg" alt="" className="w-44" />
-            {/* Add the updated technology trend text with stacked words */}
             <div className="absolute bottom-7 right-2 flex justify-center items-center flex-col z-20">
               <span className="text-[12px] font-semibold uppercase text-gray-700">
                 Technology
@@ -132,7 +124,6 @@ const IndustriesDown = ({
             const x = centerX + radius * Math.cos(angle);
             const y = centerY - radius * Math.sin(angle);
 
-            // Calculate the index to highlight the middle dot
             const isHighlighted =
               (currentIndex + highlightedPosition) % totalPositions === index;
 

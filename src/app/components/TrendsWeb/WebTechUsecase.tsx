@@ -3,14 +3,16 @@ import sectorData from "../../data/data_sector.json";
 
 const WebTechUsecase = ({
   selectedSector,
-  selectedIndustry: propSelectedIndustry, 
+  selectedIndustry: propSelectedIndustry,
   handleGoSector,
   onTechnologyClick,
-  selectedTechnology
+  selectedTechnology,
 }) => {
   const sectors = sectorData.sectors;
 
-  const [selectedIndustry, setSelectedIndustry] = useState(propSelectedIndustry);
+  const [selectedIndustry, setSelectedIndustry] =
+    useState(propSelectedIndustry);
+  const [screenWidth, setScreenWidth] = useState(1024); // Track screen width
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
@@ -49,24 +51,52 @@ const WebTechUsecase = ({
   const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
   const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
-  const [isDraggingOuter, setIsDraggingOuter] = useState(false);
-  const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
+  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2); // For inner circle
 
-  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2);
+  const [isDraggingOuter, setIsDraggingOuter] = useState(false);
   const [isDraggingInner, setIsDraggingInner] = useState(false);
+
+  const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
   const [lastMouseYInner, setLastMouseYInner] = useState(null);
 
   const circleRefOuter = useRef(null);
   const circleRefInner = useRef(null);
-  const radiusXOuter = 330;
-  const radiusYOuter = 325;
-  const radiusXInner = 170;
-  const radiusYInner = 170;
+
+  const radiusXOuter =
+    screenWidth >= 1536
+      ? 310
+      : screenWidth >= 1280
+      ? 314
+      : screenWidth >= 1024
+      ? 252
+      : 180;
+  const radiusYOuter = radiusXOuter;
+  const radiusXInner =
+    screenWidth >= 1536
+      ? 170
+      : screenWidth >= 1280
+      ? 164
+      : screenWidth >= 1024
+      ? 125
+      : 90;
+  const radiusYInner = radiusXInner;
 
   useEffect(() => {
+    console.log(`Screen width detected: ${screenWidth}`); // Log screen width for debugging
     setOuterCircleData(getInitialTechnologyData());
     setInnerCircleData(getInitialSubSectorsData());
-  }, [selectedSector, selectedIndustry]);
+
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+      };
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, [selectedSector, selectedIndustry, screenWidth]);
 
   useEffect(() => {
     if (propSelectedIndustry) {
@@ -81,34 +111,19 @@ const WebTechUsecase = ({
       }
     };
 
-    const handleMouseMoveInner = (event) => {
-      if (isDraggingInner) {
-        handleMouseMoveHandlerInner(event);
-      }
-    };
-
     const handleMouseUpOuter = () => {
       setIsDraggingOuter(false);
       setLastMouseYOuter(null);
     };
 
-    const handleMouseUpInner = () => {
-      setIsDraggingInner(false);
-      setLastMouseYInner(null);
-    };
-
     window.addEventListener("mousemove", handleMouseMoveOuter);
-    window.addEventListener("mousemove", handleMouseMoveInner);
     window.addEventListener("mouseup", handleMouseUpOuter);
-    window.addEventListener("mouseup", handleMouseUpInner);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMoveOuter);
-      window.removeEventListener("mousemove", handleMouseMoveInner);
       window.removeEventListener("mouseup", handleMouseUpOuter);
-      window.removeEventListener("mouseup", handleMouseUpInner);
     };
-  }, [isDraggingOuter, isDraggingInner, lastMouseYOuter, lastMouseYInner]);
+  }, [isDraggingOuter, lastMouseYOuter]);
 
   const handleMouseMoveHandlerOuter = (event) => {
     const { clientY } = event;
@@ -118,16 +133,6 @@ const WebTechUsecase = ({
       setAngleOffsetOuter((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
     setLastMouseYOuter(clientY);
-  };
-
-  const handleMouseMoveHandlerInner = (event) => {
-    const { clientY } = event;
-    if (lastMouseYInner !== null) {
-      const deltaY = clientY - lastMouseYInner;
-      const rotationSpeed = 0.005;
-      setAngleOffsetInner((prevOffset) => prevOffset - deltaY * rotationSpeed);
-    }
-    setLastMouseYInner(clientY);
   };
 
   const handleMouseDownOuter = (event) => {
@@ -140,22 +145,16 @@ const WebTechUsecase = ({
     }
   };
 
-  const handleMouseDownInner = (event) => {
-    if (
-      circleRefInner.current &&
-      circleRefInner.current.contains(event.target)
-    ) {
-      setIsDraggingInner(true);
-      setLastMouseYInner(event.clientY);
-    }
-  };
-
   const handleDotClickInner = (dotIndex) => {
+    const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
+    setSelectedIndustry(newSelectedIndustry);
+
     const normalizedAngleInnerOffset =
       ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentInnerCenterIndex = Math.round(
       ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
-        totalInnerDots) % totalInnerDots
+        totalInnerDots) %
+        totalInnerDots
     );
     const innerDistance =
       (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
@@ -165,32 +164,28 @@ const WebTechUsecase = ({
         : innerDistance - totalInnerDots;
     const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
     setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
-
-    const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
-    setSelectedIndustry(newSelectedIndustry); 
   };
 
-const handleDotClickOuter = (dotIndex) => {
-  const normalizedAngleOuterOffset =
-    ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  const currentOuterCenterIndex = Math.round(
-    ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
-      totalOuterDots) %
-      totalOuterDots
-  );
-  const outerDistance =
-    (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
-  const shortestOuterDistance =
-    outerDistance <= totalOuterDots / 2
-      ? outerDistance
-      : outerDistance - totalOuterDots;
-  const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
-  setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
+  const handleDotClickOuter = (dotIndex) => {
+    const normalizedAngleOuterOffset =
+      ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const currentOuterCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
+        totalOuterDots) %
+        totalOuterDots
+    );
+    const outerDistance =
+      (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
+    const shortestOuterDistance =
+      outerDistance <= totalOuterDots / 2
+        ? outerDistance
+        : outerDistance - totalOuterDots;
+    const outerAngleDifference = shortestOuterDistance * anglePerOuterDot;
+    setAngleOffsetOuter((prevOffset) => prevOffset - outerAngleDifference);
 
-
-  const selectedTechnologyData = outerCircleData[dotIndex].technologyTrend;
-  onTechnologyClick(selectedTechnologyData);
-};
+    const selectedTechnologyData = outerCircleData[dotIndex].technologyTrend;
+    onTechnologyClick(selectedTechnologyData);
+  };
 
   const dotsOuter = Array.from({ length: totalOuterDots }).map((_, index) => {
     const outerAngle =
@@ -200,13 +195,15 @@ const handleDotClickOuter = (dotIndex) => {
     return { x, y, index };
   });
 
-  const dotsInner = Array.from({ length: totalInnerDots }).map((_, index) => {
-    const innerAngle =
-      (index / totalInnerDots) * Math.PI * 2 + angleOffsetInner;
-    const x = radiusXInner * Math.sin(innerAngle);
-    const y = radiusYInner * Math.cos(innerAngle);
-    return { x, y, index };
-  });
+  const dotsInner = Array.from({ length: innerCircleData.length }).map(
+    (_, index) => {
+      const innerAngle =
+        (index / innerCircleData.length) * Math.PI * 2 + angleOffsetInner;
+      const x = radiusXInner * Math.sin(innerAngle);
+      const y = radiusYInner * Math.cos(innerAngle);
+      return { x, y, index };
+    }
+  );
 
   const centerIndexOuter = Math.round(
     ((Math.PI / 2 - angleOffsetOuter) / anglePerOuterDot + totalOuterDots) %
@@ -218,10 +215,10 @@ const handleDotClickOuter = (dotIndex) => {
   );
 
   return (
-    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative">
+    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative ">
       <div className="relative">
-        <img src="/round1.png" alt="Background" className="h-[250px]" />
-        <div className="absolute inset-0  left-2 right-2 flex items-center justify-center">
+        <img src="/round1.png" alt="Background" className="2xl:h-[216px] xl:h-[256px] lg:h-[216px]" />
+        <div className="absolute inset-0 left-2 right-2 flex items-center justify-center">
           <div
             className="text-sm font-semibold text-gray-700 cursor-pointer z-10"
             onClick={handleGoSector}
@@ -232,17 +229,17 @@ const handleDotClickOuter = (dotIndex) => {
       </div>
       <div className="absolute left-8">
         <img
-          src="innercircle1.png"
+          src="innerarc1.svg"
           alt="Inner Circle"
-          className="h-[650px] w-80"
+          className="2xl:h-[620px] xl:h-[650px] lg:h-[500px] "
         />
       </div>
 
       <div className="absolute left-2">
         <img
-          src="innercircle1.png"
+          src="innerarc1.svg"
           alt="Inner Circle"
-          className="h-[360px] w-44"
+          className="2xl:h-[360px] xl:h-[360px] lg:h-[260px]"
         />
       </div>
 
@@ -290,11 +287,7 @@ const handleDotClickOuter = (dotIndex) => {
         })}
       </div>
 
-      <div
-        ref={circleRefInner}
-        onMouseDown={handleMouseDownInner}
-        className="absolute"
-      >
+      <div className="absolute">
         {dotsInner.map((dot) => {
           const isMiddleDotInner = dot.index === centerIndexInner;
           return (

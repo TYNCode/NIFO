@@ -62,7 +62,7 @@ const EcosystemContent: React.FC<{
   }, [initialStartups]);
 
   return (
-    <div className="flex flex-col gap-4 mt-12">
+    <div className="flex flex-col gap-4 mt-12 h-[calc(100vh-8rem)]">
       <div className="bg-[#005585] p-4 w-full mt-4">
         <div className="text-lg font-semibold text-white">
           {usecase || "Ecosystem Overview"}
@@ -73,7 +73,7 @@ const EcosystemContent: React.FC<{
         </div>
       </div>
 
-      <div className="mx-3 flex flex-col gap-8">
+      <div className="mx-3 flex flex-col gap-8 overflow-y-scroll h-full">
         {detailedStartups.length > 0 ? (
           detailedStartups.map((startup, index) => (
             <div
@@ -112,21 +112,30 @@ const EcosystemContent: React.FC<{
   );
 };
 
-const Ecosystem: React.FC<{
-  startups: any[];
-  usecase: string;
-  usecaseDescription: string;
-}> = ({ startups, usecase, usecaseDescription }) => {
-  const [selectedStartup, setSelectedStartup] = useState<any | null>(null); // State to store selected startup
 
-  const router = useRouter();
+type EcosystemData = {
+  useCase: string;
+  useCaseDescription: string;
+  enhancement: string;
+  measureOfImpact: string;
+  startups: Startup[];
+};
 
-  const handleExploreClick = (selectedStartup: any) => {
-    setSelectedStartup(selectedStartup); // Set selected startup and navigate to StartupProfile
+type EcosystemProps = {
+  ecosystemData: EcosystemData;
+};
+
+const Ecosystem: React.FC<EcosystemProps> = ({ ecosystemData }) => {
+  const startups = ecosystemData.startups;
+  const usecase = ecosystemData?.useCase;
+  const [selectedStartup, setSelectedStartup] = useState<Startup | null>(null);
+
+  const handleExploreClick = (selectedStartup: Startup) => {
+    setSelectedStartup(selectedStartup);
   };
 
   const handleBackClick = () => {
-    setSelectedStartup(null); // Reset selected startup to navigate back to Ecosystem
+    setSelectedStartup(null);
   };
 
   return selectedStartup ? (
@@ -141,7 +150,7 @@ const Ecosystem: React.FC<{
     <EcosystemContent
       startups={startups}
       usecase={usecase}
-      usecaseDescription={usecaseDescription}
+      usecaseDescription={ecosystemData.useCaseDescription}
       handleExploreClick={handleExploreClick}
     />
   );
