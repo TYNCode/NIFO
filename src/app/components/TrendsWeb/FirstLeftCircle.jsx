@@ -106,7 +106,7 @@ const FirstLeftCircle = ({ onDotClick}) => {
 
       <div className="absolute left-8">
         <img
-          src="innercircle1.png"
+          src="innerarc1.png"
           alt="Inner Circle"
           className="h-[580px] "
         />
