@@ -26,15 +26,11 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
-
-  // Dynamically adjust radius based on screen size
-  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1024 ? 224 : 150;
+  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 260 : screenWidth >= 1024 ? 224 : 150;
   const radiusY = radiusX;
 
   useEffect(() => {
     setOuterCircleData(getInitialSubSectorData());
-
-    // Update screen width on resize
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
     };
@@ -101,7 +97,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
         <img
           src="/round2.png"
           alt="Background"
-          className="2xl:h-[400px] lg:h-[300px]"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           INDUSTRY
@@ -111,7 +107,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
         <img
           src="innercircle2.png"
           alt="Inner Circle"
-          className="2xl:h-[580px] lg:h-[450px]"
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
       {dots.map((dot) => {
@@ -125,7 +121,13 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
               right: `${dot.x}px`,
               top: `${
                 dot.y +
-                (screenWidth >= 1536 ? 320 : screenWidth >= 1024 ? 250 : 240)
+                (screenWidth >= 1536
+                  ? 320
+                  : screenWidth >= 1280
+                  ? 352
+                  : screenWidth >= 1024
+                  ? 250
+                  : 240)
               }px`,
               userSelect: "none",
             }}

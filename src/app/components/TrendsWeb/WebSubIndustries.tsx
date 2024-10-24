@@ -40,8 +40,14 @@ const WebSubIndustries = ({
   const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
 
-  // Dynamic radius based on screen size
-  const radiusX = screenWidth >= 1536 ? 290 : screenWidth >= 1024 ? 222 : 160;
+  const radiusX =
+    screenWidth >= 1536
+      ? 284
+      : screenWidth >= 1280
+      ? 260
+      : screenWidth >= 1024
+      ? 222
+      : 160;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -132,9 +138,9 @@ const WebSubIndustries = ({
         <img
           src="/round1.png"
           alt="Background"
-          className="2xl:h-[400px] lg:h-[300px]"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
-        <div className="absolute inset-0 left-6 flex items-center justify-center">
+        <div className="absolute inset-0 left-4 right-4 flex items-center justify-center">
           <div
             className="text-lg font-semibold text-gray-700 cursor-pointer z-10"
             onClick={handleGoSector}
@@ -148,7 +154,7 @@ const WebSubIndustries = ({
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
-          className="2xl:h-[580px] lg:h-[450px]"
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
 
@@ -163,8 +169,14 @@ const WebSubIndustries = ({
               left: `${dot.x}px`,
               top: `${
                 dot.y +
-                (screenWidth >= 1536 ? 320 : screenWidth >= 1024 ? 250 : 240)
-              }px`, 
+                (screenWidth >= 1536
+                  ? 320
+                  : screenWidth >= 1280
+                  ? 352
+                  : screenWidth >= 1024
+                  ? 250
+                  : 240)
+              }px`,
               userSelect: "none",
             }}
             onMouseDown={() => {
