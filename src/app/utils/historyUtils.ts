@@ -26,6 +26,8 @@ export const isPast30Days = (date: Date): boolean => {
 
 // Function to segregate sessions based on date ranges
 export const segregateSessions = (history: Session[]) => {
+
+  console.log("historyUTILSSS",history)
   const todaySessions: Session[] = [];
   const previous7DaysSessions: Session[] = [];
   const past30DaysSessions: Session[] = [];

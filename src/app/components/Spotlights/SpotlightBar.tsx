@@ -14,9 +14,9 @@ const SpotlightBar: React.FC<SpotlightBarProps> = ({ lastSpotlight, handleSpotli
         Spotlight
       </div>
       <div className="mx-4">
-        <div className="flex justify-center items-center cursor-pointer">
+        <div className="flex justify-center items-center cursor-pointer my-2">
           <Image
-            src="/thirdai-logo.png"
+            src={lastSpotlight.spotlight_img}
             alt="Third AI"
             width={100}
             height={50}

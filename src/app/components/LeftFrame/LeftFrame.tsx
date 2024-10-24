@@ -14,14 +14,15 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import Spotlight from "../Spotlights/Spotlight";
-import { v4 as uuidv4 } from "uuid"; 
+import { Dispatch, SetStateAction } from 'react';
 
 interface LeftFrameProps {
   onNewChat: () => void;
   setSessionId: React.Dispatch<React.SetStateAction<string>>;
+  setInputPrompt: Dispatch<SetStateAction<string>>;
 }
 
-const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
+const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInputPrompt }) => {
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -65,6 +66,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
   const handleHistorySelect = (sessionId: string) => {
     setSessionId(sessionId);
   };
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
@@ -120,7 +123,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId }) => {
             switch (activeTab) {
               case "recommended":
                 return (
-                  <RecommendedQueries onSelectHistory={handleHistorySelect} />
+                  <RecommendedQueries setInputPrompt={setInputPrompt}/>
                 );
               case "history":
                 return (

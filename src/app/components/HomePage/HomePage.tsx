@@ -316,7 +316,7 @@ export default function HomePage() {
       <div className="hidden md:flex w-full flex-row">
         {open && (
           <div className="w-1/5">
-            <LeftFrame onNewChat={handleNewChat} setSessionId={setSessionId} />
+            <LeftFrame onNewChat={handleNewChat} setSessionId={setSessionId} setInputPrompt={setInputPrompt} />
           </div>
         )}
         <div className="relative flex-grow pt-12">

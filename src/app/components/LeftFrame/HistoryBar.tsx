@@ -31,6 +31,8 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
     const firstMessage = session.messages[0];
     if (!firstMessage) return null;
 
+  console.log("todaySessionsss",todaySessions)
+
     return (
       <div key={session.session_id}>
         <div

@@ -1,15 +1,16 @@
-import React from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import data from '../../data/recommendedQueries'
+import { clearLoginState } from '../../redux/features/auth/loginSlice';
 
 interface RecommendedQueriesProps {
-    onSelectHistory: (value: string) => void;
+    setInputPrompt: Dispatch<SetStateAction<string>>;
 }
 
-const RecommendedQueries: React.FC<RecommendedQueriesProps> = ({ onSelectHistory }) => {
-
-    const sendQueryHistory = (value: string) => {
-        onSelectHistory(value);
-    };
+const RecommendedQueries: React.FC<RecommendedQueriesProps> = ({ setInputPrompt}) => {
+    
+    const sendRecommendationQuery = (item:any) => {
+    setInputPrompt(item.prompt)
+    }
 
     return (
         <>
@@ -22,7 +23,7 @@ const RecommendedQueries: React.FC<RecommendedQueriesProps> = ({ onSelectHistory
                         <div
                             key={index}
                             className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis  whitespace-nowrap text-[14px] hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
-                            onClick={() => sendQueryHistory(item.prompt)}>
+                            onClick={() => sendRecommendationQuery(item)}>
                             {item.shortName}
                         </div>
                     )
