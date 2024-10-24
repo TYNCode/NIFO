@@ -62,15 +62,27 @@ const WebTechUsecase = ({
   const circleRefOuter = useRef(null);
   const circleRefInner = useRef(null);
 
-  // Adjust the circle radii dynamically based on screen size
   const radiusXOuter =
-    screenWidth >= 1536 ? 330 : screenWidth >= 1024 ? 252 : 180;
+    screenWidth >= 1536
+      ? 310
+      : screenWidth >= 1280
+      ? 314
+      : screenWidth >= 1024
+      ? 252
+      : 180;
   const radiusYOuter = radiusXOuter;
   const radiusXInner =
-    screenWidth >= 1536 ? 170 : screenWidth >= 1024 ? 125 : 90;
+    screenWidth >= 1536
+      ? 170
+      : screenWidth >= 1280
+      ? 164
+      : screenWidth >= 1024
+      ? 125
+      : 90;
   const radiusYInner = radiusXInner;
 
   useEffect(() => {
+    console.log(`Screen width detected: ${screenWidth}`); // Log screen width for debugging
     setOuterCircleData(getInitialTechnologyData());
     setInnerCircleData(getInitialSubSectorsData());
 
@@ -84,7 +96,7 @@ const WebTechUsecase = ({
         window.removeEventListener("resize", handleResize);
       };
     }
-  }, [selectedSector, selectedIndustry]);
+  }, [selectedSector, selectedIndustry, screenWidth]);
 
   useEffect(() => {
     if (propSelectedIndustry) {
@@ -137,7 +149,6 @@ const WebTechUsecase = ({
     const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
     setSelectedIndustry(newSelectedIndustry);
 
-    // Adjust the inner circle offset to center the selected industry
     const normalizedAngleInnerOffset =
       ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentInnerCenterIndex = Math.round(
@@ -204,9 +215,9 @@ const WebTechUsecase = ({
   );
 
   return (
-    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative">
+    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative ">
       <div className="relative">
-        <img src="/round1.png" alt="Background" className="h-[216px]" />
+        <img src="/round1.png" alt="Background" className="2xl:h-[216px] xl:h-[256px] lg:h-[216px]" />
         <div className="absolute inset-0 left-2 right-2 flex items-center justify-center">
           <div
             className="text-sm font-semibold text-gray-700 cursor-pointer z-10"
@@ -217,11 +228,19 @@ const WebTechUsecase = ({
         </div>
       </div>
       <div className="absolute left-8">
-        <img src="innercircle1.png" alt="Inner Circle" className="h-[500px]" />
+        <img
+          src="innerarc1.svg"
+          alt="Inner Circle"
+          className="2xl:h-[620px] xl:h-[650px] lg:h-[500px] "
+        />
       </div>
 
       <div className="absolute left-2">
-        <img src="innercircle1.png" alt="Inner Circle" className="h-[260px]" />
+        <img
+          src="innerarc1.svg"
+          alt="Inner Circle"
+          className="2xl:h-[360px] xl:h-[360px] lg:h-[260px]"
+        />
       </div>
 
       <div

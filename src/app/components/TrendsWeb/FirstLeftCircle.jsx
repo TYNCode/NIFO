@@ -18,15 +18,13 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
-  const [screenWidth, setScreenWidth] = useState(1024); // Default to a screen width (can be anything)
+  const [screenWidth, setScreenWidth] = useState(1024);
   const circleRef = useRef(null);
 
-  // Handle radius based on screen width (set defaults)
-  const radiusX = screenWidth >= 1536 ? 290 : screenWidth >= 1024 ? 224 : 290;
+  const radiusX = screenWidth >= 1536 ? 286 : screenWidth >= 1280 ? 260 :screenWidth >= 1024 ? 224 : 290;
   const radiusY = radiusX;
 
   useEffect(() => {
-    // Check if 'window' is available to prevent SSR issues
     if (typeof window !== "undefined") {
       setScreenWidth(window.innerWidth);
 
@@ -123,7 +121,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="/round1.png"
           alt="Background"
-          className="2xl:h-[400px] lg:h-[300px]"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR
@@ -134,7 +132,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
-          className="2xl:h-[580px] lg:h-[450px]"
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
 
@@ -149,7 +147,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
               left: `${dot.x}px`,
               top: `${
                 dot.y +
-                (screenWidth >= 1536 ? 315 : screenWidth >= 1024 ? 250 : 315)
+                (screenWidth >= 1536 ? 315 : screenWidth >= 1280 ? 352 : screenWidth >= 1024 ? 250 : 315)
               }px`,
             }}
             onMouseDown={() => {

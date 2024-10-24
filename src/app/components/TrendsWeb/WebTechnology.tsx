@@ -32,7 +32,14 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
 
-  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1024 ? 222 : 160;
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 260
+      : screenWidth >= 1024
+      ? 222
+      : 160;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -126,7 +133,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
         <img
           src="/round2.png"
           alt="Background"
-          className="2xl:h-[400px] lg:h-[300px]"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           TECHNOLOGY
@@ -137,7 +144,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
         <img
           src="innercircle2.png"
           alt="Inner Circle"
-          className="2xl:h-[580px] lg:h-[450px]"
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
 
@@ -152,8 +159,14 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
               right: `${dot.x}px`,
               top: `${
                 dot.y +
-                (screenWidth >= 1536 ? 315 : screenWidth >= 1024 ? 250 : 240)
-              }px`, 
+                (screenWidth >= 1536
+                  ? 315
+                  : screenWidth >= 1280
+                  ? 352
+                  : screenWidth >= 1024
+                  ? 250
+                  : 240)
+              }px`,
               userSelect: "none",
             }}
             onClick={() => handleDotClick(dot.index)}
