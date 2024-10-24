@@ -120,7 +120,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       <div className="relative inline-block">
         <img src="/round2.png" alt="Background" className="h-[400px]" />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
-          INDUSTRY
+          TECHNOLOGY
         </div>
       </div>
       <div className="absolute right-12">
