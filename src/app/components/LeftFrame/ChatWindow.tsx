@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUserCircle } from 'react-icons/fa';
+import { BsInfoCircle } from "react-icons/bs";
 
 const ChatWindow: React.FC = () => {
     const messages = [
@@ -10,12 +11,19 @@ const ChatWindow: React.FC = () => {
 
     return (
         <>
-            <div className='text-sm py-3 px-2 text-gray-400 font-semibold'>
+            <div className='text-sm py-3 flex gap-3 items-center justify-start px-2 text-gray-400 font-semibold opacity-50'>
+                <div>
                 Chat Window
+                </div>
+
+                <div className='text-blue-400 cursor-pointer' title={`This is only a mock screen ,will be launching soon!`}>
+                <BsInfoCircle  size={16}/>
+                </div>
             </div>
             <div>
                 {messages.map((message, index) => (
-                    <div className='border bg-gray-100 flex flex-row items-center py-3 cursor-pointer hover:bg-yellow-300 text-gray-400 hover:text-black' key={index}>
+                    <div className='border bg-gray-100 flex flex-row items-center py-3 cursor-pointer opacity-40
+                    ' key={index}>
                         <div className=''>
                             <FaUserCircle className=" h-10 w-10" />
                         </div>

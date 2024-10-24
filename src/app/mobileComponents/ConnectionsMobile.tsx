@@ -26,26 +26,19 @@ const ConnectionsMobile: React.FC = () => {
     id: number,
     status: "connected" | "rejected"
   ) => {
-   
     await dispatch(updatePartnerConnectStatus({ id, request_status: status }));
 
-    
     setSelectedStatus((prevStatus) => ({
       ...prevStatus,
       [id]: status,
     }));
 
-  
     dispatch(fetchPartnerConnectsMade());
     dispatch(fetchPartnerConnectsReceived());
   };
 
   if (loading) {
     return <div>Loading connections...</div>;
-  }
-
-  if (error) {
-    return <div>Error loading connections: {error}</div>;
   }
 
   return (
@@ -84,7 +77,9 @@ const ConnectionsMobile: React.FC = () => {
       {/* Section for Requests Received */}
       <div>
         <h3 className="text-md font-semibold">Requests Received</h3>
-        {connectionsReceived && connectionsReceived.length === 0 ? (
+        {error ? (
+          <div className="mt-2 ml-2">{error}</div>
+        ) : connectionsReceived && connectionsReceived.length === 0 ? (
           <div>No requests received.</div>
         ) : (
           <ul className="space-y-4">
@@ -94,13 +89,10 @@ const ConnectionsMobile: React.FC = () => {
                 className="p-4 bg-gray-100 rounded-lg shadow-md"
               >
                 <div className="flex justify-between items-center">
-                  <div className="">
+                  <div>
                     <p className="text-base font-medium">
                       {connection?.user?.organization?.startup_name || "N/A"}
                     </p>
-                    {/* <p className="text-sm text-gray-600 capitalize">
-                      From: {connection?.user?.first_name || "Requester"}
-                    </p> */}
                     <p className="text-sm text-gray-600 capitalize">
                       Status: {connection.request_status}
                     </p>

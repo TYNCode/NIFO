@@ -32,9 +32,9 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
     setCurrentView("usecase");
   };
 
-  // Handle technology dot click
   const handleTechnologyClick = (technology) => {
-    setSelectedTechnology(technology); // Update selected technology
+    setSelectedTechnology(technology); 
+    setCurrentView("usecase");
   };
 
   return (

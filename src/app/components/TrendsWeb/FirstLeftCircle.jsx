@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
-const FirstLeftCircle = ({ onDotClick}) => {
+const FirstLeftCircle = ({ onDotClick }) => {
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
@@ -10,16 +10,35 @@ const FirstLeftCircle = ({ onDotClick}) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
+  const [outerCircleData, setOuterCircleData] = useState(
+    getInitialSectorData()
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(1024);
   const circleRef = useRef(null);
 
-  const radiusX = 290;
-  const radiusY = 290;
+  const radiusX = screenWidth >= 1536 ? 286 : screenWidth >= 1280 ? 260 :screenWidth >= 1024 ? 224 : 290;
+  const radiusY = radiusX;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setScreenWidth(window.innerWidth);
+
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -64,7 +83,8 @@ const FirstLeftCircle = ({ onDotClick}) => {
       ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
@@ -74,7 +94,6 @@ const FirstLeftCircle = ({ onDotClick}) => {
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
 
-    console.log("sectorName", outerCircleData[dotIndex].sectorName);
     if (onDotClick) {
       onDotClick(outerCircleData[dotIndex].sectorName);
     }
@@ -99,7 +118,11 @@ const FirstLeftCircle = ({ onDotClick}) => {
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
-        <img src="/round1.png" alt="Background" className="h-[400px]" />
+        <img
+          src="/round1.png"
+          alt="Background"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
+        />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR
         </div>
@@ -107,22 +130,25 @@ const FirstLeftCircle = ({ onDotClick}) => {
 
       <div className="absolute left-8">
         <img
-          src="innercircle1.png"
+          src="innerarc1.svg"
           alt="Inner Circle"
-          className="h-[580px] "
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
+
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
 
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer"
+            className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
               left: `${dot.x}px`,
-              top: `${dot.y + 315}px`,
-              userSelect: "none",
+              top: `${
+                dot.y +
+                (screenWidth >= 1536 ? 315 : screenWidth >= 1280 ? 352 : screenWidth >= 1024 ? 250 : 315)
+              }px`,
             }}
             onMouseDown={() => {
               setIsDragging(true);

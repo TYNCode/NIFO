@@ -110,11 +110,12 @@ export const fetchPartnerConnectsReceived = createAsyncThunk<
       const response = await getRequestWithAccessToken(
         "https://tyn-server.azurewebsites.net/partnerconnect/connects/received/"
       );
+      console.log("response in the partner connect slice", response)
       return response.data;
     } catch (error: any) {
+      console.log("error in the partner connect slice", error)
       return rejectWithValue(
-        error?.response?.data?.message ||
-          "Failed to fetch partner connects received"
+        error?.response?.data?.error
       );
     }
   }
@@ -205,7 +206,7 @@ const partnerConnectSlice = createSlice({
       )
       .addCase(fetchPartnerConnectsReceived.rejected, (state, action) => {
         state.error =
-          action.payload || "Failed to fetch partner connects received";
+          action.payload;
         state.loading = false;
       })
 

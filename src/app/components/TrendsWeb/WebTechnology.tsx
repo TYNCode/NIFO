@@ -5,9 +5,9 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const sectors = sectorData.sectors;
 
   const getInitialTechnologyData = () => {
-     const selectedSectorData = sectors.find(
-       (sector) => sector.sector === selectedSector
-     );
+    const selectedSectorData = sectors.find(
+      (sector) => sector.sector === selectedSector
+    );
     const selectedIndustryData =
       selectedSectorData?.subSectors[selectedIndustry];
 
@@ -17,7 +17,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       sectorName: selectedSectorData.sector,
       industryName: selectedIndustry,
       technologyTrend: technology.technologyTrend,
-      useCases: technology.useCases.slice(0, 2), 
+      useCases: technology.useCases.slice(0, 2),
     }));
   };
 
@@ -29,16 +29,22 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
   const circleRef = useRef(null);
 
-  const radiusX = 280;
-  const radiusY = 280;
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 260
+      : screenWidth >= 1024
+      ? 222
+      : 160;
+  const radiusY = radiusX;
 
   useEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
   }, [selectedSector, selectedIndustry]);
-
-  console.log("selected Detailas:", selectedSector, selectedIndustry);
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -52,12 +58,18 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       setLastMouseY(null);
     };
 
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("resize", handleResize); // Listen for window resizing
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("resize", handleResize); // Clean up listener
     };
   }, [isDragging]);
 
@@ -118,18 +130,24 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
-        <img src="/round2.png" alt="Background" className="h-[400px]" />
+        <img
+          src="/round2.png"
+          alt="Background"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
+        />
         <div className="absolute inset-x-0 left-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
-          INDUSTRY
+          TECHNOLOGY
         </div>
       </div>
+
       <div className="absolute right-12">
         <img
           src="innercircle2.png"
           alt="Inner Circle"
-          className="h-[580px]"
+          className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
+
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
 
@@ -139,7 +157,16 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
             className="absolute flex flex-col items-center justify-center cursor-pointer"
             style={{
               right: `${dot.x}px`,
-              top: `${dot.y + 315}px`,
+              top: `${
+                dot.y +
+                (screenWidth >= 1536
+                  ? 315
+                  : screenWidth >= 1280
+                  ? 352
+                  : screenWidth >= 1024
+                  ? 250
+                  : 240)
+              }px`,
               userSelect: "none",
             }}
             onClick={() => handleDotClick(dot.index)}
