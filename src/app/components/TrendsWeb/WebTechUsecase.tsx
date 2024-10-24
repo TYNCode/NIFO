@@ -46,9 +46,7 @@ const WebTechUsecase = ({
   const [innerCircleData, setInnerCircleData] = useState([]);
 
   const totalOuterDots = outerCircleData.length;
-  const totalInnerDots = innerCircleData.length;
   const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
-  const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
   const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
   const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2); // For inner circle
@@ -208,10 +206,6 @@ const WebTechUsecase = ({
     ((Math.PI / 2 - angleOffsetOuter) / anglePerOuterDot + totalOuterDots) %
       totalOuterDots
   );
-  const centerIndexInner = Math.round(
-    ((Math.PI / 2 - angleOffsetInner) / anglePerInnerDot + totalInnerDots) %
-      totalInnerDots
-  );
 
   return (
     <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative ">
@@ -288,7 +282,7 @@ const WebTechUsecase = ({
 
       <div className="absolute">
         {dotsInner.map((dot) => {
-          const isMiddleDotInner = dot.index === centerIndexInner;
+          const isMiddleDotInner = dot.index === 0; 
           return (
             <div
               key={`inner-${dot.index}`}
