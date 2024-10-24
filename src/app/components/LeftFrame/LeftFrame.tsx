@@ -15,6 +15,8 @@ import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import Spotlight from "../Spotlights/Spotlight";
 import { Dispatch, SetStateAction } from 'react';
+import { FaArrowTrendUp } from "react-icons/fa6";
+import TrendsTab from "./TrendsTab";
 
 interface LeftFrameProps {
   onNewChat: () => void;
@@ -101,8 +103,10 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
             },
             { icon: FaHistory, tab: "history", title: "Chat History" },
             { icon: LuLampDesk, tab: "spotlight", title: "Startup Spotlight" },
+            { icon : FaArrowTrendUp, tab:"trends", title: "Trends"},
             { icon: FiLink, tab: "connects", title: "Connects" },
-            { icon: IoChatbubblesSharp, tab: "chat", title: "Chat Window" },
+            // { icon: IoChatbubblesSharp, tab: "chat", title: "Chat Window : Will be launching soon!" },
+
           ].map(({ icon: Icon, tab, title }) => (
             <div
               key={tab}
@@ -143,8 +147,10 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
                 return <Spotlight />;
               case "connects":
                 return <Connects />;
-              case "chat":
-                return <ChatWindow />;
+              // case "chat":
+              //   return <ChatWindow />;
+              case "trends":
+                return <TrendsTab/> 
               default:
                 return null;
             }

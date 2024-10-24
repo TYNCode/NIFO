@@ -31,7 +31,7 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
     const firstMessage = session.messages[0];
     if (!firstMessage) return null;
 
-  console.log("todaySessionsss",todaySessions)
+    console.log("todaySessionsss", todaySessions);
 
     return (
       <div key={session.session_id}>
@@ -59,7 +59,7 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
             <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
               Today
             </div>
-            {todaySessions.map(renderSession)}
+            {todaySessions.reverse().map(renderSession)} {/* Reverse today sessions */}
           </>
         )}
         {previous7DaysSessions.length > 0 && (
@@ -67,7 +67,7 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
             <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
               Previous 7 Days
             </div>
-            {previous7DaysSessions.map(renderSession)}
+            {previous7DaysSessions.reverse().map(renderSession)} {/* Reverse previous 7 days sessions */}
           </>
         )}
         {past30DaysSessions.length > 0 && (
@@ -75,7 +75,7 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
             <div className="text-sm py-2 px-2 text-gray-500 font-semibold">
               Past 30 Days
             </div>
-            {past30DaysSessions.map(renderSession)}
+            {past30DaysSessions.reverse().map(renderSession)} {/* Reverse past 30 days sessions */}
           </>
         )}
       </div>
