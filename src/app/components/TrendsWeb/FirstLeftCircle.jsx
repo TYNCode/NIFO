@@ -19,7 +19,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
-  const circleRef = useRef(null);
 
   const radiusX = screenWidth >= 1536 ? 286 : screenWidth >= 1280 ? 260 :screenWidth >= 1024 ? 224 : 290;
   const radiusY = radiusX;
@@ -72,10 +71,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleMouseDown = (event) => {
-    if (circleRef.current && circleRef.current.contains(event.target)) {
       setIsDragging(true);
       setLastMouseY(event.clientY);
-    }
   };
 
   const handleDotClick = (dotIndex) => {
@@ -113,7 +110,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
   return (
     <div
       className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
-      ref={circleRef}
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >

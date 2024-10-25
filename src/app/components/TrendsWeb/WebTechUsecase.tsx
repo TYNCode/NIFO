@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const WebTechUsecase = ({
@@ -12,7 +12,8 @@ const WebTechUsecase = ({
 
   const [selectedIndustry, setSelectedIndustry] =
     useState(propSelectedIndustry);
-  const [screenWidth, setScreenWidth] = useState(1024); // Track screen width
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isRendered, setIsRendered] = useState(false); // New state to control re-render
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
@@ -51,16 +52,12 @@ const WebTechUsecase = ({
   const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
   const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
-  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2); // For inner circle
+  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2);
 
   const [isDraggingOuter, setIsDraggingOuter] = useState(false);
-  const [isDraggingInner, setIsDraggingInner] = useState(false);
-
   const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
-  const [lastMouseYInner, setLastMouseYInner] = useState(null);
 
   const circleRefOuter = useRef(null);
-  const circleRefInner = useRef(null);
 
   const radiusXOuter =
     screenWidth >= 1536
@@ -82,48 +79,27 @@ const WebTechUsecase = ({
   const radiusYInner = radiusXInner;
 
   useEffect(() => {
-    console.log(`Screen width detected: ${screenWidth}`); // Log screen width for debugging
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Run after initial render to recalculate positions
+  useLayoutEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
     setInnerCircleData(getInitialSubSectorsData());
 
-    if (typeof window !== "undefined") {
-      const handleResize = () => {
-        setScreenWidth(window.innerWidth);
-      };
-      window.addEventListener("resize", handleResize);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }
+    // Delay the recalculation to ensure layout is complete
+    setTimeout(() => {
+      setIsRendered(true); // Trigger re-render based on fully rendered layout
+    }, 100); // Adjust this delay if necessary
   }, [selectedSector, selectedIndustry, screenWidth]);
-
-  useEffect(() => {
-    if (propSelectedIndustry) {
-      setSelectedIndustry(propSelectedIndustry);
-    }
-  }, [propSelectedIndustry]);
-
-  useEffect(() => {
-    const handleMouseMoveOuter = (event) => {
-      if (isDraggingOuter) {
-        handleMouseMoveHandlerOuter(event);
-      }
-    };
-
-    const handleMouseUpOuter = () => {
-      setIsDraggingOuter(false);
-      setLastMouseYOuter(null);
-    };
-
-    window.addEventListener("mousemove", handleMouseMoveOuter);
-    window.addEventListener("mouseup", handleMouseUpOuter);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMoveOuter);
-      window.removeEventListener("mouseup", handleMouseUpOuter);
-    };
-  }, [isDraggingOuter, lastMouseYOuter]);
 
   const handleMouseMoveHandlerOuter = (event) => {
     const { clientY } = event;
@@ -216,7 +192,11 @@ const WebTechUsecase = ({
   return (
     <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative ">
       <div className="relative">
-        <img src="/round1.png" alt="Background" className="2xl:h-[216px] xl:h-[256px] lg:h-[216px]" />
+        <img
+          src="/round1.png"
+          alt="Background"
+          className="2xl:h-[216px] xl:h-[256px] lg:h-[216px]"
+        />
         <div className="absolute inset-0 left-2 right-2 flex items-center justify-center">
           <div
             className="text-sm font-semibold text-gray-700 cursor-pointer z-10"
