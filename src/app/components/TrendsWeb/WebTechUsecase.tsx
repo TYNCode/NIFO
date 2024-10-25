@@ -66,7 +66,7 @@ const WebTechUsecase = ({
   const radiusYOuter = radiusXOuter;
   const radiusXInner =
     screenWidth >= 1536
-      ? 200
+      ? 150
       : screenWidth >= 1280
       ? 164
       : screenWidth >= 1024
@@ -124,7 +124,8 @@ const WebTechUsecase = ({
       ((angleOffsetOuter % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentOuterCenterIndex = Math.round(
       ((Math.PI / 2 - normalizedAngleOuterOffset) / anglePerOuterDot +
-        totalOuterDots) % totalOuterDots
+        totalOuterDots) %
+        totalOuterDots
     );
     const outerDistance =
       (dotIndex - currentOuterCenterIndex + totalOuterDots) % totalOuterDots;
@@ -157,6 +158,7 @@ const WebTechUsecase = ({
       className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
       onMouseMove={(e) => isDraggingOuter && handleMouseMoveHandlerOuter(e)}
       onMouseUp={handleMouseUpOuter}
+      onMouseLeave={handleMouseUpOuter} // Stop dragging if the mouse leaves the component
     >
       <div className="relative">
         <img
@@ -189,7 +191,9 @@ const WebTechUsecase = ({
         />
       </div>
 
+      {/* Outer Circle */}
       <div
+        ref={circleRefOuter}
         onMouseDown={handleMouseDownOuter}
         className="absolute"
       >
@@ -232,14 +236,15 @@ const WebTechUsecase = ({
         })}
       </div>
 
-      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 right-0">
-        <div className="flex flex-col items-center justify-center ">
+      {/* Inner Circle with Single Dot */}
+      <div className="absolute left-40 top-1/2 transform -translate-y-1/2 ">
+        <div className="flex flex-row items-center justify-center ">
           <div
             className="rounded-full bg-[#3AB8FF] border-[#FFEFA7] border-2"
-            style={{ width: "40px", height: "40px" }}
+            style={{ width: "32px", height: "32px" }}
           ></div>
           <div
-            className="text-base text-[#4C4C4C] font-semibold"
+            className="text-sm text-[#4C4C4C] font-semibold w-24"
             style={{ textAlign: "center", marginTop: "8px" }}
           >
             {selectedIndustry || "N/A"}
