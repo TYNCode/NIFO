@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const FirstRightCircle = ({ selectedSector, onDotClick }) => {
@@ -24,9 +24,16 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
-  const circleRef = useRef(null);
-  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 260 : screenWidth >= 1024 ? 224 : 150;
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 260
+      : screenWidth >= 1024
+      ? 224
+      : 150;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -42,14 +49,40 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
     };
   }, [selectedSector]);
 
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      if (isDragging) {
+        handleMouseMoveHandler(event);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      setLastMouseY(null); // Reset lastMouseY when dragging ends
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
     if (lastMouseY !== null) {
       const deltaY = clientY - lastMouseY;
-      const rotationSpeed = 0.005;
+      const rotationSpeed = 0.0002;
       setAngleOffset((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
     setLastMouseY(clientY);
+  };
+
+  const handleMouseDown = (event) => {
+    setIsDragging(true);
+    setLastMouseY(event.clientY); // Initialize lastMouseY when dragging starts
   };
 
   const handleDotClick = (dotIndex) => {
@@ -87,10 +120,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   return (
     <div
       className="flex items-center justify-end h-[calc(100vh-64px)] w-1/2 relative"
-      ref={circleRef}
-      onMouseDown={() => setIsDragging(true)}
-      onMouseUp={() => setIsDragging(false)}
-      onMouseMove={(e) => isDragging && handleMouseMoveHandler(e)}
+      onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
