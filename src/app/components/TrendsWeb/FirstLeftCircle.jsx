@@ -117,7 +117,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="/round1.png"
           alt="Background"
-          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px] "
         />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR

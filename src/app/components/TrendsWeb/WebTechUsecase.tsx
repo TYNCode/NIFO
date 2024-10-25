@@ -13,7 +13,7 @@ const WebTechUsecase = ({
   const [selectedIndustry, setSelectedIndustry] =
     useState(propSelectedIndustry);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [isRendered, setIsRendered] = useState(false); // New state to control re-render
+  const [isRendered, setIsRendered] = useState(false);
 
   const getInitialTechnologyData = () => {
     const selectedSectorData = sectors.find(
@@ -44,16 +44,12 @@ const WebTechUsecase = ({
   };
 
   const [outerCircleData, setOuterCircleData] = useState([]);
-  const [innerCircleData, setInnerCircleData] = useState([]);
+  const [innerCircleData] = useState(getInitialSubSectorsData());
 
   const totalOuterDots = outerCircleData.length;
-  const totalInnerDots = innerCircleData.length;
   const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
-  const anglePerInnerDot = (2 * Math.PI) / totalInnerDots;
 
   const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
-  const [angleOffsetInner, setAngleOffsetInner] = useState(Math.PI / 2);
-
   const [isDraggingOuter, setIsDraggingOuter] = useState(false);
   const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
 
@@ -70,7 +66,7 @@ const WebTechUsecase = ({
   const radiusYOuter = radiusXOuter;
   const radiusXInner =
     screenWidth >= 1536
-      ? 170
+      ? 200
       : screenWidth >= 1280
       ? 164
       : screenWidth >= 1024
@@ -90,15 +86,12 @@ const WebTechUsecase = ({
     };
   }, []);
 
-  // Run after initial render to recalculate positions
   useLayoutEffect(() => {
     setOuterCircleData(getInitialTechnologyData());
-    setInnerCircleData(getInitialSubSectorsData());
 
-    // Delay the recalculation to ensure layout is complete
     setTimeout(() => {
-      setIsRendered(true); // Trigger re-render based on fully rendered layout
-    }, 100); // Adjust this delay if necessary
+      setIsRendered(true);
+    }, 100);
   }, [selectedSector, selectedIndustry, screenWidth]);
 
   const handleMouseMoveHandlerOuter = (event) => {
@@ -121,25 +114,9 @@ const WebTechUsecase = ({
     }
   };
 
-  const handleDotClickInner = (dotIndex) => {
-    const newSelectedIndustry = innerCircleData[dotIndex].subSectorName;
-    setSelectedIndustry(newSelectedIndustry);
-
-    const normalizedAngleInnerOffset =
-      ((angleOffsetInner % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-    const currentInnerCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleInnerOffset) / anglePerInnerDot +
-        totalInnerDots) %
-        totalInnerDots
-    );
-    const innerDistance =
-      (dotIndex - currentInnerCenterIndex + totalInnerDots) % totalInnerDots;
-    const shortestInnerDistance =
-      innerDistance <= totalInnerDots / 2
-        ? innerDistance
-        : innerDistance - totalInnerDots;
-    const innerAngleDifference = shortestInnerDistance * anglePerInnerDot;
-    setAngleOffsetInner((prevOffset) => prevOffset - innerAngleDifference);
+  const handleMouseUpOuter = () => {
+    setIsDraggingOuter(false);
+    setLastMouseYOuter(null);
   };
 
   const handleDotClickOuter = (dotIndex) => {
@@ -171,27 +148,17 @@ const WebTechUsecase = ({
     return { x, y, index };
   });
 
-  const dotsInner = Array.from({ length: innerCircleData.length }).map(
-    (_, index) => {
-      const innerAngle =
-        (index / innerCircleData.length) * Math.PI * 2 + angleOffsetInner;
-      const x = radiusXInner * Math.sin(innerAngle);
-      const y = radiusYInner * Math.cos(innerAngle);
-      return { x, y, index };
-    }
-  );
-
   const centerIndexOuter = Math.round(
     ((Math.PI / 2 - angleOffsetOuter) / anglePerOuterDot + totalOuterDots) %
       totalOuterDots
   );
-  const centerIndexInner = Math.round(
-    ((Math.PI / 2 - angleOffsetInner) / anglePerInnerDot + totalInnerDots) %
-      totalInnerDots
-  );
 
   return (
-    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative ">
+    <div
+      className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
+      onMouseMove={(e) => isDraggingOuter && handleMouseMoveHandlerOuter(e)}
+      onMouseUp={handleMouseUpOuter}
+    >
       <div className="relative">
         <img
           src="/round1.png"
@@ -211,7 +178,7 @@ const WebTechUsecase = ({
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
-          className="2xl:h-[620px] xl:h-[650px] lg:h-[500px] "
+          className="2xl:h-[620px] xl:h-[650px] lg:h-[500px]"
         />
       </div>
 
@@ -224,7 +191,6 @@ const WebTechUsecase = ({
       </div>
 
       <div
-        ref={circleRefOuter}
         onMouseDown={handleMouseDownOuter}
         className="absolute"
       >
@@ -267,44 +233,19 @@ const WebTechUsecase = ({
         })}
       </div>
 
-      <div className="absolute">
-        {dotsInner.map((dot) => {
-          const isMiddleDotInner = dot.index === centerIndexInner;
-          return (
-            <div
-              key={`inner-${dot.index}`}
-              className="absolute flex flex-row gap-2 items-center justify-center cursor-pointer"
-              onClick={() => handleDotClickInner(dot.index)}
-              style={{
-                left: `${dot.x}px`,
-                top: `${dot.y - 10}px`,
-                userSelect: "none",
-              }}
-            >
-              <div
-                className={`rounded-full ${
-                  isMiddleDotInner
-                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
-                    : "bg-[#D8D8D8]"
-                }`}
-                style={{
-                  width: isMiddleDotInner ? "28px" : "20px",
-                  height: isMiddleDotInner ? "28px" : "20px",
-                }}
-              />
-              <div
-                className={`w-24 ${
-                  isMiddleDotInner
-                    ? "font-semibold text-[12px] text-[#4C4C4C]"
-                    : "text-[#797979] text-[12px]"
-                }`}
-                style={{ wordWrap: "break-word", whiteSpace: "normal" }}
-              >
-                {innerCircleData[dot.index].subSectorName || "N/A"}
-              </div>
-            </div>
-          );
-        })}
+      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 right-0">
+        <div className="flex flex-col items-center justify-center ">
+          <div
+            className="rounded-full bg-[#3AB8FF] border-[#FFEFA7] border-2"
+            style={{ width: "40px", height: "40px" }}
+          ></div>
+          <div
+            className="text-base text-[#4C4C4C] font-semibold"
+            style={{ textAlign: "center", marginTop: "8px" }}
+          >
+            {selectedIndustry || "N/A"}
+          </div>
+        </div>
       </div>
     </div>
   );
