@@ -20,6 +20,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const innerArcRef = useRef(null);
 
   // Update radiusX/Y dynamically based on screen width
+
   const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 258 : screenWidth >= 1024 ? 230 : 220;
   const radiusY = radiusX;
 
@@ -121,7 +122,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
         </div>
       </div>
 
-      {/* Inner Arc Image for Dot Position Reference */}
       <div className="absolute left-8" ref={innerArcRef}>
         <img
           src="innerarc1.svg"
@@ -134,22 +134,30 @@ const FirstLeftCircle = ({ onDotClick }) => {
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
         const innerArcRect = innerArcRef.current?.getBoundingClientRect();
-        const innerArcCenterX = innerArcRect ? innerArcRect.left + innerArcRect.width / 2 : 0;
-        const innerArcCenterY = innerArcRect ? innerArcRect.top + innerArcRect.height / 2 : 0;
+        const innerArcCenterX = innerArcRect
+          ? innerArcRect.left + innerArcRect.width / 2
+          : 0;
+        const innerArcCenterY = innerArcRect
+          ? innerArcRect.top + innerArcRect.height / 2
+          : 0;
 
-        const horizontalOffsetPercent = -0.3; // 5% of inner arc's width
-        const verticalOffsetPercent = -0.115; 
-        const horizontalOffset = innerArcRect ? innerArcRect.width * horizontalOffsetPercent : 0;
-        const verticalOffset = innerArcRect ? innerArcRect.height * verticalOffsetPercent : 0;
+        const horizontalOffsetPercent = -0.3; // Adjust as needed
+        const verticalOffsetPercent = -0.115;
+        const horizontalOffset = innerArcRect
+          ? innerArcRect.width * horizontalOffsetPercent
+          : 0;
+        const verticalOffset = innerArcRect
+          ? innerArcRect.height * verticalOffsetPercent
+          : 0;
 
         return (
           <div
             key={dot.index}
             className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Add percentage-based horizontal offset
-              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Add percentage-based vertical offset
-              transform: "translate(-50%, -50%)"
+              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+              transform: "translate(-50%, -50%)",
             }}
             onMouseDown={() => {
               setIsDragging(true);
