@@ -20,9 +20,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const innerArcRef = useRef(null);
 
   // Update radiusX/Y dynamically based on screen width
-  const innerArcRef = useRef(null);
-
-  // Update radiusX/Y dynamically based on screen width
 
   const radiusX =
     screenWidth >= 1536
