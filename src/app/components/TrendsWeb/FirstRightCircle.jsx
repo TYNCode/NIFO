@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const FirstRightCircle = ({ selectedSector, onDotClick }) => {
@@ -25,6 +25,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const innerArcRef = useRef(null);
 
   const radiusX =
     screenWidth >= 1536
@@ -135,31 +136,34 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
       </div>
       <div className="absolute right-12">
         <img
-          src="innercircle2.png"
+          src="innerarc2.svg"
           alt="Inner Circle"
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect ? innerArcRect.left + innerArcRect.width / 2 : 0;
+        const innerArcCenterY = innerArcRect ? innerArcRect.top + innerArcRect.height / 2 : 0;
+
+        const horizontalOffsetPercent = -0.3; // 5% of inner arc's width
+        const verticalOffsetPercent = 0.9; 
+        const horizontalOffset = innerArcRect ? innerArcRect.width * horizontalOffsetPercent : 0;
+        const verticalOffset = innerArcRect ? innerArcRect.height * verticalOffsetPercent : 0;
 
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer"
+            className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              right: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536
-                  ? 320
-                  : screenWidth >= 1280
-                  ? 352
-                  : screenWidth >= 1024
-                  ? 250
-                  : 240)
-              }px`,
-              userSelect: "none",
+              right: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`,
+              transform: "translate(-50%, -50%)"
+            }}
+            onMouseDown={() => {
+              setIsDragging(true);
+              setLastMouseY(null);
             }}
             onClick={() => handleDotClick(dot.index)}
           >

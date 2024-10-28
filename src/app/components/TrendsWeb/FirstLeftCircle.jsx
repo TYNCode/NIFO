@@ -10,17 +10,18 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSectorData()
-  );
+  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
+  const innerArcRef = useRef(null);
 
-  const radiusX = screenWidth >= 1536 ? 286 : screenWidth >= 1280 ? 260 :screenWidth >= 1024 ? 224 : 290;
+  // Update radiusX/Y dynamically based on screen width
+
+  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 258 : screenWidth >= 1024 ? 230 : 220;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -71,22 +72,19 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleMouseDown = (event) => {
-      setIsDragging(true);
-      setLastMouseY(event.clientY);
+    setIsDragging(true);
+    setLastMouseY(event.clientY);
   };
 
   const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset =
-      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const normalizedAngleOffset = ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
@@ -124,7 +122,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         </div>
       </div>
 
-      <div className="absolute left-8">
+      <div className="absolute left-8" ref={innerArcRef}>
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
@@ -132,19 +130,34 @@ const FirstLeftCircle = ({ onDotClick }) => {
         />
       </div>
 
+      {/* Position Dots Relative to Inner Arc */}
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect
+          ? innerArcRect.left + innerArcRect.width / 2
+          : 0;
+        const innerArcCenterY = innerArcRect
+          ? innerArcRect.top + innerArcRect.height / 2
+          : 0;
+
+        const horizontalOffsetPercent = -0.3; // Adjust as needed
+        const verticalOffsetPercent = -0.115;
+        const horizontalOffset = innerArcRect
+          ? innerArcRect.width * horizontalOffsetPercent
+          : 0;
+        const verticalOffset = innerArcRect
+          ? innerArcRect.height * verticalOffsetPercent
+          : 0;
 
         return (
           <div
             key={dot.index}
             className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              left: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536 ? 315 : screenWidth >= 1280 ? 352 : screenWidth >= 1024 ? 250 : 315)
-              }px`,
+              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+              transform: "translate(-50%, -50%)",
             }}
             onMouseDown={() => {
               setIsDragging(true);
