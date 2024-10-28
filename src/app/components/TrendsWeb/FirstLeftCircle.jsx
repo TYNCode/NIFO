@@ -10,9 +10,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSectorData()
-  );
+  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -22,14 +20,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const innerArcRef = useRef(null);
 
   // Update radiusX/Y dynamically based on screen width
-  const radiusX =
-    screenWidth >= 1536
-      ? 280
-      : screenWidth >= 1280
-      ? 258
-      : screenWidth >= 1024
-      ? 230
-      : 220;
+
+  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 258 : screenWidth >= 1024 ? 230 : 220;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -89,17 +81,14 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset =
-      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const normalizedAngleOffset = ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
@@ -145,6 +134,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         />
       </div>
 
+      {/* Position Dots Relative to Inner Arc */}
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
         const innerArcRect = innerArcRef.current?.getBoundingClientRect();
