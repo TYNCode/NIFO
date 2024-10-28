@@ -19,8 +19,17 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
+  const innerArcRef = useRef(null);
 
-  const radiusX = screenWidth >= 1536 ? 286 : screenWidth >= 1280 ? 260 :screenWidth >= 1024 ? 224 : 290;
+  // Update radiusX/Y dynamically based on screen width
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 258
+      : screenWidth >= 1024
+      ? 230
+      : 220;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -71,8 +80,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleMouseDown = (event) => {
-      setIsDragging(true);
-      setLastMouseY(event.clientY);
+    setIsDragging(true);
+    setLastMouseY(event.clientY);
   };
 
   const handleDotClick = (dotIndex) => {
@@ -117,14 +126,14 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="/round1.png"
           alt="Background"
-          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px] "
+          className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR
         </div>
       </div>
 
-      <div className="absolute left-8">
+      <div className="absolute left-8" ref={innerArcRef}>
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
@@ -134,17 +143,31 @@ const FirstLeftCircle = ({ onDotClick }) => {
 
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect
+          ? innerArcRect.left + innerArcRect.width / 2
+          : 0;
+        const innerArcCenterY = innerArcRect
+          ? innerArcRect.top + innerArcRect.height / 2
+          : 0;
+
+        const horizontalOffsetPercent = -0.3; // Adjust as needed
+        const verticalOffsetPercent = -0.115;
+        const horizontalOffset = innerArcRect
+          ? innerArcRect.width * horizontalOffsetPercent
+          : 0;
+        const verticalOffset = innerArcRect
+          ? innerArcRect.height * verticalOffsetPercent
+          : 0;
 
         return (
           <div
             key={dot.index}
             className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              left: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536 ? 315 : screenWidth >= 1280 ? 352 : screenWidth >= 1024 ? 250 : 315)
-              }px`,
+              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+              transform: "translate(-50%, -50%)",
             }}
             onMouseDown={() => {
               setIsDragging(true);

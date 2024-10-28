@@ -26,29 +26,37 @@ const WebSubIndustries = ({
   );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
-
-  const selectedIndustryIndex = outerCircleData.findIndex(
-    (data) => data.subSectorName === selectedIndustry
-  );
-
-  const [angleOffset, setAngleOffset] = useState(
-    Math.PI / 2 - selectedIndustryIndex * anglePerDot
-  );
-
+  const [angleOffset, setAngleOffset] = useState(Math.PI / 2 );
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
-  const circleRef = useRef(null);
+  const [screenWidth, setScreenWidth] = useState(1024);
+  const innerArcRef = useRef(null);
 
   const radiusX =
     screenWidth >= 1536
-      ? 284
+      ? 280
       : screenWidth >= 1280
-      ? 260
+      ? 258
       : screenWidth >= 1024
-      ? 222
-      : 160;
+      ? 230
+      : 220;
   const radiusY = radiusX;
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        setScreenWidth(window.innerWidth);
+
+        const handleResize = () => {
+          setScreenWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+          window.removeEventListener("resize", handleResize);
+        };
+      }
+    }, []);
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -62,18 +70,13 @@ const WebSubIndustries = ({
       setLastMouseY(null);
     };
 
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("resize", handleResize); // Listen for window resizing
+   window.addEventListener("mousemove", handleMouseMove);
+   window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("resize", handleResize); // Clean up listener
+ 
     };
   }, [isDragging, lastMouseY]);
 
@@ -87,33 +90,34 @@ const WebSubIndustries = ({
     setLastMouseY(clientY);
   };
 
-  const handleMouseDown = (event) => {
-    if (circleRef.current && circleRef.current.contains(event.target)) {
-      setIsDragging(true);
-      setLastMouseY(event.clientY);
-    }
-  };
 
-  const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset =
-      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      const handleMouseDown = (event) => {
+        setIsDragging(true);
+        setLastMouseY(event.clientY);
+      };
 
-    const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
-    );
+      
+    const handleDotClick = (dotIndex) => {
+      const normalizedAngleOffset =
+        ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-    const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
-    const angleDifference = shortestDistance * anglePerDot;
+      const currentCenterIndex = Math.round(
+        ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+          totalDots
+      );
 
-    setAngleOffset((prevOffset) => prevOffset - angleDifference);
+  
+      const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
+      const shortestDistance =
+        distance <= totalDots / 2 ? distance : distance - totalDots;
+      const angleDifference = shortestDistance * anglePerDot;
 
-    if (onDotClick) {
-      onDotClick(outerCircleData[dotIndex].subSectorName);
-    }
-  };
+      setAngleOffset((prevOffset) => prevOffset - angleDifference);
+
+      if (onDotClick) {
+        onDotClick(outerCircleData[dotIndex].subSectorName);
+      }
+    };
 
   const dots = Array.from({ length: totalDots }).map((_, index) => {
     const angle = (index / totalDots) * Math.PI * 2 + angleOffset;
@@ -129,7 +133,6 @@ const WebSubIndustries = ({
   return (
     <div
       className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
-      ref={circleRef}
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
@@ -140,7 +143,7 @@ const WebSubIndustries = ({
           alt="Background"
           className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
-        <div className="absolute inset-0 left-4 right-4 flex items-center justify-center">
+        <div className="absolute inset-0 left-4 right-8 flex items-center justify-center">
           <div
             className="text-lg font-semibold text-gray-700 cursor-pointer z-10"
             onClick={handleGoSector}
@@ -150,7 +153,7 @@ const WebSubIndustries = ({
         </div>
       </div>
 
-      <div className="absolute left-8">
+      <div className="absolute left-8" ref={innerArcRef}>
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
@@ -160,24 +163,31 @@ const WebSubIndustries = ({
 
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect
+          ? innerArcRect.left + innerArcRect.width / 2
+          : 0;
+        const innerArcCenterY = innerArcRect
+          ? innerArcRect.top + innerArcRect.height / 2
+          : 0;
+
+        const horizontalOffsetPercent = -0.3; // Adjust as needed
+        const verticalOffsetPercent = -0.115; // Adjust as needed
+        const horizontalOffset = innerArcRect
+          ? innerArcRect.width * horizontalOffsetPercent
+          : 0;
+        const verticalOffset = innerArcRect
+          ? innerArcRect.height * verticalOffsetPercent
+          : 0;
 
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer"
+            className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              left: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536
-                  ? 320
-                  : screenWidth >= 1280
-                  ? 352
-                  : screenWidth >= 1024
-                  ? 250
-                  : 240)
-              }px`,
-              userSelect: "none",
+              left: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`,
+              transform: "translate(-50%, -50%)",
             }}
             onMouseDown={() => {
               setIsDragging(true);
