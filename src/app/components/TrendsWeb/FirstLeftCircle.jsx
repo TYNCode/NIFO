@@ -69,6 +69,10 @@ const FirstLeftCircle = ({ onDotClick }) => {
     };
   }, [isDragging, lastMouseY]);
 
+  useEffect(() => {
+    setAngleOffset((prevOffset) => prevOffset);
+  }, []);
+
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
     if (lastMouseY !== null) {
