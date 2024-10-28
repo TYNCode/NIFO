@@ -10,7 +10,9 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
+  const [outerCircleData, setOuterCircleData] = useState(
+    getInitialSectorData()
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -18,8 +20,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
-
-  // Update radiusX/Y dynamically based on screen width
 
   const radiusX =
     screenWidth >= 1536
@@ -34,13 +34,12 @@ const FirstLeftCircle = ({ onDotClick }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setScreenWidth(window.innerWidth);
-
       const handleResize = () => {
-        setScreenWidth(window.innerWidth);
+        window.requestAnimationFrame(() => {
+          setScreenWidth(window.innerWidth);
+        });
       };
-
       window.addEventListener("resize", handleResize);
-
       return () => {
         window.removeEventListener("resize", handleResize);
       };
@@ -53,15 +52,12 @@ const FirstLeftCircle = ({ onDotClick }) => {
         handleMouseMoveHandler(event);
       }
     };
-
     const handleMouseUp = () => {
       setIsDragging(false);
       setLastMouseY(null);
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
@@ -69,7 +65,10 @@ const FirstLeftCircle = ({ onDotClick }) => {
   }, [isDragging, lastMouseY]);
 
   useEffect(() => {
-    setAngleOffset((prevOffset) => prevOffset);
+    const timer = setTimeout(() => {
+      setAngleOffset((prevOffset) => prevOffset);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleMouseMoveHandler = (event) => {
@@ -88,18 +87,17 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset = ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-
+    const normalizedAngleOffset =
+      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
     );
-
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance =
+      distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
-
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
-
     if (onDotClick) {
       onDotClick(outerCircleData[dotIndex].sectorName);
     }
@@ -126,6 +124,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="/round1.png"
           alt="Background"
+          onLoad={() => setScreenWidth(window.innerWidth)}
           className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
         />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
@@ -137,11 +136,11 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
+          onLoad={() => setScreenWidth(window.innerWidth)}
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
 
-      {/* Position Dots Relative to Inner Arc */}
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
         const innerArcRect = innerArcRef.current?.getBoundingClientRect();
@@ -151,8 +150,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
         const innerArcCenterY = innerArcRect
           ? innerArcRect.top + innerArcRect.height / 2
           : 0;
-
-        const horizontalOffsetPercent = -0.3; // Adjust as needed
+        const horizontalOffsetPercent = -0.3;
         const verticalOffsetPercent = -0.115;
         const horizontalOffset = innerArcRect
           ? innerArcRect.width * horizontalOffsetPercent
@@ -166,8 +164,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
             key={dot.index}
             className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
-              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+              left: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`,
               transform: "translate(-50%, -50%)",
             }}
             onMouseDown={() => {
