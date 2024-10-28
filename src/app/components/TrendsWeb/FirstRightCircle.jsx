@@ -24,9 +24,17 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
-  const circleRef = useRef(null);
-  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 260 : screenWidth >= 1024 ? 224 : 150;
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const innerArcRef = useRef(null);
+
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 260
+      : screenWidth >= 1024
+      ? 224
+      : 150;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -42,14 +50,40 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
     };
   }, [selectedSector]);
 
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      if (isDragging) {
+        handleMouseMoveHandler(event);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      setLastMouseY(null); // Reset lastMouseY when dragging ends
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
     if (lastMouseY !== null) {
       const deltaY = clientY - lastMouseY;
-      const rotationSpeed = 0.005;
+      const rotationSpeed = 0.0002;
       setAngleOffset((prevOffset) => prevOffset - deltaY * rotationSpeed);
     }
     setLastMouseY(clientY);
+  };
+
+  const handleMouseDown = (event) => {
+    setIsDragging(true);
+    setLastMouseY(event.clientY); // Initialize lastMouseY when dragging starts
   };
 
   const handleDotClick = (dotIndex) => {
@@ -87,10 +121,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   return (
     <div
       className="flex items-center justify-end h-[calc(100vh-64px)] w-1/2 relative"
-      ref={circleRef}
-      onMouseDown={() => setIsDragging(true)}
-      onMouseUp={() => setIsDragging(false)}
-      onMouseMove={(e) => isDragging && handleMouseMoveHandler(e)}
+      onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
@@ -105,31 +136,34 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
       </div>
       <div className="absolute right-12">
         <img
-          src="innercircle2.png"
+          src="innerarc2.svg"
           alt="Inner Circle"
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
         />
       </div>
       {dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect ? innerArcRect.left + innerArcRect.width / 2 : 0;
+        const innerArcCenterY = innerArcRect ? innerArcRect.top + innerArcRect.height / 2 : 0;
+
+        const horizontalOffsetPercent = -0.3; // 5% of inner arc's width
+        const verticalOffsetPercent = 0.9; 
+        const horizontalOffset = innerArcRect ? innerArcRect.width * horizontalOffsetPercent : 0;
+        const verticalOffset = innerArcRect ? innerArcRect.height * verticalOffsetPercent : 0;
 
         return (
           <div
             key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer"
+            className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              right: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536
-                  ? 320
-                  : screenWidth >= 1280
-                  ? 352
-                  : screenWidth >= 1024
-                  ? 250
-                  : 240)
-              }px`,
-              userSelect: "none",
+              right: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`,
+              transform: "translate(-50%, -50%)"
+            }}
+            onMouseDown={() => {
+              setIsDragging(true);
+              setLastMouseY(null);
             }}
             onClick={() => handleDotClick(dot.index)}
           >

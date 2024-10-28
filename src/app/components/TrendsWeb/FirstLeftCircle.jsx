@@ -10,15 +10,16 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSectorData()
-  );
+  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
+  const innerArcRef = useRef(null);
+
+  // Update radiusX/Y dynamically based on screen width
   const innerArcRef = useRef(null);
 
   // Update radiusX/Y dynamically based on screen width
@@ -90,17 +91,14 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset =
-      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const normalizedAngleOffset = ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
