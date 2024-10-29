@@ -10,7 +10,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
     );
 
     if (!selectedSectorData) return [];
-    return Object.keys(selectedSectorData.subSectors).map((subSectorName) => ({
+    return Object.keys(selectedSectorData.subSectors).slice(0, 8).map((subSectorName) => ({
       subSectorName,
       technologyTrends: selectedSectorData.subSectors[subSectorName],
     }));
@@ -59,7 +59,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      setLastMouseY(null); // Reset lastMouseY when dragging ends
+      setLastMouseY(null);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -83,7 +83,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
 
   const handleMouseDown = (event) => {
     setIsDragging(true);
-    setLastMouseY(event.clientY); // Initialize lastMouseY when dragging starts
+    setLastMouseY(event.clientY);
   };
 
   const handleDotClick = (dotIndex) => {
@@ -147,7 +147,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
         const innerArcCenterX = innerArcRect ? innerArcRect.left + innerArcRect.width / 2 : 0;
         const innerArcCenterY = innerArcRect ? innerArcRect.top + innerArcRect.height / 2 : 0;
 
-        const horizontalOffsetPercent = -0.3; // 5% of inner arc's width
+        const horizontalOffsetPercent = -0.3; 
         const verticalOffsetPercent = 0.9; 
         const horizontalOffset = innerArcRect ? innerArcRect.width * horizontalOffsetPercent : 0;
         const verticalOffset = innerArcRect ? innerArcRect.height * verticalOffsetPercent : 0;

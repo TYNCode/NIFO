@@ -13,7 +13,7 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
 
     if (!selectedIndustryData) return [];
 
-    return selectedIndustryData.map((technology) => ({
+    return selectedIndustryData.slice(0, 8).map((technology) => ({
       sectorName: selectedSectorData.sector,
       industryName: selectedIndustry,
       technologyTrend: technology.technologyTrend,
