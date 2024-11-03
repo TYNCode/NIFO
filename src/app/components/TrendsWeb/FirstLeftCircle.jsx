@@ -39,7 +39,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
 
   const radiusX =
     screenWidth >= 1536
-      ? 280
+      ? 284
       : screenWidth >= 1280
       ? 258
       : screenWidth >= 1024
@@ -174,7 +174,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
             : 0;
 
           const horizontalOffsetPercent = -0.3; // Adjust as needed
-          const verticalOffsetPercent = -0.115;
+          const verticalOffsetPercent = -0.10;
           const horizontalOffset = innerArcRect
             ? innerArcRect.width * horizontalOffsetPercent
             : 0;
