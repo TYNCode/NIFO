@@ -1,7 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const FirstLeftCircle = ({ onDotClick }) => {
+  useLayoutEffect(() => {
+    const calculateBoundingRect = () => {
+      if (innerArcRef.current) {
+        setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+      }
+    };
+    calculateBoundingRect();
+  }, []);
+
+  const handleImageLoad = () => {
+    if (innerArcRef.current) {
+      setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+    }
+  };
+
   const sectors = sectorData.sectors;
 
   const getInitialSectorData = () => {
@@ -10,7 +25,9 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }));
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
+  const [outerCircleData, setOuterCircleData] = useState(
+    getInitialSectorData()
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -18,10 +35,16 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
+  const [innerArcRect, setInnerArcRect] = useState(null);
 
-  // Update radiusX/Y dynamically based on screen width
-
-  const radiusX = screenWidth >= 1536 ? 280 : screenWidth >= 1280 ? 258 : screenWidth >= 1024 ? 230 : 220;
+  const radiusX =
+    screenWidth >= 1536
+      ? 280
+      : screenWidth >= 1280
+      ? 258
+      : screenWidth >= 1024
+      ? 230
+      : 220;
   const radiusY = radiusX;
 
   useEffect(() => {
@@ -81,14 +104,17 @@ const FirstLeftCircle = ({ onDotClick }) => {
   };
 
   const handleDotClick = (dotIndex) => {
-    const normalizedAngleOffset = ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const normalizedAngleOffset =
+      ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
+        totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance =
+      distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
@@ -120,6 +146,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
           src="/round1.png"
           alt="Background"
           className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
+          onLoad={handleImageLoad}
         />
         <div className="absolute inset-x-0 right-8 inset-y-0 flex items-center justify-center text-2xl font-semibold text-gray-700 cursor-pointer z-10">
           SECTOR
@@ -131,72 +158,73 @@ const FirstLeftCircle = ({ onDotClick }) => {
           src="innerarc1.svg"
           alt="Inner Circle"
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
+          onLoad={handleImageLoad}
         />
       </div>
 
-      {/* Position Dots Relative to Inner Arc */}
-      {dots.map((dot) => {
-        const isMiddleDot = dot.index === centerIndex;
-        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
-        const innerArcCenterX = innerArcRect
-          ? innerArcRect.left + innerArcRect.width / 2
-          : 0;
-        const innerArcCenterY = innerArcRect
-          ? innerArcRect.top + innerArcRect.height / 2
-          : 0;
+      {innerArcRect &&
+        dots.map((dot) => {
+          const isMiddleDot = dot.index === centerIndex;
+          const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+          const innerArcCenterX = innerArcRect
+            ? innerArcRect.left + innerArcRect.width / 2
+            : 0;
+          const innerArcCenterY = innerArcRect
+            ? innerArcRect.top + innerArcRect.height / 2
+            : 0;
 
-        const horizontalOffsetPercent = -0.3; // Adjust as needed
-        const verticalOffsetPercent = -0.115;
-        const horizontalOffset = innerArcRect
-          ? innerArcRect.width * horizontalOffsetPercent
-          : 0;
-        const verticalOffset = innerArcRect
-          ? innerArcRect.height * verticalOffsetPercent
-          : 0;
+          const horizontalOffsetPercent = -0.3; // Adjust as needed
+          const verticalOffsetPercent = -0.115;
+          const horizontalOffset = innerArcRect
+            ? innerArcRect.width * horizontalOffsetPercent
+            : 0;
+          const verticalOffset = innerArcRect
+            ? innerArcRect.height * verticalOffsetPercent
+            : 0;
 
-        return (
-          <div
-            key={dot.index}
-            className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
-            style={{
-              left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
-              top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
-              transform: "translate(-50%, -50%)",
-            }}
-            onMouseDown={() => {
-              setIsDragging(true);
-              setLastMouseY(null);
-            }}
-            onClick={() => handleDotClick(dot.index)}
-          >
+          return (
             <div
-              className={`flex flex-row items-center justify-center ${
-                isMiddleDot ? "border-blue-500" : "border-black"
-              }`}
-              style={{ textAlign: "center" }}
+              key={dot.index}
+              className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
+              style={{
+                left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
+                top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+                transform: "translate(-50%, -50%)",
+              }}
+              onMouseDown={() => {
+                setIsDragging(true);
+                setLastMouseY(null);
+              }}
+              onClick={() => handleDotClick(dot.index)}
             >
               <div
-                className={`rounded-full flex items-center justify-center ${
-                  isMiddleDot
-                    ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
-                    : "bg-[#D8D8D8]"
-                } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
-                style={{ flexShrink: 0 }}
-              ></div>
-              <div
-                className={`text-sm w-32 ${
-                  isMiddleDot
-                    ? "font-semibold text-base text-[#4C4C4C]"
-                    : "text-[#797979]"
+                className={`flex flex-row items-center justify-center ${
+                  isMiddleDot ? "border-blue-500" : "border-black"
                 }`}
-                style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+                style={{ textAlign: "center" }}
               >
-                {outerCircleData[dot.index].sectorName || "N/A"}
+                <div
+                  className={`rounded-full flex items-center justify-center ${
+                    isMiddleDot
+                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                      : "bg-[#D8D8D8]"
+                  } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
+                  style={{ flexShrink: 0 }}
+                ></div>
+                <div
+                  className={`text-sm w-32 ${
+                    isMiddleDot
+                      ? "font-semibold text-base text-[#4C4C4C]"
+                      : "text-[#797979]"
+                  }`}
+                  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+                >
+                  {outerCircleData[dot.index].sectorName || "N/A"}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 };
