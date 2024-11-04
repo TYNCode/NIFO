@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const WebSubIndustries = ({
@@ -7,6 +7,25 @@ const WebSubIndustries = ({
   onDotClick,
   handleGoSector,
 }) => {
+
+  console.log("selected Industry", selectedIndustry);
+  
+  useLayoutEffect(() => {
+    const calculateBoundingRect = () => {
+      if (innerArcRef.current) {
+        setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+      }
+    };
+    calculateBoundingRect();
+  }, []);
+
+    const handleImageLoad = () => {
+      if (innerArcRef.current) {
+        setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+      }
+    };
+
+
   const sectors = sectorData.sectors;
 
   const getInitialSubSectorData = () => {
@@ -14,7 +33,7 @@ const WebSubIndustries = ({
       (sector) => sector.sector === selectedSector
     );
     return selectedSectorData
-      ? Object.keys(selectedSectorData.subSectors).slice(0, 8).map((subSectorName) => ({
+      ? Object.keys(selectedSectorData.subSectors).slice(0,8).map((subSectorName) => ({
           subSectorName,
           technologies: selectedSectorData.subSectors[subSectorName] || [],
         }))
@@ -24,21 +43,29 @@ const WebSubIndustries = ({
   const [outerCircleData, setOuterCircleData] = useState(
     getInitialSubSectorData()
   );
+  const selectedIndustryIndex = outerCircleData.findIndex(
+    (subSector) => subSector.subSectorName === selectedIndustry
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
-  const [angleOffset, setAngleOffset] = useState(Math.PI / 2 );
+  const [angleOffset, setAngleOffset] = useState(
+    selectedIndustryIndex >= 0
+      ? Math.PI / 2 - selectedIndustryIndex * anglePerDot
+      : Math.PI / 2
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
+  const [innerArcRect, setInnerArcRect] = useState(null);
 
   const radiusX =
     screenWidth >= 1536
-      ? 280
+      ? 282
       : screenWidth >= 1280
       ? 258
       : screenWidth >= 1024
-      ? 230
+      ? 226
       : 220;
   const radiusY = radiusX;
 
@@ -136,12 +163,12 @@ const WebSubIndustries = ({
       onMouseDown={handleMouseDown}
       onClick={(event) => event.stopPropagation()}
     >
-      {/* Sector Background and Label */}
       <div className="relative inline-block">
         <img
           src="/round1.png"
           alt="Background"
           className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
+          onLoad={handleImageLoad}
         />
         <div className="absolute inset-0 left-4 right-8 flex items-center justify-center">
           <div
@@ -158,10 +185,11 @@ const WebSubIndustries = ({
           src="innerarc1.svg"
           alt="Inner Circle"
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
+          onLoad={handleImageLoad}
         />
       </div>
 
-      {dots.map((dot) => {
+      {innerArcRect && dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
         const innerArcRect = innerArcRef.current?.getBoundingClientRect();
         const innerArcCenterX = innerArcRect
@@ -171,8 +199,15 @@ const WebSubIndustries = ({
           ? innerArcRect.top + innerArcRect.height / 2
           : 0;
 
-        const horizontalOffsetPercent = -0.3; // Adjust as needed
-        const verticalOffsetPercent = -0.115; // Adjust as needed
+        const horizontalOffsetPercent = -0.3; 
+        const verticalOffsetPercent =
+          screenWidth >= 1536
+            ? -0.10
+            : screenWidth >= 1280
+            ? -0.11
+            : screenWidth >= 1024
+            ? -0.12
+            : -0.115
         const horizontalOffset = innerArcRect
           ? innerArcRect.width * horizontalOffsetPercent
           : 0;
