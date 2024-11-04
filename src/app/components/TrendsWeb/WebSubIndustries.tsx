@@ -7,9 +7,7 @@ const WebSubIndustries = ({
   onDotClick,
   handleGoSector,
 }) => {
-
-  console.log("selected Industry", selectedIndustry);
-  
+ 
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
       if (innerArcRef.current) {
