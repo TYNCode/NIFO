@@ -37,6 +37,11 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   };
 
   const [outerCircleData, setOuterCircleData] = useState(getTechnologyData());
+
+    useEffect(() => {
+      setOuterCircleData(getTechnologyData());
+    }, [selectedSector, selectedIndustry]);
+
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -57,16 +62,19 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
   const radiusY = radiusX;
 
   useEffect(() => {
-    setOuterCircleData(getTechnologyData());
-  }, [selectedSector, selectedIndustry]);
-
-  useEffect(() => {
-    const handleResize = () => {
+    if (typeof window !== "undefined") {
       setScreenWidth(window.innerWidth);
-    };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -164,25 +172,52 @@ const WebTechnology = ({ selectedSector, onDotClick, selectedIndustry }) => {
         />
       </div>
 
-      {dots.map((dot) => {
+      {innerArcRect && 
+      dots.map((dot) => {
         const isMiddleDot = dot.index === centerIndex;
+        const innerArcRect = innerArcRef.current?.getBoundingClientRect();
+        const innerArcCenterX = innerArcRect
+          ? innerArcRect.left + innerArcRect.width / 2
+          : 0;
+        const innerArcCenterY = innerArcRect
+          ? innerArcRect.top + innerArcRect.height / 2
+          : 0;
+
+        const horizontalOffsetPercent =
+          screenWidth >= 1536
+            ? -5.76
+            : screenWidth >= 1280
+            ? -5.36
+            : screenWidth >= 1024
+            ? -4.94
+            : -5.74;
+        const verticalOffsetPercent =
+          screenWidth >= 1536
+            ? -0.1
+            : screenWidth >= 1280
+            ? -0.1
+            : screenWidth >= 1024
+            ? -0.125
+            : -0.1;
+        const horizontalOffset = innerArcRect
+          ? innerArcRect.width * horizontalOffsetPercent
+          : 0;
+        const verticalOffset = innerArcRect
+          ? innerArcRect.height * verticalOffsetPercent
+          : 0;
 
         return (
           <div
             key={dot.index}
             className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
             style={{
-              right: `${dot.x}px`,
-              top: `${
-                dot.y +
-                (screenWidth >= 1536
-                  ? 315
-                  : screenWidth >= 1280
-                  ? 352
-                  : screenWidth >= 1024
-                  ? 250
-                  : 240)
-              }px`,
+              right: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+              top: `${innerArcCenterY + dot.y + verticalOffset}px`,
+              transform: "translate(-50%, -50%)",
+            }}
+            onMouseDown={() => {
+              setIsDragging(true);
+              setLastMouseY(null);
             }}
             onClick={() => handleDotClick(dot.index)}
           >
