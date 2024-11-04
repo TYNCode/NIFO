@@ -19,9 +19,9 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
 
   const sectors = sectorData.sectors;
 
-  const getInitialSubSectorData = () => {
+  const getSubSectorData = (sectorName) => {
     const selectedSectorData = sectors.find(
-      (sector) => sector.sector === selectedSector
+      (sector) => sector.sector === sectorName
     );
 
     if (!selectedSectorData) return [];
@@ -34,8 +34,13 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
   };
 
   const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSubSectorData()
+    getSubSectorData(selectedSector)
   );
+
+  useEffect(() => {
+    setOuterCircleData(getSubSectorData(selectedSector));
+  }, [selectedSector]);
+
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -80,7 +85,7 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      setLastMouseY(null); // Reset lastMouseY when dragging ends
+      setLastMouseY(null); 
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -91,10 +96,6 @@ const FirstRightCircle = ({ selectedSector, onDotClick }) => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, lastMouseY]);
-
-  useEffect(() => {
-    setAngleOffset((prevOffset) => prevOffset);
-  }, []);
 
   const handleMouseMoveHandler = (event) => {
     const { clientY } = event;
