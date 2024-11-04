@@ -10,6 +10,8 @@ const WebTechUsecase = ({
 }) => {
   const sectors = sectorData.sectors;
 
+  console.log("selected technology", selectedTechnology)
+
   const [selectedIndustry, setSelectedIndustry] =
     useState(propSelectedIndustry);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -43,13 +45,22 @@ const WebTechUsecase = ({
       : [];
   };
 
-  const [outerCircleData, setOuterCircleData] = useState([]);
+  const [outerCircleData, setOuterCircleData] = useState(getInitialTechnologyData());
+  const selectedTechnologyIndex = outerCircleData.findIndex(
+    (tech) => tech.technologyTrend === selectedTechnology
+  );
+
   const [innerCircleData] = useState(getInitialSubSectorsData());
 
   const totalOuterDots = outerCircleData.length;
   const anglePerOuterDot = (2 * Math.PI) / totalOuterDots;
 
-  const [angleOffsetOuter, setAngleOffsetOuter] = useState(Math.PI / 2);
+  const [angleOffsetOuter, setAngleOffsetOuter] = useState(
+    selectedTechnologyIndex >= 0
+      ? Math.PI / 2 - selectedTechnologyIndex * anglePerOuterDot
+      : Math.PI / 2
+  );
+
   const [isDraggingOuter, setIsDraggingOuter] = useState(false);
   const [lastMouseYOuter, setLastMouseYOuter] = useState(null);
 
