@@ -69,8 +69,8 @@ const StartupsWeb = ({
   }, [startups]);
 
   return (
-    <div className="flex flex-col gap-4 items-center bg-white shadow-lg rounded mt-16 w-[400px] h-[75vh]">
-      <div className="relative flex flex-col gap-8 py-6 px-4 w-full bg-blue-400">
+    <div className="flex flex-col gap-4 items-center bg-white shadow-lg rounded mt-10 w-[400px] xl:w-[600px] h-[75vh]">
+      <div className="relative w-full flex flex-col gap-8 py-6 px-4 bg-blue-400">
         <div
           className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10"
           onClick={handleClose}
@@ -94,7 +94,7 @@ const StartupsWeb = ({
         </div>
       </div>
 
-      <div className={`flex flex-col ${!loading} && overflow-y-scroll scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400` }>
+      <div className={`flex flex-col gap-4 px-1 ${loading ? '' : 'overflow-y-auto scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400'}`}>
         {loading ? (
           <div className="flex justify-center items-center h-[300px]">
             <ThreeDots color="#00BFFF" height={80} width={80} />
@@ -106,7 +106,7 @@ const StartupsWeb = ({
               className="flex flex-col mx-2 px-2 py-1.5 mb-10 rounded-md shadow-sm shadow-gray-400 border-gray-400"
             >
               <div className="flex flex-row">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 w-full h-full text-sm">
                   <div className="font-medium">{startup.name}</div>
                   <div>{startup.description || "No description available."}</div>
                   <div
@@ -123,7 +123,7 @@ const StartupsWeb = ({
                   <img
                     src={startup?.logo || "default-image.png"}
                     alt={startup?.name}
-                    className="w-40 object-cover h-[80px]"
+                    className="w-24 object-cover h-[40px]"
                   />
                 </div>
               </div>
