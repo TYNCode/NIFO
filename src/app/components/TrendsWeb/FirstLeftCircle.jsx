@@ -190,8 +190,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
               key={dot.index}
               className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
               style={{
-                left: `${innerArcCenterX + dot.x + horizontalOffset}px`, // Corrected with quotes
-                top: `${innerArcCenterY + dot.y + verticalOffset}px`, // Corrected with quotes
+                left: `${innerArcCenterX + dot.x + horizontalOffset}px`, 
+                top: `${innerArcCenterY + dot.y + verticalOffset}px`, 
                 transform: "translate(-50%, -50%)",
               }}
               onMouseDown={() => {
@@ -215,7 +215,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
                   style={{ flexShrink: 0 }}
                 ></div>
                 <div
-                  className={`text-sm w-32 ${
+                  className={`text-sm w-32 justify-start text-left ml-2 ${
                     isMiddleDot
                       ? "font-semibold text-base text-[#4C4C4C]"
                       : "text-[#797979]"
