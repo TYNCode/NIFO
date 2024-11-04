@@ -173,7 +173,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
             ? innerArcRect.top + innerArcRect.height / 2
             : 0;
 
-          const horizontalOffsetPercent = -0.3; // Adjust as needed
+          const horizontalOffsetPercent = -0.3; 
           const verticalOffsetPercent = -0.1;
           const horizontalOffset = innerArcRect
             ? innerArcRect.width * horizontalOffsetPercent
