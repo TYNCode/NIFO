@@ -1,23 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const FirstLeftCircle = ({ onDotClick }) => {
-  useLayoutEffect(() => {
-    const calculateBoundingRect = () => {
-      if (innerArcRef.current) {
-        setInnerArcRect(innerArcRef.current.getBoundingClientRect());
-      }
-    };
-    calculateBoundingRect();
-  }, []);
-
-  const handleImageLoad = () => {
-    if (innerArcRef.current) {
-      setInnerArcRect(innerArcRef.current.getBoundingClientRect());
-    }
-  };
-
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
       if (innerArcRef.current) {
@@ -52,16 +36,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
   const [innerArcRect, setInnerArcRect] = useState(null);
-  const [innerArcRect, setInnerArcRect] = useState(null);
 
-  const radiusX =
-    screenWidth >= 1536
-      ? 284
-      : screenWidth >= 1280
-      ? 258
-      : screenWidth >= 1024
-      ? 230
-      : 220;
   const radiusX =
     screenWidth >= 1536
       ? 284
@@ -75,12 +50,13 @@ const FirstLeftCircle = ({ onDotClick }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setScreenWidth(window.innerWidth);
+
       const handleResize = () => {
-        window.requestAnimationFrame(() => {
-          setScreenWidth(window.innerWidth);
-        });
+        setScreenWidth(window.innerWidth);
       };
+
       window.addEventListener("resize", handleResize);
+
       return () => {
         window.removeEventListener("resize", handleResize);
       };
@@ -93,12 +69,15 @@ const FirstLeftCircle = ({ onDotClick }) => {
         handleMouseMoveHandler(event);
       }
     };
+
     const handleMouseUp = () => {
       setIsDragging(false);
       setLastMouseY(null);
     };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
@@ -132,11 +111,14 @@ const FirstLeftCircle = ({ onDotClick }) => {
       ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
         totalDots
     );
+
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
     const shortestDistance =
       distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
+
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
+
     if (onDotClick) {
       onDotClick(outerCircleData[dotIndex].sectorName);
     }
@@ -163,7 +145,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="/round1.png"
           alt="Background"
-          onLoad={() => setScreenWidth(window.innerWidth)}
           className="2xl:h-[400px] xl:h-[380px] lg:h-[300px]"
           onLoad={handleImageLoad}
         />
@@ -176,7 +157,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
         <img
           src="innerarc1.svg"
           alt="Inner Circle"
-          onLoad={() => setScreenWidth(window.innerWidth)}
           className="2xl:h-[580px] xl:h-[520px] lg:h-[450px]"
           onLoad={handleImageLoad}
         />
