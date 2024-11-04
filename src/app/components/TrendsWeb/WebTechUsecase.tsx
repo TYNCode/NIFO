@@ -23,7 +23,7 @@ const WebTechUsecase = ({
       selectedSectorData?.subSectors[selectedIndustry];
 
     return selectedIndustryData
-      ? selectedIndustryData.slice(0, 8).map((technology) => ({
+      ? selectedIndustryData.slice(0,8).map((technology) => ({
           sectorName: selectedSectorData.sector,
           industryName: selectedIndustry,
           technologyTrend: technology.technologyTrend,
