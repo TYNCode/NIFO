@@ -8,6 +8,8 @@ const WebSubIndustries = ({
   handleGoSector,
 }) => {
 
+  console.log("selected Industry", selectedIndustry);
+  
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
       if (innerArcRef.current) {
@@ -41,9 +43,16 @@ const WebSubIndustries = ({
   const [outerCircleData, setOuterCircleData] = useState(
     getInitialSubSectorData()
   );
+  const selectedIndustryIndex = outerCircleData.findIndex(
+    (subSector) => subSector.subSectorName === selectedIndustry
+  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
-  const [angleOffset, setAngleOffset] = useState(Math.PI / 2 );
+  const [angleOffset, setAngleOffset] = useState(
+    selectedIndustryIndex >= 0
+      ? Math.PI / 2 - selectedIndustryIndex * anglePerDot
+      : Math.PI / 2
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
