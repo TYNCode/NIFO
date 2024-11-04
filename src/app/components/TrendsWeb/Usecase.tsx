@@ -8,11 +8,13 @@ const Usecase = ({
   selectedTechnology,
 }) => {
   const [usecases, setUsecases] = useState([]);
+
   useEffect(() => {
     if (selectedSector && selectedIndustry && selectedTechnology) {
       const sector = sectorData.sectors.find(
         (s) => s.sector === selectedSector
       );
+
       if (!sector) {
         console.log("Sector not found");
         setUsecases([]);
@@ -42,33 +44,39 @@ const Usecase = ({
         return;
       }
 
-      // Extracting the use cases
-      const fetchedUsecases = technology.useCases.map(
-        (usecase) => usecase.useCase
-      );
+      // Extracting the use cases with descriptions
+      const fetchedUsecases = technology.useCases.map((usecase) => ({
+        useCase: usecase.useCase,
+        description: usecase.useCaseDescription,
+      }));
       setUsecases(fetchedUsecases);
     }
   }, [selectedSector, selectedIndustry, selectedTechnology]);
 
   const handleUsecaseClick = (usecase) => {
-    onSelectUsecase(usecase); // Notify the parent component of the selected use case
+    console.log("handleclickusecase",usecase)
+    onSelectUsecase(usecase.useCase);
   };
 
   return (
     <div>
-      <div className="flex flex-col gap-8">
-        <div className="border flex mx-auto w-max border-t-0 rounded-md px-8 py-3 bg-blue shadow-md bg-blue-400 text-white font-medium text-lg border-blue-400">
+      <div className="">
+        <div className="border-2 flex mx-auto w-max border-t-0 rounded-md px-8 py-3 bg-blue shadow-md text-gray-700 font-medium text-xl border-blue-400">
           Usecases
         </div>
-        <div className="flex flex-col gap-y-12 justify-center items-center">
+        <div
+          className="flex flex-col gap-4 h-[70vh] xl:h-screen mt-5 xl:mt-10 scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400 overflow-y-scroll"
+          style={{ maxHeight: '500px' }}
+        >
           {usecases.length > 0 ? (
             usecases.map((usecase, index) => (
               <div
-                className="bg-white shadow-md rounded-sm shadow-gray-300 p-4 w-[500px] cursor-pointer hover:text-white hover:bg-blue-400"
+                className="flex flex-col gap-2 items-center bg-white border border-gray-200 shadow-md rounded-sm shadow-gray-300 p-4 w-[450px] xl:w-[500px] 2xl:w-[600px] hover:shadow-lg cursor-pointer hover:text-white group hover:bg-blue-400"
                 key={index}
                 onClick={() => handleUsecaseClick(usecase)}
               >
-                {usecase}
+                <div className="font-semibold hover:font-bold  group-hover:text-yellow-200">{usecase.useCase}</div>
+                <div className="text-gray-700 group-hover:text-white hover:text-base text-sm">{usecase.description}</div>
               </div>
             ))
           ) : (

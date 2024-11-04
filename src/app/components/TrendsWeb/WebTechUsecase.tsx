@@ -166,7 +166,7 @@ const WebTechUsecase = ({
 
   return (
     <div
-      className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
+      className="flex items-center justify-start w-1/2 relative"
       onMouseMove={(e) => isDraggingOuter && handleMouseMoveHandlerOuter(e)}
       onMouseUp={handleMouseUpOuter}
       onMouseLeave={handleMouseUpOuter} // Stop dragging if the mouse leaves the component

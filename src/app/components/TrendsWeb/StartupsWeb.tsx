@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaGlobe } from "react-icons/fa";
-import sectorData from "../../data/data_sector.json";
 import { IoClose } from "react-icons/io5";
+import sectorData from "../../data/data_sector.json";
+import { ThreeDots } from "react-loader-spinner"; // Use a specific loader
 
 const StartupsWeb = ({
   handleEcosystem,
@@ -10,8 +11,8 @@ const StartupsWeb = ({
   handleClose,
 }) => {
   const [detailedStartups, setDetailedStartups] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Function to find the use case based on the selected ecosystem
   const findUseCaseData = (ecosystemName) => {
     for (const sector of sectorData.sectors) {
       for (const subSector in sector.subSectors) {
@@ -31,7 +32,6 @@ const StartupsWeb = ({
   const useCaseData = findUseCaseData(selectedEcosystem);
   const { startups } = useCaseData || {};
 
-  // Fetch detailed startup information based on the startup name
   const fetchStartupDetails = async (startupName) => {
     try {
       const response = await fetch(
@@ -52,9 +52,9 @@ const StartupsWeb = ({
     return null;
   };
 
-  // useEffect to fetch detailed information for each startup
   useEffect(() => {
     const fetchDetails = async () => {
+      setLoading(true);
       if (startups && startups.length > 0) {
         const promises = startups.map((startup) =>
           fetchStartupDetails(startup.name)
@@ -62,13 +62,14 @@ const StartupsWeb = ({
         const results = await Promise.all(promises);
         setDetailedStartups(results.filter((result) => result !== null));
       }
+      setLoading(false);
     };
 
     fetchDetails();
   }, [startups]);
 
   return (
-    <div className="flex flex-col gap-4 items-center bg-white shadow-lg rounded overflow-y-auto scrollbar-thin mt-16 w-[400px] h-[75vh]">
+    <div className="flex flex-col gap-4 items-center bg-white shadow-lg rounded mt-16 w-[400px] h-[75vh]">
       <div className="relative flex flex-col gap-8 py-6 px-4 w-full bg-blue-400">
         <div
           className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10"
@@ -93,8 +94,12 @@ const StartupsWeb = ({
         </div>
       </div>
 
-      <div className="flex flex-col overflow-y-scroll scrollbar-thin">
-        {detailedStartups && detailedStartups.length > 0 ? (
+      <div className={`flex flex-col ${!loading} && overflow-y-scroll scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400` }>
+        {loading ? (
+          <div className="flex justify-center items-center h-[300px]">
+            <ThreeDots color="#00BFFF" height={80} width={80} />
+          </div>
+        ) : detailedStartups && detailedStartups.length > 0 ? (
           detailedStartups.map((startup, index) => (
             <div
               key={index}

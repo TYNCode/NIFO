@@ -30,7 +30,7 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) =>
   } = useCaseData || {};
 
   return (
-    <div className="flex flex-col gap-4 items-center  shadow-lg  rounded overflow-y-auto  pb-4 scrollbar-thin mt-16 w-[400px] h-[75vh]">
+    <div className="flex flex-col gap-4 items-center xl:mr-[200px] 2xl:mr-[300px] shadow-lg  rounded overflow-y-auto  pb-4  scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400 mt-16 w-[400px] xl:w-[550px] h-[75vh]">
       <div className="relative flex flex-col gap-8 py-6 px-4 w-full bg-blue-400">
         <div
           className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10"
