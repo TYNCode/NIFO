@@ -1,5 +1,5 @@
 import React from "react";
-import sectorData from "../../data/data_sector.json"; 
+import sectorData from "../../data/data_sector.json";
 import { IoClose } from "react-icons/io5";
 
 const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) => {
@@ -16,7 +16,7 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) =>
         }
       }
     }
-    return null; 
+    return null;
   };
 
   const useCaseData = findUseCaseData(selectedEcosystem);
@@ -26,12 +26,11 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) =>
     useCaseDescription: description,
     enhancement,
     measureOfImpact: measurementOfImpact,
-    startups,
   } = useCaseData || {};
 
   return (
-    <div className="flex flex-col gap-4 items-center  shadow-lg  rounded overflow-y-auto  pb-4 scrollbar-thin mt-16 w-[400px] h-[75vh]">
-      <div className="relative flex flex-col gap-8 py-6 px-4 w-full bg-blue-400">
+    <div className="flex flex-col gap-4 justify-center items-center bg-white shadow-lg rounded mt-10 w-[400px] xl:w-[600px] h-[75vh] overflow-hidden">
+      <div className="relative w-full flex flex-col gap-8 py-6 px-4 bg-blue-400">
         <div
           className="text-white font-semibold absolute right-1 top-1 cursor-pointer z-10"
           onClick={handleClose}
@@ -49,27 +48,27 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) =>
         </div>
 
         <div
-          className="relative z-50 text-sm font-medium  mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md bg-blue-200 text-black"
+          className="relative z-50 text-sm font-medium bg-blue-200 text-black mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
           onClick={handleExploreClick}
         >
           Explore Ecosystem
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 px-5">
+      <div className="flex flex-col flex-grow pb-2 gap-4 px-5 overflow-y-auto scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400">
         <div className="flex flex-col gap-2">
-          <div className="font-semibold text-lg">Description</div>
-          <div className="text-base">
+          <div className="font-medium text-base">Description</div>
+          <div className="text-base text-gray-700">
             {description || "No description available."}
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-semibold text-lg">Enhancement</div>
-          <div>{enhancement || "No enhancement information available."}</div>
+          <div className="font-medium text-base">Enhancement</div>
+          <div className="text-gray-700">{enhancement || "No enhancement information available."}</div>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-semibold text-lg">Measurement of Impact</div>
-          <div>
+          <div className="font-medium text-base">Measurement of Impact</div>
+          <div className="text-gray-700">
             {measurementOfImpact || "No measurement of impact available."}
           </div>
         </div>

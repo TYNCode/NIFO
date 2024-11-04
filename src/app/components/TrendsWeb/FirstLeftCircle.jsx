@@ -173,8 +173,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
             ? innerArcRect.top + innerArcRect.height / 2
             : 0;
 
-          const horizontalOffsetPercent = -0.3; // Adjust as needed
-          const verticalOffsetPercent = -0.10;
+          const horizontalOffsetPercent = -0.3; 
+          const verticalOffsetPercent = -0.1;
           const horizontalOffset = innerArcRect
             ? innerArcRect.width * horizontalOffsetPercent
             : 0;
@@ -187,8 +187,8 @@ const FirstLeftCircle = ({ onDotClick }) => {
               key={dot.index}
               className="absolute flex flex-col items-center justify-center cursor-pointer select-none"
               style={{
-                left: `${innerArcCenterX + dot.x + horizontalOffset}px`, 
-                top: `${innerArcCenterY + dot.y + verticalOffset}px`, 
+                left: `${innerArcCenterX + dot.x + horizontalOffset}px`,
+                top: `${innerArcCenterY + dot.y + verticalOffset}px`,
                 transform: "translate(-50%, -50%)",
               }}
               onMouseDown={() => {
