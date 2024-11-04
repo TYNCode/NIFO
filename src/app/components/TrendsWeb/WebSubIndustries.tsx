@@ -14,7 +14,7 @@ const WebSubIndustries = ({
       (sector) => sector.sector === selectedSector
     );
     return selectedSectorData
-      ? Object.keys(selectedSectorData.subSectors).map((subSectorName) => ({
+      ? Object.keys(selectedSectorData.subSectors).slice(0, 8).map((subSectorName) => ({
           subSectorName,
           technologies: selectedSectorData.subSectors[subSectorName] || [],
         }))
