@@ -1,7 +1,23 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import sectorData from "../../data/data_sector.json";
 
 const FirstLeftCircle = ({ onDotClick }) => {
+  useLayoutEffect(() => {
+    const calculateBoundingRect = () => {
+      if (innerArcRef.current) {
+        setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+      }
+    };
+    calculateBoundingRect();
+  }, []);
+
+  const handleImageLoad = () => {
+    if (innerArcRef.current) {
+      setInnerArcRect(innerArcRef.current.getBoundingClientRect());
+    }
+  };
+
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
       if (innerArcRef.current) {
@@ -28,9 +44,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [outerCircleData, setOuterCircleData] = useState(
     getInitialSectorData()
   );
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSectorData()
-  );
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
@@ -39,7 +52,16 @@ const FirstLeftCircle = ({ onDotClick }) => {
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
   const [innerArcRect, setInnerArcRect] = useState(null);
+  const [innerArcRect, setInnerArcRect] = useState(null);
 
+  const radiusX =
+    screenWidth >= 1536
+      ? 284
+      : screenWidth >= 1280
+      ? 258
+      : screenWidth >= 1024
+      ? 230
+      : 220;
   const radiusX =
     screenWidth >= 1536
       ? 284
@@ -84,10 +106,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
   }, [isDragging, lastMouseY]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAngleOffset((prevOffset) => prevOffset);
-    }, 100);
-    return () => clearTimeout(timer);
+    setAngleOffset((prevOffset) => prevOffset);
   }, []);
 
   const handleMouseMoveHandler = (event) => {
@@ -110,8 +129,6 @@ const FirstLeftCircle = ({ onDotClick }) => {
       ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
       ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
         totalDots
     );
