@@ -137,6 +137,7 @@ const StartupDetailsWeb = ({ selectedStartup, handleClose }) => {
                 {renderIfAvailable("Country", startupDetails?.startup_country)}
                 {renderIfAvailable("Company Stage", startupDetails?.startup_company_stage)}
                 {renderIfAvailable("Solutions", startupDetails?.startup_solutions)}
+                {renderIfAvailable("Usecases", startupDetails?.startup_usecases)}
               </div>
             </>
           )}
