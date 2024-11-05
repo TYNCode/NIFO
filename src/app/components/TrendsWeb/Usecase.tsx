@@ -65,7 +65,7 @@ const Usecase = ({
           Usecases
         </div>
         <div
-          className="flex flex-col gap-4 h-[70vh] xl:h-screen mt-5 xl:mt-10 scrollbar-thin scrollbar-track-indigo-50 scrollbar-thumb-blue-400 overflow-y-scroll"
+          className="flex flex-col gap-4 h-[70vh] xl:h-screen mt-5 xl:mt-10 scrollbar-hidden overflow-y-scroll"
           style={{ maxHeight: '500px' }}
         >
           {usecases.length > 0 ? (
