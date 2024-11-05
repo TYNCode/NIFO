@@ -9,7 +9,7 @@ const NavbarTrend = () => {
   }
 
   return (
-    <div className=' w-full z-50'>
+    <div className=' w-full relative z-50'>
       <div className='shadow-md'>
         <img
         src="/nifoimage.png"
