@@ -138,7 +138,7 @@ const WebTechUsecase = ({
   const verticalOffsetInnerPercent = screenWidth >= 1536 ? 0.31 : screenWidth >= 1280 ? 0.32 : screenWidth >= 1024 ? 0.27 : -0;
 
   return (
-    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative " onMouseDown={handleMouseDownOuter} onClick={(e) => e.stopPropagation()}>
+    <div className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative" onMouseDown={handleMouseDownOuter} onClick={(e) => e.stopPropagation()}>
       <div className="relative">
         <img src="/round1.png" alt="Background" className="2xl:h-[216px] xl:h-[256px] lg:h-[180px]" onLoad={handleImageLoad} />
         <div className="absolute inset-0 left-2 right-2 flex items-center justify-center">
