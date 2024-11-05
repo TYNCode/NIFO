@@ -38,7 +38,7 @@ const WebUsecases = ({ selectedIndustry, selectedSector, handleGoSector , select
   };
 
   return (
-    <div className="flex h-screen relative select-none">
+    <div className="flex h-screen relative overflow-hidden select-none">
       <WebTechUsecase
         selectedIndustry={selectedIndustry}
         selectedSector={selectedSector}
