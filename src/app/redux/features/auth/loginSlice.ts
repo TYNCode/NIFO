@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   async (data: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://nifo.theyellow.network/api/user/login/",
+        "https://tyn-server.azurewebsites.net/user/login/",
         data
       );
       return response.data;
