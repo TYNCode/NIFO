@@ -1,4 +1,8 @@
-module.exports = {
+const withPWA = require("next-pwa")({
+  dest: "public",
+});
+
+module.exports = withPWA({
   env: {
     PUBLIC_BASE_URL_LOCAL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL,
   },
@@ -11,4 +15,4 @@ module.exports = {
       "lh3.googleusercontent.com",
     ],
   },
-};
+});
