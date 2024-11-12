@@ -364,19 +364,13 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Mobile Responsiveness */}
       <div className="flex flex-col md:hidden h-screen">
-        {/* Mobile Header */}
         {activeTab === "Trends" ? (
           <TrendsMobileHeader handleBack={handleBack} />
         ) : (
           <MobileHeader />
         )}
-
-        {/* Content Area */}
-        <div className="flex-grow overflow-y-auto">{renderTabContent()}</div>
-
-        {/* Bottom Bar */}
+        <div className="flex overflow-hidden">{renderTabContent()}</div>
         <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>
     </main>
