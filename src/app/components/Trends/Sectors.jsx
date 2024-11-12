@@ -86,7 +86,7 @@ const Sectors = ({ onSectorClick }) => {
       </div>
 
       <div
-        className="relative w-screen flex justify-end items-end select-none "
+        className="relative w-screen flex justify-end items-end select-none pb-20"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
