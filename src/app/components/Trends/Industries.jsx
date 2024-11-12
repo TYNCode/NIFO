@@ -14,7 +14,7 @@ const Industries = ({
   };
 
   return (
-    <div className="relative h-screen flex flex-col justify-between bg-gray-100 overflow-hidden">
+    <div className="relative h-[100dvh] flex flex-col justify-between bg-gray-100 overflow-hidden">
       <div className="flex-grow-0">
         <IndustriesUp
         selectedIndustry={selectedIndustry}
@@ -27,7 +27,7 @@ const Industries = ({
           selectedSector={selectedSector}
           selectedIndustry={selectedIndustry}
           onTechnologyClick={onTechnologyClick}
-          onTechnologiesUpdate={handleTechnologyUpdate} // Pass down the handler
+          onTechnologiesUpdate={handleTechnologyUpdate}
         />
       </div>
     </div>
