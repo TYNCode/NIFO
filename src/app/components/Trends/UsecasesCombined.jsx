@@ -12,7 +12,7 @@ const UsecasesCombined = ({
   setSelectedUseCase
 }) => {
   return (
-    <div className="flex flex-col justify-between h-screen">
+    <div className="flex flex-col justify-between h-[100dvh]">
       <div className="flex-grow-0">
         <UsecasesArc
           selectedIndustry={selectedIndustry}
