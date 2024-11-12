@@ -70,7 +70,7 @@ const Sectors = ({ onSectorClick }) => {
   };
 
   return (
-    <div className="relative flex flex-col justify-between h-screen overflow-hidden bg-gray-100">
+    <div className="relative flex flex-col justify-between h-[100dvh] overflow-hidden bg-gray-100">
       <div>
         <div className="">
           <img src="/sector_default.png" alt="" className="" />
