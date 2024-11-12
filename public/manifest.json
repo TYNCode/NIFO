@@ -2,7 +2,7 @@
     "name": "Noiseless Information and Frictionless Orchestration",
     "short_name": "NIFO",
     "start_url": "/",
-    "display": "minimal-ui",
+    "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
     "description": "An app providing seamless information flow and efficient orchestration.",
