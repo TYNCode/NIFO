@@ -30,8 +30,8 @@ const CurvedLineUp = ({ selectedSector }) => {
         ];
 
   return (
-    <div className="relative bg-gray-100 flex justify-end items-start select-none mt-16">
-      <div>
+    <div className="relative flex justify-end items-start select-none mt-16">
+      <div className="absolute">
         <img src="/circleup1.svg" alt="" className="w-32" />
       </div>
 
