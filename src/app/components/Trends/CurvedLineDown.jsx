@@ -68,7 +68,7 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
 
   return (
     <div
-      className="relative bg-gray-100 flex justify-end items-end select-none mb-20"
+      className="relative  flex justify-end items-end select-none mb-20"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
