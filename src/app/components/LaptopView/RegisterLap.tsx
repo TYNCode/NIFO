@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import RegistrationModel from "../RegisterModel/RegisterModel";
 import { fetchAllCompanies } from "../../redux/features/companyprofile/companyProfileSlice";
+import TermsAndConditions from "../TermsAndConditions";
 
 interface RegisterLapProps {
   onSubmit: SubmitHandler<FormData>;
@@ -36,6 +37,8 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     null
   );
   const [showModal, setShowModal] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const { companies } = useAppSelector((state) => state.companyProfile);
 
@@ -62,6 +65,15 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     setFilteredCompanies([]);
     setValue("organization_id", company.startup_id);
   };
+
+   const handleOpenTermsModal = (event: React.MouseEvent) => {
+     event.preventDefault();
+     setShowTermsModal(true); 
+   };
+
+     const handleCloseTermsModal = () => {
+       setShowTermsModal(false); 
+     };
 
   const handleFormSubmit: SubmitHandler<FormData> = (data) => {
     if (selectedCompanyId) {
@@ -102,16 +114,16 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
         </div>
       </div>
       <div className="w-5/12 bg-white order-2 md:order-2 h-screen">
-        <div className="flex items-start justify-start flex-col gap-y-2 xl:gap-4 p-8">
+        <div className="flex items-start justify-start flex-col gap-y-2 xl:gap-4 px-8 py-2">
           <h2 className="font-bold text-3xl xl:text-5xl">Get started</h2>
-          <p className="font-light text-base xl:text-xl text-gray-400">
+          <p className="font-light text-base xl:text-xl text-gray-400 py-2">
             Start your journey by creating an account
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
-          className="flex flex-col gap-4 xl:gap-8 px-10 justify-center items-center xl:pt-8"
+          className="flex flex-col gap-4 xl:gap-8 px-10 justify-center items-center xl:pt-2"
         >
           <div className="flex flex-col items-start justify-start gap-2">
             <label htmlFor="first_name">Full Name</label>
@@ -211,6 +223,26 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
             )}
           </div>
 
+          <div className="flex items-center gap-2 mt-4">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="w-4 h-4 rounded-full border-gray-300 text-blue-500 focus:outline-none focus:ring-0 active:ring-0 "
+            />
+            <label htmlFor="terms" className="text-sm text-gray-600">
+              I agree to the{" "}
+              <button
+                type="button"
+                onClick={handleOpenTermsModal}
+                className="text-blue-500 underline"
+              >
+                Terms and Conditions
+              </button>
+            </label>
+          </div>
+
           {!loading && (message || error) && (
             <p
               className={`text-base capitalize ${
@@ -223,15 +255,17 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
 
           <button
             type="submit"
-            disabled={!isValid || isSubmitting}
+            disabled={!isValid || isSubmitting || !termsAccepted}
             className={`rounded-md bg-blue-500 text-sm px-4 py-2 text-white flex items-center justify-center uppercase font-semibold ${
-              isSubmitting || !isValid ? "cursor-not-allowed bg-gray-300" : ""
+              isSubmitting || !isValid || !termsAccepted
+                ? "cursor-not-allowed bg-gray-300"
+                : ""
             }`}
           >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
-        <div className="p-8">
+        <div className="flex justify-center items-center pt-5">
           <span className="text-sm xl:text-base text-gray-400 font-light">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-blue-500">
@@ -241,6 +275,12 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
         </div>
       </div>
       {showModal && <RegistrationModel onClose={handleCloseModal} />}
+      {/* Terms and Conditions Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <TermsAndConditions handleCloseTermsModal={handleCloseTermsModal}/>
+        </div>
+      )}
     </div>
   );
 };
