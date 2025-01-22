@@ -1,0 +1,84 @@
+{
+    "Energy Equipment & Services": [
+        {
+            "SubIndustry": "Oil & Gas Drilling",
+            "UseCases": [
+                {
+                    "UseCase": "Schlumberger is revolutionizing drilling operations by using automation and AI. Their systems enhance efficiency and safety by managing drilling parameters in real-time, which reduces human intervention and minimizes risks while optimizing resource extraction.",
+                    "Company": "Schlumberger"
+                },
+                {
+                    "UseCase": "Halliburton has implemented environmental monitoring systems to ensure compliance with regulations during drilling. These systems continuously monitor air and water quality using advanced sensors, helping detect and mitigate environmental impacts quickly.",
+                    "Company": "Halliburton"
+                }
+            ]
+        },
+        {
+            "SubIndustry": "Oil & Gas Equipment & Services",
+            "UseCases": [
+                {
+                    "UseCase": "Baker Hughes employs IoT sensors and predictive analytics to monitor drilling equipment health. Their approach anticipates failures, allowing for timely maintenance, which reduces downtime and enhances operational efficiency.",
+                    "Company": "Baker Hughes"
+                }
+            ]
+        }
+    ],
+    "Oil, Gas & Consumable Fuels": [
+        {
+            "SubIndustry": "Integrated Oil & Gas",
+            "UseCases": [
+                {
+                    "UseCase": "ExxonMobil is integrating renewable energy sources like solar and wind into oil operations to reduce carbon emissions. By using clean energy to power their facilities, they demonstrate a commitment to sustainable practices.",
+                    "Company": "ExxonMobil"
+                }
+            ]
+        },
+        {
+            "SubIndustry": "Oil & Gas Exploration & Production",
+            "UseCases": [
+                {
+                    "UseCase": "Chevron utilizes enhanced oil recovery methods such as CO2 injection to boost extraction rates from mature fields. This increases output, prolongs the productive life of fields, and reduces environmental impacts.",
+                    "Company": "Chevron"
+                }
+            ]
+        },
+        {
+            "SubIndustry": "Oil & Gas Refining & Marketing",
+            "UseCases": [
+                {
+                    "UseCase": "BP is innovating in refining processes by using new catalysts to increase efficiency and reduce emissions. These advancements result in cleaner fuels that comply with strict environmental standards.",
+                    "Company": "BP"
+                }
+            ]
+        }
+    ],
+    "Chemicals": [
+        {
+            "SubIndustry": "Commodity Chemicals",
+            "UseCases": [
+                {
+                    "UseCase": "BASF is leading the charge in sustainable chemical production by adopting bio-based materials and efficient processes. This transition aims to decrease reliance on fossil fuels and minimize environmental impact.",
+                    "Company": "BASF"
+                }
+            ]
+        },
+        {
+            "SubIndustry": "Diversified Chemicals",
+            "UseCases": [
+                {
+                    "UseCase": "Dow Chemical is at the forefront of developing high-performance polymers for automotive and aerospace industries. These materials offer superior durability and reduced weight, improving fuel efficiency and meeting stringent safety standards.",
+                    "Company": "Dow Chemical"
+                }
+            ]
+        },
+        {
+            "SubIndustry": "Fertilizers & Agricultural Chemicals",
+            "UseCases": [
+                {
+                    "UseCase": "Nutrien employs precision agriculture techniques using satellite imagery and AI to optimize fertilizer use. This method enhances crop yields while reducing chemical overuse, promoting better soil health and environmental sustainability.",
+                    "Company": "Nutrien"
+                }
+            ]
+        }
+    ]
+}

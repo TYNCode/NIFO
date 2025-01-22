@@ -43,19 +43,18 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     dispatch(fetchAllCompanies());
   }, [dispatch]);
 
-useEffect(() => {
-  if (query && companies.length > 0) {
-    const filtered = companies
-      .filter((company) =>
-        company.startup_name?.toLowerCase().includes(query.toLowerCase())
-      )
-      .slice(0, 4);
-    setFilteredCompanies(filtered);
-  } else {
-    setFilteredCompanies([]);
-  }
-}, [query, companies]);
-
+  useEffect(() => {
+    if (query && companies.length > 0) {
+      const filtered = companies
+        .filter((company) =>
+          company.startup_name?.toLowerCase().includes(query.toLowerCase())
+        )
+        .slice(0, 4);
+      setFilteredCompanies(filtered);
+    } else {
+      setFilteredCompanies([]);
+    }
+  }, [query, companies]);
 
   const handleCompanySelect = (company: StartupType) => {
     setQuery(company.startup_name);
@@ -68,7 +67,7 @@ useEffect(() => {
     if (selectedCompanyId) {
       data.organization_id = selectedCompanyId;
     }
-    delete data.organization_name; 
+    delete data.organization_name;
     console.log("Data to submit:", data);
     onSubmit(data);
   };
@@ -82,6 +81,13 @@ useEffect(() => {
     setShowModal(false);
     dispatch(fetchAllCompanies());
   };
+
+  const showAddOrganizationButton =
+    query &&
+    !filteredCompanies.some(
+      (company) => company.startup_name.toLowerCase() === query.toLowerCase()
+    ) &&
+    selectedCompanyId === null;
 
   return (
     <div className="flex justify-evenly items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
@@ -172,7 +178,10 @@ useEffect(() => {
               placeholder="Enter your organization"
               className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300  w-80"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setSelectedCompanyId(null); // Reset selected company when user types new query
+              }}
             />
             {filteredCompanies.length > 0 && (
               <ul className="border border-gray-300 mt-2 w-full max-h-48 overflow-y-auto bg-white z-10">
@@ -187,7 +196,7 @@ useEffect(() => {
                 ))}
               </ul>
             )}
-            {query && filteredCompanies.length === 0 && (
+            {showAddOrganizationButton && (
               <button
                 className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg"
                 onClick={handleOpenModal}
@@ -225,7 +234,7 @@ useEffect(() => {
         <div className="p-8">
           <span className="text-sm xl:text-base text-gray-400 font-light">
             Already have an account?{" "}
-            <Link href="/signin" className="font-medium text-blue-500">
+            <Link href="/login" className="font-medium text-blue-500">
               Sign in
             </Link>
           </span>

@@ -40,48 +40,9 @@ const CurvedLineUp = ({ selectedSector }) => {
           "No Sectors Available",
         ];
 
-  const handleTouchStart = (e) => {
-    if (isAnimating) return; // Prevent interaction during animation
-    setStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    if (startX === null || isAnimating) return;
-
-    const deltaX = e.touches[0].clientX - startX;
-
-    if (deltaX > 50) {
-      handleScroll("prev");
-      setStartX(e.touches[0].clientX); // Reset startX to the new position
-    } else if (deltaX < -50) {
-      handleScroll("next");
-      setStartX(e.touches[0].clientX); // Reset startX to the new position
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setStartX(null);
-  };
-
-  const handleScroll = (direction) => {
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      const newIndex =
-        direction === "next"
-          ? (selectedIndex + 1) % sectorNames.length
-          : (selectedIndex - 1 + sectorNames.length) % sectorNames.length;
-      setCurrentIndex(newIndex);
-      setIsAnimating(false);
-    }, 500); // Match this duration with the CSS transition duration
-  };
-
   return (
     <div
       className="relative bg-gray-100 flex justify-end items-start select-none mt-16"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
       <div>
         <img src="/circleup1.svg" alt="" className="w-32" />

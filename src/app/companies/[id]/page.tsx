@@ -1,15 +1,37 @@
 "use client";
-
-import React, { useEffect } from 'react'
+import React, { useEffect } from "react";
+import { ClipLoader } from "react-spinners";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchCompanyById } from '../../redux/features/companyprofile/companyProfile';
 import { decryptURL } from '../../utils/shareUtils';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
-export default function page() {
+
+
+interface CompanyProfileProps {
+  company: {
+    startup_name: string;
+    startup_analyst_rating: string;
+    startup_industry: string;
+    startup_technology: string;
+    startup_overview: string;
+    startup_description: string;
+    startup_company_stage: string;
+    startup_country: string;
+    startup_founders_info: string;
+    startup_emails: string;
+  };
+}
+
+
+
+const CompanyProfile: React.FC<CompanyProfileProps> = () => {
+
+  
   const dispatch = useAppDispatch();
   const { company, loading, error } = useAppSelector((state) => state.companyProfile);
   const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     let encodedOrganizationId = params.id;
@@ -22,84 +44,116 @@ export default function page() {
     dispatch(fetchCompanyById(decodedOrganizationId));
   }, [dispatch]);
 
-  return (
 
-    <div className="bg-white p-6 rounded-lg shadow-sm border sm:w-[70%] w-[80%] mx-auto my-5">
-      <h1 className="sm:text-4xl text-2xl font-bold text-gray-900 mb-4">{company?.startup_name}</h1>
-      <div className="space-y-4">
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900 "><strong className="text-gray-700 mr-2">Analyst Rating:</strong>{company?.startup_analyst_rating}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Url:</strong>{company?.startup_url}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Partners:</strong>{company?.startup_partners}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Customers:</strong>{company?.startup_customers}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Usecases:</strong>{company?.startup_usecases}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Industry:</strong>{company?.startup_industry}</p>
-        </div>
-        <div className="flex items-baseline  space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Technology:</strong>{company?.startup_technology}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Solutions:</strong>{company?.startup_solutions}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Overview:</strong>{company?.startup_overview}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Description:</strong>{company?.startup_description}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Stage:</strong>{company?.startup_company_stage}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Country:</strong>{company?.startup_country}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Founders Info:</strong>{company?.startup_founders_info}</p>
-        </div>
-        <div className="flex items-baseline space-y-2 md:space-y-0 md:space-x-4">
-          <p className="text-gray-900"><strong className="text-gray-700 mr-2">Emails:</strong>{company?.startup_emails}</p>
-        </div>
+  if (!company) {
+    return (
+      <div className="flex items-center justify-center min-h-screen ">
+        <ClipLoader color="#3b82f6" size={50} />
       </div>
-    </div>
+    );
+  }
 
-    // <div>
-    //   <h1><strong>Name:</strong>{company?.startup_name}</h1>
-    //   <p><strong>Analyst Rating:</strong> {company?.startup_analyst_rating}</p>
-    //   <p><strong>URL:</strong> {company?.startup_url}</p>
-    //   <p><strong>Analyst Rating:</strong> {company?.startup_analyst_rating}</p>
-    //   <p><strong>Partners:</strong> {company?.startup_partners}</p>
-    //   <p><strong>Customers:</strong> {company?.startup_customers}</p>
-    //   <p><strong>Use cases:</strong> {company?.startup_usecases}</p>
-    //   <p><strong>Solution:</strong> {company?.startup_solutions}</p>
-    //   <p><strong>Industry:</strong> {company?.startup_industry}</p>
-    //   <p><strong>Technology:</strong> {company?.startup_technology}</p>
-    //   <p><strong>Overview:</strong> {company?.startup_overview}</p>
-    //   <p><strong>Description:</strong> {company?.startup_description}</p>
-    //   <p><strong>Stage:</strong> {company?.startup_company_stage}</p>
-    //   <p><strong>Country:</strong> {company?.startup_country}</p>
-    //   <p><strong>Founders:</strong> {company?.startup_founders_info}</p>
-    //   <p><strong>Contact:</strong> {company?.startup_emails}</p>
-    // </div>
-  )
-}
+  return (
+    <div>
+    <div className="w-[50%] flex items-center mx-auto my-6" >
+            <button
+              onClick={() => router.back()}  
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+            >
+              Back
+            </button>
+
+            <h1 className="text-3xl font-bold mx-auto my-0 text-gray-900 ">
+              {company.startup_name}
+            </h1>
+      </div>
+        <div className="flex flex-col items-center space-y-6 p-4  min-h-screen">
+
+          <div className="w-full max-w-3xl">
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Analyst Rating
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_analyst_rating || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Industry
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_industry || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Technology
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_technology || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Overview
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_overview || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Description
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_description || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Stage
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_company_stage || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Country
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_country || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Founders Info
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_founders_info || "N/A"}
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <span className="absolute -top-3 left-4 px-2 bg-white text-gray-700 font-semibold">
+                Emails
+              </span>
+              <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
+                {company.startup_emails || "N/A"}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  );
+};
+
+export default CompanyProfile;

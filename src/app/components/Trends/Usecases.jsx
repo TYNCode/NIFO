@@ -3,17 +3,14 @@
 import React, { useState } from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 import { BsArrowRight } from "react-icons/bs";
-import { useRouter } from "next/navigation";
 
-const Usecases = ({ selectedIndustry, selectedTechnology }) => {
-  const router = useRouter();
+const Usecases = ({ selectedIndustry, selectedTechnology, onUsecaseClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
   const [slide, setSlide] = useState("enter"); // 'enter', 'exit-left', 'exit-right'
   const [touchStartX, setTouchStartX] = useState(0); // Initialize touchStartX state
 
-  // Find the selected industry's data within the sectors
   const selectedSector = sectorsData.sectors.find((sector) =>
     sector.industries.some(
       (industry) => industry.industryName === selectedIndustry
@@ -83,22 +80,11 @@ const Usecases = ({ selectedIndustry, selectedTechnology }) => {
 
   const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null;
 
-
-const handleUsecaseClick = () => {
-  if (currentUseCase) {
-    const query = new URLSearchParams({
-      usecase: currentUseCase.usecase,
-      usecaseDescription: currentUseCase.usecaseDescription,
-      Enhancement: currentUseCase.Enhancement || "",
-      MeasureOfImpact: currentUseCase["Measure of Impact"] || "",
-      startups: JSON.stringify(currentUseCase.startups || []), // Include startups
-    }).toString();
-
-    router.push(`/usecase?${query}`);
-  }
-};
-
-
+  const handleUsecaseClick = () => {
+    if (currentUseCase) {
+      setTimeout(() => onUsecaseClick(currentUseCase), 0); // Delay state update to avoid rendering issues
+    }
+  };
 
   return (
     <div
@@ -106,14 +92,12 @@ const handleUsecaseClick = () => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Container for "Use Cases" Box */}
       <div className="flex items-center justify-center w-10 z-10">
         <div className="inline-block px-6 py-1 border border-[#0081CA] bg-[#F0FAFF] uppercase font-medium transform -rotate-90 text-nowrap text-sm">
           Use Cases
         </div>
       </div>
 
-      {/* Animated Visible Card */}
       {currentUseCase && (
         <div
           key={currentUseCase.usecase}
@@ -128,7 +112,6 @@ const handleUsecaseClick = () => {
         </div>
       )}
 
-      {/* Arrow on the right side */}
       {useCases.length > 1 && (
         <div
           className="border-2 rounded-full p-2 text-[#0081CA] border-[#0081CA] cursor-pointer z-10 flex items-center justify-center h-10 w-10"

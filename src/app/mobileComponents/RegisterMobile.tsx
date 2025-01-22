@@ -35,6 +35,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     null
   );
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const { companies } = useAppSelector((state) => state.companyProfile);
@@ -51,16 +52,19 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
         )
         .slice(0, 4);
       setFilteredCompanies(filtered);
+      setShowDropdown(true);
     } else {
       setFilteredCompanies([]);
+      setShowDropdown(false);
     }
   }, [query, companies]);
 
   const handleCompanySelect = (company: StartupType) => {
-    setQuery(company.startup_name);
-    setSelectedCompanyId(company.startup_id);
-    setFilteredCompanies([]);
-    setValue("organization_id", company.startup_id);
+    setQuery(company.startup_name); // Set the selected company name
+    setSelectedCompanyId(company.startup_id); // Save the selected company ID
+    setFilteredCompanies([]); // Clear the filtered companies
+    setShowDropdown(false); // Hide the dropdown
+    setValue("organization_id", company.startup_id); // Set the form value
   };
 
   const handleFormSubmit: SubmitHandler<FormData> = (data) => {
@@ -80,7 +84,8 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
     query &&
     !filteredCompanies.some(
       (company) => company.startup_name.toLowerCase() === query.toLowerCase()
-    );
+    ) &&
+    selectedCompanyId === null;
 
   return (
     <div className="h-screen w-full flex flex-col justify-start pt-10 items-start bg-gradient-to-b from-yellow-300 to-yellow-100">
@@ -153,9 +158,12 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
               placeholder="Organization Name"
               className="text-base px-5 py-3 outline-none rounded-lg shadow border-none w-full"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setSelectedCompanyId(null);
+              }}
             />
-            {filteredCompanies.length > 0 && (
+            {showDropdown && filteredCompanies.length > 0 && (
               <ul className="border border-gray-300 mt-2 w-full max-h-48 overflow-y-auto">
                 {filteredCompanies.map((company) => (
                   <li
@@ -168,13 +176,13 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
                 ))}
               </ul>
             )}
-            {showAddOrganizationButton && (     
-                <button
-                  className="mt-2 bg-blue-500 text-white font-medium uppercase text-sm px-4 py-2 rounded-md"
-                  onClick={handleOpenModal}
-                >
-                  Company not found? Add it here!
-                </button>
+            {showAddOrganizationButton && (
+              <button
+                className="mt-2 bg-blue-500 text-white font-medium uppercase text-sm px-4 py-2 rounded-md"
+                onClick={handleOpenModal}
+              >
+                Company not found? Add it here!
+              </button>
             )}
             {errors.organization_name && (
               <p className="text-red-500">{errors.organization_name.message}</p>

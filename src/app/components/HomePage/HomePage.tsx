@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { IoShareSocialOutline } from "react-icons/io5";
 import LeftFrame from "../LeftFrame/LeftFrame";
 import Prompt from "../Prompt";
 import NavBar from "../Navbar";
@@ -13,12 +14,12 @@ import SpotlightMobile from "../Spotlights/SpotlightMobile";
 import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
 import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
+import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader";
 import { ChatHistoryResponse, StartupType } from "../../interfaces";
 import { encryptURL } from "../../utils/shareUtils";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
-import { IoShareSocialOutline } from "react-icons/io5";
-import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader"; // Add this line
+import { v4 as uuidv4 } from "uuid"; // Import uuid for unique session IDs
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function HomePage() {
@@ -26,7 +27,9 @@ export default function HomePage() {
   const searchParams = useSearchParams();
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
-  const [selectedStartup, setSelectedStartup] = useState<StartupType>();
+  const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
+    null
+  );
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -37,15 +40,13 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'Spotlight');
   const router = useRouter();
 
-  const [sessionId, setSessionId] = useState<string>(() => {
-    const now = new Date();
-    return now.getSeconds().toString();
-  });
+  const [sessionId, setSessionId] = useState<string>(() => uuidv4()); // Use uuid for unique session IDs
 
   const [requestQuery, setRequestQuery] = useState<string>();
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
+  const [currentStep, setCurrentStep] = useState("trends");
 
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("user");
@@ -81,30 +82,37 @@ export default function HomePage() {
   };
 
   const handleBack = () => {
-    if (selectedTechnology) {
-      setSelectedTechnology(null); // Go back to Industries
-    } else if (selectedIndustry) {
-      setSelectedIndustry(null); // Go back to SubSectors
-    } else if (selectedSector) {
-      setSelectedSector(null); // Go back to Sectors
+    if (currentStep === "ecosystem") {
+      setCurrentStep("usecaseDescription");
+    } else if (currentStep === "usecaseDescription") {
+      setCurrentStep("usecasesCombined");
+    } else if (currentStep === "usecasesCombined") {
+      setCurrentStep("industries");
+    } else if (currentStep === "industries") {
+      setCurrentStep("subSectors");
+    } else if (currentStep === "subSectors") {
+      setCurrentStep("sectors");
     } else {
-      setActiveTab("Spotlight"); // Go back to Spotlight if at the root of Trends
+      setCurrentStep("trends");
     }
   };
 
   const handleSectorClick = (sectorName) => {
     setSelectedSector(sectorName);
-    setSelectedIndustry(null); // Reset industry and technology
+    setSelectedIndustry(null);
     setSelectedTechnology(null);
+    setCurrentStep("subSectors");
   };
 
   const handleIndustryClick = (industryName) => {
     setSelectedIndustry(industryName);
-    setSelectedTechnology(null); // Reset technology
+    setSelectedTechnology(null);
+    setCurrentStep("industries");
   };
 
   const handleTechnologyClick = (technologyName) => {
     setSelectedTechnology(technologyName);
+    setCurrentStep("usecasesCombined");
   };
 
   const toggleWidth = () => {
@@ -181,8 +189,6 @@ export default function HomePage() {
           }
         );
 
-        console.log("responseee==?", response.data.conversations);
-
         if (response.status === 200) {
           setMessages(response.data.conversations);
         } else {
@@ -208,7 +214,7 @@ export default function HomePage() {
   };
 
   const handleSendStartupData = (item: any, message: any) => {
-    console.log("itemofhandlem", message);
+    console.log("Selected startup:", message);
     setMailMessage(message);
     setRequestQuery(message.question);
     setSelectedStartup(item?.database_info);
@@ -237,7 +243,7 @@ export default function HomePage() {
   };
 
   const handleNewChat = () => {
-    const newSessionId = `session-${Date.now()}`;
+    const newSessionId = uuidv4();
     setSessionId(newSessionId);
     setMessages([]);
     setInputPrompt("");
@@ -308,6 +314,8 @@ export default function HomePage() {
             handleSectorClick={handleSectorClick}
             handleIndustryClick={handleIndustryClick}
             handleTechnologyClick={handleTechnologyClick}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
           />
         );
       case "More":
@@ -353,6 +361,22 @@ export default function HomePage() {
             />
           </div>
         </div>
+
+        {openRightFrame && selectedStartup && (
+          <div className={`${expanded ? "" : "w-1/4"}`}>
+            <CompanyProfilePane
+              companyData={selectedStartup}
+              setOpenState={setOpenRightFrame}
+              openState={openRightFrame}
+              userInfo={userInfo}
+              expanded={expanded}
+              toggleWidth={toggleWidth}
+              mailData={mailMessage}
+              setMailData={setMailMessage}
+              queryData={queryData}
+            />
+          </div>
+        )}
       </div>
 
       {/* Mobile Responsiveness */}

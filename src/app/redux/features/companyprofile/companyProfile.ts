@@ -253,6 +253,7 @@ const companyProfileSlice = createSlice({
           state.error = action.payload || "Failed to update company";
           state.loading = false;
         }
+        
       );
 
     //Companies List

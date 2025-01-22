@@ -20,8 +20,8 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
   console.log("History Data in history bar", history);
 
   const handleRenderMainSession = (session: string) => {
-    console.log(session, "seasonseason");
-    // router.push(`/${session}`);
+    console.log("Selected Session ID in HistoryBar:", session); // Log the session ID
+    // router.push(`/${session}`); // Commented out until necessary
   };
 
   const { todaySessions, previous7DaysSessions, past30DaysSessions } =
@@ -36,8 +36,8 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
         <div
           className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis whitespace-nowrap text-[14px] hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
           onClick={() => {
-            onSelectHistory(session.session_id);
-            handleRenderMainSession(session.session_id);
+            onSelectHistory(session.session_id); // Trigger session ID update
+            handleRenderMainSession(session.session_id); // Log and handle session
           }}
         >
           {firstMessage.content}

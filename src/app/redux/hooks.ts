@@ -27,12 +27,19 @@ export const deleteRequest = async (url: string): Promise<AxiosResponse> => {
   return axios.delete(url);
 };
 
+export const patchRequest = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
+  return axios.patch(url, data);
+};
+
 export const getToken = (): string | null => {
   const token = localStorage.getItem("jwtAccessToken");
-  // console.log(`Access Token : ${token}`)
   return token;
 };
 
+// Requests with Access Token
 export const getRequestWithAccessToken = async (
   url: string
 ): Promise<AxiosResponse> => {
@@ -85,6 +92,21 @@ export const deleteRequestWithAccessToken = async (
     throw new Error("Access token not provided");
   }
   return axios.delete(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const patchRequestWithAccessToken = async (
+  url: string,
+  data: any
+): Promise<AxiosResponse> => {
+  const token = getToken();
+  if (!token) {
+    throw new Error("Access token not provided");
+  }
+  return axios.patch(url, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

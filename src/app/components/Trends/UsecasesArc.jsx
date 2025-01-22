@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import sectorsData from "../../data/sector_data.json"; // Import the JSON data
 
-const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyNames }) => {
+const UsecasesArc = ({ selectedIndustry, selectedTechnology }) => {
   const radius1 = 165; // Radius of the first arc
   const radius2 = 285; // Radius of the second arc
   const centerX1 = 155; // Center the first arc's topmost dot horizontally
@@ -22,31 +22,33 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
       )
     : null;
 
+  const allIndustries = selectedSector
+    ? selectedSector.industries.map((industry) => industry.industryName)
+    : [];
+
   const technologyNames = selectedIndustryData
     ? selectedIndustryData.technologies.map((tech) => tech.technologyName)
     : [];
 
   // Find the index of the selected industry and technology
-  const selectedIndustryIndex = selectedIndustryData
-    ? selectedSector.industries
-        .map((industry) => industry.industryName)
-        .indexOf(selectedIndustry)
+  const selectedIndustryIndex = allIndustries.length
+    ? allIndustries.indexOf(selectedIndustry)
     : -1;
 
-  const selectedTechnologyIndex = technologyNames.indexOf(selectedTechnology);
+  const selectedTechnologyIndex = technologyNames.length
+    ? technologyNames.indexOf(selectedTechnology)
+    : -1;
 
   // Determine the industries and technologies to display along with their neighbors
   const displayedIndustries =
     selectedIndustryIndex !== -1
       ? [
-          OriginalTechnologyNames[
-            (selectedIndustryIndex - 1 + OriginalTechnologyNames.length) %
-              OriginalTechnologyNames.length
+          allIndustries[
+            (selectedIndustryIndex - 1 + allIndustries.length) %
+              allIndustries.length
           ],
           selectedIndustry,
-          OriginalTechnologyNames[
-            (selectedIndustryIndex + 1) % OriginalTechnologyNames.length
-          ],
+          allIndustries[(selectedIndustryIndex + 1) % allIndustries.length],
         ]
       : [
           "No Industries Available",
@@ -72,17 +74,6 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
           "No Technologies Available",
         ];
 
-  const [currentIndexArc1, setCurrentIndexArc1] = useState(
-    selectedIndustryIndex
-  );
-  const [currentIndexArc2, setCurrentIndexArc2] = useState(
-    selectedTechnologyIndex
-  );
-  const [startXArc1, setStartXArc1] = useState(null);
-  const [startXArc2, setStartXArc2] = useState(null);
-  const [isAnimatingArc1, setIsAnimatingArc1] = useState(false);
-  const [isAnimatingArc2, setIsAnimatingArc2] = useState(false);
-
   // Define the fixed positions for the three dots along each arc
   const fixedAnglesArc1 = [
     -Math.PI / 2, // Top center (90°)
@@ -92,34 +83,32 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
 
   const fixedAnglesArc2 = [
     -Math.PI / 2, // Top center (90°)
-    -Math.PI / 4, // Middle right (30°)
+    -Math.PI / 4, // Middle right (45°)
     0, // Bottom right (0°)
   ];
-
 
   return (
     <div>
       <div className="relative flex justify-end items-start select-none mt-16">
-        {/* First Arc */}
-        <div>
-          <img src="/circleup1.svg" alt="" className="w-32" />
+        {/* First Arc - Industries */}
+        <div className="absolute">
+          <img src="/circleup1.svg" alt="Arc 1" className="w-32" />
         </div>
 
         <div className="absolute">
           <div className="relative w-44">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-44" />
+              <img src="/circleup2.svg" alt="Arc 2" className="w-44" />
               <div className="absolute top-10 right-4 flex justify-center items-center">
                 <span className="text-lg font-semibold uppercase text-gray-700">
-                  BFSI
+                  {"BFSI"}
                 </span>
               </div>
             </div>
             {fixedAnglesArc1.map((angle, index) => {
               const isMiddleDot = index === 1; // Middle dot is at index 1
-              const newAngle = angle + (isAnimatingArc1 ? Math.PI / 4 : 0);
-              const x = centerX1 + radius1 * Math.sin(newAngle);
-              const y = centerY1 + radius1 * Math.cos(newAngle);
+              const x = centerX1 + radius1 * Math.sin(angle);
+              const y = centerY1 + radius1 * Math.cos(angle);
 
               return (
                 <div
@@ -136,15 +125,12 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
                   >
                     <div
                       className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                        isMiddleDot
+                          ? "font-semibold text-base text-[#4C4C4C]"
+                          : "text-[#797979]"
                       }`}
                     >
-                      {
-                        displayedIndustries[
-                          (currentIndexArc1 + index) %
-                            displayedIndustries.length
-                        ]
-                      }
+                      {displayedIndustries[index]}
                     </div>
                   </div>
                 </div>
@@ -153,13 +139,11 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
           </div>
         </div>
 
-        {/* Second Arc */}
-        <div
-          className="absolute"
-        >
+        {/* Second Arc - Technologies */}
+        <div>
           <div className="relative w-[300px]">
             <div>
-              <img src="/circleup2.svg" alt="" className="w-[300px]" />
+              <img src="/circleup2.svg" alt="Arc 2" className="w-[300px]" />
             </div>
             {fixedAnglesArc2.map((angle, index) => {
               const isMiddleDot = index === 1; // Middle dot is at index 1
@@ -181,17 +165,14 @@ const UsecasesArc = ({ selectedIndustry, selectedTechnology, OriginalTechnologyN
                   >
                     <div
                       className={`absolute right-full mr-2 top-2 text-sm w-32 text-right ${
-                        isMiddleDot ? "font-semibold text-base text-[#4C4C4C]" : "text-[#797979]"
+                        isMiddleDot
+                          ? "font-semibold text-base text-[#4C4C4C]"
+                          : "text-[#797979]"
                       }`}
                     >
-                      {
-                        isMiddleDot
-                          ? selectedTechnology
-                          : displayedTechnologies[
-                              (currentIndexArc2 + index) %
-                                displayedTechnologies.length
-                            ]
-                      }
+                      {isMiddleDot
+                        ? selectedTechnology
+                        : displayedTechnologies[index]}
                     </div>
                   </div>
                 </div>

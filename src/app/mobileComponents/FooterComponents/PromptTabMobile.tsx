@@ -15,7 +15,7 @@ const PromptTabMobile = ({
     return (
       <div className="">
         {/* Text area with send button inside */}
-        <div className="bg-white w-[350px] h-28 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] relative">
+        <div className="bg-white w-[100%] h-28 rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] relative">
           <textarea
             className="w-full h-full focus:outline-none py-4 px-6 pr-10 rounded-md resize-none border-none overflow-y-auto text-[14px] placeholder:text-sm placeholder:italic leading-tight"
             placeholder="Provide your problem statement to be solved..."

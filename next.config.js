@@ -8,6 +8,7 @@ module.exports = {
       "media.licdn.com",
       "encrypted-tbn0.gstatic.com",
       "www.wofsummit.com",
+      "lh3.googleusercontent.com",
     ],
   },
 };
