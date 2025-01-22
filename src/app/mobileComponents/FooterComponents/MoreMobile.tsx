@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { LuChevronRight } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import RecommendedQueriesMobile from "../RecommendedQueriesMobile";
@@ -8,11 +10,12 @@ import { encryptURL } from "../../utils/shareUtils";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa6";
 
 const getInitials = (name) =>
-  name
+     name
     .split(" ")
     .map((word) => word[0])
     .join("")
     .toUpperCase();
+
 
 function MoreMobile({ userInfo }) {
   const userName = userInfo?.first_name;

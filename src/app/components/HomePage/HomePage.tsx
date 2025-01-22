@@ -20,14 +20,16 @@ import { encryptURL } from "../../utils/shareUtils";
 import { useAppDispatch } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
 import { v4 as uuidv4 } from "uuid"; // Import uuid for unique session IDs
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
+  const searchParams = useSearchParams();
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
   const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
     null
-  ); // Initialize as null
+  );
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<any>(null);
@@ -35,7 +37,9 @@ export default function HomePage() {
   const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true);
   const [mailMessage, setMailMessage] = useState<any>(null);
   const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("Spotlight");
+  const [activeTab, setActiveTab] = useState<string>(searchParams.get('tab') || 'Spotlight');
+  const router = useRouter();
+
   const [sessionId, setSessionId] = useState<string>(() => uuidv4()); // Use uuid for unique session IDs
 
   const [requestQuery, setRequestQuery] = useState<string>();
@@ -59,6 +63,17 @@ export default function HomePage() {
   const handleToggleLeftFrameNavbar = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    const currentTab = searchParams.get('tab') || 'More';
+    console.log("Current tab=>"+currentTab)
+    setActiveTab(currentTab);
+  }, [searchParams]);
+
+  useEffect(() => {
+    router.push(`/?tab=${activeTab}`);
+    console.log("Active tab = > "+activeTab);
+  }, [activeTab, router]);
 
   const handleToggleLeftFrame = () => {
     if (open) {
@@ -271,7 +286,7 @@ export default function HomePage() {
     ));
   };
 
-  const renderTabContent = () => {
+  const renderTabContent = () => { 
     switch (activeTab) {
       case "Spotlight":
         return <SpotlightMobile />;

@@ -19,6 +19,15 @@ export interface StartupType {
 }
 
 
+export interface CompanyProfile {
+  startup_id: number;
+  startup_name: string;
+  startup_description: string;
+  startup_url: string;
+  startup_country: string;
+}
+
+
 export interface User {
   email: string;
   first_name: string;
