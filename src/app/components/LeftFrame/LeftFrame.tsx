@@ -78,7 +78,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
   };
 
   const handleDashboardRoute = () => {
-    router.push("/totalRequests");
+    router.push("/Dashboard");
   };
 
   const isYellowNetworkEmail = (email: string) =>

@@ -4,22 +4,25 @@ import NavBar from "../components/ConsultantScreen/Navbar";
 import { IoPerson } from "react-icons/io5";
 import { FaUser, FaUsers, FaUserCog } from "react-icons/fa";
 import axios from "axios";
-import MyRequests from "../components/ConsultantScreen/MyRequests";
-import AllRequests from "../components/ConsultantScreen/AllRequests";
+import StartupManage from "../components/AdminScreen/StartupManage";
+import EnterpriseManage from "../components/AdminScreen/EnterPriseManage";
+import ConsultantManage from "../components/AdminScreen/ConsultantManage";
 
 const progress = ["Newly Added", "In Progress", "Completed"];
 
-const TotalRequests: React.FC = () => {
+const Dashboard: React.FC = () => {
   const [newlyAddedOpen, setNewlyAddedOpen] = useState<boolean>(true);
   const [inProgressOpen, setInProgressOpen] = useState<boolean>(true);
   const [completedOpen, setCompletedOpen] = useState<boolean>(true);
   const [rejectedOpen, setRejectedOpen] = useState<boolean>(true);
-  const [view, setView] = useState<string>("allRequests");
-  const [userInfo, setUserInfo] = useState<any>({})
+  const [view, setView] = useState<string>("StartupManage");
+  const [userInfo, setUserInfo] = useState<any>({});
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUserInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+    if (typeof window !== "undefined") {
+      const storedUserInfo = JSON.parse(
+        localStorage.getItem("userInfo") || "{}"
+      );
       setUserInfo(storedUserInfo);
     }
   }, []);
@@ -67,44 +70,37 @@ const TotalRequests: React.FC = () => {
           ) : null}
           <div
             className={`mt-5 cursor-pointer ${
-              view === "allRequests" ? "text-yellow-500" : "text-gray-400"
+              view === "StartupManage" ? "text-yellow-500" : "text-gray-400"
             }`}
-            onClick={() => setView("allRequests")}
+            onClick={() => setView("StartupManage")}
           >
             <FaUsers size={23} />
           </div>
           <div
             className={`mt-5 cursor-pointer ${
-              view === "myRequests" ? "text-yellow-400" : "text-gray-400"
+              view === "EnterpriseManage" ? "text-yellow-400" : "text-gray-400"
             }`}
-            onClick={() => setView("myRequests")}
+            onClick={() => setView("EnterpriseManage")}
+          >
+            <FaUser size={23} />
+          </div>
+          <div
+            className={`mt-5 cursor-pointer ${
+              view === "ConsultantManage" ? "text-yellow-400" : "text-gray-400"
+            }`}
+            onClick={() => setView("ConsultantManage")}
           >
             <FaUser size={23} />
           </div>
         </div>
 
-        <div>
-          {view === "allRequests" ? (
-            <AllRequests
-              newlyAddedOpen={newlyAddedOpen}
-              toggleNewlyAdded={toggleNewlyAdded}
-              toggleInProgress={toggleInProgress}
-              completedOpen={completedOpen}
-              inProgressOpen={inProgressOpen}
-              toggleCompleted={toggleCompleted}
-              isSuperUser={isSuperUser}
-            />
-          ) : view === "myRequests" ? (
-            <MyRequests
-              newlyAddedOpen={newlyAddedOpen}
-              toggleNewlyAdded={toggleNewlyAdded}
-              toggleInProgress={toggleInProgress}
-              completedOpen={completedOpen}
-              inProgressOpen={inProgressOpen}
-              toggleCompleted={toggleCompleted}
-              rejectedOpen={rejectedOpen}
-              toggleRejected={toggleRejected}
-            />
+        <div className="w-full mt-2">
+          {view === "StartupManage" ? (
+            <StartupManage />
+          ) : view === "EnterpriseManage" ? (
+            <EnterpriseManage />
+          ) : view === "ConsultantManage" ? (
+            <ConsultantManage />
           ) : (
             <div>Admin Configuration</div>
           )}
@@ -114,4 +110,4 @@ const TotalRequests: React.FC = () => {
   );
 };
 
-export default TotalRequests;
+export default Dashboard;
