@@ -21,10 +21,6 @@ const UsecasesArc = ({
     (sector) => sector.sector === selectedSector
   )
 
-  console.log("selectedS", selectedSector)
-
-  console.log("selectedSectorData", sector)
-
   const selectedIndustryData = selectedSectorData
     ? selectedSectorData.subSectors[selectedIndustry]
     : null;

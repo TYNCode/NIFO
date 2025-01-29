@@ -68,7 +68,6 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
       data.organization_id = selectedCompanyId;
     }
     delete data.organization_name;
-    console.log("Data to submit:", data);
     onSubmit(data);
   };
 

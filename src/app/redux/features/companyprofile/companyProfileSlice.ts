@@ -86,10 +86,6 @@ export const fetchCompanyById = createAsyncThunk<
 export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(
   "companyProfile/postCompany",
   async (newCompanyData, { rejectWithValue }) => {
-    console.log(
-      "Registration of company into the postCompany Api endpointr",
-      newCompanyData
-    );
     try {
       const response = await postRequest(
         `https://tyn-server.azurewebsites.net/directorysearch/companyview/`,

@@ -13,7 +13,7 @@ const StartupList = ({ startups, handleStartups }) => {
     );
   };
 
-  console.log("startups inside startupList", startups);
+
 
   return (
     <div className="grid grid-flow-row gap-4 pl-1 py-2 pb-2">
@@ -30,7 +30,7 @@ const StartupList = ({ startups, handleStartups }) => {
                   ? "text-blue-400 underline cursor-pointer"
                   : "cursor-default"
               } font-bold mb-2 w-2/3`}
-              // Only call handleStartups if database_info exists
+
               onClick={() => {
                 if (startup.database_info) {
                   handleStartups(startup, startupIndex);

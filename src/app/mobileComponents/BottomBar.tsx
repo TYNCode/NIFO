@@ -8,7 +8,6 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 const BottomBar = ({ setActiveTab, activeTab }) => {
   const router = useRouter(); 
   const handleTabClick = (tabName:string, route:string) => {
-    console.log("hanndleCLic is pressed")
     setActiveTab(tabName);
     router.push(route); 
   };

@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import NavBar from "../components/ConsultantScreen/Navbar";
-import { IoPerson } from "react-icons/io5";
 import { FaUser, FaUsers, FaUserCog } from "react-icons/fa";
-import axios from "axios";
 import MyRequests from "../components/ConsultantScreen/MyRequests";
 import AllRequests from "../components/ConsultantScreen/AllRequests";
+import UploadDeck from "../components/ConsultantScreen/UploadDeck";
 
 const progress = ["Newly Added", "In Progress", "Completed"];
 
@@ -14,7 +13,7 @@ const TotalRequests: React.FC = () => {
   const [inProgressOpen, setInProgressOpen] = useState<boolean>(true);
   const [completedOpen, setCompletedOpen] = useState<boolean>(true);
   const [rejectedOpen, setRejectedOpen] = useState<boolean>(true);
-  const [view, setView] = useState<string>("allRequests");
+  const [view, setView] = useState<string>("uploadDeck");
   const [userInfo, setUserInfo] = useState<any>({})
 
   useEffect(() => {
@@ -67,6 +66,14 @@ const TotalRequests: React.FC = () => {
           ) : null}
           <div
             className={`mt-5 cursor-pointer ${
+              view === "uploadDeck" ? "text-yellow-500" : "text-gray-400"
+            }`}
+            onClick={() => setView("uploadDeck")}
+          >
+            <FaUsers size={23} />
+          </div>
+          <div
+            className={`mt-5 cursor-pointer ${
               view === "allRequests" ? "text-yellow-500" : "text-gray-400"
             }`}
             onClick={() => setView("allRequests")}
@@ -106,7 +113,9 @@ const TotalRequests: React.FC = () => {
               toggleRejected={toggleRejected}
             />
           ) : (
-            <div>Admin Configuration</div>
+            <div>
+              <UploadDeck/>
+            </div>
           )}
         </div>
       </div>

@@ -28,7 +28,6 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log("Registration of company is started", data);
     try {
       await dispatch(postCompany(data)).unwrap();
 

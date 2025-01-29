@@ -33,7 +33,6 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({
             },
           }
         );
-        console.log(response.data);
       } catch (error) {
         console.error("Error occurred while submitting feedback:", error);
       }

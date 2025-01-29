@@ -57,7 +57,6 @@ const CompanyProfilePage: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchCompanyById(decodedOrganizationId));
-    console.log(company);
   }, [dispatch, decodedOrganizationId]);
 
   useEffect(() => {

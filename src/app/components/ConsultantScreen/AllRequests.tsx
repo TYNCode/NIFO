@@ -30,7 +30,6 @@ const AllRequests = ({
       .get("https://tyn-server.azurewebsites.net/partnerconnect/")
       .then((response) => {
         setRequests(response.data);
-        console.log("Fetched requests:", response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);

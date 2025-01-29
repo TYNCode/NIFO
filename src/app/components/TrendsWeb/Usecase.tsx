@@ -16,14 +16,12 @@ const Usecase = ({
       );
 
       if (!sector) {
-        console.log("Sector not found");
         setUsecases([]);
         return;
       }
 
       const subSector = sector.subSectors[selectedIndustry];
       if (!subSector) {
-        console.log("Sub-sector not found");
         setUsecases([]);
         return;
       }
@@ -33,18 +31,15 @@ const Usecase = ({
       );
 
       if (!technology) {
-        console.log("Technology not found");
         setUsecases([]);
         return;
       }
 
       if (!technology.useCases || technology.useCases.length === 0) {
-        console.log("No use cases found");
         setUsecases([]);
         return;
       }
 
-      // Extracting the use cases with descriptions
       const fetchedUsecases = technology.useCases.map((usecase) => ({
         useCase: usecase.useCase,
         description: usecase.useCaseDescription,
@@ -54,7 +49,6 @@ const Usecase = ({
   }, [selectedSector, selectedIndustry, selectedTechnology]);
 
   const handleUsecaseClick = (usecase) => {
-    console.log("handleclickusecase",usecase)
     onSelectUsecase(usecase.useCase);
   };
 

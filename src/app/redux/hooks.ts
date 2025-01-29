@@ -39,7 +39,6 @@ export const getToken = (): string | null => {
   return token;
 };
 
-// Requests with Access Token
 export const getRequestWithAccessToken = async (
   url: string
 ): Promise<AxiosResponse> => {

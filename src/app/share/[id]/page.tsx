@@ -33,8 +33,6 @@ const ShareSessionPage = () => {
     }
   }, [decryptedSessionId, dispatch]);
 
-
-  console.log("messageInfo",messages)
   const renderSolutionOrchestration = (message) => {
     return (
       <div>

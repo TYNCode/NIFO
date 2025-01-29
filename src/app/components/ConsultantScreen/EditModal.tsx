@@ -17,7 +17,6 @@ const EditModal: React.FC<EditModalProps> = ({
   formatDate,
 }) => {
   const [currentStatus, setCurrentStatus] = useState(request.query_status);
-  console.log(request.id);
   const updateStatus = async (id) => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
     if (jwtAccessToken) {
