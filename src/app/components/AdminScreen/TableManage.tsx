@@ -4,20 +4,63 @@ import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
+import { subDays, startOfWeek, startOfMonth, isAfter } from "date-fns";
 
-const TableManage = ({ data, title, entityName, setData }) => {
+const TableLoader = () => (
+  <div className="animate-pulse">
+    {[...Array(5)].map((_, index) => (
+      <div key={index} className="border-b border-gray-200 py-4">
+        <div className="flex items-center space-x-4">
+          <div className="h-4 w-4 bg-gray-200 rounded"></div>
+          <div className="space-y-3 w-full">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const TableManage = ({
+  data,
+  title,
+  entityName,
+  setData,
+  userType,
+  isLoading = false,
+}) => {
   const [filter, setFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("all");
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [entityToDelete, setEntityToDelete] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showBulkConfirmation, setShowBulkConfirmation] = useState(false);
 
+  const applyDateFilter = (item) => {
+    const today = new Date();
+    const itemDate = new Date(item.date_joined);
+
+    if (dateFilter === "today") {
+      return itemDate.toDateString() === today.toDateString();
+    } else if (dateFilter === "this_week") {
+      return isAfter(itemDate, subDays(startOfWeek(today), 1));
+    } else if (dateFilter === "this_month") {
+      return isAfter(itemDate, startOfMonth(today));
+    }
+    return true;
+  };
+
   const filteredData = useMemo(() => {
-    return data.filter((item) =>
-      item.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  }, [filter, data]);
+    return data
+      .filter(
+        (item) =>
+          item.first_name.toLowerCase().includes(filter.toLowerCase()) ||
+          item.email.toLowerCase().includes(filter.toLowerCase()) ||
+          item.startup_name.toLowerCase().includes(filter.toLowerCase())
+      )
+      .filter(applyDateFilter);
+  }, [filter, dateFilter, data]);
 
   const columns = useMemo(
     () => [
@@ -34,28 +77,23 @@ const TableManage = ({ data, title, entityName, setData }) => {
           </div>
         ),
       },
-      { Header: "Name", accessor: "name" },
+      { Header: "Name", accessor: "first_name" },
+      { Header: "Email", accessor: "email" },
+      { Header: "Startup Name", accessor: "startup_name" },
       {
-        Header: "URL",
-        accessor: "url",
+        Header: "Status",
+        accessor: "is_active",
         Cell: ({ value }) => (
-          <a
-            href={value}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
+          <span
+            className={`px-2 py-1 rounded ${value ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}
           >
-            {value}
-          </a>
+            {value ? "Active" : "Inactive"}
+          </span>
         ),
       },
-      { Header: "Rating", accessor: "rating" },
-      { Header: "Industry", accessor: "industry" },
-      { Header: "Country", accessor: "country" },
-      { Header: "Stage", accessor: "stage" },
       {
-        Header: "Verified",
-        accessor: "isVerified",
+        Header: "Primary User",
+        accessor: "is_primary_user",
         Cell: ({ value }) => (value ? "Yes" : "No"),
       },
       {
@@ -97,7 +135,6 @@ const TableManage = ({ data, title, entityName, setData }) => {
     pageOptions,
     state: { pageIndex },
     selectedFlatRows,
-    getToggleAllRowsSelectedProps,
   } = useTable(
     {
       columns,
@@ -152,13 +189,58 @@ const TableManage = ({ data, title, entityName, setData }) => {
     }
   };
 
-  const handleSave = (updatedStartup) => {
-    const updatedData = data.map((startup) =>
-      startup.id === updatedStartup.id ? updatedStartup : startup
-    );
-    setData(updatedData);
-    setSelectedEntity(null);
-    setIsEditing(false);
+  const handleSave = async (updatedUser) => {
+    const apiUrl = `http://127.0.0.1:8000/adminroutes/api/users/${updatedUser.id}/`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update user: ${response.status}`);
+      }
+
+      const updatedResponseData = await response.json();
+
+      const formattedUser = {
+        id: updatedResponseData.id,
+        first_name: updatedResponseData.first_name,
+        email: updatedResponseData.email,
+        startup_name: updatedResponseData.organization?.startup_name || "N/A",
+        is_active: updatedResponseData.is_active,
+        is_primary_user: updatedResponseData.is_primary_user,
+        date_joined: updatedResponseData.date_joined,
+        is_staff: updatedResponseData.is_staff,
+      };
+
+      const updatedData = data.map((user) =>
+        user.id === formattedUser.id ? formattedUser : user
+      );
+
+      setData(updatedData);
+
+      const cachedData = JSON.parse(localStorage.getItem(`${userType}`));
+
+      const updatedLocalStorageData = cachedData.map((user) =>
+        user.id === formattedUser.id ? formattedUser : user
+      );
+
+      localStorage.setItem(
+        `${userType}`,
+        JSON.stringify(updatedLocalStorageData)
+      );
+
+      setSelectedEntity(null);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating user:", error.message);
+      alert("Failed to update the user. Please try again.");
+    }
   };
 
   const handleCancelEdit = () => {
@@ -173,98 +255,123 @@ const TableManage = ({ data, title, entityName, setData }) => {
 
   return (
     <div className="flex h-full">
-      <div className="flex-1 p-2 rounded-lg ">
+      <div className="flex-1 p-2 rounded-lg">
         <div className="w-full flex justify-between">
-          {selectedFlatRows.length > 0 && (
-            <button
-              onClick={handleBulkDelete}
-              className="bg-red-500 text-white px-4 py-2 rounded mb-4"
-            >
-              Bulk Delete ({selectedFlatRows.length})
-            </button>
-          )}
-          <div className="flex items-center justify-center border border-gray-300 rounded mb-4 p-1 w-auto">
-            <IoIosSearch className="pl-1 text-gray-500 text-2xl" />
-            <input
-              type="text"
-              placeholder="Search by name..."
-              className="border-none  focus:outline-none focus:ring-0"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            />
+          <div className="mb-4 flex items-center space-x-4 justify-between w-full">
+            <div className="flex items-center justify-center border border-gray-300 rounded p-1 w-[40%]">
+              <IoIosSearch className="pl-1 text-gray-500 text-2xl" />
+              <input
+                type="text"
+                placeholder={`Search by name, email, or ${userType}...`}
+                className="border-none focus:outline-none focus:ring-0 w-full"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <label className=" font-medium text-base">Joined date:</label>
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="border border-gray-300 rounded p-2"
+              >
+                <option value="all">All Dates</option>
+                <option value="today">Today</option>
+                <option value="this_week">This Week</option>
+                <option value="this_month">This Month</option>
+              </select>
+            </div>
           </div>
         </div>
-
-        <table
-          {...getTableProps()}
-          className="table-auto w-full border-collapse border border-gray-300"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr
-                {...headerGroup.getHeaderGroupProps()}
-                className="bg-gray-100"
-              >
-                {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    className="px-4 py-2 text-left text-gray-700 font-medium border-b border-gray-200"
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
+        {selectedFlatRows.length > 0 && (
+          <button
+            onClick={handleBulkDelete}
+            className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+          >
+            Bulk Delete ({selectedFlatRows.length})
+          </button>
+        )}
+        {isLoading ? (
+          <TableLoader />
+        ) : data.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No {entityName.toLowerCase()}s found
+          </div>
+        ) : (
+          <table
+            {...getTableProps()}
+            className="table-auto w-full border-collapse border border-gray-300"
+          >
+            <thead>
+              {headerGroups.map((headerGroup) => (
                 <tr
-                  {...row.getRowProps()}
-                  onClick={(e) => handleRowClick(row, e)}
-                  className="cursor-pointer hover:bg-gray-200 transition duration-200"
+                  {...headerGroup.getHeaderGroupProps()}
+                  className="bg-gray-100"
                 >
-                  {row.cells.map((cell) => (
-                    <td
-                      {...cell.getCellProps()}
-                      className="px-4 py-2 text-gray-600 border-b border-gray-200"
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      className="px-4 py-2 text-left text-gray-700 font-medium border-b border-gray-200"
                     >
-                      {cell.render("Cell")}
-                    </td>
+                      {column.render("Header")}
+                    </th>
                   ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr
+                    {...row.getRowProps()}
+                    onClick={(e) => handleRowClick(row, e)}
+                    className="cursor-pointer hover:bg-gray-200 transition duration-200"
+                  >
+                    {row.cells.map((cell) => (
+                      <td
+                        {...cell.getCellProps()}
+                        className="px-4 py-2 text-gray-600 border-b border-gray-200"
+                      >
+                        {cell.render("Cell")}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
 
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={previousPage}
-            disabled={!canPreviousPage}
-            className="mr-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
-          >
-            <GrFormPrevious className="text-3xl" />
-          </button>
-          <span className="text-gray-600">
-            Page {pageIndex + 1} of {pageOptions.length}
-          </span>
-          <button
-            onClick={nextPage}
-            disabled={!canNextPage}
-            className="ml-4 p-1 bg-yellow-400  text-white rounded-full disabled:bg-gray-300"
-          >
-            <MdOutlineNavigateNext className="text-3xl" />
-          </button>
-        </div>
+        {!isLoading && data.length > 0 && (
+          <div className="flex justify-center items-center mt-4">
+            <button
+              onClick={previousPage}
+              disabled={!canPreviousPage}
+              className="mr-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
+            >
+              <GrFormPrevious className="text-3xl" />
+            </button>
+            <span className="text-gray-600">
+              Page {pageIndex + 1} of {pageOptions.length}
+            </span>
+            <button
+              onClick={nextPage}
+              disabled={!canNextPage}
+              className="ml-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
+            >
+              <MdOutlineNavigateNext className="text-3xl" />
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedEntity && (
-        <div className="w-1/3 bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-y-auto max-h-[90vh]">
+        <div className="w-[30%] bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-y-auto max-h-[90vh]">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">
-              {isEditing ? `Edit ${entityName}` : `${entityName} Details`}
+              {isEditing ? `Edit User` : `User Details`}
             </h3>
             <button
               onClick={closeDetailsModal}
@@ -287,13 +394,13 @@ const TableManage = ({ data, title, entityName, setData }) => {
             </button>
           </div>
           {isEditing ? (
-            <EditEntityForm
-              entity={selectedEntity}
+            <EditUserForm
+              user={selectedEntity}
               onSave={handleSave}
               onCancel={handleCancelEdit}
             />
           ) : (
-            <EntityDetails entity={selectedEntity} />
+            <UserDetails user={selectedEntity} />
           )}
         </div>
       )}
@@ -302,9 +409,7 @@ const TableManage = ({ data, title, entityName, setData }) => {
         <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-1/3">
             <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
-            <p className="mb-4">
-              Are you sure you want to delete this {entityName.toLowerCase()}?
-            </p>
+            <p className="mb-4">Are you sure you want to delete this user?</p>
             <div className="flex space-x-4">
               <button
                 onClick={confirmDelete}
@@ -328,8 +433,7 @@ const TableManage = ({ data, title, entityName, setData }) => {
           <div className="bg-white p-6 rounded-lg shadow-xl w-1/3">
             <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
             <p className="mb-4">
-              Are you sure you want to delete {selectedFlatRows.length}{" "}
-              {entityName.toLowerCase()}s?
+              Are you sure you want to delete {selectedFlatRows.length} users?
             </p>
             <div className="flex space-x-4">
               <button
@@ -352,171 +456,73 @@ const TableManage = ({ data, title, entityName, setData }) => {
   );
 };
 
-const EntityDetails = ({ entity }) => (
+const UserDetails = ({ user }) => (
   <div>
-    <h3 className="text-xl font-semibold text-gray-800 mb-4">{entity.name}</h3>
-    <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-2">
-      <dt className="font-medium text-gray-700">URL:</dt>
-      <dd>
-        <a
-          href={entity.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
-        >
-          {entity.url}
-        </a>
-      </dd>
-      <dt className="font-medium text-gray-700">Rating:</dt>
-      <dd className="text-gray-700">{entity.rating}</dd>
-      <dt className="font-medium text-gray-700">Industry:</dt>
-      <dd className="text-gray-700">{entity.industry}</dd>
-      <dt className="font-medium text-gray-700">Country:</dt>
-      <dd className="text-gray-700">{entity.country}</dd>
-      <dt className="font-medium text-gray-700">Stage:</dt>
-      <dd className="text-gray-700">{entity.stage}</dd>
-      <dt className="font-medium text-gray-700">Verified:</dt>
-      <dd className="text-gray-700">{entity.isVerified ? "Yes" : "No"}</dd>
-      <dt className="font-medium text-gray-700">Description:</dt>
-      <dd className="text-gray-700">{entity.description}</dd>
-      <dt className="font-medium text-gray-700">Founders:</dt>
-      <dd className="text-gray-700">{entity.founders}</dd>
-      <dt className="font-medium text-gray-700">Email:</dt>
-      <dd>
-        <a
-          href={`mailto:${entity.email}`}
-          className="text-blue-500 hover:underline"
-        >
-          {entity.email}
-        </a>
-      </dd>
+    <h3 className="text-xl font-semibold text-gray-800 mb-4">
+      {user.first_name}
+    </h3>
+    <dl className="flex flex-col gap-4">
+      <div>
+        <dt className="font-bold text-gray-700">Email:</dt>
+        <dd>
+          <a
+            href={`mailto:${user.email}`}
+            className="text-blue-500 hover:underline"
+          >
+            {user.email}
+          </a>
+        </dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Startup Name:</dt>
+        <dd className="text-gray-700">{user.startup_name}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Status:</dt>
+        <dd className="text-gray-700">
+          {user.is_active ? "Active" : "Inactive"}
+        </dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Primary User:</dt>
+        <dd className="text-gray-700">{user.is_primary_user ? "Yes" : "No"}</dd>
+      </div>
     </dl>
   </div>
 );
 
-const EditEntityForm = ({ entity, onSave, onCancel }) => {
-  const [editedEntity, setEditedEntity] = useState({ ...entity });
+const EditUserForm = ({ user, onSave, onCancel }) => {
+  const [editedUser, setEditedUser] = useState({ ...user });
 
   const handleChange = (e) => {
-    setEditedEntity({ ...editedEntity, [e.target.name]: e.target.value });
+    const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setEditedUser({ ...editedUser, [e.target.name]: value });
   };
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave(editedEntity);
+        onSave(editedUser);
       }}
     >
-      <input type="hidden" name="id" value={editedEntity.id} />
+      <input type="hidden" name="id" value={editedUser.id} />
       <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
+        <label
+          htmlFor="first_name"
+          className="block text-gray-700 font-bold mb-2"
+        >
           Name:
         </label>
         <input
           type="text"
-          id="name"
-          name="name"
-          value={editedEntity.name}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="url" className="block text-gray-700 font-bold mb-2">
-          URL:
-        </label>
-        <input
-          type="text"
-          id="url"
-          name="url"
-          value={editedEntity.url}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="rating" className="block text-gray-700 font-bold mb-2">
-          Rating:
-        </label>
-        <input
-          type="number"
-          id="rating"
-          name="rating"
-          value={editedEntity.rating}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="industry"
-          className="block text-gray-700 font-bold mb-2"
-        >
-          Industry:
-        </label>
-        <input
-          type="text"
-          id="industry"
-          name="industry"
-          value={editedEntity.industry}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="country" className="block text-gray-700 font-bold mb-2">
-          Country:
-        </label>
-        <input
-          type="text"
-          id="country"
-          name="country"
-          value={editedEntity.country}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="stage" className="block text-gray-700 font-bold mb-2">
-          Stage:
-        </label>
-        <input
-          type="text"
-          id="stage"
-          name="stage"
-          value={editedEntity.stage}
-          onChange={handleChange}
-          className="border border-gray-300p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="description"
-          className="block text-gray-700 font-bold mb-2"
-        >
-          Description:
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={editedEntity.description}
-          onChange={handleChange}
-          className="border border-gray-300 p-2 w-full rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="founders"
-          className="block text-gray-700 font-bold mb-2"
-        >
-          Founders:
-        </label>
-        <input
-          type="text"
-          id="founders"
-          name="founders"
-          value={editedEntity.founders}
+          id="first_name"
+          name="first_name"
+          value={editedUser.first_name}
           onChange={handleChange}
           className="border border-gray-300 p-2 w-full rounded"
         />
@@ -529,12 +535,54 @@ const EditEntityForm = ({ entity, onSave, onCancel }) => {
           type="email"
           id="email"
           name="email"
-          value={editedEntity.email}
+          value={editedUser.email}
           onChange={handleChange}
           className="border border-gray-300 p-2 w-full rounded"
         />
       </div>
-
+      <div className="mb-4">
+        <label
+          htmlFor="startup_name"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Startup Name:
+        </label>
+        <input
+          type="text"
+          id="startup_name"
+          name="startup_name"
+          value={editedUser.startup_name}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+          readOnly
+        />
+      </div>
+      <div className="mb-4">
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="is_active"
+            name="is_active"
+            checked={editedUser.is_active}
+            onChange={handleChange}
+            className="rounded border-gray-300"
+          />
+          <span className="text-gray-700 font-bold">Active Status</span>
+        </label>
+      </div>
+      <div className="mb-4">
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="is_primary_user"
+            name="is_primary_user"
+            checked={editedUser.is_primary_user}
+            onChange={handleChange}
+            className="rounded border-gray-300"
+          />
+          <span className="text-gray-700 font-bold">Primary User</span>
+        </label>
+      </div>
       <div className="flex justify-end space-x-2">
         <button
           type="button"

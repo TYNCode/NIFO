@@ -1,150 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TableManage from "./TableManage";
 import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
 
 const StartupManage = () => {
-  const [startups, setStartups] = useState([
-    {
-      id: 1,
-      name: "TechCorp",
-      url: "https://techcorp.com",
-      rating: 4.5,
-      industry: "Technology",
-      country: "USA",
-      stage: "Growth",
-      isVerified: true,
-      description: "TechCorp is a leading tech company.",
-      founders: "John Doe, Jane Doe",
-      email: "contact@techcorp.com",
-    },
-    {
-      id: 2,
-      name: "BioHealth",
-      url: "https://biohealth.com",
-      rating: 4.2,
-      industry: "Healthcare",
-      country: "Germany",
-      stage: "Startup",
-      isVerified: false,
-      description: "BioHealth focuses on innovative healthcare solutions.",
-      founders: "Alice Brown, Bob Smith",
-      email: "info@biohealth.com",
-    },
-    {
-      id: 3,
-      name: "EduLabs",
-      url: "https://edulabs.com",
-      rating: 4.8,
-      industry: "Education",
-      country: "UK",
-      stage: "Growth",
-      isVerified: true,
-      description: "EduLabs offers online education solutions.",
-      founders: "Tom White, Sarah Green",
-      email: "support@edulabs.com",
-    },
-    {
-      id: 4,
-      name: "GreenEnergy",
-      url: "https://greenenergy.com",
-      rating: 3.9,
-      industry: "Energy",
-      country: "Canada",
-      stage: "Mature",
-      isVerified: true,
-      description: "GreenEnergy is dedicated to sustainable energy solutions.",
-      founders: "Jack Blue, Lisa Yellow",
-      email: "contact@greenenergy.com",
-    },
-    {
-      id: 5,
-      name: "SpaceXplore",
-      url: "https://spacexplore.com",
-      rating: 5.0,
-      industry: "Aerospace",
-      country: "USA",
-      stage: "Mature",
-      isVerified: false,
-      description: "SpaceXplore focuses on space exploration.",
-      founders: "Elon Musk, Gwynne Shotwell",
-      email: "info@spacexplore.com",
-    },
-    {
-      id: 6,
-      name: "TechCorp",
-      url: "https://techcorp.com",
-      rating: 4.5,
-      industry: "Technology",
-      country: "USA",
-      stage: "Growth",
-      isVerified: true,
-      description: "TechCorp is a leading tech company.",
-      founders: "John Doe, Jane Doe",
-      email: "contact@techcorp.com",
-    },
-    {
-      id: 7,
-      name: "BioHealth",
-      url: "https://biohealth.com",
-      rating: 4.2,
-      industry: "Healthcare",
-      country: "Germany",
-      stage: "Startup",
-      isVerified: false,
-      description: "BioHealth focuses on innovative healthcare solutions.",
-      founders: "Alice Brown, Bob Smith",
-      email: "info@biohealth.com",
-    },
-    {
-      id: 8,
-      name: "EduLabs",
-      url: "https://edulabs.com",
-      rating: 4.8,
-      industry: "Education",
-      country: "UK",
-      stage: "Growth",
-      isVerified: true,
-      description: "EduLabs offers online education solutions.",
-      founders: "Tom White, Sarah Green",
-      email: "support@edulabs.com",
-    },
-    {
-      id: 9,
-      name: "GreenEnergy",
-      url: "https://greenenergy.com",
-      rating: 3.9,
-      industry: "Energy",
-      country: "Canada",
-      stage: "Mature",
-      isVerified: true,
-      description: "GreenEnergy is dedicated to sustainable energy solutions.",
-      founders: "Jack Blue, Lisa Yellow",
-      email: "contact@greenenergy.com",
-    },
-    {
-      id: 10,
-      name: "SpaceXplore",
-      url: "https://spacexplore.com",
-      rating: 5.0,
-      industry: "Aerospace",
-      country: "USA",
-      stage: "Mature",
-      isVerified: false,
-      description: "SpaceXplore focuses on space exploration.",
-      founders: "Elon Musk, Gwynne Shotwell",
-      email: "info@spacexplore.com",
-    },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+
+        const cachedData = localStorage.getItem("Startup");
+        const cacheTimestamp = localStorage.getItem("StartupTimestamp");
+
+        const ONE_HOUR = 60 * 60 * 1000; // 1 hour in milliseconds
+        const now = new Date().getTime();
+
+        if (cacheTimestamp && now - parseInt(cacheTimestamp) > ONE_HOUR) {
+          clearCache();
+        }
+
+        if (
+          cachedData &&
+          cacheTimestamp &&
+          now - parseInt(cacheTimestamp) < ONE_HOUR
+        ) {
+          setUsers(JSON.parse(cachedData));
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          "http://127.0.0.1:8000/adminroutes/api/users/"
+        );
+        const data = await response.json();
+
+        const formattedData = data
+          .filter((user) => user.is_staff !== true)
+          .map((user) => ({
+            id: user.id,
+            first_name: user.first_name,
+            email: user.email,
+            startup_name: user.organization?.startup_name || "N/A",
+            is_active: user.is_active,
+            is_primary_user: user.is_primary_user,
+            date_joined: user.date_joined,
+            is_staff: user.is_staff,
+          }));
+
+        localStorage.setItem("Startup", JSON.stringify(formattedData));
+        localStorage.setItem("StartupTimestamp", now.toString());
+
+        setUsers(formattedData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const clearCache = () => {
+    localStorage.removeItem("staffUsers");
+    localStorage.removeItem("staffUsersTimestamp");
+  };
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4 ml-2">Manage Startups</h2>
+      <h2 className="text-2xl font-semibold mb-4 ml-2">
+        Manage Startups Users
+      </h2>
       <TableManage
-        data={startups}
+        data={users}
         title="Startups"
         entityName="Startup"
-        setData={setStartups}
+        setData={setUsers}
+        userType="Startup"
+        isLoading={isLoading}
       />
     </div>
   );
