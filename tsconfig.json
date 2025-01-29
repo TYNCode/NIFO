@@ -6,7 +6,7 @@
       "node"
     ],
     "module": "esnext",
-    "jsx": "react-jsx", // Ensure this is set
+    "jsx": "preserve", // Ensure this is set
     "lib": [
       "dom",
       "dom.iterable",

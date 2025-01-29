@@ -10,6 +10,12 @@ import ConsultantManage from "../components/AdminScreen/ConsultantManage";
 
 const progress = ["Newly Added", "In Progress", "Completed"];
 
+interface IconData {
+  id: string;
+  icon: React.ReactNode;
+  view: string;
+}
+
 const Dashboard: React.FC = () => {
   const [newlyAddedOpen, setNewlyAddedOpen] = useState<boolean>(true);
   const [inProgressOpen, setInProgressOpen] = useState<boolean>(true);
@@ -18,16 +24,13 @@ const Dashboard: React.FC = () => {
   const [view, setView] = useState<string>("StartupManage");
   const [userInfo, setUserInfo] = useState<any>({});
 
-  
-
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUserInfo = JSON.parse(
-        localStorage.getItem("userInfo") || "{}"
-      );
+      const storedUserInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
       setUserInfo(storedUserInfo);
     }
   }, []);
+  
   const isSuperUser = userInfo["is_superuser"];
 
   function formatDate(dateString: string) {
@@ -54,46 +57,47 @@ const Dashboard: React.FC = () => {
     setRejectedOpen(!rejectedOpen);
   };
 
+  const iconsData: IconData[] = [
+    {
+      id: "adminConfig",
+      icon: <FaUserCog size={23} />,
+      view: "adminConfig",
+    },
+    {
+      id: "StartupManage",
+      icon: <FaUsers size={23} />,
+      view: "StartupManage",
+    },
+    {
+      id: "EnterpriseManage",
+      icon: <FaUser size={23} />,
+      view: "EnterpriseManage",
+    },
+    {
+      id: "ConsultantManage",
+      icon: <FaUser size={23} />,
+      view: "ConsultantManage",
+    },
+  ];
+
   return (
     <div className="flex flex-col h-screen">
       <NavBar />
 
       <div className="flex-grow flex flex-row">
-        <div className="flex flex-col gap-8  shadow-md px-6 z-10 items-center">
-          {isSuperUser ? (
-            <div
-              className={`mt-5 cursor-pointer ${
-                view === "adminConfig" ? "text-yellow-500" : "text-gray-400"
-              }`}
-              onClick={() => setView("adminConfig")}
-            >
-              <FaUserCog size={23} />
-            </div>
-          ) : null}
-          <div
-            className={`mt-5 cursor-pointer ${
-              view === "StartupManage" ? "text-yellow-500" : "text-gray-400"
-            }`}
-            onClick={() => setView("StartupManage")}
-          >
-            <FaUsers size={23} />
-          </div>
-          <div
-            className={`mt-5 cursor-pointer ${
-              view === "EnterpriseManage" ? "text-yellow-400" : "text-gray-400"
-            }`}
-            onClick={() => setView("EnterpriseManage")}
-          >
-            <FaUser size={23} />
-          </div>
-          <div
-            className={`mt-5 cursor-pointer ${
-              view === "ConsultantManage" ? "text-yellow-400" : "text-gray-400"
-            }`}
-            onClick={() => setView("ConsultantManage")}
-          >
-            <FaUser size={23} />
-          </div>
+        <div className="flex flex-col gap-8 shadow-md px-6 z-10 items-center">
+          {iconsData.map((iconData) => (
+            (iconData.view === "adminConfig" && isSuperUser) || iconData.view !== "adminConfig" ? (
+              <div
+                key={iconData.id}
+                id={iconData.id}
+                className={`mt-5 cursor-pointer ${view === iconData.view ? "text-yellow-500" : "text-gray-400"}`}
+                onClick={() => setView(iconData.view)}
+              >
+                {iconData.icon}
+              </div>
+            ) : null
+          ))}
         </div>
 
         <div className="w-full mt-2">
