@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "types": [
+      "jest",
+      "node"
+    ],
+    "module": "esnext",
+    "jsx": "react-jsx", // Ensure this is set
     "lib": [
       "dom",
       "dom.iterable",
@@ -12,11 +18,11 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    //"module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    //"jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
@@ -35,4 +41,3 @@
     "node_modules"
   ]
 }
-

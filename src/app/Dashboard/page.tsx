@@ -18,6 +18,8 @@ const Dashboard: React.FC = () => {
   const [view, setView] = useState<string>("StartupManage");
   const [userInfo, setUserInfo] = useState<any>({});
 
+  
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserInfo = JSON.parse(
