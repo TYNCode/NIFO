@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import Spotlight from "../Spotlights/Spotlight";
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import TrendsTab from "./TrendsTab";
 
@@ -24,7 +24,11 @@ interface LeftFrameProps {
   setInputPrompt: Dispatch<SetStateAction<string>>;
 }
 
-const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInputPrompt }) => {
+const LeftFrame: React.FC<LeftFrameProps> = ({
+  onNewChat,
+  setSessionId,
+  setInputPrompt,
+}) => {
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -35,7 +39,6 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
   const { history } = useAppSelector((state) => state.chatHistory);
   const logoutRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
 
   useEffect(() => {
     dispatch(fetchChatHistory());
@@ -69,8 +72,6 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
     setSessionId(sessionId);
   };
 
-
-
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     setIsLogoutOpen(false);
@@ -81,17 +82,11 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
     router.push("/Dashboard");
   };
 
-  const isYellowNetworkEmail = (email: string) =>
-    email.endsWith("@theyellow.network") ||
-    email.endsWith("mahendran99@gmail.com");
-
   return (
     <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
-
       <div className="flex justify-center items-center bg-white shadow-md p-4 z-20">
         <img src="/nifoimage.png" alt="The Yellow Network" width={160} />
       </div>
-
 
       <div className="flex-grow overflow-y-auto scrollbar-thin">
         <div className="flex flex-row justify-between mx-4 mt-6 mb-3">
@@ -103,10 +98,9 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
             },
             { icon: FaHistory, tab: "history", title: "Chat History" },
             { icon: LuLampDesk, tab: "spotlight", title: "Startup Spotlight" },
-            { icon : FaArrowTrendUp, tab:"trends", title: "Trends"},
+            { icon: FaArrowTrendUp, tab: "trends", title: "Trends" },
             { icon: FiLink, tab: "connects", title: "Connects" },
             // { icon: IoChatbubblesSharp, tab: "chat", title: "Chat Window : Will be launching soon!" },
-
           ].map(({ icon: Icon, tab, title }) => (
             <div
               key={tab}
@@ -126,9 +120,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
           {(() => {
             switch (activeTab) {
               case "recommended":
-                return (
-                  <RecommendedQueries setInputPrompt={setInputPrompt}/>
-                );
+                return <RecommendedQueries setInputPrompt={setInputPrompt} />;
               case "history":
                 return (
                   <>
@@ -150,7 +142,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
               // case "chat":
               //   return <ChatWindow />;
               case "trends":
-                return <TrendsTab/> 
+                return <TrendsTab />;
               default:
                 return null;
             }
@@ -166,7 +158,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({ onNewChat, setSessionId , setInpu
         <div>{userInfo?.first_name}</div>
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
-            {isYellowNetworkEmail(userInfo?.email) && (
+            {userInfo?.is_primary_user && (
               <div
                 className="flex justify-between px-8 py-3 hover:text-yellow-500"
                 onClick={handleDashboardRoute}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useTable, usePagination, useRowSelect } from "react-table";
 import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
@@ -8,7 +8,7 @@ import { subDays, startOfWeek, startOfMonth, isAfter } from "date-fns";
 
 const TableLoader = () => (
   <div className="animate-pulse">
-    {[...Array(5)].map((_, index) => (
+    {[...Array(10)].map((_, index) => (
       <div key={index} className="border-b border-gray-200 py-4">
         <div className="flex items-center space-x-4">
           <div className="h-4 w-4 bg-gray-200 rounded"></div>
@@ -28,6 +28,9 @@ const TableManage = ({
   setData,
   userType,
   isLoading = false,
+  totalCount,
+  onPageChange,
+  currentPage,
 }) => {
   const [filter, setFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
@@ -36,6 +39,9 @@ const TableManage = ({
   const [entityToDelete, setEntityToDelete] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showBulkConfirmation, setShowBulkConfirmation] = useState(false);
+
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   const applyDateFilter = (item) => {
     const today = new Date();
@@ -139,7 +145,6 @@ const TableManage = ({
     {
       columns,
       data: filteredData,
-      initialState: { pageSize: 5 },
     },
     usePagination,
     useRowSelect
@@ -218,21 +223,10 @@ const TableManage = ({
         is_staff: updatedResponseData.is_staff,
       };
 
-      const updatedData = data.map((user) =>
-        user.id === formattedUser.id ? formattedUser : user
-      );
-
-      setData(updatedData);
-
-      const cachedData = JSON.parse(localStorage.getItem(`${userType}`));
-
-      const updatedLocalStorageData = cachedData.map((user) =>
-        user.id === formattedUser.id ? formattedUser : user
-      );
-
-      localStorage.setItem(
-        `${userType}`,
-        JSON.stringify(updatedLocalStorageData)
+      setData((prevData) =>
+        prevData.map((user) =>
+          user.id === formattedUser.id ? { ...user, ...formattedUser } : user
+        )
       );
 
       setSelectedEntity(null);
@@ -257,7 +251,7 @@ const TableManage = ({
     <div className="flex h-full">
       <div className="flex-1 p-2 rounded-lg">
         <div className="w-full flex justify-between">
-          <div className="mb-4 flex items-center space-x-4 justify-between w-full">
+          <div className="mb-4 flex items-center space-x-4 justify-between w-full hidden">
             <div className="flex items-center justify-center border border-gray-300 rounded p-1 w-[40%]">
               <IoIosSearch className="pl-1 text-gray-500 text-2xl" />
               <input
@@ -296,7 +290,7 @@ const TableManage = ({
           <TableLoader />
         ) : data.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No {entityName.toLowerCase()}s found
+            No {entityName.toLowerCase()} found
           </div>
         ) : (
           <table
@@ -344,27 +338,25 @@ const TableManage = ({
           </table>
         )}
 
-        {!isLoading && data.length > 0 && (
-          <div className="flex justify-center items-center mt-4">
-            <button
-              onClick={previousPage}
-              disabled={!canPreviousPage}
-              className="mr-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
-            >
-              <GrFormPrevious className="text-3xl" />
-            </button>
-            <span className="text-gray-600">
-              Page {pageIndex + 1} of {pageOptions.length}
-            </span>
-            <button
-              onClick={nextPage}
-              disabled={!canNextPage}
-              className="ml-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
-            >
-              <MdOutlineNavigateNext className="text-3xl" />
-            </button>
-          </div>
-        )}
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="mr-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
+          >
+            <GrFormPrevious className="text-3xl" />
+          </button>
+          <span className="text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="ml-4 p-1 bg-yellow-400 text-white rounded-full disabled:bg-gray-300"
+          >
+            <MdOutlineNavigateNext className="text-3xl" />
+          </button>
+        </div>
       </div>
 
       {selectedEntity && (
