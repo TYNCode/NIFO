@@ -11,8 +11,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { ConnectionStatus } from "../../redux/features/connection/connectionSlice";
 
 const SpotlightPage = ({ selectedSpotlight, handleSpotlightShare }) => {
-  console.log("selectedSpotlight", selectedSpotlight);
-
   const dispatch = useAppDispatch();
   const connectionStatuses = useAppSelector(
     (state) => state.partnerConnect.connectionStatuses

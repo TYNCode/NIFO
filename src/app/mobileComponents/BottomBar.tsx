@@ -8,7 +8,6 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 const BottomBar = ({ setActiveTab, activeTab }) => {
   const router = useRouter(); 
   const handleTabClick = (tabName:string, route:string) => {
-    console.log("hanndleCLic is pressed")
     setActiveTab(tabName);
     router.push(route); 
   };
@@ -18,6 +17,7 @@ const BottomBar = ({ setActiveTab, activeTab }) => {
       activeTab === tabName ? "text-blue-500 border-t-2 border-blue-400 py-2" : "text-gray-700"
     }`;
 
+    
   return (
     <div>
       <div className="fixed bottom-0 w-full h-20 flex items-center justify-around bg-white z-50">

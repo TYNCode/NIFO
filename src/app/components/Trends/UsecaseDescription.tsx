@@ -8,8 +8,6 @@ const UsecaseDescription = ({
   selectedUseCase
 }) => {
 
-  console.log("UsecaseDescription", selectedUseCase?.useCaseDescription)
-
  const handleExploreClick = () => {
    handleEcosystem({
      selectedUseCase

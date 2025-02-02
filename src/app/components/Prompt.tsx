@@ -34,6 +34,7 @@ const Prompt: React.FC<PromptProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
 
+
   useEffect(() => {
     scrollToBottom();
   }, [renderMessages]);
@@ -47,13 +48,8 @@ const Prompt: React.FC<PromptProps> = ({
   const autoResizeTextarea = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      console.log(
-        "Auto-resize triggered:",
-        textarea.scrollHeight,
-        textarea.clientHeight
-      );
-      textarea.style.height = "auto"; // Reset the height
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set it to the scroll height
+      textarea.style.height = "auto"; 
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
 
@@ -82,7 +78,6 @@ const Prompt: React.FC<PromptProps> = ({
     handleToggleRightFrame();
   };
 
-  // Correctly define the feedback form handlers
   const handleFeedbackIconClick = () => {
     setIsFeedbackFormOpen(true);
   };
@@ -92,7 +87,7 @@ const Prompt: React.FC<PromptProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full items-center justify-center relative">
+    <div className="flex flex-col h-full w-full items-center justify-center relative">
       <div className="prompt-container overflow-y-auto">
         {renderMessages().length === 0 ? (
           <>
@@ -108,9 +103,9 @@ const Prompt: React.FC<PromptProps> = ({
             </div>
           </>
         ) : (
-          <div className="w-[656px] mb-8 md:mb-16">
+          <div className="mx-28 mb-8 md:mb-16">
             {renderMessages()}
-            <div ref={messagesEndRef} />
+            {/* <div ref={messagesEndRef} /> */}
           </div>
         )}
       </div>
@@ -141,12 +136,12 @@ const Prompt: React.FC<PromptProps> = ({
             </div>
           )}
         </div>
-        <div
+        {/* <div
           className="absolute right-12 bottom-6 text-gray-500 bg-blue-200 rounded-full cursor-pointer"
           onClick={handleFeedbackIconClick}
         >
           <BsChatQuote size={32} />
-        </div>
+        </div> */}
         {/* <FeedbackForm
           isOpen={isFeedbackFormOpen}
           onRequestClose={closeFeedbackForm}

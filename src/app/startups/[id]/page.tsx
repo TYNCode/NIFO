@@ -13,9 +13,6 @@ const StartupDetails = () => {
 
   const params = useParams();
   let startupId = params.id;
-
-  console.log("startupid from params", startupId);
-  // Ensure startupId is a string
   if (Array.isArray(startupId)) {
     startupId = startupId[0];
   }
@@ -50,7 +47,6 @@ const StartupDetails = () => {
         `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
       );
       setStartupData(res.data);
-      console.log("Response:", res);
     } catch (error) {
       console.error("Error fetching startup details:", error);
     }
@@ -62,7 +58,6 @@ const StartupDetails = () => {
     }
   }, [decryptedStartupId]);
 
-  console.log("Startup Data:", startupData);
 
   const handleShareClick = async () => {
     const encryptStartupId = (id, key) => {
@@ -87,7 +82,6 @@ const StartupDetails = () => {
           text: startupData?.startup_description,
           url: `${window.location.origin}/startups/${encryptedStartupId}`,
         });
-        console.log("Successfully shared");
       } catch (error) {
         console.error("Error sharing:", error);
       }

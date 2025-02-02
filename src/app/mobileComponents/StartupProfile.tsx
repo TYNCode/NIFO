@@ -11,7 +11,6 @@ import {
 import { IoShareSocialOutline } from "react-icons/io5";
 
 const StartupProfile = ({ selectedStartup, onBackClick, queryForConnect }) => {
-  console.log("selectedStartup",selectedStartup);
   const [loading, setLoading] = useState(false);
   const { connectionStatuses } = useAppSelector(
     (state) => state.partnerConnect

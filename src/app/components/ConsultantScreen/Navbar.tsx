@@ -11,8 +11,8 @@ const NavBar: React.FC = () => {
             <Image
                 src='/nifoimage.png'
                 alt='The Yellow Network'
-                height={0}
-                width={180}
+                height={60}
+                width={60}
             />
         </div>
     );

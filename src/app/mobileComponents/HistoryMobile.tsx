@@ -45,7 +45,7 @@ const HistoryMobile: React.FC<HistoryMobileProps> = ({ onSelectSession }) => {
   }
 
   return (
-    <div>
+    <div className="overflow-y-scroll h-[60vh] mb-10">
       {todaySessions.length > 0 && (
         <>
           <div className="text-sm py-2 px-2 text-gray-500 font-semibold">

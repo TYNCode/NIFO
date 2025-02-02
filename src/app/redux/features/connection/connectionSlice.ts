@@ -110,10 +110,8 @@ export const fetchPartnerConnectsReceived = createAsyncThunk<
       const response = await getRequestWithAccessToken(
         "https://tyn-server.azurewebsites.net/partnerconnect/connects/received/"
       );
-      console.log("response in the partner connect slice", response)
       return response.data;
     } catch (error: any) {
-      console.log("error in the partner connect slice", error)
       return rejectWithValue(
         error?.response?.data?.error
       );
