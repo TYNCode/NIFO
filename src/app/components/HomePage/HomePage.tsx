@@ -25,10 +25,12 @@ import ComparisonTable from "./ComparisonTable";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
+  const searchParams = useSearchParams();
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
   const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
     null
+  );
   );
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
@@ -187,6 +189,17 @@ export default function HomePage() {
   const handleToggleLeftFrameNavbar = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    const currentTab = searchParams.get('tab') || 'More';
+    console.log("Current tab=>"+currentTab)
+    setActiveTab(currentTab);
+  }, [searchParams]);
+
+  useEffect(() => {
+    router.push(`/?tab=${activeTab}`);
+    console.log("Active tab = > "+activeTab);
+  }, [activeTab, router]);
 
   const handleToggleLeftFrame = () => {
     if (open) {
@@ -437,7 +450,7 @@ export default function HomePage() {
     ));
   };
 
-  const renderTabContent = () => {
+  const renderTabContent = () => { 
     switch (activeTab) {
       case "Spotlight":
         return <SpotlightMobile />;

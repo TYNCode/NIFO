@@ -6,7 +6,7 @@ import loginSlice from "./features/auth/loginSlice";
 import registerSlice from "./features/auth/registerSlice";
 import spotlightSlice from "./features/spotlight/spotlightSlice";
 import partnerConnectSlice from "./features/connection/connectionSlice"
-import companyProfileSlice from "./features/companyprofile/companyProfileSlice";
+import companyProfileSlice from "./features/companyprofile/companyProfile";
 
 
 const rootReducer = combineReducers({

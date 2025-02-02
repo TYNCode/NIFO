@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   fetchCompanyById,
   updateCompanyById,
-} from "../../redux/features/companyprofile/companyProfileSlice";
+} from "../../redux/features/companyprofile/companyProfile";
 import { decryptURL } from "../../utils/shareUtils";
 import { getUserInfo } from "../../utils/localStorageUtils";
 import CompanyProfile from "../../components/CompanyProfile/CompanyProfile";
