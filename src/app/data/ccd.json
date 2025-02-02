@@ -1,0 +1,84 @@
+{
+    "final_document": {
+        "Challenge Summary": "A high-level summary of the challenge.",
+        "Challenge Scenario": [
+            {
+                "Overview": "Aluminum is extracted from alumina in a potline with a process called the Hall-Heroult process. In the plant, there are new and older potlines. The new potline has no issues, and in the older potline, they have identified the weaker shells. Whenever the temperature is above the threshold, the side shell will become red-hot and start spilling the molten aluminium metal."
+            },
+            {
+                "Focus Areas": [
+                    {
+                        "Key Area 1": "Install sensors to monitor the temperature of the side shell."
+                    }
+                ]
+            },
+            {
+                "Technical Requirements": [
+                    {
+                        "Requirement 1": "Implement an alert system that sends notifications to operators when temperatures exceed the threshold."
+                    }
+                ]
+            },
+            {
+                "Expected Benefits": [
+                    {
+                        "Benefit 1": "Prevent spillage by addressing temperature irregularities in real time."
+                    }
+                ]
+            }
+        ],
+        "Profile of the End-Users": [
+            "Aluminum smelters, operators and maintenance personnel working in aluminum extraction plants."
+        ],
+        "Outcomes (Requirements & KPIs)": {
+            "Functional Requirements": [
+                {
+                    "Requirement 1": "Install sensors to monitor the temperature of the side shell."
+                },
+                {
+                    "Requirement 2": "Implement an alert system that sends notifications to operators when temperatures exceed the threshold."
+                }
+            ],
+            "Constraints": [
+                {
+                    "Constraint 1": "Existing infrastructure and resources of the plant must be taken into consideration."
+                }
+            ],
+            "Anticipated high-level % improvements & % reduction in KPIs possible through this initiative": [
+                {
+                    "Improvement 1": "100% reduction in spillage by addressing temperature irregularities in real time."
+                }
+            ],
+            "List of Features & Functionalities": [
+                {
+                    "Feature 1": "Sensors to monitor the temperature of the side shell."
+                },
+                {
+                    "Feature 2": "An alert system that sends notifications to operators when temperatures exceed the threshold."
+                }
+            ]
+        },
+        "Operational KPI Metrics Table": {
+            "Operational KPI Metrics": [
+                "Spillage volume",
+                "Temperature fluctuations"
+            ],
+            "Baseline KPI (Unit of Measurement)": [
+                "Tons",
+                "%"
+            ],
+            "Baseline # (Baseline Period)": [
+                "1000 tons",
+                "5%"
+            ],
+            "Target (Expected)": [
+                "0 tons",
+                "0%"
+            ],
+            "Expected Timeline to achieve 100% Target": [
+                "6 months",
+                ""
+            ]
+        }
+    }
+}
