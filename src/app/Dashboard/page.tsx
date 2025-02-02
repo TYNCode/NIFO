@@ -230,14 +230,16 @@ const Dashboard: React.FC = () => {
               currentPage={currentPage}
               onPageChange={handlePageChange}
             />
-          ) : view === "ManageStartup" ? (
+          ) 
+          : view === "ManageStartup" ? (
             <ManageStartups
               data={startups}
               entityName="Startups"
               setData={setStartups}
               isLoading={isLoadingStartups}
             />
-          ) : view === "ManageUsers" ? (
+          )
+           : view === "ManageUsers" ? (
             <ManageUsers
               users={users}
               setUsers={setUsers}

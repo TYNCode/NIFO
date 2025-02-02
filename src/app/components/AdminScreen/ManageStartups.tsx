@@ -32,7 +32,7 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   const filteredData = useMemo(() => {
     console.log(data[0]);
     return data.filter(
-      (item) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
+      (item:any) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
       // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||
       // item.startup_industry.toLowerCase().includes(filter.toLowerCase())
     );
@@ -110,25 +110,25 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
-    page,
+    page, // ✅ Correct: Now using 'page' instead of 'rows'
     nextPage,
     previousPage,
     canNextPage,
     canPreviousPage,
     pageOptions,
-    state: { pageIndex },
+    state: { pageIndex }, // ✅ Correct: pageIndex is inside 'state'
     selectedFlatRows,
   } = useTable(
     {
       columns,
       data: filteredData,
-      initialState: { pageSize: 5 },
+      initialState: { pageIndex: 0, pageSize: 5 }, // ✅ Fix: Correctly setting page size
     },
-    usePagination,
+    usePagination, // ✅ Ensure pagination is properly added
     useRowSelect
   );
+  
 
   const handleEdit = (entity) => {
     setSelectedEntity(entity);

@@ -25,7 +25,7 @@ interface CompanyProfileProps {
 
 
 
-const CompanyProfile: React.FC<CompanyProfileProps> = () => {
+const CompanyProfile: React.FC<any> = () => {
 
   
   const dispatch = useAppDispatch();
