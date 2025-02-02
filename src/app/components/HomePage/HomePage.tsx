@@ -22,15 +22,16 @@ import { v4 as uuidv4 } from "uuid";
 import BounceLoading from "./BounceLoading/BounceLoading";
 import { FiPlayCircle } from "react-icons/fi";
 import ComparisonTable from "./ComparisonTable";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);
+  const router  = useRouter()
   const searchParams = useSearchParams();
   const [defaultPrompt, setDefaultPrompt] = useState<string>("");
   const [open, setOpen] = useState<boolean>(true);
   const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
     null
-  );
   );
   const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
