@@ -1,10 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import { FaAngleLeft } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 
 const TrendsMobileHeader = ({ handleBack }) => {
-  const router = useRouter();
+  //const router = useRouter();
 
   return (
     <div className="relative">

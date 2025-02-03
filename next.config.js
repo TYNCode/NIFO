@@ -18,4 +18,5 @@ module.exports = withPWA({
       "lh3.googleusercontent.com",
     ],
   },
+  reactStrictMode: true,
 });

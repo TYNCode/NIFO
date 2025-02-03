@@ -60,23 +60,23 @@ describe("LoginLap Component", () => {
     await waitFor(() => expect(signInButton).not.toBeDisabled());
   });
 
-//   test("clicking Sign in button should change its text to 'Signing in...'", async () => {
-//     render(<LoginLap onSubmit={mockOnSubmit} loading={true} />);
+  test("clicking Sign in button should change its text to 'Signing in...'", async () => {
+    render(<LoginLap onSubmit={mockOnSubmit} loading={true} />);
 
-//     const signInButton = screen.getByTestId("signInBtn");
-//     fireEvent.click(signInButton)
-//     expect(signInButton).toHaveTextContent("Signing in...");
-//   });
+    const signInButton = screen.getByTestId("signInBtn");
+    fireEvent.click(signInButton)
+    expect(signInButton).toHaveTextContent("Signing in...");
+  });
 
-//   test("should display validation errors when required fields are empty", async () => {
-//     const signInButton = screen.getByTestId("signInBtn");
-//     fireEvent.click(signInButton);
+  test("should display validation errors when required fields are empty", async () => {
+    const signInButton = screen.getByTestId("signInBtn");
+    fireEvent.click(signInButton);
 
-//     await waitFor(() => {
-//       expect(screen.getByText("Email is required")).toBeInTheDocument();
-//       expect(screen.getByText("Password is required")).toBeInTheDocument();
-//     });
-//   });
+    await waitFor(() => {
+      expect(screen.getByText("Email is required")).toBeInTheDocument();
+      expect(screen.getByText("Password is required")).toBeInTheDocument();
+    });
+  });
 
   test("clicking Forgot Password navigates to /changePassword", () => {
     const forgotPasswordLink = screen.getByTestId("forgotPasswordButton");
