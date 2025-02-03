@@ -32,7 +32,7 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   const filteredData = useMemo(() => {
     console.log(data[0]);
     return data.filter(
-      (item:any) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
+      (item) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
       // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||
       // item.startup_industry.toLowerCase().includes(filter.toLowerCase())
     );
