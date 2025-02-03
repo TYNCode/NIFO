@@ -12,7 +12,6 @@ const EnterPriseManage = ({
   onPageChange,
 }) => {
   const EnterpriseUserData = users.filter((user) => !user.is_staff);
-  
 
   return (
     <div className="container mx-auto p-6">
