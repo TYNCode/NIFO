@@ -187,11 +187,9 @@ const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div
-              className={`mt-5 c
-                
-                ursor-pointer ${
-                  view === "ManageUsers" ? "text-yellow-400" : "text-gray-400"
-                }`}
+              className={`mt-5 cursor-pointer ${
+                view === "ManageUsers" ? "text-yellow-400" : "text-gray-400"
+              }`}
               onClick={() => {
                 setView("ManageUsers");
                 handlePageChange(1);
