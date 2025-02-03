@@ -89,8 +89,8 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     selectedCompanyId === null;
 
   return (
-    <div className="flex justify-evenly items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
-      <div className="w-7/12 h-screen flex items-center justify-center">
+    <div className="flex h-full h-screen">
+      <div className="w-7/12 h-full flex items-center justify-center bg-gradient-to-b from-yellow-100 to-yellow-400">
         <div>
           <Image
             src="/tyn-login.png"
@@ -101,7 +101,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
         </div>
       </div>
       <div className="w-5/12 bg-white order-2 md:order-2 h-screen">
-        <div className="flex items-start justify-start flex-col gap-y-2 xl:gap-4 p-8">
+        <div className="flex flex-col gap-y-2 xl:gap-4 p-8">
           <h2 className="font-bold text-3xl xl:text-5xl">Get started</h2>
           <p className="font-light text-base xl:text-xl text-gray-400">
             Start your journey by creating an account
@@ -230,7 +230,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
-        <div className="p-8">
+        <div className="flex justify-center items-center p-8">
           <span className="text-sm xl:text-base text-gray-400 font-light">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-blue-500">
