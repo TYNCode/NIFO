@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "types": [
       "jest",
       "node"
     ],
     "module": "esnext",
-    "jsx": "preserve", // Ensure this is set
+    "jsx": "react-jsx", // Ensure this is set
     "lib": [
       "dom",
       "dom.iterable",

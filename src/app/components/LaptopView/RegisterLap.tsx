@@ -222,6 +222,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
           )}
 
           <button
+            data-testid="registerBtn"
             type="submit"
             disabled={!isValid || isSubmitting}
             className={`rounded-md bg-blue-500 text-sm px-4 py-2 text-white flex items-center justify-center uppercase font-semibold ${

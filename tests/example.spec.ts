@@ -12,7 +12,7 @@ test('Login and visit Dashboard', async ({ page }) => {
   await page.click('button[type="submit"]');
 
   // Wait for the homepage/dashboard to load
-  await page.waitForURL('http://localhost:3000/'); // Replace with the actual dashboard URL
+  await page.waitForURL('http://localhost:3000', { waitUntil: 'networkidle', timeout: 20000 }); // Replace with the actual dashboard URL
   await expect(page).toHaveTitle(/The Yellow Network/i);
 
   const userName = page.locator('div.px-8.py-3.shadow-md'); 
@@ -32,11 +32,20 @@ test('Login and visit Dashboard', async ({ page }) => {
   await page.getByText("View Dashboard").click();
 
   // **Ensure redirection to /Dashboard**
-  await page.waitForURL('http://localhost:3000/Dashboard'); // Replace with actual Dashboard URL
-  await expect(page.getByText("Manage Startups Users")).toBeVisible();
+  await page.waitForURL('http://localhost:3000/Dashboard',  { waitUntil: 'networkidle', timeout: 5000 }); // Replace with actual Dashboard URL
+  await page.locator('text="Startup Name"').waitFor({ state: 'visible', timeout: 15000 });
 
-  const faUsersIcon = page.locator('.fa-users'); 
-  await faUsersIcon.waitFor({ state: 'visible', timeout: 20000 }); 
-  // Click the icon
-  await faUsersIcon.click();
+
+
+  var usersButton = page.locator('#EnterpriseManage'); 
+  await usersButton.click();
+  await expect(page.getByText("Manage EnterPrise Users")).toBeVisible();
+
+  usersButton = page.locator('#ConsultantManage'); 
+  await usersButton.click();
+  await expect(page.getByText("Manage Consultant Users")).toBeVisible();
+
+  
+
+
 });

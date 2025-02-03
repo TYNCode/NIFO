@@ -53,21 +53,22 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
           </div>
 
           {isSubmitted && message && (
-            <p className={`text-${error ? "red" : "blue"}-500`}>{message}</p>
+            <p className={`text-${error ? "red" : "blue"}-500` } id="signInBtn" >{message}</p>
           )}
 
           {error && (
             <p className="text-red-500">{error}</p>
           )}
 
-          <div>
-            <Link href="/changePassword" className="underline">
+          <div >
+            <Link href="/changePassword" data-testid="forgotPasswordButton" className="underline">
               Forgot Password?
             </Link>
           </div>
 
           <button
             type="submit"
+            data-testid="signInBtn"
             disabled={!isValid || loading}
             className={`rounded-md ${
               isValid && !loading
@@ -79,7 +80,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
           </button>
         </form>
 
-        <div className="flex justify-center items-center gap-2 mt-8 xl:mt-40">
+        <div data-testid="signUpButton" className="flex justify-center items-center gap-2 mt-8 xl:mt-40">
           <div>Not a member?</div>
           <Link href="/register" className="underline">
             Sign-up

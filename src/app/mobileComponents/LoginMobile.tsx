@@ -48,6 +48,7 @@ const LoginMobile: React.FC<LoginMobileProps> = ({ onSubmit, loading, message, e
           )}
           <button
             type="submit"
+            data-testid="submitBtn"
             disabled={!isValid || loading}
             className={`rounded-md ${
               isValid && !loading

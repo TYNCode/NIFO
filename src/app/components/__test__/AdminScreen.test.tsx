@@ -4,7 +4,20 @@ import StartupManage from '../AdminScreen/StartupManage';
 import EnterpriseManage from '../AdminScreen/EnterPriseManage';
 import ConsultantManage from '../AdminScreen/ConsultantManage';
 import TableManage from '../AdminScreen/TableManage';
-import React from 'react';
+
+
+/*
+ Jest Unit Testing
+ Components
+    1. StartupManage     
+    2. EnterpriseManage
+    3. ConsultantManage
+ Location
+    app/components/AdminScreen/
+ Number of Tests : 3
+*/
+
+
 
 const startupUsers = [
     {
@@ -111,7 +124,7 @@ const startupUsers = [
 
 describe('AdminScreen Component Tests', () => {
     // Test StartupManage component rendering
-    describe('StartupManage', () => {
+    describe('Test for StartupManage component', () => {
         it('should render StartupManage component correctly', () => {
         render(<StartupManage />);
         
@@ -123,7 +136,7 @@ describe('AdminScreen Component Tests', () => {
     });
 
     // Test EnterpriseManage component rendering
-    describe('EnterpriseManage', () => {
+    describe('Test for EnterpriseManage component', () => {
         it('should render EnterpriseManage component correctly', () => {
         render(<EnterpriseManage />);
         
@@ -135,7 +148,7 @@ describe('AdminScreen Component Tests', () => {
     });
 
   // Test ConsultantManage component rendering
-    describe('ConsultantManage', () => {
+    describe('Test for ConsultantManage component', () => {
         it('should render ConsultantManage component correctly', () => {
         render(<ConsultantManage />);
         
@@ -145,6 +158,21 @@ describe('AdminScreen Component Tests', () => {
         });
 
     });
+
+    describe("Test for TableManage component", () => {
+        var isLoading = true
+        var mockfn = jest.fn();
+        it('should render table', () => {
+            render(<TableManage
+                data={startupUsers}
+                title="Startups"
+                entityName="Startup"
+                setData={mockfn}
+                userType="Startup"
+                isLoading={isLoading}
+              />);
+        })
+    })
   
 
 });
