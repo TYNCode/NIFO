@@ -8,10 +8,12 @@ import { IoMdCloseCircle } from "react-icons/io";
 import ProblemStatement from "./ProblemStatement";
 import Questionnaire from "./Questionnaire";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import { MdAddCircleOutline } from "react-icons/md";
+import * as XLSX from "xlsx";
 
 const Page = () => {
     const [file, setFile] = useState(null);
+    const [questionnaireFile, setQuestionnaireFile] = useState(null)
     const [problemStatement, setProblemStatement] = useState("");
     const [isProblemStatementLoading, setIsProblemStatementLoading] = useState(false);
     const [isAskingQuestions, setIsAskingQuestions] = useState(false);
@@ -26,8 +28,10 @@ const Page = () => {
     const [docxFileUrl, setDocxFileUrl] = useState(null);
     const [textStatement, setTextStatement] = useState("");
     const [isChoosenOption, setIsChoosenOption] = useState(false);
-    const [isDocumentLoading , setIsDocumentLoading] = useState(false);
-
+    const [isDocumentLoading, setIsDocumentLoading] = useState(false);
+    const [isQuestionnaireLoading, setIsQuestionnaireLoading] = useState(false);
+    const [isQuestionnaireUploaded, setIsQuestionnaireUploaded] = useState(false);
+    const [questionnaireAnswers, setQuestionnaireAnswers] = useState([])
     const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
 
     const handleFileChange = (e) => {
@@ -45,29 +49,72 @@ const Page = () => {
 
         try {
             let response;
-            if (file) {
-                const formData = new FormData();
-                formData.append("file", file);
+            let extractedProblemStatement = "";
+            let extractedContext = "";
 
+            const formData = new FormData();
+            if (file) formData.append("file", file);
+            if (textStatement.trim()) formData.append("text", textStatement.trim());
+
+            response = await axios.post(
+                `${API_BASE_URL}/upload-file/`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+
+            extractedProblemStatement = response.data.problem_statement;
+            extractedContext = response.data.context;
+
+            setProblemStatement(extractedProblemStatement);
+            setContext(extractedContext);
+        } catch (error) {
+            console.error("Error processing the document:", error);
+            alert("Failed to process the document.");
+        } finally {
+            setIsProblemStatementLoading(false);
+        }
+    };
+
+    const questionnaireUploadAndGenerate = async () => {
+        if (!file && !textStatement.trim()) {
+            alert("Please enter a problem statement or upload a file.");
+            return;
+        }
+        setIsProblemStatementLoading(true);
+        try {
+            let response;
+            let extractedProblemStatement = "";
+            let extractedContext = "";
+
+            const formData = new FormData();
+            if (file) formData.append("file", file);
+            if (textStatement.trim()) formData.append("text", textStatement.trim());
+
+            response = await axios.post(
+                `${API_BASE_URL}/upload-file/`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            extractedProblemStatement = response.data.problem_statement;
+            extractedContext = response.data.context;
+            setProblemStatement(extractedProblemStatement);
+            setContext(extractedContext);
+            setIsProblemStatementLoading(false);
+            setIsDocumentLoading(true);
+            if (questionnaireFile) {
+                const requestData = {
+                    problem_statement: extractedProblemStatement,
+                    context: extractedContext,
+                    answers: questionnaireAnswers
+                };
                 response = await axios.post(
-                    `${API_BASE_URL}/upload-file/`,
-                    formData,
-                    { headers: { "Content-Type": "multipart/form-data" } }
-                );
-            } else if (textStatement.trim()) {
-                response = await axios.post(
-                    `${API_BASE_URL}/upload-file/`,
-                    { text: textStatement },
+                    `${API_BASE_URL}/generate-challenge-document/`,
+                    requestData,
                     { headers: { "Content-Type": "application/json" } }
                 );
-            } else {
-                alert("Please enter a problem statement or upload a file.");
-                setIsProblemStatementLoading(false);
-                return;
+                setGeneratedJSON(response.data);
+                await callGenerateDocxAPI(response.data);
             }
-            setProblemStatement(response.data.problem_statement);
-            setContext(response.data.context);
-
         } catch (error) {
             console.error("Error processing the document:", error);
             alert("Failed to process the document.");
@@ -77,13 +124,14 @@ const Page = () => {
     };
 
     const handleProceed = async () => {
+        setIsQuestionnaireLoading(true);
         try {
             const response = await axios.post(
                 `${API_BASE_URL}/generate-questions/`,
                 { problem_statement: problemStatement, context: context },
                 { headers: { "Content-Type": "application/json" } }
             );
-            
+
             setQuestions(response.data.questions || []);
             const emptyAnswers = response.data.questions.reduce((acc, q) => {
                 acc[q] = "";
@@ -92,6 +140,7 @@ const Page = () => {
             setAnswers(emptyAnswers);
             setIsChoosenOption(true);
             setIsAskingQuestions(true);
+            setIsQuestionnaireLoading(false);
         } catch (error) {
             console.error("Error generating questions:", error);
             alert("Failed to generate questions.");
@@ -138,7 +187,7 @@ const Page = () => {
             setIsGeneratingJSON(true);
             setIsAskingQuestions(false);
             setSkipQuestions(true);
-            await callGenerateChallengeAPI(answers); 
+            await callGenerateChallengeAPI(answers);
         }
     };
 
@@ -174,7 +223,7 @@ const Page = () => {
             const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             const url = window.URL.createObjectURL(blob);
             setDocxFileUrl(url);
-        
+
         } catch (error) {
             console.error("Error generating DOCX document:", error);
             alert("Failed to generate DOCX document.");
@@ -187,79 +236,157 @@ const Page = () => {
         document.getElementById("fileInput").click();
     }
 
+    const AddQuestionnaire = () => {
+        const fileInput = document.getElementById("xlsx");
+        if (fileInput) {
+            fileInput.click();
+        }
+    }
+
+    const handleQuestionnaireUpload = async (event) => {
+        const selectedQuestionnaire = event.target.files[0];
+        if (!selectedQuestionnaire) {
+            alert("No file selected.");
+            return;
+        }
+
+        try {
+            const data = await selectedQuestionnaire.arrayBuffer();
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const expectedHeaders = ["SI No", "Questions", "User Answers"];
+            const fileHeaders = jsonData[0] || [];
+            const isValidTemplate = expectedHeaders.every((header, index) => fileHeaders[index] === header);
+
+            if (!isValidTemplate) {
+                alert("Invalid template file. Please upload a file with the correct format.");
+                return;
+            }
+
+            const extractedAnswers = jsonData.slice(1).map(row => ({
+                question: row[1] || "",
+                answer: row[2] || ""
+            })).filter(item => item.question.trim() !== "");
+
+            setQuestionnaireAnswers(extractedAnswers);
+            setQuestionnaireFile(selectedQuestionnaire);
+            setIsQuestionnaireUploaded(true);
+
+            console.log("Extracted Answers:", extractedAnswers);
+        } catch (error) {
+            console.error("Error reading the file:", error);
+            alert("An error occurred while validating the file. Please try again.");
+        }
+    };
+
     return (
         <>
             <NavbarTrend />
             <div className="px-32 py-16 relative">
-                {file && (
-                    <div className="text-sm mb-2 bg-gray-200 w-max px-4 py-2 text-gray-500 shadow-sm rounded-md relative">
-                        {file.name.endsWith('.xlsx') && (
-                            <span className="text-white text-[10px] bg-green-500 px-1 py-1 uppercase mr-2">
-                                Spreadsheet
-                            </span>
-                        )}
-                        {file.name.endsWith('.docx') && (
-                            <span className="text-white text-[10px] bg-blue-500 px-1 py-1 uppercase mr-2">
-                                Word Document
-                            </span>
-                        )}
-                        {file.name.endsWith('.pdf') && (
-                            <span className="text-white text-[10px] bg-red-500 px-1 py-1 uppercase mr-2">
-                                PDF File
-                            </span>
-                        )}
-                        {file.name.endsWith('.txt') && (
-                            <span className="text-white text-[10px] bg-gray-500 px-1 py-1 uppercase mr-2">
-                                Text File
-                            </span>
-                        )}
-                        {file.name}
-                        <div
-                            className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 cursor-pointer"
-                            onClick={() => setFile(null)}
-                        >
-                            <IoMdCloseCircle className="text-red-600" size={16} />
+                <div className="flex flex-row gap-4">
+                    {file && (
+                        <div className="text-sm mb-2 bg-gray-200 w-max px-4 py-2 text-gray-500 shadow-sm rounded-md relative">
+                            {file.name.endsWith('.xlsx') && (
+                                <span className="text-white text-[10px] bg-green-500 px-1 py-1 uppercase mr-2">
+                                    Spreadsheet
+                                </span>
+                            )}
+                            {file.name.endsWith('.docx') && (
+                                <span className="text-white text-[10px] bg-blue-500 px-1 py-1 uppercase mr-2">
+                                    Word Document
+                                </span>
+                            )}
+                            {file.name.endsWith('.pdf') && (
+                                <span className="text-white text-[10px] bg-red-500 px-1 py-1 uppercase mr-2">
+                                    PDF File
+                                </span>
+                            )}
+                            {file.name.endsWith('.txt') && (
+                                <span className="text-white text-[10px] bg-gray-500 px-1 py-1 uppercase mr-2">
+                                    Text File
+                                </span>
+                            )}
+                            {file.name}
+                            <div
+                                className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 cursor-pointer"
+                                onClick={() => setFile(null)}
+                            >
+                                <IoMdCloseCircle className="text-red-600" size={16} />
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                    {questionnaireFile && (
+                        <div className="text-sm mb-2 bg-gray-200 w-max px-4 py-2 text-gray-500 shadow-sm rounded-md relative">
+                            <span className="text-white text-[10px] bg-green-500 px-1 py-1 uppercase mr-2">
+                                Questionnaire File
+                            </span>
+                            {questionnaireFile.name}
+                            <div
+                                className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 cursor-pointer"
+                                onClick={() => setQuestionnaireFile(null)}
+                            >
+                                <IoMdCloseCircle className="text-red-600" size={16} />
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-                <div className="relative w-full">
-                    <input
-                        type="file"
-                        id="fileInput"
-                        className="hidden"
-                        onChange={handleFileChange}
-                    />
-                    <input
-                        type="text"
-                        className="h-[52px] w-full rounded-md border-none shadow-md focus:ring-0 placeholder-gray-400 placeholder:font-normal text-gray-600 font-normal pl-12 pr-4"
-                        placeholder="Enter your problem statement"
-                        value={textStatement}
-                        onChange={(e) => setTextStatement(e.target.value)}
-                    />
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 cursor-pointer z-10" onClick={handleIconClick}>
-                        <IoAttachOutline size={23} className="text-gray-400" />
+
+                <div className="shadow-md rounded-md overflow-hidden">
+                    <div className="relative w-full flex items-center">
+                        <input
+                            type="file"
+                            id="fileInput"
+                            className="hidden"
+                            onChange={handleFileChange}
+                        />
+                        <textarea
+                            rows={4}
+                            className="w-full shadow-none focus:ring-0 border-none placeholder-gray-500 text-gray-600 px-6 resize-none"
+                            placeholder="Enter your problem statement"
+                            value={textStatement}
+                            onChange={(e) => setTextStatement(e.target.value)}
+                        />
                     </div>
-                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={() => handleUploadAndGenerate()}>
-                       {
-                            !isProblemStatementLoading ? (
-                            <IoSend size={23} className="text-gray-400" />
-                        )
-                            :
-                            (
+                    <div className="flex flex-row justify-between bg-white pb-4 px-6">
+                        <div className="flex items-center gap-2">
+                            <div onClick={handleIconClick} className="flex items-center gap-1 text-[10px] border-2 border-gray-500 px-2 py-0.5 rounded-full cursor-pointer">
+                                <IoAttachOutline size={12} className="text-gray-400" />
+                                <span className="text-gray-400">Attach File</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px] border-2 border-gray-500 px-2 py-0.5 rounded-full cursor-pointer" onClick={AddQuestionnaire}>
+                                <MdAddCircleOutline size={12} className="text-gray-400" />
+                                <span className="text-gray-400" >Questionnaire</span>
+                            </div>
+                            <input type="file"
+                                id='xlsx'
+                                accept=".xlsx"
+                                className="hidden"
+                                onChange={handleQuestionnaireUpload} />
+                        </div>
+                        <div
+                            className="cursor-pointer"
+                            onClick={() => questionnaireFile ? questionnaireUploadAndGenerate() : handleUploadAndGenerate()}
+                        >
+                            {!isProblemStatementLoading ? (
+                                <IoSend size={23} className="text-gray-400" />
+                            ) : (
                                 <AiOutlineLoading3Quarters size={23} className="text-blue-400 animate-spin" />
-                            )
-                       } 
-                        
+                            )}
+                        </div>
+
                     </div>
                 </div>
 
+
                 {
-                    isProblemStatementLoading && 
+                    isProblemStatementLoading &&
                     (
-                    <div className="flex text-gray-500 mt-4 font-normal">
-                      Generating Problem Statement ...
-                    </div>
+                        <div className="flex text-gray-500 mt-4 font-normal">
+                            Generating Problem Statement ...
+                        </div>
                     )
                 }
 
@@ -269,17 +396,19 @@ const Page = () => {
                     handleProceed={handleProceed}
                     handleSkipQuestions={handleSkipQuestions}
                     isChoosenOption={isChoosenOption}
+                    isQuestionnaireLoading={isQuestionnaireLoading}
+                    questionnaireFile = {questionnaireFile}
                 />
 
                 {
-                   isAskingQuestions &&(
+                    isAskingQuestions && (
                         <Questionnaire
                             questions={questions}
                             answers={answers}
                             handleAnswerSubmit={handleAnswerSubmit}
                             setAnswers={setAnswers}
                         />
-                   )
+                    )
                 }
 
                 {
@@ -301,7 +430,7 @@ const Page = () => {
                         </a>
                     </div>
                 )}
-                
+
             </div>
         </>
     );

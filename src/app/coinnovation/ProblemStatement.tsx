@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { FaChevronUp, FaEdit } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-const ProblemStatement = ({ problemStatement, setProblemStatement, handleProceed, handleSkipQuestions ,isChoosenOption}) => {
+const ProblemStatement = ({ problemStatement, setProblemStatement, handleProceed, handleSkipQuestions ,isChoosenOption , isQuestionnaireLoading , questionnaireFile}) => {
     const [isProblemStatementVisible, setIsProblemStatementVisible] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
   
@@ -68,14 +69,22 @@ const ProblemStatement = ({ problemStatement, setProblemStatement, handleProceed
                       )}
                   </div>
 
-                  {!isChoosenOption &&(
+                  {!isChoosenOption && !questionnaireFile &&(
                       <div className='flex flex-row justify-center items-center gap-4 mt-5'>
                           <div className="font-medium text-base text-gray-500">
                               Can I ask you some questions to understand the problem in depth?
                           </div>
+                          {isQuestionnaireLoading ? (
+                            <div>
+                             <AiOutlineLoading3Quarters className='animate-spin' />
+                            </div>
+                          ) : (
                           <div className='bg-blue-400 px-3 py-1.5 rounded-md text-white text-sm cursor-pointer flex items-center' onClick={handleProceed}>
                               Proceed
                           </div>
+                          )}
+                        
+                         
                           <div className='bg-gray-300 px-3 py-1.5 rounded-md text-white text-sm cursor-pointer flex items-center' onClick={handleSkipQuestions}>
                               Skip
                           </div>
