@@ -32,7 +32,7 @@ const EcosystemContent: React.FC = () => {
   ): Promise<string | null> => {
     try {
       const response = await fetch(
-        `https://tyn-server.azurewebsites.net/directorysearch/companysearch/?startup_name=${startupName}`
+        `http://127.0.0.1:8000/directorysearch/companysearch/?startup_name=${startupName}`
       );
       const data = await response.json();
 

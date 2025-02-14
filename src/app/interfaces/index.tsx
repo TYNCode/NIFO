@@ -18,6 +18,10 @@ export interface StartupType {
   startup_partners: string | null;
 }
 
+export interface StartupNameType {
+  startup_id : number;
+  startup_name :  string;
+}
 
 export interface CompanyProfile {
   startup_id: number;
