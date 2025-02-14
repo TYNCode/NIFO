@@ -255,27 +255,36 @@ export default function HomePage() {
   //   }
   // };
 
-
   const renderMessages = () => {
     return messages.map((message: any, index: number) => {
-      // Extract the response text from the JSON
-      const markdownText =
-        typeof message?.response?.response === "string"
-          ? message?.response?.response
-          : JSON.stringify(message?.response?.response, null, 2);
-  
+      let markdownText = "";
+
+      // Ensure the response is properly formatted for Markdown
+      if (typeof message?.response?.response === "string") {
+        // Convert \n to real line breaks for Markdown
+        markdownText = message?.response?.response.replace(/\n/g, "  \n");
+      } else if (typeof message?.response?.response === "object") {
+        // Format JSON data properly inside a code block
+        markdownText =
+          "```json\n" +
+          JSON.stringify(message?.response?.response, null, 2) +
+          "\n```";
+      }
+
       return (
-        <div key={index} className="justify-between mb-4 text-[16px]">
+        <div key={index} className="justify-between mb-4 text-[16px] w-[50vw]">
+          {/* User Question */}
           <div className="p-6 text-left border-l-4 border-orange-100">
             <span className="font-semibold text-[17px] text-black block mb-1">
               You:
             </span>
             <span className="text-[17px]">{message?.question}</span>
           </div>
-  
+
+          {/* Response from NIFO */}
           <div className="p-6 text-left border-l-4 border-blue-100">
             <span className="font-semibold text-black block mb-3">NIFO:</span>
-  
+
             {message?.response === "Loading" ? (
               <div>
                 <BounceLoading />
@@ -283,8 +292,10 @@ export default function HomePage() {
             ) : (
               <div>
                 {/* Render Markdown Correctly */}
-                <ReactMarkdown className="prose max-w-none">{markdownText}</ReactMarkdown>
-  
+                <ReactMarkdown className="prose max-w-none">
+                  {markdownText}
+                </ReactMarkdown>
+
                 {message?.response?.follow_up_questions && (
                   <div className="mt-4">
                     <p className="font-semibold text-[16px] text-gray-700">
@@ -299,12 +310,12 @@ export default function HomePage() {
                     </ul>
                   </div>
                 )}
-  
+
                 <RenderStartup
                   message={message}
                   handleSendStartupData={handleSendStartupData}
                 />
-  
+
                 {message?.response?.startups && (
                   <div className="flex justify-end my-2">
                     <div className="flex gap-2 bg-blue-400 text-white py-2 px-2 w-max items-center rounded-md justify-end text-sm cursor-pointer">
@@ -325,8 +336,6 @@ export default function HomePage() {
       );
     });
   };
-  
-
 
   const renderTabContent = () => {
     switch (activeTab) {
