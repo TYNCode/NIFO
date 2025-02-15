@@ -18,7 +18,7 @@ const Page = () => {
     const [isProblemStatementLoading, setIsProblemStatementLoading] = useState(false);
     const [isAskingQuestions, setIsAskingQuestions] = useState(false);
     const [skipQuestions, setSkipQuestions] = useState(false);
-    const [questions, setQuestions] = useState([]);
+    const [questions, setQuestions] = useState({});
     const [answers, setAnswers] = useState({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isGeneratingJSON, setIsGeneratingJSON] = useState(false);
@@ -31,7 +31,7 @@ const Page = () => {
     const [isDocumentLoading, setIsDocumentLoading] = useState(false);
     const [isQuestionnaireLoading, setIsQuestionnaireLoading] = useState(false);
     const [isQuestionnaireUploaded, setIsQuestionnaireUploaded] = useState(false);
-    const [questionnaireAnswers, setQuestionnaireAnswers] = useState([])
+    const [questionnaireAnswers, setQuestionnaireAnswers] = useState({})
     const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
 
     const handleFileChange = (e) => {
@@ -105,7 +105,7 @@ const Page = () => {
                 const requestData = {
                     problem_statement: extractedProblemStatement,
                     context: extractedContext,
-                    answers: questionnaireAnswers
+                    categories: questionnaireAnswers
                 };
                 response = await axios.post(
                     `${API_BASE_URL}/generate-challenge-document/`,
@@ -132,15 +132,27 @@ const Page = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            setQuestions(response.data.questions || []);
-            const emptyAnswers = response.data.questions.reduce((acc, q) => {
-                acc[q] = "";
+            const apiResponse = response.data.categories; 
+
+            const structuredQuestions = Object.keys(apiResponse).reduce((acc, category) => {
+                acc[category] = apiResponse[category].questions || [];
                 return acc;
             }, {});
-            setAnswers(emptyAnswers);
+
+            const structuredAnswers = Object.keys(apiResponse).reduce((acc, category) => {
+                acc[category] = apiResponse[category].questions.reduce((qAcc, question) => {
+                    qAcc[question] = ""; 
+                    return qAcc;
+                }, {});
+                return acc;
+            }, {});
+
+            setQuestions(structuredQuestions);
+            setAnswers(structuredAnswers);
             setIsChoosenOption(true);
             setIsAskingQuestions(true);
             setIsQuestionnaireLoading(false);
+
         } catch (error) {
             console.error("Error generating questions:", error);
             alert("Failed to generate questions.");
@@ -180,7 +192,7 @@ const Page = () => {
             return;
         }
 
-        if (currentQuestionIndex < questions.length - 1) {
+        if (currentQuestionIndex < Object.keys(questions).length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
             setIsDocumentLoading(true);
@@ -256,35 +268,50 @@ const Page = () => {
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-            const expectedHeaders = ["SI No", "Questions", "User Answers"];
+
+            console.log("Raw JSON Data from Excel:", jsonData); 
+
+            const expectedHeaders = ["SI No", "Questions", "Answers"];
             const fileHeaders = jsonData[0] || [];
-            const isValidTemplate = expectedHeaders.every((header, index) => fileHeaders[index] === header);
+            const isValidTemplate = expectedHeaders.every((header, index) => fileHeaders[index]?.trim() === header);
 
             if (!isValidTemplate) {
                 alert("Invalid template file. Please upload a file with the correct format.");
                 return;
             }
 
-            const extractedAnswers = jsonData.slice(1).map(row => ({
-                question: row[1] || "",
-                answer: row[2] || ""
-            })).filter(item => item.question.trim() !== "");
+            let structuredData = { categories: {} };
+            let currentCategory = null;
 
-            setQuestionnaireAnswers(extractedAnswers);
+            jsonData.slice(1).forEach((row, index) => {
+                const siNo = row[0] ? row[0].toString().trim() : "";
+                const question = row[1] ? row[1].toString().trim() : "";
+                const answer = row[2] ? row[2].toString().trim() : "";
+                if (siNo !== "" && question === "" && answer === "") {
+                    currentCategory = siNo;
+                    structuredData.categories[currentCategory] = { questions: [], answers: [] };
+                    console.log(`✅ Detected Category: ${currentCategory}`);
+                }
+                else if (currentCategory && question !== "") {
+                    structuredData.categories[currentCategory].questions.push(question);
+                    structuredData.categories[currentCategory].answers.push(answer);
+                }
+            });
+            setQuestionnaireAnswers(structuredData);
             setQuestionnaireFile(selectedQuestionnaire);
             setIsQuestionnaireUploaded(true);
-
-            console.log("Extracted Answers:", extractedAnswers);
         } catch (error) {
             console.error("Error reading the file:", error);
-            alert("An error occurred while validating the file. Please try again.");
+            alert("An error occurred while processing the file. Please try again.");
         }
     };
+
+
 
     return (
         <>
             <NavbarTrend />
-            <div className="px-32 py-16 relative">
+            <div className="px-[8%] py-16 relative">
                 <div className="flex flex-row gap-4">
                     {file && (
                         <div className="text-sm mb-2 bg-gray-200 w-max px-4 py-2 text-gray-500 shadow-sm rounded-md relative">
