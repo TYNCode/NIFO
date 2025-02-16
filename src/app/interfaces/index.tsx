@@ -100,12 +100,22 @@ export interface Session {
   messages: Message[];
 }
 
+
+export interface Conversation {
+  id?: number;
+  role: string;
+  message: string;
+  created_time: string;
+  session?: number;
+}
+
 export interface ChatHistoryResponse {
   id: number;
   session_id: string;
   created_time: string;
-  messages: Message[];
+  conversations: Conversation[];
 }
+
 
 export interface FormData {
   first_name: string;

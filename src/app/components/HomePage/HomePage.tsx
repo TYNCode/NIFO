@@ -51,8 +51,10 @@ export default function HomePage() {
   const [selectedTechnology, setSelectedTechnology] = useState(null);
   const [currentStep, setCurrentStep] = useState("trends");
 
-  const [compareResultsLoading, setCompareResultsLoading] =
-    useState<boolean>(false);
+  const [compareResultsLoading, setCompareResultsLoading] = useState<{
+    [key: number]: boolean;
+  }>({});
+
   const [comparisonTableResponse, setComparisonTableResponse] = useState<any>(
     []
   );
@@ -187,10 +189,11 @@ export default function HomePage() {
   const handleGetConvo = async () => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
 
+    console.log("session id inside handleGetConvo", sessionId)
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/prompt/convo/${sessionId}/`,
+          `http://127.0.0.1:8000/prompt/sessions/${sessionId}/conversations`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
@@ -239,32 +242,46 @@ export default function HomePage() {
     setInputPrompt("");
   };
 
-  // const handleCompareResults = async (message: any) => {
-  //   setCompareResultsLoading(true);
-  //   try {
-  //     const response = await postRequestWithAccessToken(
-  //       "http://127.0.0.1:8000/prompt/compareresults/",
-  //       message
-  //     );
-  //     setComparisonTableResponse(response?.data?.answer?.entities);
-  //     console.log("Response from compare results:", response);
-  //   } catch (error) {
-  //     console.log("handleCompareResults is error", error);
-  //   } finally {
-  //     setCompareResultsLoading(false);
-  //   }
-  // };
+  const handleCompareResults = async (messageIndex: number) => {
+    if (compareResultsLoading[messageIndex]) return;
+
+    setCompareResultsLoading((prev) => ({
+      ...prev,
+      [messageIndex]: true,
+    }));
+
+    try {
+      const response = await postRequestWithAccessToken(
+        "http://127.0.0.1:8000/prompt/compareresults/",
+        messages[messageIndex]
+      );
+
+      setMessages((prevMessages) =>
+        prevMessages.map((msg, index) =>
+          index === messageIndex
+            ? { ...msg, compareResults: response?.data?.answer?.response}
+            : msg
+        )
+      );
+    } catch (error) {
+      console.error("handleCompareResults error:", error);
+    } finally {
+      setCompareResultsLoading((prev) => ({
+        ...prev,
+        [messageIndex]: false, // Reset only this index
+      }));
+    }
+  };
 
   const renderMessages = () => {
     return messages.map((message: any, index: number) => {
       let markdownText = "";
 
-      // Ensure the response is properly formatted for Markdown
+      console.log("message-----------<))))))))))))))))))", message)
+
       if (typeof message?.response?.response === "string") {
-        // Convert \n to real line breaks for Markdown
         markdownText = message?.response?.response.replace(/\n/g, "  \n");
       } else if (typeof message?.response?.response === "object") {
-        // Format JSON data properly inside a code block
         markdownText =
           "```json\n" +
           JSON.stringify(message?.response?.response, null, 2) +
@@ -318,8 +335,11 @@ export default function HomePage() {
 
                 {message?.response?.startups && (
                   <div className="flex justify-end my-2">
-                    <div className="flex gap-2 bg-blue-400 text-white py-2 px-2 w-max items-center rounded-md justify-end text-sm cursor-pointer">
-                      {compareResultsLoading ? (
+                    <div
+                      onClick={() => handleCompareResults(index)}
+                      className="flex gap-2 bg-blue-400 text-white py-2 px-2 w-max items-center rounded-md justify-end text-sm cursor-pointer"
+                    >
+                      {compareResultsLoading[index] ? (
                         <div className="cursor-not-allowed">Loading ...</div>
                       ) : (
                         <div className="flex gap-2 justify-center items-center cursor-pointer">
@@ -329,6 +349,12 @@ export default function HomePage() {
                     </div>
                   </div>
                 )}
+
+                {/* Comparison Table - Shows only if there are results */}
+                {message?.compareResults &&
+                  message?.compareResults.length > 0 && (
+                    <ComparisonTable data={message.compareResults} />
+                  )}
               </div>
             )}
           </div>
