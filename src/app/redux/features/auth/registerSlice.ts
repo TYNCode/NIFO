@@ -28,7 +28,7 @@ export const registerUser = createAsyncThunk(
   async (data: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/user/register/",
+        "http://127.0.0.1:8000/user/register/",
         data
       );
       return response.data;

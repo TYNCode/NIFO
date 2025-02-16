@@ -70,7 +70,7 @@ export const fetchPartnerConnectsByOrg = createAsyncThunk<
   async (orgId, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `https://tyn-server.azurewebsites.net/partnerconnect/connects/?requested_org=${orgId}`
+        `http://127.0.0.1:8000/partnerconnect/connects/?requested_org=${orgId}`
       );
       return response.data;
     } catch (error: any) {
@@ -89,7 +89,7 @@ export const fetchPartnerConnectsMade = createAsyncThunk<
 >("partnerConnect/fetchPartnerConnectsMade", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      "https://tyn-server.azurewebsites.net/partnerconnect/connects/made/"
+      "http://127.0.0.1:8000/partnerconnect/connects/made/"
     );
     return response.data;
   } catch (error: any) {
@@ -108,7 +108,7 @@ export const fetchPartnerConnectsReceived = createAsyncThunk<
   async (_, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/received/"
+        "http://127.0.0.1:8000/partnerconnect/connects/received/"
       );
       return response.data;
     } catch (error: any) {
@@ -128,7 +128,7 @@ export const createPartnerConnect = createAsyncThunk<
   async (payload, { rejectWithValue }) => {
     try {
       const response = await postRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
+        "http://127.0.0.1:8000/partnerconnect/connects/create-update/",
         payload
       );
       return response.data;
@@ -149,7 +149,7 @@ export const updatePartnerConnectStatus = createAsyncThunk<
   async ({ id, request_status }, { rejectWithValue }) => {
     try {
       const response = await patchRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
+        "http://127.0.0.1:8000/partnerconnect/connects/create-update/",
         { id, request_status }
       );
       return response.data;
