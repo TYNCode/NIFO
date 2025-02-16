@@ -32,7 +32,7 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   const filteredData = useMemo(() => {
     console.log(data[0]);
     return data.filter(
-      (item:any) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
+      (item) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
       // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||
       // item.startup_industry.toLowerCase().includes(filter.toLowerCase())
     );
@@ -175,7 +175,7 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   };
 
   const handleSave = async (updatedUser) => {
-    const apiUrl = `http://127.0.0.1:8000/adminroutes/api/startups/${updatedUser.startup_id}/`;
+    const apiUrl = `https://tyn-server.azurewebsites.net/adminroutes/api/startups/${updatedUser.startup_id}/`;
     const { startup_url, startup_name, ...filteredUser } = updatedUser;
 
     try {

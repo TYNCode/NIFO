@@ -1,60 +1,80 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 .transition-all {
-    transition: all 0.3s ease-in;
+  transition: all 0.3s ease-in;
 }
 
 .transition-opacity {
-    transition-property: opacity;
-    transition-duration: 0.3s;
-    transition-timing-function: ease;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }
 
 .prompt-container {
-    height: calc(100vh - 200px);
-    overflow-y: auto;
-    scrollbar-width: none;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .prompt-container::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 :root {
-    --cyan-500: #339af0; 
-  }
-  
-  .outlineChange input:focus {
-    border-color: var(--cyan-500); 
-    outline: none; 
-    box-shadow: 0 0 0 1px var(--cyan-500); 
+  --cyan-500: #339af0;
+}
+
+.outlineChange input:focus {
+  border-color: var(--cyan-500);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--cyan-500);
+}
+
+.enter {
+  transform: translateX(0);
+  transition: transform 0.5s ease-in-out;
+}
+
+.exit-left {
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.exit-right {
+  transform: translateX(100%);
+  transition: transform 0.5s ease-in-out;
+}
+
+@layer utilities {
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
   }
 
-  .enter {
-      transform: translateX(0);
-      transition: transform 0.5s ease-in-out;
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-
-  .exit-left {
-      transform: translateX(-100%);
-      transition: transform 0.5s ease-in-out;
-  }
-
-  .exit-right {
-      transform: translateX(100%);
-      transition: transform 0.5s ease-in-out;
-  }
+}
 
 
-  @layer utilities {
-    .scrollbar-hidden::-webkit-scrollbar {
-      display: none;
-    }
-  
-    .scrollbar-hidden {
-      scrollbar-width: none;
-      -ms-overflow-style: none; 
-    }
-  }
+h1 {
+  font-size: 1.75em;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 1em;
+  font-weight: bold;
+}
