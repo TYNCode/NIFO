@@ -32,6 +32,8 @@ const Page = () => {
     const [isQuestionnaireLoading, setIsQuestionnaireLoading] = useState(false);
     const [isQuestionnaireUploaded, setIsQuestionnaireUploaded] = useState(false);
     const [questionnaireAnswers, setQuestionnaireAnswers] = useState({})
+    const [nifoAnswers, setNifoAnswers] = useState({});
+
     const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
 
     const handleFileChange = (e) => {
@@ -132,7 +134,7 @@ const Page = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            const apiResponse = response.data.categories; 
+            const apiResponse = response.data.categories;
 
             const structuredQuestions = Object.keys(apiResponse).reduce((acc, category) => {
                 acc[category] = apiResponse[category].questions || [];
@@ -141,14 +143,25 @@ const Page = () => {
 
             const structuredAnswers = Object.keys(apiResponse).reduce((acc, category) => {
                 acc[category] = apiResponse[category].questions.reduce((qAcc, question) => {
-                    qAcc[question] = ""; 
+                    qAcc[question] = "";
                     return qAcc;
                 }, {});
                 return acc;
             }, {});
 
+            const structuredNifoAnswers = Object.keys(apiResponse).reduce((acc, category) => {
+                acc[category] = apiResponse[category].questions.reduce((qAcc, question, index) => {
+                    const answerList = apiResponse[category]?.answers || []; // Extract answers directly
+                    qAcc[question] = answerList[index] || "No Answer Provided"; // Correct mapping of question → answer
+                    return qAcc;
+                }, {});
+                return acc;
+            }, {});
+
+
             setQuestions(structuredQuestions);
             setAnswers(structuredAnswers);
+            setNifoAnswers(structuredNifoAnswers); 
             setIsChoosenOption(true);
             setIsAskingQuestions(true);
             setIsQuestionnaireLoading(false);
@@ -156,8 +169,11 @@ const Page = () => {
         } catch (error) {
             console.error("Error generating questions:", error);
             alert("Failed to generate questions.");
+            setIsQuestionnaireLoading(false);
         }
     };
+
+
 
     const handleSkipQuestions = async () => {
         setSkipQuestions(true);
@@ -211,8 +227,6 @@ const Page = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            console.log("document json generated")
-
             setIsDocumentLoading(false);
             setGeneratedJSON(response.data);
             await callGenerateDocxAPI(response.data);
@@ -231,7 +245,7 @@ const Page = () => {
                 jsonData,
                 { headers: { "Content-Type": "application/json" }, responseType: "blob" }
             );
-
+            setIsDocumentLoading(false);
             const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             const url = window.URL.createObjectURL(blob);
             setDocxFileUrl(url);
@@ -434,6 +448,7 @@ const Page = () => {
                             answers={answers}
                             handleAnswerSubmit={handleAnswerSubmit}
                             setAnswers={setAnswers}
+                            nifoAnswers={nifoAnswers}
                         />
                     )
                 }

@@ -4,7 +4,7 @@ import { LiaDownloadSolid } from "react-icons/lia";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-const Questionarrie = ({ answers, questions, handleAnswerSubmit, setAnswers }) => {
+const Questionarrie = ({ answers, questions, handleAnswerSubmit, setAnswers , nifoAnswers}) => {
     const [isQuestionnaireVisible, setIsQuestionnaireVisible] = useState(true);
     const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -37,29 +37,29 @@ const Questionarrie = ({ answers, questions, handleAnswerSubmit, setAnswers }) =
             alignment: { vertical: "middle" as "middle" },
         };
 
-        // 🔹 Set Header Row
-        worksheet.addRow(["SI No", "Questions", "Answers"]).eachCell((cell) => {
+        worksheet.addRow(["SI No", "Questions", "Answers", "Nifo Answers"]).eachCell((cell) => {
             cell.style = headerStyle;
         });
 
-        let rowIndex = 2; // Start from the second row
+        let rowIndex = 2; 
 
-        // 🔹 Loop through categories and add data
         Object.keys(questions).forEach((category) => {
-            // Add Category Header (Merged across A-C)
-            const categoryRow = worksheet.addRow([category, "", ""]);
+
+            const categoryRow = worksheet.addRow([category, "", "", ""]);
             categoryRow.eachCell((cell) => {
                 cell.style = headerStyle;
             });
-            worksheet.mergeCells(`A${rowIndex}:C${rowIndex}`);
+            worksheet.mergeCells(`A${rowIndex}:D${rowIndex}`);
             rowIndex++;
 
-            // Add Questions
             questions[category].forEach((question, index) => {
+                const nifoAnswer = nifoAnswers?.[category]?.[question] || "No Answer Provided"; 
+
                 const questionRow = worksheet.addRow([
-                    index + 1, // SI No
+                    index + 1, 
                     question,
-                    answers[category]?.[question] || "" // Default to empty if no answer
+                    answers[category]?.[question] || "", 
+                    nifoAnswer 
                 ]);
                 questionRow.eachCell((cell) => {
                     cell.style = normalStyle;
@@ -68,20 +68,18 @@ const Questionarrie = ({ answers, questions, handleAnswerSubmit, setAnswers }) =
             });
         });
 
-        // 🔹 Auto-adjust column widths
+
         worksheet.columns = [
             { width: 10 }, // SI No
             { width: 80 }, // Questions
-            { width: 60 }, // Answers
+            { width: 60 }, // Answers (empty initially)
+            { width: 60 }, // Nifo Answers (pre-filled with correct data)
         ];
 
-        // 🔹 Generate and Download the File
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        saveAs(blob, "Styled_Questionnaire.xlsx");
+        saveAs(blob, "Briefing_Questionnaire.xlsx");
     };
-
-
 
     const handleBack = () => {
         if (currentQuestionIndex > 0) {
