@@ -32,6 +32,7 @@ const Page = () => {
     const [isQuestionnaireLoading, setIsQuestionnaireLoading] = useState(false);
     const [isQuestionnaireUploaded, setIsQuestionnaireUploaded] = useState(false);
     const [questionnaireAnswers, setQuestionnaireAnswers] = useState({})
+    const [nifoAnswers , setNifoAnswers] = useState({});
     const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
 
     const handleFileChange = (e) => {
