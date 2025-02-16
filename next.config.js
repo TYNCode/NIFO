@@ -7,7 +7,7 @@ const withPWA = require("next-pwa")({
 
 module.exports = withPWA({
   env: {
-    PUBLIC_BASE_URL_LOCAL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL,
+    PUBLIC_BASE_URL_LOCAL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL
   },
   images: {
     domains: [

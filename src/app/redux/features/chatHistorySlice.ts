@@ -19,20 +19,21 @@ export const fetchChatHistory = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/prompt/session/"
+        "http://127.0.0.1:8000/prompt/sessions/"
       );
+      
       const data = response.data;
+      console.log("dataaaaa", data); // Debugging
 
-      // Transform the data to fit the Session interface
       const formattedData: Session[] = data.map(
         (session: ChatHistoryResponse) => ({
           id: session.id,
           session_id: session.session_id,
           created_time: session.created_time,
-          messages: session.messages.map((message) => ({
+          messages: session.conversations.map((message) => ({
             id: message.id,
             role: message.role,
-            content: message.content,
+            content: message.message, // FIXED: content → message
             created_time: message.created_time,
             session: message.session,
           })),
@@ -41,12 +42,12 @@ export const fetchChatHistory = createAsyncThunk(
 
       return formattedData;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "Error fetching query history"
-      );
+      console.error("API error:", error);
+      return rejectWithValue(error.response?.data || "Error fetching chat history");
     }
   }
 );
+
 
 const chatHistorySlice = createSlice({
   name: "chatHistory",

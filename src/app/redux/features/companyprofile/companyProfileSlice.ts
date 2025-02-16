@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartupType } from "../../../interfaces";
+import { StartupNameType, StartupType } from "../../../interfaces";
 import {
   deleteRequest,
   getRequest,
@@ -7,16 +7,14 @@ import {
   putRequest,
 } from "../../hooks";
 
-// Define the state shape for company profiles
 interface CompanyProfileState {
   loading: boolean;
-  companies: StartupType[];
+  companies: StartupType[] | StartupNameType[];
   company: StartupType | null;
   error: string | null;
   hasMore: boolean;
 }
 
-// Initial state
 const initialState: CompanyProfileState = {
   companies: [],
   company: null,
@@ -35,7 +33,7 @@ export const fetchCompaniesByPagination = createAsyncThunk<
   async ({ page, page_size }, { rejectWithValue }) => {
     try {
       const response = await getRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/?page=${page}&page_size=${page_size}/`
+        `http://127.0.0.1:8000/directorysearch/companyview/?page=${page}&page_size=${page_size}/`
       );
       return response.data.results;
     } catch (error: any) {
@@ -54,7 +52,7 @@ export const fetchAllCompanies = createAsyncThunk<
 >("companyProfile/fetchAllCompanies", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/`
+      `http://127.0.0.1:8000/directorysearch/companyregistrationsearch/`
     );
     return response.data;
   } catch (error: any) {
@@ -72,7 +70,7 @@ export const fetchCompanyById = createAsyncThunk<
 >("companyProfile/fetchCompanyById", async (id, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
     );
     return response.data;
   } catch (error: any) {
@@ -82,13 +80,33 @@ export const fetchCompanyById = createAsyncThunk<
   }
 });
 
+export const fetchCompanyByName = createAsyncThunk<
+  StartupNameType[], 
+  string,          
+  { rejectValue: string }
+>(
+  "companyProfile/fetchCompanyByName",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await getRequest(
+        `http://127.0.0.1:8000/directorysearch/companyregistrationsearch/?search=${encodeURIComponent(query)}`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch company data"
+      );
+    }
+  }
+);
+
 // Thunk to create a new company
 export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(
   "companyProfile/postCompany",
   async (newCompanyData, { rejectWithValue }) => {
     try {
       const response = await postRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/`,
+        `http://127.0.0.1:8000/directorysearch/companyview/`,
         newCompanyData
       );
       return response.data;
@@ -110,7 +128,7 @@ export const updateCompanyById = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await putRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`,
+        `http://127.0.0.1:8000/directorysearch/companyview/${id}/`,
         data
       );
       return response.data;
@@ -130,7 +148,7 @@ export const deleteCompanyById = createAsyncThunk<
 >("companyProfile/deleteCompanyById", async (id, { rejectWithValue }) => {
   try {
     await deleteRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
     );
     return id;
   } catch (error: any) {
@@ -145,7 +163,6 @@ const companyProfileSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Fetch companies by pagination
     builder
       .addCase(fetchCompaniesByPagination.pending, (state) => {
         state.loading = true;
@@ -253,6 +270,29 @@ const companyProfileSlice = createSlice({
         updateCompanyById.rejected,
         (state, action: PayloadAction<string | undefined>) => {
           state.error = action.payload || "Failed to update company";
+          state.loading = false;
+        }
+      );
+
+    //Search by company name
+    builder
+      .addCase(fetchCompanyByName.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.companies = []; // Clear old search results to avoid confusion
+      })
+      .addCase(
+        fetchCompanyByName.fulfilled,
+        (state, action: PayloadAction<StartupNameType[]>) => {
+          state.companies = action.payload;
+          state.loading = false;
+          state.error = null;
+        }
+      )
+      .addCase(
+        fetchCompanyByName.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Failed to fetch company data";
           state.loading = false;
         }
       );

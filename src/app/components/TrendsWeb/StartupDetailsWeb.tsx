@@ -47,7 +47,7 @@ const StartupDetailsWeb = ({ selectedStartup, handleClose }) => {
       const fetchStartupDetails = async () => {
         try {
           const response = await fetch(
-            `https://tyn-server.azurewebsites.net/directorysearch/companyview/${selectedStartup.startup_id}`
+            `http://127.0.0.1:8000/directorysearch/companyview/${selectedStartup.startup_id}`
           );
           const data = await response.json();
           setStartupDetails(data);
