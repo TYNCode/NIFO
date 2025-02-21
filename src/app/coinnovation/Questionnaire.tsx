@@ -70,10 +70,10 @@ const Questionarrie = ({ answers, questions, handleAnswerSubmit, setAnswers , ni
 
 
         worksheet.columns = [
-            { width: 10 }, // SI No
-            { width: 80 }, // Questions
-            { width: 60 }, // Answers (empty initially)
-            { width: 60 }, // Nifo Answers (pre-filled with correct data)
+            { width: 10 }, 
+            { width: 80 }, 
+            { width: 60 }, 
+            { width: 60 }, 
         ];
 
         const buffer = await workbook.xlsx.writeBuffer();

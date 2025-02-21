@@ -10,6 +10,8 @@ import Questionnaire from "./Questionnaire";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdAddCircleOutline } from "react-icons/md";
 import * as XLSX from "xlsx";
+import NavbarCoinnovation from "../components/CoInnovation/NavbarCoinnovation";
+import ProgressOne from "./components/ProgressOne";
 
 const Page = () => {
     const [file, setFile] = useState(null);
@@ -150,8 +152,8 @@ const Page = () => {
 
             const structuredNifoAnswers = Object.keys(apiResponse).reduce((acc, category) => {
                 acc[category] = apiResponse[category].questions.reduce((qAcc, question, index) => {
-                    const answerList = apiResponse[category]?.answers || []; // Extract answers directly
-                    qAcc[question] = answerList[index] || "No Answer Provided"; // Correct mapping of question → answer
+                    const answerList = apiResponse[category]?.answers || []; 
+                    qAcc[question] = answerList[index] || "No Answer Provided"; 
                     return qAcc;
                 }, {});
                 return acc;
@@ -171,8 +173,6 @@ const Page = () => {
             setIsQuestionnaireLoading(false);
         }
     };
-
-
 
     const handleSkipQuestions = async () => {
         setSkipQuestions(true);
@@ -320,11 +320,10 @@ const Page = () => {
     };
 
 
-
     return (
         <>
             <NavbarTrend />
-            <div className="px-[8%] py-16 relative">
+            {/* <div className="px-[8%] py-16 relative">
                 <div className="flex flex-row gap-4">
                     {file && (
                         <div className="text-sm mb-2 bg-gray-200 w-max px-4 py-2 text-gray-500 shadow-sm rounded-md relative">
@@ -472,8 +471,9 @@ const Page = () => {
                     </div>
                 )}
 
-            </div>
-        </>
+            </div>     */}
+            <ProgressOne/>
+        </> 
     );
 };
 
