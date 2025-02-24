@@ -1,340 +1,223 @@
 import React, { useState } from "react";
-import Image from "next/image";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import { IoMdAdd } from "react-icons/io";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { MdOutlineModeEdit } from "react-icons/md";
-
-interface Answer {
-  assumed: string;
-  actual: string | null;
-}
-
-interface Question {
-  question: string;
-  answer: Answer;
-  isSelected?: boolean;
-}
-
-interface Category {
-  questions: Question[];
-}
-
-interface QuestionnaireData {
-  categories: Record<string, Category>;
-}
-
+import { IoChevronDownOutline } from "react-icons/io5";
+import { CiPlay1 } from "react-icons/ci";
+import { BiSave } from "react-icons/bi";
+import { FiEdit2 } from "react-icons/fi";
+import axios from "axios";
 const ProjectDetails: React.FC = () => {
-  const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData>({
-    categories: {
-      "Manufacturing Process Optimization": {
-        questions: [
-          {
-            question: "What are the main bottlenecks in the production line?",
-            answer: {
-              assumed: "Material handling delays and frequent machine breakdowns.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-          {
-            question: "How does the current scheduling impact production efficiency?",
-            answer: {
-              assumed: "Inefficient scheduling causes idle time and over-utilization of certain machines.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-        ],
-      },
-      "Supply Chain Management": {
-        questions: [
-          {
-            question: "What challenges are faced in raw material procurement?",
-            answer: {
-              assumed: "Supplier delays and fluctuating material costs.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-          {
-            question: "How is inventory managed to reduce waste?",
-            answer: {
-              assumed: "A combination of manual tracking and ERP-based forecasts.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-        ],
-      },
-      "Quality Control": {
-        questions: [
-          {
-            question: "What defect rates are observed in final products?",
-            answer: {
-              assumed: "Approximately 5% of products show minor defects.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-          {
-            question: "What are the key parameters monitored for quality assurance?",
-            answer: {
-              assumed: "Dimensional accuracy, surface finish, and mechanical strength.",
-              actual: null,
-            },
-            isSelected: false,
-          },
-        ],
-      },
-    },
-  });
-
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
-  const [openAnswers, setOpenAnswers] = useState<Record<string, boolean>>({});
-  const [editingAnswers, setEditingAnswers] = useState<Record<string, boolean>>({});
-  const [newQuestionInputs, setNewQuestionInputs] = useState<Record<string, boolean>>({});
-  const [newQuestionText, setNewQuestionText] = useState<string>("");
-  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
-
-  const toggleCategory = (category: string) => {
-    setOpenCategories(prev => ({ ...prev, [category]: !prev[category] }));
-  };
-
-  const toggleAnswer = (question: string) => {
-    setOpenAnswers(prev => ({ ...prev, [question]: !prev[question] }));
-  };
-
-  const toggleQuestionSelection = (category: string, questionIndex: number) => {
-    const questionId = `${category}-${questionIndex}`;
-    
-    setSelectedQuestions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(questionId)) {
-        newSet.delete(questionId);
-      } else {
-        newSet.add(questionId);
-      }
-      return newSet;
+    const [projectData, setProjectData] = useState({
+        project_id: "",
+        project_name: "",
+        priority: "",
+        status: "",
+        start_date: "",
+        end_date: "",
+        enterprise: "",
+        owner: "",
+        approver: "",
+        category: "",
+        department: "",
+        business_unit: "",
+        location: "",
+        project_description: "",
+        problem_statement: "Excessive energy consumption in aluminum smelting is causing overheating and reduced efficiency.",
+        context: "Full extracted text from document analysis."
     });
-  };
+    const [isOpenPriority, setIsOpenPriority] = useState(false);
+    const [isOpenStatus, setIsOpenStatus] = useState(false);
+    const [selectedOptionPriority, setSelectedOptionPriority] = useState("Select an option");
+    const [selectedOptionStatus, setSelectedOptionStatus] = useState("Select an option");
+    const [loading, setLoading] = useState(false);
+    const [responseMessage, setResponseMessage] = useState("");
 
-  const handleAddQuestion = (category: string) => {
-    setNewQuestionInputs(prev => ({ ...prev, [category]: true }));
-  };
+    const optionsPriority = ["Critical", "High", "Medium", "Low"];
+    const optionsStatus = ["To Do", "In Progress", "In Review", "Done", "Blocked", "Waiting for Approval", "Cancelled"];
 
-  const handleSaveNewQuestion = (category: string) => {
-    if (newQuestionText.trim()) {
-      console.log("Adding new question:", {
-        category,
-        question: newQuestionText,
-        assumed: "Default assumed answer",
-        actual: null
-      });
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setProjectData({ ...projectData, [e.target.name]: e.target.value });
+    };
 
-      setQuestionnaireData(prevData => ({
-        categories: {
-          ...prevData.categories,
-          [category]: {
-            questions: [
-              ...prevData.categories[category].questions,
-              {
-                question: newQuestionText,
-                answer: {
-                  assumed: "Default assumed answer",
-                  actual: null
-                },
-                isSelected: false
-              }
-            ]
-          }
+    const handleSelectPriority = (option: string) => {
+        setSelectedOptionPriority(option);
+        setIsOpenPriority(false);
+    };
+
+    const handleSelectStatus = (option: string) => {
+        setSelectedOptionStatus(option);
+        setIsOpenStatus(false);
+    };
+
+    const handleSubmit = async () => {
+        setLoading(true);
+        setResponseMessage("");
+
+        try {
+            const response = await axios.post(
+                "http://127.0.0.1:8000/coinnovation/create-project/",
+                projectData,
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            setResponseMessage("Project successfully created!");
+            console.log("Success:", response.data);
+        } catch (error) {
+            setResponseMessage("Failed to create project. Please try again.");
+            console.error("Error:", error);
+        } finally {
+            setLoading(false);
         }
-      }));
-      setNewQuestionText("");
-      setNewQuestionInputs(prev => ({ ...prev, [category]: false }));
-    }
-  };
+    };
 
-  const handleDeleteSelected = (category: string) => {
-    const hasSelectedInCategory = Array.from(selectedQuestions).some(id => id.startsWith(`${category}-`));
-    if (!hasSelectedInCategory) return;
+    return (
+        <>
+            <div className="px-16 py-6 bg-[#F4FCFF]">
+                <div className="flex flex-row gap-6 justify-center">
+                    <div className="flex flex-col gap-4">
+                        <div className="text-[#4A4D4E] text-lg font-semibold">Project Entry Details</div>
 
-    console.log("Deleting selected questions from category:", category);
+                        <div className="flex flex-col">
+                            <label className="text-sm text-[#4A4D4E]">Project ID</label>
+                            <input 
+                            type="text" 
+                            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+                            name="project_id"
+                            value={projectData.project_id}
+                            onChange={handleInputChange} />
+                        </div>
 
-    setQuestionnaireData(prevData => {
-      const updatedCategories = { ...prevData.categories };
-      const updatedQuestions = updatedCategories[category].questions.filter((_, index) => 
-        !selectedQuestions.has(`${category}-${index}`)
-      );
+                        <div className="flex flex-col">
+                            <label className="text-sm text-[#4A4D4E]">Project Name</label>
+                            <input 
+                            type="text" 
+                            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" 
+                            name="project_name"
+                            value={projectData.project_name}
+                            onChange={handleInputChange}/>
+                        </div>
+
+                        <div className="relative">
+                            <label className="text-sm text-[#4A4D4E]">Priority</label>
+                            <div
+                                className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 cursor-pointer bg-white w-full"
+                                onClick={() => setIsOpenPriority(!isOpenPriority)}
+                            >
+                                <span className="text-[#4A4D4E] text-sm">{selectedOptionPriority}</span>
+                                <IoChevronDownOutline className={`transition-transform text-sm font-light text-[#979797] ${isOpenPriority ? "rotate-180" : ""}`} />
+                            </div>
+
+                            {isOpenPriority && (
+                                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
+                                    {optionsPriority.map((option, index) => (
+                                        <div
+                                            key={index}
+                                            className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
+                                            onClick={() => handleSelectPriority(option)}
+                                        >
+                                            {option}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <div className="relative">
+                            <label className="text-sm text-[#4A4D4E]">Status</label>
+                            <div
+                                className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-sm"
+                                onClick={() => setIsOpenStatus(!isOpenStatus)}
+                            >
+                                <span className="text-[#4A4D4E]">{selectedOptionStatus}</span>
+                                <IoChevronDownOutline className={`transition-transform text-sm font-light text-[#979797] ${isOpenStatus ? "rotate-180" : ""}`} />
+                            </div>
+
+                            {isOpenStatus && (
+                                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
+                                    {optionsStatus.map((option, index) => (
+                                        <div
+                                            key={index}
+                                            className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
+                                            onClick={() => handleSelectStatus(option)}
+                                        >
+                                            {option}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col">
+                                <label className="text-sm text-[#4A4D4E]">Start Date</label>
+                                <input type="date" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-sm text-[#4A4D4E]">Target Closure</label>
+                                <input type="date" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
+
+                    <div className="flex flex-col gap-4">
+                        <div className="text-lg font-semibold text-[#4A4D4E]">Enterprise Details</div>
+
+                        {["Enterprise", "Owner", "Approver"].map((label, index) => (
+                            <div key={index} className="flex flex-col">
+                                <label className="text-sm text-[#4A4D4E]">{label}</label>
+                                <input type="text" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                            </div>
+                        ))}
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {["Category", "Department", "Business Unit", "Location"].map((label, index) => (
+                                <div key={index} className="flex flex-col">
+                                    <label className="text-sm text-[#4A4D4E]">{label}</label>
+                                    <input type="text" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
+
+                    <div className="flex flex-col">
+                        <div className="text-lg font-semibold text-[#4A4D4E]">Project Description</div>
+                        <textarea
+                            name="project_description"
+                            value={projectData.project_description}
+                            onChange={handleInputChange}
+                            rows={3}
+                            className="rounded-md focus:ring-0 border-[#56A8F0] border-[1px] w-full px-2 resize-none 
+               text-[#4A4D4E] text-sm font-normal mt-2"
+                        />
+                    </div>
+                </div>
       
-      if (updatedQuestions.length === 0) {
-        delete updatedCategories[category];
-      } else {
-        updatedCategories[category] = { questions: updatedQuestions };
-      }
-      
-      return { categories: updatedCategories };
-    });
-
-    // Clear selections for this category only
-    setSelectedQuestions(prev => {
-      const newSet = new Set(prev);
-      Array.from(prev).forEach(id => {
-        if (id.startsWith(category)) {
-          newSet.delete(id);
-        }
-      });
-      return newSet;
-    });
-  };
-
-  const handleEditAnswer = (category: string, questionIndex: number) => {
-    setEditingAnswers(prev => ({ ...prev, [`${category}-${questionIndex}`]: true }));
-  };
-
-  const handleSaveAnswer = (category: string, questionIndex: number, newAnswer: string) => {
-    console.log("Saving answer:", {
-      category,
-      questionIndex,
-      newAnswer
-    });
-
-    setQuestionnaireData(prevData => {
-      const updatedCategories = { ...prevData.categories };
-      updatedCategories[category].questions[questionIndex].answer.assumed = newAnswer;
-      return { categories: updatedCategories };
-    });
-    setEditingAnswers(prev => ({ ...prev, [`${category}-${questionIndex}`]: false }));
-  };
-
-  return (
-    <div className="p-4 w-full">
-      <div className="flex justify-between items-center text-black py-2 rounded-md">
-        <h1 className="text-xl font-bold">Questionnaire</h1>
-        <button>
-          <Image
-            alt="Download Questionnaire"
-            src="/coinnovation/download_questionairre.svg"
-            width={30}
-            height={30}
-          />
-        </button>
-      </div>
-
-      <div className="p-3">
-        {Object.entries(questionnaireData.categories).map(([category, details], index) => (
-          <div key={category} className="mb-4">
-            <div className="flex justify-between items-center bg-white p-3 rounded-lg">
-              <h2 className="text-lg font-semibold">
-                {index + 1}. {category}
-              </h2>
-              <div className="flex space-x-4 text-blue-500 cursor-pointer">
-                <span onClick={() => handleAddQuestion(category)}>
-                  <IoMdAdd />
-                </span>
-                <span onClick={() => handleDeleteSelected(category)}>
-                  <RiDeleteBin6Line />
-                </span>
-                <span onClick={() => toggleCategory(category)}>
-                  {openCategories[category] ? <FaChevronUp /> : <FaChevronDown />}
-                </span>
-              </div>
+                <div className="flex flex-row gap-4 justify-end items-end">
+                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+                        <div>
+                            <FiEdit2 />
+                        </div>
+                        <div className="font-semibold">Edit</div>
+                    </div>
+                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+                        <div>
+                            <BiSave />
+                        </div>
+                        <div className="font-semibold">Save & Continue</div>
+                    </div>
+                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+                        <div>
+                            <CiPlay1 />
+                        </div>
+                        <div className="font-semibold">Skip</div>
+                    </div>
+                </div>
             </div>
-
-            {openCategories[category] && (
-              <div className="mt-2">
-                {newQuestionInputs[category] && (
-                  <div className="px-4 py-2 bg-white rounded-lg mt-2">
-                    <input
-                      type="text"
-                      value={newQuestionText}
-                      onChange={(e) => setNewQuestionText(e.target.value)}
-                      placeholder="Enter new question"
-                      className="w-full p-2 rounded-lg border-blue-400 border"
-                    />
-                    <div className="flex justify-end mt-2 space-x-2">
-                      <button
-                        onClick={() => handleSaveNewQuestion(category)}
-                        className="bg-blue-400 text-white px-4 py-2 rounded-lg"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => {
-                          setNewQuestionInputs(prev => ({ ...prev, [category]: false }));
-                          setNewQuestionText("");
-                        }}
-                        className="bg-gray-400 text-white px-4 py-2 rounded-lg"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {details.questions.map((q, i) => (
-                  <div key={q.question} className="px-4 py-2 bg-white rounded-lg mt-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedQuestions.has(`${category}-${i}`)}
-                          onChange={() => toggleQuestionSelection(category, i)}
-                          className="h-4 w-4"
-                        />
-                        <p className="font-medium">
-                          Q{i + 1} {q.question}
-                        </p>
-                      </div>
-                      <span
-                        onClick={() => toggleAnswer(q.question)}
-                        className="text-blue-500 cursor-pointer"
-                      >
-                        {openAnswers[q.question] ? <FaChevronUp /> : <FaChevronDown />}
-                      </span>
-                    </div>
-
-                    {openAnswers[q.question] && (
-                      <div className="mt-2 px-2 p-2 rounded-lg flex justify-between items-center gap-4">
-                        <input
-                          type="text"
-                          defaultValue={q.answer.assumed}
-                          readOnly={!editingAnswers[`${category}-${i}`]}
-                          className="w-full rounded-lg border-blue-400 border-solid border p-2"
-                        />
-                        {editingAnswers[`${category}-${i}`] ? (
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={(e) => handleSaveAnswer(category, i, (e.target as HTMLButtonElement).previousElementSibling?.querySelector('input')?.value || '')}
-                              className="bg-blue-400 text-white px-4 py-2 rounded-lg"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={() => setEditingAnswers(prev => ({ ...prev, [`${category}-${i}`]: false }))}
-                              className="bg-gray-400 text-white px-4 py-2 rounded-lg"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <MdOutlineModeEdit
-                            className="text-blue-400 cursor-pointer"
-                            size={26}
-                            onClick={() => handleEditAnswer(category, i)}
-                          />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+            
+        </>
+     
+    );
 };
 
 export default ProjectDetails;
