@@ -8,7 +8,7 @@ const ProgressOne: React.FC = () => {
 
     return (
         <>
-            <div className="bg-red-200 pt-20">
+            <div className=" pt-20">
                 <div className="flex flex-row gap-8 justify-center items-center shadow-sm">
                     {[
                         { id: "1a", label: "Identification of the use case" },

@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { CiPlay1 } from "react-icons/ci";
+import ProjectDetails from "./ProjectDetails";
 
 const OneTabStepOne = () => {
     const [problemStatement, setProblemStatement] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [responseData, setResponseData] = useState<string | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-    const lineHeight = 24; 
+    const lineHeight = 24;
     const maxRows = 4;
 
     useEffect(() => {
@@ -21,9 +25,33 @@ const OneTabStepOne = () => {
         setProblemStatement(e.target.value);
     };
 
+    const handleSubmit = async () => {
+        if (!problemStatement.trim()) {
+            alert("Please enter a problem statement.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                "http://127.0.0.1:8000/coinnovation/upload-file/",
+                { text: problemStatement },
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            setResponseData(response.data.problem_statement || "No response from API");
+        } catch (error) {
+            console.error("Error submitting problem statement:", error);
+            setResponseData("Failed to process the request.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="">
-            <div className="bg-blue-200 shadow-md rounded-lg flex justify-center items-center px-5">
+            <div className="bg-blue-200 shadow-md rounded-lg flex flex-col justify-center items-center px-5">
                 <div className="flex items-center flex-col gap-4">
                     <div className="flex flex-col justify-center items-center gap-1">
                         <div className="text-base">Let us define the</div>
@@ -46,13 +74,24 @@ const OneTabStepOne = () => {
                             />
                         </div>
 
-                        <div className="flex flex-row items-center gap-2 px-4 py-[7px] bg-blue-500 w-max rounded-lg text-white cursor-pointer">
+                        <button
+                            className="flex flex-row items-center gap-2 px-4 py-[7px] bg-blue-500 w-max rounded-lg text-white cursor-pointer"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
                             <div className="font-medium">
                                 <CiPlay1 />
                             </div>
-                            <div className="font-medium">Describe</div>
-                        </div>
+                            <div className="font-medium">
+                                {loading ? "Processing..." : "Describe"}
+                            </div>
+                        </button>
+                     
                     </div>
+                </div>
+
+                <div className="mt-16">
+                    <ProjectDetails/>
                 </div>
             </div>
         </div>
