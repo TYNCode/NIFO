@@ -472,7 +472,10 @@ const Page = () => {
                 )}
 
             </div>     */}
-            <ProgressOne/>
+            <div className="h-screen bg-[#F5FCFF] pt-16 px-24">
+                <ProgressOne />
+            </div>
+       
         </> 
     );
 };

@@ -7,6 +7,7 @@ const OneTabStepOne = () => {
     const [problemStatement, setProblemStatement] = useState("");
     const [loading, setLoading] = useState(false);
     const [responseData, setResponseData] = useState<string | null>(null);
+    const [projectID , setProjectID] = useState<string | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const lineHeight = 24;
     const maxRows = 4;
@@ -32,28 +33,42 @@ const OneTabStepOne = () => {
         }
 
         setLoading(true);
+        setResponseData("");
 
         try {
-            const response = await axios.post(
+            const uploadResponse = await axios.post(
                 "http://127.0.0.1:8000/coinnovation/upload-file/",
                 { text: problemStatement },
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            setResponseData(response.data.problem_statement || "No response from API");
+            const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
+            setResponseData(problemStatementResponse);
+
+            const createProjectResponse = await axios.post(
+                "http://127.0.0.1:8000/coinnovation/create-project/",
+                {
+                    project_description: problemStatementResponse,
+                },
+                { headers: { "Content-Type": "application/json" } }
+            );
+            const projectResponse = createProjectResponse.data || "No response from API";
+            setProjectID(projectResponse.project_id);
         } catch (error) {
-            console.error("Error submitting problem statement:", error);
+            console.error("Error in API calls:", error);
             setResponseData("Failed to process the request.");
+            alert("Failed to create project. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
+
     return (
         <div className="">
-            <div className="bg-blue-200 shadow-md rounded-lg flex flex-col justify-center items-center px-5">
-                <div className="flex items-center flex-col gap-4">
-                    <div className="flex flex-col justify-center items-center gap-1">
+            <div className="bg-[#F5FCFF] shadow-md rounded-lg flex flex-col justify-center items-center px-5">
+                <div className="flex items-center flex-col gap-4 py-32">
+                    <div className="flex flex-col justify-center items-center gap-1 ">
                         <div className="text-base">Let us define the</div>
                         <div className="text-xl font-medium">Problem Statement</div>
                     </div>
@@ -91,8 +106,11 @@ const OneTabStepOne = () => {
                 </div>
 
                 <div className="mt-16">
-                    <ProjectDetails/>
+                    <ProjectDetails 
+                    projectID = {projectID}
+                    projectDescription={responseData}/>
                 </div>
+
             </div>
         </div>
     );

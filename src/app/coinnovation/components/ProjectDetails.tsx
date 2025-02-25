@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { BiSave } from "react-icons/bi";
 import { FiEdit2 } from "react-icons/fi";
 import axios from "axios";
-const ProjectDetails: React.FC = () => {
+
+interface ProjectDetailsProps {
+    projectID: string;
+    projectDescription:string;
+}
+
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectID, projectDescription }) => {
     const [projectData, setProjectData] = useState({
-        project_id: "",
+        project_id: projectID,
         project_name: "",
         priority: "",
         status: "",
@@ -23,9 +29,17 @@ const ProjectDetails: React.FC = () => {
         problem_statement: "Excessive energy consumption in aluminum smelting is causing overheating and reduced efficiency.",
         context: "Full extracted text from document analysis."
     });
+
+    useEffect(() => {
+        setProjectData(prevData => ({
+            ...prevData,
+            project_id: projectID,
+            project_description: projectDescription
+        }));
+    }, [projectID]);
+
     const [isOpenPriority, setIsOpenPriority] = useState(false);
     const [isOpenStatus, setIsOpenStatus] = useState(false);
-    const [selectedOptionPriority, setSelectedOptionPriority] = useState("Select an option");
     const [selectedOptionStatus, setSelectedOptionStatus] = useState("Select an option");
     const [loading, setLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState("");
@@ -38,12 +52,12 @@ const ProjectDetails: React.FC = () => {
     };
 
     const handleSelectPriority = (option: string) => {
-        setSelectedOptionPriority(option);
+        setProjectData({ ...projectData, priority: option });
         setIsOpenPriority(false);
     };
 
     const handleSelectStatus = (option: string) => {
-        setSelectedOptionStatus(option);
+        setProjectData({ ...projectData, status: option });
         setIsOpenStatus(false);
     };
 
@@ -51,15 +65,18 @@ const ProjectDetails: React.FC = () => {
         setLoading(true);
         setResponseMessage("");
 
+        const formattedProjectData = {
+            ...projectData,
+            start_date: projectData.start_date ? new Date(projectData.start_date).toISOString().split("T")[0] : "",
+            end_date: projectData.end_date ? new Date(projectData.end_date).toISOString().split("T")[0] : ""
+        };
+
         try {
-            const response = await axios.post(
+            const response = await axios.put(
                 "http://127.0.0.1:8000/coinnovation/create-project/",
-                projectData,
+                formattedProjectData,
                 { headers: { "Content-Type": "application/json" } }
             );
-
-            setResponseMessage("Project successfully created!");
-            console.log("Success:", response.data);
         } catch (error) {
             setResponseMessage("Failed to create project. Please try again.");
             console.error("Error:", error);
@@ -68,9 +85,12 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    console.log("Project ID:", projectID);
+    console.log("Project Data:", projectData);
+
     return (
         <>
-            <div className="px-16 py-6 bg-[#F4FCFF]">
+            <div className="px-16  bg-[#F4FCFF]">
                 <div className="flex flex-row gap-6 justify-center">
                     <div className="flex flex-col gap-4">
                         <div className="text-[#4A4D4E] text-lg font-semibold">Project Entry Details</div>
@@ -101,7 +121,7 @@ const ProjectDetails: React.FC = () => {
                                 className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 cursor-pointer bg-white w-full"
                                 onClick={() => setIsOpenPriority(!isOpenPriority)}
                             >
-                                <span className="text-[#4A4D4E] text-sm">{selectedOptionPriority}</span>
+                                <span className="text-[#4A4D4E] text-sm">{projectData.priority || "Select an option"}</span>
                                 <IoChevronDownOutline className={`transition-transform text-sm font-light text-[#979797] ${isOpenPriority ? "rotate-180" : ""}`} />
                             </div>
 
@@ -125,7 +145,7 @@ const ProjectDetails: React.FC = () => {
                                 className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-sm"
                                 onClick={() => setIsOpenStatus(!isOpenStatus)}
                             >
-                                <span className="text-[#4A4D4E]">{selectedOptionStatus}</span>
+                                <span className="text-[#4A4D4E]">{projectData.status || "Select an option"}</span>
                                 <IoChevronDownOutline className={`transition-transform text-sm font-light text-[#979797] ${isOpenStatus ? "rotate-180" : ""}`} />
                             </div>
 
@@ -147,13 +167,26 @@ const ProjectDetails: React.FC = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex flex-col">
                                 <label className="text-sm text-[#4A4D4E]">Start Date</label>
-                                <input type="date" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                                <input
+                                    type="date"
+                                    name="start_date"
+                                    value={projectData.start_date}
+                                    onChange={handleInputChange}
+                                    className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+                                />
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-sm text-[#4A4D4E]">Target Closure</label>
-                                <input type="date" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                                <input
+                                    type="date"
+                                    name="end_date"
+                                    value={projectData.end_date}
+                                    onChange={handleInputChange}
+                                    className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+                                />
                             </div>
                         </div>
+
                     </div>
 
                     <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
@@ -161,21 +194,34 @@ const ProjectDetails: React.FC = () => {
                     <div className="flex flex-col gap-4">
                         <div className="text-lg font-semibold text-[#4A4D4E]">Enterprise Details</div>
 
-                        {["Enterprise", "Owner", "Approver"].map((label, index) => (
+                        {["enterprise", "owner", "approver"].map((field, index) => (
                             <div key={index} className="flex flex-col">
-                                <label className="text-sm text-[#4A4D4E]">{label}</label>
-                                <input type="text" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                                <label className="text-sm text-[#4A4D4E]">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                <input
+                                    type="text"
+                                    name={field}
+                                    value={projectData[field as keyof typeof projectData]}
+                                    onChange={handleInputChange}
+                                    className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+                                />
                             </div>
                         ))}
 
                         <div className="grid grid-cols-2 gap-4">
-                            {["Category", "Department", "Business Unit", "Location"].map((label, index) => (
+                            {["category", "department", "business_unit", "location"].map((field, index) => (
                                 <div key={index} className="flex flex-col">
-                                    <label className="text-sm text-[#4A4D4E]">{label}</label>
-                                    <input type="text" className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full" />
+                                    <label className="text-sm text-[#4A4D4E]">{field.replace("_", " ").charAt(0).toUpperCase() + field.replace("_", " ").slice(1)}</label>
+                                    <input
+                                        type="text"
+                                        name={field}
+                                        value={projectData[field as keyof typeof projectData]}
+                                        onChange={handleInputChange}
+                                        className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+                                    />
                                 </div>
                             ))}
                         </div>
+
                     </div>
 
                     <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
@@ -194,13 +240,8 @@ const ProjectDetails: React.FC = () => {
                 </div>
       
                 <div className="flex flex-row gap-4 justify-end items-end">
-                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
-                        <div>
-                            <FiEdit2 />
-                        </div>
-                        <div className="font-semibold">Edit</div>
-                    </div>
-                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+                    <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer"
+                    onClick={handleSubmit}>
                         <div>
                             <BiSave />
                         </div>
