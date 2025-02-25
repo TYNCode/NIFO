@@ -3,7 +3,7 @@ import Questionairre from './Questionairre';
 import ProjectDetails from './ProjectDetails';
 
 interface OneTabStepTwoProps {
-    // Define props here
+    
 }
 
 const OneTabStepTwo: React.FC<OneTabStepTwoProps> = (props) => {

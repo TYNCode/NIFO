@@ -4,24 +4,24 @@ import OneTabStepTwo from "./OneTabStepTwo";
 import OneTabStepThree from "./OneTabStepThree";
 
 const ProgressOne: React.FC = () => {
-    const [activeTab, setActiveTab] = useState("1a");
+    const [activeTab, setActiveTab] = useState("01.a");
 
     return (
         <>
-            <div className=" pt-20">
-                <div className="flex flex-row gap-8 justify-center items-center shadow-sm">
+            <div className="bg-white px-4 py-4 rounded shadow-sm">
+                <div className="flex flex-row gap-4 justify-center items-center w-full shadow-sm">
                     {[
-                        { id: "1a", label: "Identification of the use case" },
-                        { id: "1b", label: "Gather and Analyze Problem Details" },
-                        { id: "1c", label: "Create a Problem Definition Document" },
+                        { id: "01.a", label: "Identification of the use case" },
+                        { id: "01.b", label: "Gather and Analyze Problem Details" },
+                        { id: "01.c", label: "Create a Problem Definition Document" },
                     ].map((tab) => (
                         <div
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-row justify-between text-sm gap-2 font-medium px-4 py-2 rounded-t-lg cursor-pointer transition-all duration-200
+                            className={`flex-1 text-center flex flex-row items-center justify-center gap-2 text-sm font-medium px-4 py-2 rounded-t-lg cursor-pointer transition-all duration-200
                                 ${activeTab === tab.id
-                                    ? "bg-blue-500 text-white"
-                                    : "bg-white text-black"
+                                    ? "bg-[#F5FCFF] text-[#0071C1] font-semibold border-t-2 border-t-[#56A8F0]"
+                                    : "bg-[#B5BBC20D] text-[#848484] border-t-2 border-t-[#B5BBC2]"
                                 }`}
                         >
                             <div>{tab.id}</div>
@@ -30,10 +30,10 @@ const ProgressOne: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="">
-                    {activeTab === "1a" && <OneTabStepOne />}
-                    {activeTab === "1b" && <OneTabStepTwo />}
-                    {activeTab === "1c" && <OneTabStepThree />}
+                <div>
+                    {activeTab === "01.a" && <OneTabStepOne />}
+                    {activeTab === "01.b" && <OneTabStepTwo />}
+                    {activeTab === "01.c" && <OneTabStepThree />}
                 </div>
             </div>
         </>
