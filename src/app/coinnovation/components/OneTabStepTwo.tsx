@@ -1,4 +1,5 @@
 import React from 'react';
+import Questionairre from './Questionairre';
 import ProjectDetails from './ProjectDetails';
 
 interface OneTabStepTwoProps {
@@ -7,12 +8,14 @@ interface OneTabStepTwoProps {
 
 const OneTabStepTwo: React.FC<OneTabStepTwoProps> = (props) => {
     return (
-        <div className='w-full flex gap-20'>
-            <div className='w-1/3'>Hi</div>
-            <div className='w-2/3'>
-                <ProjectDetails/>
-            </div>
+        <div className="w-full flex gap-20">
+        <div className="w-[20%]">
+            {/* <ProjectDetails/> */}
         </div>
+        <div className="w-[80%] h-screen">
+          <Questionairre/>
+        </div>
+      </div>
 
     );
 };
