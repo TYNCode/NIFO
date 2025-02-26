@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { CiPlay1 } from "react-icons/ci";
 import ProjectDetails from "./ProjectDetails";
+import ProblemInput from "./ProblemInput";
 
 const OneTabStepOne = () => {
     const [problemStatement, setProblemStatement] = useState("");
     const [loading, setLoading] = useState(false);
     const [responseData, setResponseData] = useState<string | null>(null);
-    const [projectID , setProjectID] = useState<string | null>(null);
+    const [projectID, setProjectID] = useState<string | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-    const lineHeight = 24;
+    const lineHeight = 12;
     const maxRows = 4;
 
     useEffect(() => {
@@ -63,55 +64,48 @@ const OneTabStepOne = () => {
         }
     };
 
-
     return (
-        <div className="">
-            <div className="bg-[#F5FCFF] shadow-md rounded-lg flex flex-col justify-center items-center px-5">
-                <div className="flex items-center flex-col gap-4 py-32">
-                    <div className="flex flex-col justify-center items-center gap-1 ">
-                        <div className="text-base">Let us define the</div>
-                        <div className="text-xl font-medium">Problem Statement</div>
+        <div className="bg-[#F5FCFF] shadow-md rounded-lg flex flex-col justify-center items-center px-5 h-[70vh]">
+            {!responseData ? (
+                <div className="flex flex-col justify-center items-center gap-4 ">
+                    <div className="flex flex-col gap-1 justify-center items-center ">
+                        <div className="text-base font-semibold">Let us define the</div>
+                        <div className="text-2xl font-semibold">Problem Statement</div>
                     </div>
 
-                    <div className="flex flex-row justify-center items-center gap-2">
-                        <div className="w-full">
-                            <textarea
-                                ref={textareaRef}
-                                className="w-[900px] border-none focus:ring-0 px-4 py-2 resize-none overflow-auto rounded-lg 
-                                           placeholder-gray-400 placeholder-opacity-75 text-base leading-[1.5] align-middle"
-                                value={problemStatement}
-                                onChange={handleChange}
-                                placeholder="Type your problem statement"
-                                style={{
-                                    minHeight: `${lineHeight}px`,
-                                    maxHeight: `${lineHeight * maxRows}px`,
-                                }}
-                            />
-                        </div>
+                    <div className="mt-8">
+                        <ProblemInput
+                            textareaRef={textareaRef}
+                            problemStatement={problemStatement}
+                            handleChange={handleChange}
+                            lineHeight={lineHeight}
+                            maxRows={maxRows}
+                            handleSubmit={handleSubmit}
+                            loading={loading}
+                        />
+                    </div>
 
-                        <button
-                            className="flex flex-row items-center gap-2 px-4 py-[7px] bg-blue-500 w-max rounded-lg text-white cursor-pointer"
-                            onClick={handleSubmit}
-                            disabled={loading}
-                        >
-                            <div className="font-medium">
-                                <CiPlay1 />
-                            </div>
-                            <div className="font-medium">
-                                {loading ? "Processing..." : "Describe"}
-                            </div>
-                        </button>
-                     
+                </div>
+            ) : (
+                <div>
+                    <div className="text-sm font-semibold">Let me define the Problem Statement</div>
+                    <ProblemInput
+                        textareaRef={textareaRef}
+                        problemStatement={problemStatement}
+                        handleChange={handleChange}
+                        lineHeight={lineHeight}
+                        maxRows={maxRows}
+                        handleSubmit={handleSubmit}
+                        loading={loading}
+                    />
+                    <div className="mt-16">
+                        <ProjectDetails
+                            projectID={projectID}
+                            projectDescription={responseData}
+                        />
                     </div>
                 </div>
-
-                <div className="mt-16">
-                    <ProjectDetails 
-                    projectID = {projectID}
-                    projectDescription={responseData}/>
-                </div>
-
-            </div>
+            )}
         </div>
     );
 };

@@ -90,7 +90,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectID, projectDescr
 
     return (
         <>
-            <div className="px-16  bg-[#F4FCFF]">
+        <div>
+          <div>
+            
+          </div>
+        </div>
+        <div className="px-16  bg-[#F4FCFF]">
                 <div className="flex flex-row gap-6 justify-center">
                     <div className="flex flex-col gap-4">
                         <div className="text-[#4A4D4E] text-lg font-semibold">Project Entry Details</div>
@@ -254,7 +259,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectID, projectDescr
                         <div className="font-semibold">Skip</div>
                     </div>
                 </div>
-            </div>
+        </div>
             
         </>
      
