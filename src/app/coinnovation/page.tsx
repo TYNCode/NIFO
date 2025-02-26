@@ -321,7 +321,7 @@ const Page = () => {
 
 
     return (
-        <>
+        <div className="h-screen bg-[#F5FCFF]">
             <NavbarTrend />
             {/* <div className="px-[8%] py-16 relative">
                 <div className="flex flex-row gap-4">
@@ -472,11 +472,11 @@ const Page = () => {
                 )}
 
             </div>     */}
-            <div className="h-screen bg-[#F5FCFF] pt-16 px-24">
+            <div className=" px-24 pt-8">
                 <ProgressOne />
             </div>
        
-        </> 
+        </div> 
     );
 };
 
