@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 
-const NavbarTrend: React.FC = () => {
+const NavBarCoin: React.FC = () => {
   const router = useRouter();
 
   const handleRoute = () => {
@@ -22,4 +22,4 @@ const NavbarTrend: React.FC = () => {
   );
 };
 
-export default NavbarTrend;
+export default NavBarCoin;

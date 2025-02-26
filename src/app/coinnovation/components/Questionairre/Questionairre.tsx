@@ -208,7 +208,7 @@ const Questionairre: React.FC = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="w-full">
       <div className="flex justify-between items-center text-black py-2 rounded-md">
         <h1 className="text-xl font-bold">Questionnaire</h1>
         <button>

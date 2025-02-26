@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 
-import Questionairre from "../coinnovation/components/Questionairre";
+import Questionairre from "../coinnovation/components/Questionairre/Questionairre";
 
 const page = () => {
   return (
