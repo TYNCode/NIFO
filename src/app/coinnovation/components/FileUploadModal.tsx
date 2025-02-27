@@ -3,30 +3,47 @@ import React, { useState } from "react";
 interface FileUploadModalProps {
     isFileUploadModalOpen: boolean;
     setIsFileUploadModalOpen: (isOpen: boolean) => void;
+    files: File[];
+    setFiles: (files: File[]) => void;
 }
 
-const FileUploadModal: React.FC<FileUploadModalProps> = ({ isFileUploadModalOpen, setIsFileUploadModalOpen }) => {
+const FileUploadModal: React.FC<FileUploadModalProps> = ({
+    isFileUploadModalOpen,
+    setIsFileUploadModalOpen,
+    files,
+    setFiles
+}) => {
     if (!isFileUploadModalOpen) return null;
-
-    const [isFileUploaded, setIsFileUploaded] = useState(false);
-    const [file, setFile] = useState<File | null>(null);
+    const [tempFiles, setTempFiles] = useState<File[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [uploadComplete, setUploadComplete] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];  // Get the selected file
-        if (selectedFile) {
-            setFile(selectedFile);
-            setIsFileUploaded(true);
-        }
+        const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+        setTempFiles([...tempFiles, ...selectedFiles]); 
+        setUploadComplete(false);
     };
 
     const handleUploadClick = () => {
-        // Handle file upload logic here
-        if (file) {
-            alert(`Uploading file: ${file.name}`);
-        } else {
-            alert("Please select a file first.");
+        if (tempFiles.length === 0) {
+            alert("Please select files first.");
+            return;
         }
+
+        setUploading(true);
+        setUploadComplete(false);
+
+        setTimeout(() => {
+            setUploading(false);
+            setUploadComplete(true);
+            setTimeout(() => {
+                setFiles([...files, ...tempFiles]);
+                setTempFiles([]);
+                setIsFileUploadModalOpen(false); 
+            }, 1000); 
+        }, 2000);
     };
+
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -42,52 +59,52 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({ isFileUploadModalOpen
                     File Upload
                     <div className="absolute -bottom-[2px] w-[120px] h-[2px] bg-[#0070C0]"></div>
                 </div>
-                <hr className="border-[#E3F2FE] w-full mt-2" />
+                <hr className={`border-[#E3F2FE] w-full mt-2 ${uploadComplete ? 'border-green-500' : ''}`} />
 
-              
                 <div
                     className="my-4 mx-auto border-2 border-dashed border-[#D8D8D8] rounded-lg py-6 px-4 flex flex-col w-[80%] cursor-pointer hover:bg-blue-50 transition duration-200"
                     onClick={() => document.getElementById("fileInput")?.click()}
                 >
-                    {isFileUploaded ? (
-                        <div className="w-full flex flex-row items-center gap-4">
-                            {file.name.endsWith('.xlsx') && (
-                                <img src="/coinnovation/excel-icon.svg" className=" flex-shrink-0" alt="File Icon" />
-                            )}
-                            {file.name.endsWith('.docx') && (
-                                <img src="/coinnovation/docx-icon.svg" className=" flex-shrink-0" alt="File Icon" />
-                            )}
-                            {file.name.endsWith('.pdf') && (
-                                <img src="/coinnovation/pdf-icon.svg" className=" flex-shrink-0" alt="File Icon" />
-                            )}
-                            {file.name.endsWith('.txt') && (
-                                <img src="/coinnovation/txt-icon.svg" className=" flex-shrink-0" alt="File Icon" />
-                            )}
-                            <div className="flex flex-col gap-2 w-full">
-                                <div className="flex flex-row justify-between items-center w-full">
-                                    <div className="text-[12px] text-[#4A4D4E] truncate w-full">{file.name}</div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            setFile(null);
-                                            setIsFileUploaded(false);
-                                        }}
-                                        className="text-[#4A4D4E] text-sm font-semibold cursor-pointer"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
+                    {tempFiles.length > 0 ? (
+                        tempFiles.map((file, index) => (
+                            <div key={index} className="w-full flex flex-row items-center gap-4">
+                                {file.name.endsWith('.xlsx') && (
+                                    <img src="/coinnovation/excel-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                )}
+                                {file.name.endsWith('.docx') && (
+                                    <img src="/coinnovation/docx-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                )}
+                                {file.name.endsWith('.pdf') && (
+                                    <img src="/coinnovation/pdf-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                )}
+                                {file.name.endsWith('.txt') && (
+                                    <img src="/coinnovation/txt-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                )}
+                                <div className="flex flex-col gap-2 w-full">
+                                    <div className="flex flex-row justify-between items-center w-full">
+                                        <div className="text-[12px] text-[#4A4D4E] truncate w-full">{file.name}</div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setTempFiles(tempFiles.filter((_, i) => i !== index));
+                                            }}
+                                            className="text-[#4A4D4E] text-sm font-semibold cursor-pointer"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
 
-                                <div className="w-full h-[5px] rounded-full bg-gray-200">
-                                    <div className="h-full bg-[#E4E5E7] rounded-full w-full"></div>
-                                </div>
+                                    <div className="w-full h-[5px] rounded-full bg-gray-200">
+                                        <div className={`h-full rounded-full ${uploadComplete ? 'bg-green-500' : 'bg-[#E4E5E7]'} w-full`}></div>
+                                    </div>
 
-                                <div className="flex flex-row justify-between text-xs text-gray-600 w-full">
-                                    <span>Document Selected. Click the upload button to proceed.</span>
-                                    <span>{(file.size / 1024).toFixed(2)} KB</span>
+                                    <div className="flex flex-row justify-between text-xs text-gray-600 w-full">
+                                        <span>Document Selected. Click the upload button to proceed.</span>
+                                        <span>{(file.size / 1024).toFixed(2)} KB</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ))
                     ) : (
                         <div className="flex flex-col justify-center items-center gap-2">
                             <div>
@@ -99,33 +116,32 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({ isFileUploadModalOpen
                     )}
                 </div>
 
-
                 <input
                     type="file"
                     id="fileInput"
                     className="hidden"
                     accept=".pdf,.txt,.xlsx,.docx"
+                    multiple
                     onChange={handleFileChange}
                 />
-
-
 
                 <div className="flex justify-center mt-4">
                     <button
                         onClick={handleUploadClick}
                         className={`flex flex-row items-center justify-center gap-2 px-4 py-2 w-max text-[12px] text-white shadow-[6px_10px_20px_0px_rgba(7,7,7,0.1)] rounded-[12px] 
-                        ${isFileUploaded ? "bg-[#2286C0] cursor-pointer" : "bg-[#979797] cursor-default"}`}
-                        disabled={!isFileUploaded}
+                        ${tempFiles.length > 0 && !uploading ? "bg-[#2286C0] cursor-pointer" : "bg-[#979797] cursor-default"}`}
+                        disabled={tempFiles.length === 0 || uploading}
                     >
                         <img
                             src="/coinnovation/uploadfilewhite.svg"
                             alt="File Upload Icon"
                             className="h-4 w-4 object-contain"
                         />
-                        <div className="flex items-center">Upload</div>
+                        <div className="flex items-center">
+                            {uploading ? "Uploading" : "Upload"}
+                        </div>
                     </button>
                 </div>
-
             </div>
         </div>
     );

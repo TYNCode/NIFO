@@ -26,6 +26,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const lineHeight = 24;
     const maxRows = 4;
+    const [files, setFiles] = useState<File[]>([]);
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -41,19 +42,27 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     };
 
     const handleSubmit = async () => {
-        if (!problemStatement.trim()) {
-            alert("Please enter a problem statement.");
+        if (!problemStatement.trim() && files.length === 0) {
+            alert("Please enter a problem statement or upload at least one file.");
             return;
         }
 
         try {
-            setLoading(true); 
+            setLoading(true);
             setResponseData(null);
 
+            // ✅ Prepare FormData for file and text submission
+            const formData = new FormData();
+            if (problemStatement.trim()) {
+                formData.append("text", problemStatement); // ✅ Add text input
+            }
+            files.forEach((file) => formData.append("file", file)); // ✅ Append multiple files correctly
+
+            // ✅ Send API request to analyze problem statement
             const uploadResponse = await axios.post(
                 "http://127.0.0.1:8000/coinnovation/upload-file/",
-                { text: problemStatement },
-                { headers: { "Content-Type": "application/json" } }
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
 
             const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
@@ -67,14 +76,17 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
             const projectResponse = createProjectResponse.data || "No response from API";
             setProjectID(projectResponse.project_id);
+
         } catch (error) {
-            console.error("Error in API calls:", error);
+            console.error("Error in API call:", error);
             setResponseData("Failed to process the request.");
-            alert("Failed to create project. Please try again.");
+            alert("Error: Failed to analyze the problem statement.");
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
+
+
 
     return (
         <div className="bg-[#F5FCFF] shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
@@ -94,6 +106,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
                             maxRows={maxRows}
                             handleSubmit={handleSubmit}
                             loading={loading} 
+                            files={files}
+                            setFiles ={setFiles}
                         />
                     </div>
                 </div>
@@ -107,6 +121,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
                         maxRows={maxRows}
                         handleSubmit={handleSubmit}
                         loading={loading} 
+                        files={files}
+                        setFiles ={setFiles}
                     />
 
                     <ProjectDetails projectID={projectID} setQuestionnaireData={setQuestionnaireData} projectDescription={responseData}  problemStatement={problemStatement}/>
