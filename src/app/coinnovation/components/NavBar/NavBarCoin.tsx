@@ -9,12 +9,12 @@ const NavBarCoin: React.FC = () => {
   };
 
   return (
-    <div className="w-full relative z-50">
-      <div className="shadow-md">
+    <div className="fixed top-0 left-14 right-0 bg-white z-10 shadow-md">
+      <div className="p-4">
         <img
           src="/nifoimage.png"
           alt="Nifo Logo"
-          className="w-24 cursor-pointer"
+          className="w-20 cursor-pointer"
           onClick={handleRoute}
         />
       </div>

@@ -12,11 +12,11 @@ interface ProcessStep {
 }
 
 const coInnovationProcessSteps: ProcessStep[] = [
-  { id: 1, title: "Identify and Define Problem" },
-  { id: 2, title: "Preliminary Sourcing and Curation" },
-  { id: 3, title: "Engagement with Solution Providers" },
-  { id: 4, title: "Solution Evaluation" },
-  { id: 5, title: "Customization and Finalization of the solution" },
+  { id: 1, title: "Define" },
+  { id: 2, title: "Source" },
+  { id: 3, title: "Engage" },
+  { id: 4, title: "Evaluate" },
+  { id: 5, title: "Finalize" },
 ];
 
 const tabContent: Record<number, JSX.Element> = {
@@ -36,40 +36,44 @@ const Page: React.FC = () => {
 
   return (
     <>
-      <div className="flex">
-        <Sidebar />
-        <div className="flex flex-col">
+      <div className="grid grid-cols-[3.7rem_1fr] h-screen">
+        <div>
+          <Sidebar />
+        </div>
+        <div className="flex flex-col relative">
           <NavBarCoin />
-          <div className="bg-[#F4FCFF]">
+          <div className="bg-[#F4FCFF] mt-16 px-4">
             <div className="text-[#0071C1] mt-10 mb-5  text-xl uppercase font-bold">
               Create Project
             </div>
 
-            <div className="flex gap-2 mx-2">
+            <div className="flex gap-3 mx-2 justify-between">
               {coInnovationProcessSteps.map((process) => (
                 <div
                   key={process.id}
-                  className={`relative flex items-center justify-center flex-col w-1/5 h-24
-                px-4 py-2 rounded-2xl cursor-pointer transition-all
-                ${
-                  selectedTab === process.id
-                    ? "bg-[#0071C1] text-white shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
-                    : "bg-white text-[#0071C1] shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
-                }`}
+                  className={`relative flex flex-col w-1/5 h-full px-4 pb-4 rounded-2xl cursor-pointer transition-all
+      ${
+        selectedTab === process.id
+          ? "bg-[#0071C1] text-white shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
+          : "bg-white text-[#0071C1] shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
+      }`}
                   onClick={() => setSelectedTab(process.id)}
                 >
-                  <div className="h-24 text-[14px] flex items-start gap-2">
-                    <div className="text-left font-bold">0{process.id}</div>
-                    <div className="font-semibold text-center">
+                  <div className="h-12 text-[16px] flex items-center w-full">
+                    <div className="font-semibold text-[15px] w-1/4 text-left">
+                      0{process.id}
+                    </div>
+
+                    <div className="font-semibold text-center w-2/4">
                       {process.title}
                     </div>
                   </div>
 
                   <div
-                    className={`w-[90%] rounded-md h-2 ${
+                    className={`w-full rounded-md h-[4px] ${
                       selectedTab === process.id
                         ? "bg-[#F7F701]"
-                        : "h-[6px] bg-[#E7E7E7]"
+                        : "h-[2px] bg-[#E7E7E7]"
                     }`}
                   ></div>
                 </div>

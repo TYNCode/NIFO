@@ -18,23 +18,23 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
 
   const sidebarOptions: SidebarOption[] = [
-    { id: 1, title: "Home", icon: <PiCirclesFour size={24} />, route: "/" },
+    { id: 1, title: "Home", icon: <PiCirclesFour size={20} />, route: "/" },
     {
       id: 2,
       title: "Co-Innovation",
-      icon: <FaSuitcase size={24} />,
+      icon: <FaSuitcase size={20} />,
       route: "/coinnovation",
     },
     {
       id: 3,
       title: "Notification",
-      icon: <MdOutlineNotificationsActive size={24} />,
+      icon: <MdOutlineNotificationsActive size={20} />,
       route: "/notification",
     },
     {
       id: 4,
       title: "Settings",
-      icon: < IoSettingsOutline size={24} />,
+      icon: < IoSettingsOutline size={20} />,
       route: "/settings",
     },
     // { id: 5, title: "Chat", icon: <FaSuitcase size={24} />, route: "/chat" },
@@ -46,25 +46,27 @@ const Sidebar: React.FC = () => {
 
   return (
     <div
-      className={`bg-white ${isExpanded ? "w-56" : ""} min-h-screen flex flex-col items-center py-4 shadow-md transition-all duration-300`}
+      className={`fixed z-50 bg-white ${isExpanded ? "w-56 items-left" : "items-center"} h-screen flex flex-col py-4 shadow-md transition-all duration-300`}
     >
       <div
-        className="w-full flex items-center justify-start cursor-pointer p-4 hover:bg-gray-100"
+        className={`w-full flex ${isExpanded ? "w-56 items-left pl-2 pr-6" : "items-center px-5"} justify-start cursor-pointer  py-4 hover:bg-gray-100`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <FaBars size={24} className="text-[#0070C0]" />
+        <FaBars size={20} className="text-[#0070C0]" />
       </div>
 
+      <div className="flex flex-col gap-4">
       {sidebarOptions.map((option) => (
         <div
           key={option.id}
-          className={`flex items-center w-full p-4 cursor-pointer  rounded-lg transition-all  ${isActive === option.title ? "bg-[#0070C0] text-white" : "bg-white text-[#0070C0] hover:bg-gray-100"}`}
+          className={`flex items-center py-2 px-2 cursor-pointer  rounded-lg transition-all  ${isActive === option.title ? "bg-[#0070C0]  text-white" : "bg-white text-[#0070C0] hover:bg-gray-100"}`}
           onClick={() => handleSidebarClick(option.id, option.route)}
         >
           {option.icon}
           {isExpanded && <span className="ml-4">{option.title}</span>}
         </div>
       ))}
+      </div>
     </div>
   );
 };
