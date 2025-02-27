@@ -1,52 +1,77 @@
 import React from "react";
 
+interface EnterpriseData {
+  enterprise: string;
+  owner: string;
+  approver: string;
+  category: string;
+  department: string;
+  business_unit: string;
+  location: string;
+}
+
 interface EnterpriseDetailsProps {
-  projectData: {
-    enterprise: string;
-    owner: string;
-    approver: string;
-    category: string;
-    department: string;
-    business_unit: string;
-    location: string;
-  };
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  projectData: EnterpriseData;
+  onInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  readOnly?: boolean;
 }
 
 const EnterpriseDetails: React.FC<EnterpriseDetailsProps> = ({
   projectData,
-  onInputChange
+  onInputChange,
+  readOnly = false,
 }) => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-lg font-semibold text-[#4A4D4E]">Enterprise Details</div>
+      <div className="text-lg font-semibold text-[#4A4D4E]">
+        Enterprise Details
+      </div>
 
-      {["enterprise"].map((field, index) => (
+      {["enterprise", "owner", "approver"].map((field, index) => (
         <div key={index} className="flex flex-col">
-          <label className="text-sm text-[#4A4D4E]">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+          <label className="text-sm text-[#4A4D4E]">
+            {field.charAt(0).toUpperCase() + field.slice(1)}
+          </label>
           <input
             type="text"
             name={field}
-            value={projectData[field as keyof typeof projectData]}
+            value={(
+              projectData[field as keyof EnterpriseData] ?? ""
+            ).toString()}
             onChange={onInputChange}
-            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+            className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+              readOnly ? "bg-gray-100" : ""
+            }`}
+            readOnly={readOnly}
           />
         </div>
       ))}
 
       <div className="grid grid-cols-2 gap-4">
-        {["owner", "approver","category", "department", "business_unit", "location"].map((field, index) => (
-          <div key={index} className="flex flex-col">
-            <label className="text-sm text-[#4A4D4E]">{field.replace("_", " ").charAt(0).toUpperCase() + field.replace("_", " ").slice(1)}</label>
-            <input
-              type="text"
-              name={field}
-              value={projectData[field as keyof typeof projectData]}
-              onChange={onInputChange}
-              className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-            />
-          </div>
-        ))}
+        {["category", "department", "business_unit", "location"].map(
+          (field, index) => (
+            <div key={index} className="flex flex-col">
+              <label className="text-sm text-[#4A4D4E]">
+                {field.replace("_", " ").charAt(0).toUpperCase() +
+                  field.replace("_", " ").slice(1)}
+              </label>
+              <input
+                type="text"
+                name={field}
+                value={(
+                  projectData[field as keyof EnterpriseData] ?? ""
+                ).toString()}
+                onChange={onInputChange}
+                className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+                  readOnly ? "bg-gray-100" : ""
+                }`}
+                readOnly={readOnly}
+              />
+            </div>
+          )
+        )}
       </div>
     </div>
   );
