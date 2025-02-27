@@ -44,7 +44,7 @@ const StartupDetails = () => {
   const fetchStartupDetails = async (id) => {
     try {
       const res = await axios.get(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+        `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
       );
       setStartupData(res.data);
     } catch (error) {

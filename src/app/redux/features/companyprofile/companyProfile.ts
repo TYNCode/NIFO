@@ -37,7 +37,7 @@ export const fetchCompanies = createAsyncThunk<
 >("companyProfile/fetchCompanies", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/`
+      `http://127.0.0.1:8000/directorysearch/companyview/`
     );
     return response.data;
   } catch (error: any) {
@@ -52,7 +52,7 @@ export const fetchCompaniesList = createAsyncThunk(
   async ({ page, page_size }: { page: number, page_size: number }, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/?page=${page}&page_size=${page_size}`,
+        `http://127.0.0.1:8000/directorysearch/companyview/?page=${page}&page_size=${page_size}`,
       );
 
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -75,7 +75,7 @@ export const searchCompaniesSuggestion = createAsyncThunk<
 >("companyProfile/searchCompaniesSuggestion", async (query, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/searchSuggestion/?query=${query}`
+      `http://127.0.0.1:8000/directorysearch/companyview/searchSuggestion/?query=${query}`
     );
     return response.data;
   } catch (error: any) {
@@ -93,7 +93,7 @@ export const searchCompanies = createAsyncThunk<
 >("companyProfile/searchCompanies", async (query, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/search/?query=${query}`
+      `http://127.0.0.1:8000/directorysearch/companyview/search/?query=${query}`
     );
     return response.data;
   } catch (error: any) {
@@ -113,7 +113,7 @@ export const fetchCompanyById = createAsyncThunk<
 >("companyProfile/fetchCompanyById", async (id, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
     );
     return response.data;
   } catch (error: any) {
@@ -132,7 +132,7 @@ export const fetchCompanyProfileById = createAsyncThunk<
 >("companyProfile/fetchCompanyProfileById", async (id, { rejectWithValue }) => {
   try {
     const response = await getRequestWithAccessToken(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+      `http://127.0.0.1:8000/directorysearch/companyview/${id}/`
     );
     return response.data;
   } catch (error: any) {
@@ -153,7 +153,7 @@ export const updateCompanyById = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await putRequestWithAccessToken(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`,
+        `http://127.0.0.1:8000/directorysearch/companyview/${id}/`,
         data
       );
       return response.data;

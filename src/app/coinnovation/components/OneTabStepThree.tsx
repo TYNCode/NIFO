@@ -3,6 +3,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin6Line, RiEditFill } from 'react-icons/ri';
 import data from '../../data/ccd.json'
+import jsonData from '../../data/ccd.json'
 import axios from 'axios';
 interface OneTabStepThreeProps {
 }
@@ -16,7 +17,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     const [isOutcomeOpen, setOutcomeOpen] = useState(false);
     const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
     const [docxFileUrl, setDocxFileUrl] = useState('')
-    const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
+    const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
     const challengeScenarioData = data?.final_document?.["Challenge Scenario"]?.[0] || {};
     const endUserProfileData = data?.final_document?.["Profile of the End-Users"]?.[0] || {};
     const getChallengeTabData = (key) => {
@@ -68,18 +69,30 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     };
 
     const callGenerateDocxAPI = async (jsonData) => {
-        console.log("document issssssssss generated")
+        console.log("Generating document...");
+
         setIsGeneratingDocx(true);
+
         try {
             const response = await axios.post(
                 `${API_BASE_URL}/generate-docx/`,
                 jsonData,
-                { headers: { "Content-Type": "application/json" }, responseType: "blob" }
+                {
+                    headers: { "Content-Type": "application/json" },
+                    responseType: "blob" 
+                }
             );
-            const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            });
             const url = window.URL.createObjectURL(blob);
-            setDocxFileUrl(url);
-
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Final_Document.docx"; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error generating DOCX document:", error);
             alert("Failed to generate DOCX document.");
@@ -103,9 +116,6 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                     <div className='flex flex-row gap-8'>
                         <div className='text-[#2286C0]'>
                             <FiEdit2 />
-                        </div>
-                        <div className='text-[#2286C0]'>
-                            <RiDeleteBin6Line />
                         </div>
                         <div className="cursor-pointer" onClick={() => toggleAccordion("challenge")}>
                             <FaChevronDown className={`text-[#2286C0] transition-transform duration-300 ${isChallengeOpen ? "rotate-180" : ""}`} />
@@ -157,9 +167,6 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                         <div className='text-[#2286C0]'>
                             <FiEdit2 />
                         </div>
-                        <div className='text-[#2286C0]'>
-                            <RiDeleteBin6Line />
-                        </div>
                         <div className="cursor-pointer" onClick={() => toggleAccordion("endUser")}>
                             <FaChevronDown className={`text-[#2286C0] transition-transform duration-300 ${isEndUserOpen ? "rotate-180" : ""}`} />
                         </div>
@@ -204,11 +211,8 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                         <div className='text-[#4A4D4E] text-[12px] italic'>Describe the quantified & qualified outcomes as KPIs and list out the various requirements in terms of jobs to be done, constraints, desired features & functionality the solution must meet.</div>
                     </div>
                     <div className='flex flex-row gap-8'>
-                        <div className='text-[#2286C0]'>
+                        <div className='text-[#2286C0] cursor-pointer' >
                             <FiEdit2 />
-                        </div>
-                        <div className='text-[#2286C0]'>
-                            <RiDeleteBin6Line />
                         </div>
                         <div className="cursor-pointer" onClick={() => toggleAccordion("outcome")}>
                             <FaChevronDown className={`text-[#2286C0] transition-transform duration-300 ${isOutcomeOpen ? "rotate-180" : ""}`} />
@@ -283,12 +287,16 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                     </div>
                     <div className='text-[12px]'>Save</div>
                 </button>
-                <button className='flex flex-row gap-2 bg-[#979797] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]' onClick={callGenerateDocxAPI}>
+                <button
+                    className='flex flex-row gap-2 bg-[#979797] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'
+                    onClick={() => callGenerateDocxAPI(jsonData)} 
+                >
                     <div>
-                        <img src='/coinnovation/pdd-icon.svg' className=''/>
+                        <img src='/coinnovation/pdd-icon.svg' className='' alt="PDD Icon" />
                     </div>
                     <div className='text-[12px]'>PDD Download</div>
                 </button>
+
             </div>
         </div>
     );

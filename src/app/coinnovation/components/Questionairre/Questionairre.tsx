@@ -173,6 +173,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     }));
   };
 
+  const handleGeneratePDD = ()=>{
+    
+  }
   return (
     <div className="w-full">
       <div className="flex justify-between items-center text-black py-2 rounded-md">
@@ -325,6 +328,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
             </div>
           )
         )}
+      </div>
+
+      <div className="flex justify-end">
+        <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleGeneratePDD}>
+          <div>
+            <img src="/coinnovation/savepdd-icon.svg"/>
+          </div>
+          <div>
+            Save & Continue
+          </div>
+        </button>
       </div>
     </div>
   );

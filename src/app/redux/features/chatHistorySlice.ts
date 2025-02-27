@@ -19,7 +19,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/prompt/sessions/"
+        "http://127.0.0.1:8000/prompt/sessions/"
       );
       
       const data = response.data;
