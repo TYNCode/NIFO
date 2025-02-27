@@ -51,15 +51,11 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         try {
             setLoading(true);
             setResponseData(null);
-
-            // ✅ Prepare FormData for file and text submission
             const formData = new FormData();
             if (problemStatement.trim()) {
-                formData.append("text", problemStatement); // ✅ Add text input
+                formData.append("text", problemStatement); 
             }
-            files.forEach((file) => formData.append("file", file)); // ✅ Append multiple files correctly
-
-            // ✅ Send API request to analyze problem statement
+            files.forEach((file) => formData.append("file", file)); 
             const uploadResponse = await axios.post(
                 "http://127.0.0.1:8000/coinnovation/upload-file/",
                 formData,

@@ -36,16 +36,16 @@ const ProgressOne: React.FC = () => {
   }, [activeTab, problemStatement, responseData, projectID]);
 
 
-  const isTab2Enabled = !!activeTab; 
-  const isTab3Enabled = !!questionnaireData; 
+  // const isTab2Enabled = !!activeTab; 
+  // const isTab3Enabled = !!questionnaireData; 
 
   return (
     <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
       <div className="flex flex-row gap-4 justify-center items-center w-full shadow-sm">
         {[
           { id: "01.a", label: "Identification of the use case", enabled: true },
-          { id: "01.b", label: "Gather and Analyze Problem Details", enabled: isTab2Enabled },
-          { id: "01.c", label: "Create a Problem Definition Document", enabled: isTab3Enabled },
+          { id: "01.b", label: "Gather and Analyze Problem Details", enabled: true },
+          { id: "01.c", label: "Create a Problem Definition Document", enabled: true },
         ].map((tab) => (
           <div
             key={tab.id}
@@ -73,7 +73,7 @@ const ProgressOne: React.FC = () => {
             setQuestionnaireData={setQuestionnaireData}
           />
         )}
-        {activeTab === "01.b" && isTab2Enabled && (
+        {activeTab === "01.b"  && (
           <OneTabStepTwo
             projectID={projectID}
             projectDescription={responseData}
@@ -81,7 +81,7 @@ const ProgressOne: React.FC = () => {
             setQuestionnaireData={setQuestionnaireData}
           />
         )}
-        {activeTab === "01.c" && isTab3Enabled && <OneTabStepThree />}
+        {activeTab === "01.c" && <OneTabStepThree />}
       </div>
     </div>
   );
