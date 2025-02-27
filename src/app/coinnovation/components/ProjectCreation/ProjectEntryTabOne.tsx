@@ -1,10 +1,11 @@
 import { IoChevronDownOutline } from "react-icons/io5";
 import { ProjectData } from "../ProjectDetails";
 
-
 interface ProjectEntryTabOneProps {
   projectData: ProjectData;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   isOpenPriority: boolean;
   setIsOpenPriority: (value: boolean) => void;
   isOpenStatus: boolean;
@@ -14,58 +15,60 @@ interface ProjectEntryTabOneProps {
 }
 
 const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
-    projectData,
-    handleInputChange,
-    isOpenPriority,
-    setIsOpenPriority,
-    isOpenStatus,
-    setIsOpenStatus,
-    handleSelectPriority,
-    handleSelectStatus
-  }) => {
-    const optionsPriority = ["Critical", "High", "Medium", "Low"];
-    const optionsStatus = [
-      "To Do",
-      "In Progress",
-      "In Review",
-      "Done",
-      "Blocked",
-      "Waiting for Approval",
-      "Cancelled",
-    ];
-  
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="text-[#4A4D4E] text-lg font-semibold">
-          Project Entry Details
-        </div>
-  
-        <div className="flex flex-col">
-          <label className="text-sm text-[#4A4D4E]">Project ID</label>
-          <input
-            type="text"
-            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-            name="project_id"
-            value={projectData.project_id}
-            onChange={handleInputChange}
-          />
-        </div>
-  
-        <div className="flex flex-col">
-          <label className="text-sm text-[#4A4D4E]">Project Name</label>
-          <input
-            type="text"
-            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-            name="project_name"
-            value={projectData.project_name}
-            onChange={handleInputChange}
-          />
-        </div>
-  
-        <div className="relative">
+  projectData,
+  handleInputChange,
+  isOpenPriority,
+  setIsOpenPriority,
+  isOpenStatus,
+  setIsOpenStatus,
+  handleSelectPriority,
+  handleSelectStatus,
+}) => {
+  const optionsPriority = ["Critical", "High", "Medium", "Low"];
+  const optionsStatus = [
+    "To Do",
+    "In Progress",
+    "In Review",
+    "Done",
+    "Blocked",
+    "Waiting for Approval",
+    "Cancelled",
+  ];
+
+  return (
+    <div className="flex flex-col gap-4 w-2/6">
+      <div className="text-[#4A4D4E] text-lg font-semibold">
+        Project Entry Details
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-sm text-[#4A4D4E]">Project ID</label>
+        <input
+          type="text"
+          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+          name="project_id"
+          value={projectData.project_id}
+          onChange={handleInputChange}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-sm text-[#4A4D4E]">Project Name</label>
+        <input
+          type="text"
+          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full placeholder:text-xs"
+          name="project_name"
+          value={projectData.project_name}
+          placeholder="Enter the Project Name"
+          onChange={handleInputChange}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="relative flex flex-col gap-1">
           <label className="text-sm text-[#4A4D4E]">Priority</label>
           <div
-            className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 cursor-pointer bg-white w-full"
+            className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full"
             onClick={() => setIsOpenPriority(!isOpenPriority)}
           >
             <span className="text-[#4A4D4E] text-sm">
@@ -75,7 +78,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
               className={`transition-transform text-sm font-light text-[#979797] ${isOpenPriority ? "rotate-180" : ""}`}
             />
           </div>
-  
+
           {isOpenPriority && (
             <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
               {optionsPriority.map((option, index) => (
@@ -90,7 +93,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
             </div>
           )}
         </div>
-        
+
         <div className="relative">
           <label className="text-sm text-[#4A4D4E]">Status</label>
           <div
@@ -104,7 +107,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
               className={`transition-transform text-sm font-light text-[#979797] ${isOpenStatus ? "rotate-180" : ""}`}
             />
           </div>
-  
+
           {isOpenStatus && (
             <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
               {optionsStatus.map((option, index) => (
@@ -119,33 +122,34 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
             </div>
           )}
         </div>
-  
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col">
-            <label className="text-sm text-[#4A4D4E]">Start Date</label>
-            <input
-              type="date"
-              name="start_date"
-              value={projectData.start_date}
-              onChange={handleInputChange}
-              className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-sm text-[#4A4D4E]">
-              Target Closure
-            </label>
-            <input
-              type="date"
-              name="end_date"
-              value={projectData.end_date}
-              onChange={handleInputChange}
-              className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-            />
-          </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-[#4A4D4E]">Start Date</label>
+          <input
+            type="date"
+            name="start_date"
+            placeholder="MM/DD/YYYY"
+            value={projectData.start_date}
+            onChange={handleInputChange}
+            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-[#4A4D4E]">Target Closure</label>
+          <input
+            type="date"
+            name="end_date"
+             placeholder="MM/DD/YYYY"
+            value={projectData.end_date}
+            onChange={handleInputChange}
+            className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
+          />
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default ProjectEntryTabOne;

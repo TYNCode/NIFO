@@ -10,7 +10,7 @@ const ProjectDescriptionTabOne: React.FC<ProjectDescriptionTabOneProps> = ({
   handleInputChange
 }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-2/6">
       <div className="text-lg font-semibold text-[#4A4D4E]">
         Project Description
       </div>

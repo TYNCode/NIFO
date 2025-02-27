@@ -27,11 +27,6 @@ export interface ProjectData {
 }
 
 
-
-
-
-
-
 interface ProjectDetailsProps {
   projectID: string;
   projectDescription: string;
@@ -39,10 +34,6 @@ interface ProjectDetailsProps {
   setQuestionnaireData: any;
 }
 
-
-
-
-// Main ProjectDetails Component
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
   projectDescription,
@@ -175,14 +166,14 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
   return (
     <>
-      <div className="bg-[#F4FCFF]">
+      <div className="bg-[#F4FCFF] max-w-[80vw] w-full">
         {fetchLoading ? (
           <div className="flex justify-center items-center py-8">
             <div className="text-[#4A4D4E]">Loading project details...</div>
           </div>
         ) : (
           <div>
-            <div className="flex flex-row gap-6 justify-center">
+            <div className="flex flex-row gap-6 max-w-[80vw] w-full justify-center">
               <ProjectEntryTabOne 
                 projectData={projectData}
                 handleInputChange={handleInputChange}
@@ -209,7 +200,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
               />
             </div>
 
-            <div className="flex flex-row gap-4 justify-end items-end mt-4">
+            <div className="flex flex-row gap-4 justify-end items-end my-5">
               {responseMessage && (
                 <div
                   className={`px-4 py-2 rounded ${responseMessage.includes("success") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
@@ -225,7 +216,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                   <BiSave />
                 </div>
                 <div className="font-semibold">
-                  {loading ? "Saving..." : "Save & Continue"}
+                  {loading ? "Saving & Generating Questionairre..." : "Save & Continue"}
                 </div>
               </div>
               <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
