@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { CiPlay1 } from "react-icons/ci";
 import ProjectDetails from "./ProjectDetails";
 import ProblemInput from "./ProblemInput";
 
@@ -10,7 +9,7 @@ const OneTabStepOne = () => {
     const [responseData, setResponseData] = useState<string | null>(null);
     const [projectID, setProjectID] = useState<string | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-    const lineHeight = 12;
+    const lineHeight = 24;
     const maxRows = 4;
 
     useEffect(() => {
@@ -87,23 +86,25 @@ const OneTabStepOne = () => {
 
                 </div>
             ) : (
-                <div>
-                    <div className="text-sm font-semibold">Let me define the Problem Statement</div>
-                    <ProblemInput
-                        textareaRef={textareaRef}
-                        problemStatement={problemStatement}
-                        handleChange={handleChange}
-                        lineHeight={lineHeight}
-                        maxRows={maxRows}
-                        handleSubmit={handleSubmit}
-                        loading={loading}
-                    />
-                    <div className="mt-16">
-                        <ProjectDetails
-                            projectID={projectID}
-                            projectDescription={responseData}
-                        />
+                <div className="flex flex-col justify-center items-center gap-12 mt-16">
+                    <div className="">
+                            <ProblemInput
+                                textareaRef={textareaRef}
+                                problemStatement={problemStatement}
+                                handleChange={handleChange}
+                                lineHeight={lineHeight}
+                                maxRows={maxRows}
+                                handleSubmit={handleSubmit}
+                                loading={loading}
+                            />
                     </div>
+
+                        <div className="">
+                            <ProjectDetails
+                                projectID={projectID}
+                                projectDescription={responseData}
+                            />
+                        </div>
                 </div>
             )}
         </div>
