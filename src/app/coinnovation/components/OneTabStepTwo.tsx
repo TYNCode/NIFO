@@ -12,7 +12,7 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = () => {
   });
 
   return (
-    <div className="p-4 w-full flex gap-20 h-screen bg-[#F4FCFF]">
+    <div className="p-4 w-full flex h-screen bg-[#F4FCFF]">
       <div className="w-[30%]">
         <ProjectDetailsInQuestionairre
           projectID={projectDetails.projectID}
@@ -20,7 +20,7 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = () => {
         />
       </div>
       <div className="border-l-[1px] border-[#f18b47] h-full"></div>
-      <div className="w-[75%]">
+      <div className="w-[70%]">
         <Questionairre />
       </div>
     </div>

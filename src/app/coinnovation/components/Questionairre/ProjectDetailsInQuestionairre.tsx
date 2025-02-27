@@ -87,7 +87,7 @@ const ProjectDetailsInQuestionairre: React.FC<
   };
 
   return (
-    <div className="px-16 bg-[#F4FCFF]">
+    <div className="px-8 bg-[#F4FCFF]">
       <div className="flex flex-col gap-6 justify-center">
         <ProjectEntry
           projectData={{
