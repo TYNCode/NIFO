@@ -3,6 +3,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin6Line, RiEditFill } from 'react-icons/ri';
 import data from '../../data/ccd.json'
+import axios from 'axios';
 interface OneTabStepThreeProps {
 }
 
@@ -10,11 +11,12 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     const [challengeTab, setChallengeTab] = useState("Focus Areas");
     const [endUserTab, setEndUserTab] = useState("Roles");
     const [outcomeTab, setOutcomeTab] = useState("Functional Requirements");
-
     const [isChallengeOpen, setChallengeOpen] = useState(true);
     const [isEndUserOpen, setEndUserOpen] = useState(false);
     const [isOutcomeOpen, setOutcomeOpen] = useState(false);
-
+    const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
+    const [docxFileUrl, setDocxFileUrl] = useState('')
+    const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
     const challengeScenarioData = data?.final_document?.["Challenge Scenario"]?.[0] || {};
     const endUserProfileData = data?.final_document?.["Profile of the End-Users"]?.[0] || {};
     const getChallengeTabData = (key) => {
@@ -65,13 +67,33 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
         if (section === "outcome") setOutcomeOpen(!isOutcomeOpen);
     };
 
+    const callGenerateDocxAPI = async (jsonData) => {
+        console.log("document issssssssss generated")
+        setIsGeneratingDocx(true);
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}/generate-docx/`,
+                jsonData,
+                { headers: { "Content-Type": "application/json" }, responseType: "blob" }
+            );
+            const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            const url = window.URL.createObjectURL(blob);
+            setDocxFileUrl(url);
+
+        } catch (error) {
+            console.error("Error generating DOCX document:", error);
+            alert("Failed to generate DOCX document.");
+        } finally {
+            setIsGeneratingDocx(false);
+        }
+    };
+
     const kpiTable = data.final_document["Operational KPI Metrics Table"];
     console.log(kpiTable);
     const metricKeys = Object.keys(kpiTable);
 
     return (
         <div className='bg-[#F4FCFF] px-4 py-4 flex flex-col gap-4'>
-
             <div>
                 <div className='flex flex-row items-center justify-between px-6 py-4 bg-white rounded-[8px]'>
                     <div className='flex flex-col '>
@@ -261,7 +283,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                     </div>
                     <div className='text-[12px]'>Save</div>
                 </button>
-                <button className='flex flex-row gap-2 bg-[#979797] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'>
+                <button className='flex flex-row gap-2 bg-[#979797] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]' onClick={callGenerateDocxAPI}>
                     <div>
                         <img src='/coinnovation/pdd-icon.svg' className=''/>
                     </div>
