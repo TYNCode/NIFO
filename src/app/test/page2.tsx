@@ -33,7 +33,7 @@ const [isQuestionnaireLoading, setIsQuestionnaireLoading] = useState(false);
 const [isQuestionnaireUploaded, setIsQuestionnaireUploaded] = useState(false);
 const [questionnaireAnswers, setQuestionnaireAnswers] = useState({})
 const [nifoAnswers , setNifoAnswers] = useState({});
-const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
+const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
 
 const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];

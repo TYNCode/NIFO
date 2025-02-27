@@ -27,11 +27,6 @@ export interface ProjectData {
 }
 
 
-
-
-
-
-
 interface ProjectDetailsProps {
   projectID: string;
   projectDescription: string;
@@ -39,10 +34,6 @@ interface ProjectDetailsProps {
   setQuestionnaireData: any;
 }
 
-
-
-
-// Main ProjectDetails Component
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
   projectDescription,

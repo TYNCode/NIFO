@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
       try {
         setIsLoadingStartups(true);
         const response = await fetch(
-          "https://tyn-server.azurewebsites.net/adminroutes/api/startups/"
+          "http://127.0.0.1:8000/adminroutes/api/startups/"
         );
         if (!response.ok) throw new Error("Failed to fetch startups");
 
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://tyn-server.azurewebsites.net/adminroutes/api/users/?page=${page}`
+        `http://127.0.0.1:8000/adminroutes/api/users/?page=${page}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch users");

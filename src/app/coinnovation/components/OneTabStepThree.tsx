@@ -17,7 +17,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     const [isOutcomeOpen, setOutcomeOpen] = useState(false);
     const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
     const [docxFileUrl, setDocxFileUrl] = useState('')
-    const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
+    const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
     const challengeScenarioData = data?.final_document?.["Challenge Scenario"]?.[0] || {};
     const endUserProfileData = data?.final_document?.["Profile of the End-Users"]?.[0] || {};
     const getChallengeTabData = (key) => {
@@ -100,7 +100,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
             setIsGeneratingDocx(false);
         }
     };
-    
+
     const kpiTable = data.final_document["Operational KPI Metrics Table"];
     console.log(kpiTable);
     const metricKeys = Object.keys(kpiTable);

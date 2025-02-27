@@ -148,7 +148,7 @@ export default function HomePage() {
 
     try {
       const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/prompt/chat/",
+        "http://127.0.0.1:8000/prompt/chat/",
         userQuery,
         {
           headers: {
@@ -193,7 +193,7 @@ export default function HomePage() {
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
-          `https://tyn-server.azurewebsites.net/prompt/sessions/${sessionId}/conversations`,
+          `http://127.0.0.1:8000/prompt/sessions/${sessionId}/conversations`,
           {
             headers: {
               Authorization: `Bearer ${jwtAccessToken}`,
@@ -252,7 +252,7 @@ export default function HomePage() {
 
     try {
       const response = await postRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/prompt/compareresults/",
+        "http://127.0.0.1:8000/prompt/compareresults/",
         messages[messageIndex]
       );
 
