@@ -1,23 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { IoChevronDownOutline } from "react-icons/io5";
+
 import { CiPlay1 } from "react-icons/ci";
 import { BiSave } from "react-icons/bi";
 import axios from "axios";
+import ProjectEntryTabOne from "./ProjectCreation/ProjectEntryTabOne";
+import EnterpriseEntryTabOne from "./ProjectCreation/EnterpriseEntryTabOne";
+import ProjectDescriptionTabOne from "./ProjectCreation/ProjectDescriptionTabOne";
+
+export interface ProjectData {
+  project_id: string;
+  project_name: string;
+  priority: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  enterprise: string;
+  owner: string;
+  approver: string;
+  category: string;
+  department: string;
+  business_unit: string;
+  location: string;
+  project_description: string;
+  problem_statement: string;
+  context: string;
+}
+
+
+
+
+
+
 
 interface ProjectDetailsProps {
   projectID: string;
   projectDescription: string;
   problemStatement: string;
-  setQuestionnaireData:any;
+  setQuestionnaireData: any;
 }
 
+
+
+
+// Main ProjectDetails Component
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
   projectDescription,
   problemStatement,
   setQuestionnaireData
 }) => {
-  const [projectData, setProjectData] = useState({
+  const [projectData, setProjectData] = useState<ProjectData>({
     project_id: projectID,
     project_name: "",
     priority: "",
@@ -45,16 +77,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
   console.log("projectId",projectID)
   console.log("projectDescription", projectData)
-  const optionsPriority = ["Critical", "High", "Medium", "Low"];
-  const optionsStatus = [
-    "To Do",
-    "In Progress",
-    "In Review",
-    "Done",
-    "Blocked",
-    "Waiting for Approval",
-    "Cancelled",
-  ];
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -114,7 +136,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     "project_id": projectID,
     "problem_statement": problemStatement,
     "context": projectDescription,
-}
+  }
 
   const handleSaveandContinue = async () => {
     setLoading(true);
@@ -161,178 +183,30 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         ) : (
           <div>
             <div className="flex flex-row gap-6 justify-center">
-              <div className="flex flex-col gap-4">
-                <div className="text-[#4A4D4E] text-lg font-semibold">
-                  Project Entry Details
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-sm text-[#4A4D4E]">Project ID</label>
-                  <input
-                    type="text"
-                    className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                    name="project_id"
-                    value={projectData.project_id}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-sm text-[#4A4D4E]">Project Name</label>
-                  <input
-                    type="text"
-                    className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                    name="project_name"
-                    value={projectData.project_name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="relative">
-                  <label className="text-sm text-[#4A4D4E]">Priority</label>
-                  <div
-                    className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 cursor-pointer bg-white w-full"
-                    onClick={() => setIsOpenPriority(!isOpenPriority)}
-                  >
-                    <span className="text-[#4A4D4E] text-sm">
-                      {projectData.priority || "Select an option"}
-                    </span>
-                    <IoChevronDownOutline
-                      className={`transition-transform text-sm font-light text-[#979797] ${isOpenPriority ? "rotate-180" : ""}`}
-                    />
-                  </div>
-
-                  {isOpenPriority && (
-                    <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
-                      {optionsPriority.map((option, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
-                          onClick={() => handleSelectPriority(option)}
-                        >
-                          {option}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="relative">
-                  <label className="text-sm text-[#4A4D4E]">Status</label>
-                  <div
-                    className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-sm"
-                    onClick={() => setIsOpenStatus(!isOpenStatus)}
-                  >
-                    <span className="text-[#4A4D4E]">
-                      {projectData.status || "Select an option"}
-                    </span>
-                    <IoChevronDownOutline
-                      className={`transition-transform text-sm font-light text-[#979797] ${isOpenStatus ? "rotate-180" : ""}`}
-                    />
-                  </div>
-
-                  {isOpenStatus && (
-                    <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
-                      {optionsStatus.map((option, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
-                          onClick={() => handleSelectStatus(option)}
-                        >
-                          {option}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col">
-                    <label className="text-sm text-[#4A4D4E]">Start Date</label>
-                    <input
-                      type="date"
-                      name="start_date"
-                      value={projectData.start_date}
-                      onChange={handleInputChange}
-                      className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-sm text-[#4A4D4E]">
-                      Target Closure
-                    </label>
-                    <input
-                      type="date"
-                      name="end_date"
-                      value={projectData.end_date}
-                      onChange={handleInputChange}
-                      className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                    />
-                  </div>
-                </div>
-              </div>
+              <ProjectEntryTabOne 
+                projectData={projectData}
+                handleInputChange={handleInputChange}
+                isOpenPriority={isOpenPriority}
+                setIsOpenPriority={setIsOpenPriority}
+                isOpenStatus={isOpenStatus}
+                setIsOpenStatus={setIsOpenStatus}
+                handleSelectPriority={handleSelectPriority}
+                handleSelectStatus={handleSelectStatus}
+              />
 
               <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
 
-              <div className="flex flex-col gap-4">
-                <div className="text-lg font-semibold text-[#4A4D4E]">
-                  Enterprise Details
-                </div>
-
-                {["enterprise", "owner", "approver"].map((field, index) => (
-                  <div key={index} className="flex flex-col">
-                    <label className="text-sm text-[#4A4D4E]">
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </label>
-                    <input
-                      type="text"
-                      name={field}
-                      value={projectData[
-                        field as keyof typeof projectData
-                      ]?.toString()}
-                      onChange={handleInputChange}
-                      className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                    />
-                  </div>
-                ))}
-
-                <div className="grid grid-cols-2 gap-4">
-                  {["category", "department", "business_unit", "location"].map(
-                    (field, index) => (
-                      <div key={index} className="flex flex-col">
-                        <label className="text-sm text-[#4A4D4E]">
-                          {field.replace("_", " ").charAt(0).toUpperCase() +
-                            field.replace("_", " ").slice(1)}
-                        </label>
-                        <input
-                          type="text"
-                          name={field}
-                          value={projectData[
-                            field as keyof typeof projectData
-                          ]?.toString()}
-                          onChange={handleInputChange}
-                          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full"
-                        />
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
+              <EnterpriseEntryTabOne 
+                projectData={projectData}
+                handleInputChange={handleInputChange}
+              />
 
               <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
 
-              <div className="flex flex-col">
-                <div className="text-lg font-semibold text-[#4A4D4E]">
-                  Project Description
-                </div>
-                <textarea
-                  name="project_description"
-                  value={projectData.project_description}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="rounded-md focus:ring-0 border-[#56A8F0] border-[1px] w-full px-2 resize-none 
-                   text-[#4A4D4E] text-sm font-normal mt-2"
-                />
-              </div>
+              <ProjectDescriptionTabOne 
+                projectData={projectData}
+                handleInputChange={handleInputChange}
+              />
             </div>
 
             <div className="flex flex-row gap-4 justify-end items-end mt-4">
@@ -368,4 +242,4 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   );
 };
 
-export default ProjectDetails;
+export {ProjectDescriptionTabOne, ProjectDetails };

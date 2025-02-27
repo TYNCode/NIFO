@@ -36,7 +36,7 @@ const ProgressOne: React.FC = () => {
   }, [activeTab, problemStatement, responseData, projectID]);
 
 
-  const isTab2Enabled = !!questionnaireData; 
+  const isTab2Enabled = !!activeTab; 
   const isTab3Enabled = !!questionnaireData; 
 
   return (
