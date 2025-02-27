@@ -142,12 +142,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         `http://127.0.0.1:8000/coinnovation/generate-questions/`,
         questionairreBody 
       );
-
-
       setQuestionnaireData(responseofquestionairre.data.data)
-
-      
-
     } catch (error) {
       setResponseMessage("Failed to update project. Please try again.");
       console.error("Error:", error);

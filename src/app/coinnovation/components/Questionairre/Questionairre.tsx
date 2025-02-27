@@ -188,7 +188,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <div className="p-3">
-        {Object.entries(questionnaireData.categories).map(
+        {Object?.entries(questionnaireData?.categories).map(
           ([category, details], index) => (
             <div key={category} className="mb-4">
               <div className="flex justify-between items-center bg-white p-3 rounded-lg">
