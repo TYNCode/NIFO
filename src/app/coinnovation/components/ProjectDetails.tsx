@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { BiSave } from "react-icons/bi";
-import { FiEdit2 } from "react-icons/fi";
 import axios from "axios";
 
 interface ProjectDetailsProps {
@@ -90,12 +89,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectID, projectDescr
 
     return (
         <>
-        <div>
-          <div>
-            
-          </div>
-        </div>
-        <div className="px-16  bg-[#F4FCFF]">
+        <div className="bg-[#F4FCFF]">
                 <div className="flex flex-row gap-6 justify-center">
                     <div className="flex flex-col gap-4">
                         <div className="text-[#4A4D4E] text-lg font-semibold">Project Entry Details</div>
@@ -260,7 +254,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectID, projectDescr
                     </div>
                 </div>
         </div>
-            
         </>
      
     );

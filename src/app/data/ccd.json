@@ -1,83 +1,100 @@
 {
     "final_document": {
-        "Challenge Summary": "A high-level summary of the challenge.",
+        "Challenge Summary": "The accumulation of scrap on one side of the bin due to uneven distribution from the conveyor system leads to inefficient use of space and potential overflow issues. This challenge necessitates a solution for balanced scrap distribution within the bin to optimize operations and reduce waste.",
         "Challenge Scenario": [
             {
-                "Overview": "Aluminum is extracted from alumina in a potline with a process called the Hall-Heroult process. In the plant, there are new and older potlines. The new potline has no issues, and in the older potline, they have identified the weaker shells. Whenever the temperature is above the threshold, the side shell will become red-hot and start spilling the molten aluminium metal."
+                "Overview": "The current conveyor system design results in a fixed output angle, causing scrap material to flow unevenly into the bin. As a result, one side of the bin becomes overloaded while the other remains underutilized. This imbalance not only wastes valuable space but also poses risks of overflow, which can disrupt operations and increase labor costs associated with manual redistribution."
             },
             {
                 "Focus Areas": [
-                    {
-                        "Key Area 1": "Install sensors to monitor the temperature of the side shell."
-                    }
+                    "Conveyor Design Optimization: Redesign the conveyor system to allow for adjustable output angles to promote even distribution of scrap material.",
+                    "Automated Redistribution: Implement automated mechanisms to redistribute scrap evenly across the bin, minimizing manual intervention.",
+                    "Real-Time Monitoring: Establish a real-time monitoring system to track scrap levels and distribution within the bin, allowing for proactive management of imbalances.",
+                    "Space Utilization: Maximize the use of available bin space to prevent overflow and enhance operational efficiency."
                 ]
             },
             {
                 "Technical Requirements": [
-                    {
-                        "Requirement 1": "Implement an alert system that sends notifications to operators when temperatures exceed the threshold."
-                    }
+                    "Adjustable Conveyor System: A conveyor system that allows for variable output angles to facilitate even distribution of scrap material.",
+                    "Automated Redistribution Mechanism: A system that can automatically redistribute scrap within the bin using actuators or conveyor belts.",
+                    "Real-Time Monitoring Sensors: Sensors that provide continuous feedback on scrap levels and distribution, integrated with a user interface for monitoring.",
+                    "Data Analytics Software: Software to analyze scrap distribution patterns and optimize the conveyor settings based on real-time data.",
+                    "Power Supply Compatibility: Ensure that all new equipment is compatible with existing power supply systems in the facility."
                 ]
             },
             {
                 "Expected Benefits": [
-                    {
-                        "Benefit 1": "Prevent spillage by addressing temperature irregularities in real time."
-                    }
+                    "Increased Efficiency: Improved operational efficiency by reducing the need for manual redistribution of scrap.",
+                    "Space Optimization: Enhanced utilization of bin space, leading to fewer overflow incidents and reduced waste disposal costs.",
+                    "Labor Cost Reduction: Decreased labor costs associated with monitoring and managing scrap distribution.",
+                    "Proactive Management: Ability to address imbalances proactively through real-time monitoring, reducing downtime and operational disruptions."
                 ]
             }
         ],
         "Profile of the End-Users": [
-            "Aluminum smelters, operators and maintenance personnel working in aluminum extraction plants."
+            {
+                "Role": "Plant operators and maintenance engineers responsible for managing scrap handling and disposal processes. They typically have experience in operational efficiency and are familiar with the challenges associated with scrap accumulation."
+            },
+            {
+                "Current methods to overcome the challenge": [
+                    "Manual Redistribution: Operators currently redistribute scrap manually, which is labor-intensive and inefficient.",
+                    "Periodic Monitoring: Daily checks are performed to assess scrap levels, but imbalances are often addressed reactively rather than proactively."
+                ]
+            }
         ],
         "Outcomes (Requirements & KPIs)": {
             "Functional Requirements": [
-                {
-                    "Requirement 1": "Install sensors to monitor the temperature of the side shell."
-                },
-                {
-                    "Requirement 2": "Implement an alert system that sends notifications to operators when temperatures exceed the threshold."
-                }
+                "Real-Time Monitoring System: Implement sensors to continuously monitor scrap levels and distribution within the bin.",
+                "Automated Redistribution: Develop a system that can automatically adjust the flow of scrap based on real-time data to ensure even distribution.",
+                "User Interface: Create a user-friendly interface for operators to monitor scrap levels and receive alerts for imbalances.",
+                "Data Logging: Store historical data on scrap distribution for analysis and optimization of the conveyor system."
             ],
             "Constraints": [
-                {
-                    "Constraint 1": "Existing infrastructure and resources of the plant must be taken into consideration."
-                }
+                "Space Limitations: New equipment must fit within the existing layout of the facility without requiring significant structural changes.",
+                "Integration Challenges: Ensure that new systems can be integrated with existing conveyor and bin structures without major disruptions."
             ],
             "Anticipated high-level % improvements & % reduction in KPIs possible through this initiative": [
-                {
-                    "Improvement 1": "100% reduction in spillage by addressing temperature irregularities in real time."
-                }
+                "Efficiency Improvement: Anticipated 20-30% improvement in operational efficiency due to reduced manual intervention.",
+                "Labor Cost Reduction: Expected 15-25% reduction in labor costs associated with scrap management.",
+                "Overflow Incidents: Projected 40-50% reduction in overflow incidents due to better space utilization."
             ],
             "List of Features & Functionalities": [
-                {
-                    "Feature 1": "Sensors to monitor the temperature of the side shell."
-                },
-                {
-                    "Feature 2": "An alert system that sends notifications to operators when temperatures exceed the threshold."
-                }
+                "Adjustable Conveyor Angles: Ability to change the angle of the conveyor output to optimize scrap distribution.",
+                "Automated Redistribution System: Mechanisms to redistribute scrap automatically within the bin.",
+                "Real-Time Monitoring Dashboard: A dashboard displaying current scrap levels and alerts for imbalances.",
+                "Data Analytics: Tools for analyzing scrap distribution patterns and optimizing operations based on historical data."
             ]
         },
         "Operational KPI Metrics Table": {
             "Operational KPI Metrics": [
-                "Spillage volume",
-                "Temperature fluctuations"
+                "Scrap Overflow Incidents",
+                "Labor Costs for Scrap Management",
+                "Operational Efficiency",
+                "Space Utilization Rate"
             ],
             "Baseline KPI (Unit of Measurement)": [
-                "Tons",
-                "%"
+                "Number of Incidents",
+                "Cost (INR/month)",
+                "Efficiency (%)",
+                "Space Utilization (%)"
             ],
             "Baseline # (Baseline Period)": [
-                "1000 tons",
-                "5%"
+                "TBD",
+                "TBD",
+                "TBD",
+                "TBD"
             ],
             "Target (Expected)": [
-                "0 tons",
-                "0%"
+                "TBD",
+                "TBD",
+                "TBD",
+                "TBD"
             ],
             "Expected Timeline to achieve 100% Target": [
-                "6 months",
-                ""
+                "TBD",
+                "TBD",
+                "TBD",
+                "TBD"
             ]
         }
     }
