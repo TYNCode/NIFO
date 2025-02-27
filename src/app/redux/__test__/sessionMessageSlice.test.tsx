@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import sessionMessageReducer, { fetchSessionMessages } from "../features/chat/sessionMessageSlice"; // Adjust the path if necessary
 import { StartupType } from "../../interfaces"; // Adjust the path as needed
 import axios from "axios"; // Import axios directly for mocking
+// import mockConversations from "./mockConversation";
 
 jest.mock("axios"); // Mock axios module
 const mockedAxios = axios as jest.Mocked<typeof axios>; // Type the mock to access mockResolvedValueOnce
@@ -15,16 +16,18 @@ describe("sessionMessageSlice", () => {
 
   const mockConversations = [
     {
-      question: "What is your name?",
+      question:
+        "Can you provide companies which will help in Real-time quality monitoring of water at every process step",
       response: {
         success: true,
-        category: "General",
-        response: "I am a chatbot.",
+        category: "direct user query",
+        response:
+          "Here are several companies that specialize in real-time quality monitoring of water across various process steps:",
         startups: [
           {
-            name: "Startup1",
+            name: "KarIOT",
             description: "A cool startup",
-            database_info: { id: 1, name: "Database1" },
+            database_info: { /* Add the appropriate StartupType data here */ },
           },
         ],
       },
@@ -70,6 +73,7 @@ describe("sessionMessageSlice", () => {
     const store = configureStore({ reducer: { sessionMessage: sessionMessageReducer } });
 
     await store.dispatch(fetchSessionMessages("123"));
+
 
     const state = store.getState().sessionMessage;
 
