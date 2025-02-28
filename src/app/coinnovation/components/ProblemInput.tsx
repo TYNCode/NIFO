@@ -54,7 +54,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
           <div className="w-full flex items-center relative">
             <textarea
               ref={textareaRef}
-              className="w-full border border-gray-300 focus:ring-[1px] focus:ring-[#2286C0] px-4 py-3 pr-12 resize-none overflow-auto
+              className="w-full border border-gray-300 focus:ring-[0px] focus:border-[#2286C0] focus:border-[1px] focus:ring-[#2286C0] px-4 py-3 pr-12 resize-none overflow-auto
                             rounded-xl shadow-md placeholder-gray-400 leading-6 text-sm scrollbar-thin"
               value={problemStatement}
               onChange={handleChange}

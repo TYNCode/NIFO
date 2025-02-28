@@ -32,13 +32,15 @@ interface ProjectDetailsProps {
   projectDescription: string;
   problemStatement: string;
   setQuestionnaireData: any;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
   projectDescription,
   problemStatement,
-  setQuestionnaireData
+  setQuestionnaireData,
+  setActiveTab
 }) => {
   const [projectData, setProjectData] = useState<ProjectData>({
     project_id: projectID,
@@ -156,6 +158,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         questionairreBody 
       );
       setQuestionnaireData(responseofquestionairre.data.data)
+      setActiveTab("01.b"); 
     } catch (error) {
       setResponseMessage("Failed to update project. Please try again.");
       console.error("Error:", error);
@@ -219,12 +222,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                   {loading ? "Saving & Generating Questionairre..." : "Save & Continue"}
                 </div>
               </div>
-              <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+              {/* <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
                 <div>
                   <CiPlay1 />
                 </div>
                 <div className="font-semibold">Skip</div>
-              </div>
+              </div> */}
             </div>
           </div>
         )}

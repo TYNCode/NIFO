@@ -279,14 +279,14 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
             </div>
 
             <div className='flex flex-row gap-4 justify-end'>
-                <button className='flex flex-row gap-2 bg-[#2286C0] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'>
+                {/* <button className='flex flex-row gap-2 bg-[#2286C0] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'>
                     <div>
                         <img src='/coinnovation/savepdd-icon.svg'/>
                     </div>
                     <div className='text-[12px]'>Save</div>
-                </button>
+                </button> */}
                 <button
-                    className='flex flex-row gap-2 bg-[#979797] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'
+                    className='flex flex-row gap-2 bg-[#2286C0] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'
                     onClick={() => callGenerateDocxAPI(jsonData)} 
                 >
                     <div>
