@@ -1,28 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { ProjectData } from "../coinnovation/components/ProjectDetails";
 
-interface Project {
-  project_id: string;
-  project_name: string | null;
-  priority: string;
-  status: string;
-  start_date: string | null;
-  end_date: string | null;
-  enterprise: string | null;
-  owner: string | null;
-  approver: string | null;
-  category: string | null;
-  department: string | null;
-  business_unit: string | null;
-  location: string | null;
-  project_description: string;
-  context: string | null;
-  problem_statement: string | null;
-}
 
 const ProjectLists: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -46,14 +29,24 @@ const ProjectLists: React.FC = () => {
     }
   };
 
+  const handleCreateProject = ()=> {
+    console.log("handleCreateProjectttt")
+    router.push("/coinnovation")
+  }
+
   return (
     <div className="p-6 bg-[#F5FCFF] min-h-screen ">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Project Management</h2>
+        <div className="flex flex-row gap-5">
         <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
+          View Status
+        </button>
+        <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]" onClick={handleCreateProject}>
           + Create Project
         </button>
+        </div>
       </div>
 
       {/* Table Header (Using div to simulate table header) */}
@@ -81,7 +74,8 @@ const ProjectLists: React.FC = () => {
           >
             {/* Enterprise */}
             <div className="col-span-1 font-medium text-gray-800">
-              {project.enterprise ?? "N/A"}
+              {/* {project.enterprise ?? "N/A"} */}
+              <img src={project.enterprise_img ?? "N/A"} alt={project.enterprise} />
             </div>
 
             {/* Project ID and Name */}

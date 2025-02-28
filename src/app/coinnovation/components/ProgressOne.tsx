@@ -3,40 +3,52 @@ import OneTabStepOne from "./OneTabStepOne";
 import OneTabStepTwo from "./OneTabStepTwo";
 import OneTabStepThree from "./OneTabStepThree";
 
-const ProgressOne: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("01.a");
-  const [problemStatement, setProblemStatement] = useState("");
+// Define the type for props
+interface ProgressOneProps {
+  projectID: string | null;
+  setProjectID: (id: string | null) => void;
+}
+
+const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) => {
+  const [activeTab, setActiveTab] = useState<string>("01.a");
+  const [problemStatement, setProblemStatement] = useState<string>("");
   const [responseData, setResponseData] = useState<string | null>(null);
-  const [projectID, setProjectID] = useState<string | null>(null);
-  const [questionnaireData, setQuestionnaireData] = useState(null);
-  const [jsonForDocument , setJsonForDocument] = useState({})
-  
+  const [questionnaireData, setQuestionnaireData] = useState<any>(null);
+  const [jsonForDocument, setJsonForDocument] = useState<Record<string, any>>({});
+
+  // Load from localStorage on initial mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       setActiveTab(localStorage.getItem("activeTab") || "01.a");
       setProblemStatement(localStorage.getItem("problemStatement") || "");
       setResponseData(localStorage.getItem("responseData") || null);
-      setProjectID(localStorage.getItem("projectID") || null);
-    }
-  }, []);
 
+      const storedProjectID = localStorage.getItem("projectID");
+      if (storedProjectID) {
+        setProjectID(storedProjectID);
+      }
+    }
+  }, [setProjectID]);
+
+  // Persist to localStorage when state changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("activeTab", activeTab);
       localStorage.setItem("problemStatement", problemStatement);
-      responseData
-        ? localStorage.setItem("responseData", responseData)
-        : localStorage.removeItem("responseData");
 
-      projectID
-        ? localStorage.setItem("projectID", projectID)
-        : localStorage.removeItem("projectID");
+      if (responseData) {
+        localStorage.setItem("responseData", responseData);
+      } else {
+        localStorage.removeItem("responseData");
+      }
+
+      if (projectID) {
+        localStorage.setItem("projectID", projectID);
+      } else {
+        localStorage.removeItem("projectID");
+      }
     }
   }, [activeTab, problemStatement, responseData, projectID]);
-
-
-  // const isTab2Enabled = !!activeTab; 
-  // const isTab3Enabled = !!questionnaireData; 
 
   return (
     <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
@@ -72,7 +84,7 @@ const ProgressOne: React.FC = () => {
             setQuestionnaireData={setQuestionnaireData}
           />
         )}
-        {activeTab === "01.b"  && (
+        {activeTab === "01.b" && (
           <OneTabStepTwo
             projectID={projectID}
             problemStatement={problemStatement}
@@ -83,9 +95,12 @@ const ProgressOne: React.FC = () => {
             setJsonForDocument={setJsonForDocument}
           />
         )}
-        {activeTab === "01.c" && <OneTabStepThree 
-        jsonForDocument = {jsonForDocument}
-        setJsonForDocument = {setJsonForDocument}/>}
+        {activeTab === "01.c" && (
+          <OneTabStepThree
+            jsonForDocument={jsonForDocument}
+            setJsonForDocument={setJsonForDocument}
+          />
+        )}
       </div>
     </div>
   );

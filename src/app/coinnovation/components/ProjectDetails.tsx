@@ -14,7 +14,8 @@ export interface ProjectData {
   status: string;
   start_date: string;
   end_date: string;
-  group_company?: string; 
+  group_company: string; 
+  enterprise_img: any;
   enterprise: string;
   owner: string;
   approver: string;
@@ -59,6 +60,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     problem_statement:
       "",
     context: "",
+    enterprise_img:"",
   });
 
   const [isOpenPriority, setIsOpenPriority] = useState(false);

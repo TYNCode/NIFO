@@ -5,7 +5,7 @@ import { ProjectData } from "../ProjectDetails";
 interface EnterpriseEntryTabOneProps {
     projectData: ProjectData;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    handleDropdownChange: (field: string, value: string) => void; // New prop
+    handleDropdownChange: (field: string, value: string) => void;
 }
 
 const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
@@ -18,45 +18,55 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
 
     const groupCompanyOptions = ["Vedanta", "Tata"];
 
-    const enterpriseOptions: Record<string, string[]> = {
-        Vedanta: [
-            "Bharat Aluminium Company",
-            "Vedanta Aluminium",
-            "Jharsuguda Aluminium Smelter",
-            "Cairn Oil & Gas",
-            "Mangala Oil Field",
-            "Ravva Oil Field",
-            "Electrosteel Steels",
-            "Sesa Goa Iron Ore",
-            "Hindustan Zinc",
-            "Sterlite Copper",
-            "Talwandi Sabo Power Limited",
-            "Malco Energy",
-            "Ferro Alloys Corporation",
-        ],
-        Tata: [
-            "Tata Steel",
-            "Tata Power",
-            "Tata Projects",
-            "Tata Housing",
-            "Tata Motors",
-            "Tata Chemicals",
-            "Tata Digital",
-            "Titan Company",
-            "Tata Consumer Products",
-            "Air India Limited",
-        ],
-    };
+    const vedantaCompanies = [
+        { id: 1, title: "Bharat Aluminium Company", imageurl: "" },
+        { id: 2, title: "Vedanta Aluminium", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740722126/tatasteel_tpdier.jpg" },
+        { id: 3, title: "Jharsuguda Aluminium Smelter", imageurl: "" },
+        { id: 4, title: "Cairn Oil & Gas", imageurl: "" },
+        { id: 5, title: "Mangala Oil Field", imageurl: "" },
+        { id: 6, title: "Ravva Oil Field", imageurl: "" },
+        { id: 7, title: "Electrosteel Steels", imageurl: "" },
+        { id: 8, title: "Sesa Goa Iron Ore", imageurl: "" },
+        { id: 9, title: "Hindustan Zinc", imageurl: "" },
+        { id: 10, title: "Sterlite Copper", imageurl: "" },
+        { id: 11, title: "Talwandi Sabo Power Limited", imageurl: "" },
+        { id: 12, title: "Malco Energy", imageurl: "" },
+        { id: 13, title: "Ferro Alloys Corporation", imageurl: "" },
+    ];
 
-    const handleSelectGroupCompany = (option: string) => {
-        handleDropdownChange("group_company", option);
-        handleDropdownChange("enterprise", ""); // Clear enterprise when group changes
+    const tataCompanies = [
+        { id: 1, title: "Tata Steel", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740722126/tatasteel_tpdier.jpg" },
+        { id: 2, title: "Tata Power", imageurl: "" },
+        { id: 3, title: "Tata Projects", imageurl: "" },
+        { id: 4, title: "Tata Housing", imageurl: "" },
+        { id: 5, title: "Tata Motors", imageurl: "" },
+        { id: 6, title: "Tata Chemicals", imageurl: "" },
+        { id: 7, title: "Tata Digital", imageurl: "" },
+        { id: 8, title: "Titan Company", imageurl: "" },
+        { id: 9, title: "Tata Consumer Products", imageurl: "" },
+        { id: 10, title: "Air India Limited", imageurl: "" },
+    ];
+
+    const handleSelectGroupCompany = (group: string) => {
+        handleDropdownChange("group_company", group);
+        handleDropdownChange("enterprise", "");
+        handleDropdownChange("enterprise_img", "");
         setIsOpenGroupCompany(false);
     };
 
-    const handleSelectEnterprise = (option: string) => {
-        handleDropdownChange("enterprise", option);
+    const handleSelectEnterprise = (enterprise: { title: string; imageurl: string }) => {
+        handleDropdownChange("enterprise", enterprise.title);
+        handleDropdownChange("enterprise_img", enterprise.imageurl);
         setIsOpenEnterprise(false);
+    };
+
+    const getEnterpriseList = () => {
+        if (projectData.group_company === "Vedanta") {
+            return vedantaCompanies;
+        } else if (projectData.group_company === "Tata") {
+            return tataCompanies;
+        }
+        return [];
     };
 
     return (
@@ -111,13 +121,16 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
 
                     {isOpenEnterprise && projectData.group_company && (
                         <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-20">
-                            {enterpriseOptions[projectData.group_company]?.map((option, index) => (
+                            {getEnterpriseList().map((enterprise, index) => (
                                 <div
                                     key={index}
-                                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer"
-                                    onClick={() => handleSelectEnterprise(option)}
+                                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer flex items-center gap-2"
+                                    onClick={() => handleSelectEnterprise(enterprise)}
                                 >
-                                    {option}
+                                    {enterprise.imageurl && (
+                                        <img src={enterprise.imageurl} alt={enterprise.title} className="w-5 h-5 rounded-full" />
+                                    )}
+                                    {enterprise.title}
                                 </div>
                             ))}
                         </div>
@@ -125,26 +138,23 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                 </div>
             </div>
 
+            {/* Other Fields */}
             <div className="grid grid-cols-2 gap-4">
-        {[ "owner", "approver","category", "department", "business_unit", "location"].map(
-          (field, index) => (
-            <div key={index} className="flex flex-col gap-1">
-              <label className="text-[#4A4D4E] text-[13px]">
-                {field.replace("_", " ").charAt(0).toUpperCase() +
-                  field.replace("_", " ").slice(1)}
-              </label>
-              <input
-                type="text"
-                name={field}
-                value={projectData[field as keyof typeof projectData]?.toString()}
-                placeholder={`Please enter the ${field}`}
-                onChange={handleInputChange}
-                className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]"
-              />
+                {["owner", "approver", "category", "department", "business_unit", "location"].map((field, index) => (
+                    <div key={index} className="flex flex-col gap-1">
+                        <label className="text-sm text-[#4A4D4E]">
+                            {field.replace("_", " ").charAt(0).toUpperCase() + field.replace("_", " ").slice(1)}
+                        </label>
+                        <input
+                            type="text"
+                            name={field}
+                            value={projectData[field as keyof typeof projectData]?.toString()}
+                            onChange={handleInputChange}
+                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm"
+                        />
+                    </div>
+                ))}
             </div>
-          )
-        )}
-      </div>
         </div>
     );
 };
