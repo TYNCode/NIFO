@@ -14,6 +14,7 @@ export interface ProjectData {
   status: string;
   start_date: string;
   end_date: string;
+  group_company?: string; 
   enterprise: string;
   owner: string;
   approver: string;
@@ -25,7 +26,6 @@ export interface ProjectData {
   problem_statement: string;
   context: string;
 }
-
 
 interface ProjectDetailsProps {
   projectID: string;
@@ -49,6 +49,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     status: "",
     start_date: "",
     end_date: "",
+    group_company: "", 
     enterprise: "",
     owner: "",
     approver: "",
@@ -68,8 +69,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const [fetchLoading, setFetchLoading] = useState(true);
   const [responseMessage, setResponseMessage] = useState("");
 
-  console.log("projectId",projectID)
-  console.log("projectDescription", projectData)
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -124,6 +123,14 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     setProjectData({ ...projectData, status: option });
     setIsOpenStatus(false);
   };
+
+  const handleDropdownChange = (field: string, value: string) => {
+    setProjectData((prevData) => ({
+        ...prevData,
+        [field]: value
+    }));
+};
+
 
   const questionairreBody = {
     "project_id": projectID,
@@ -193,6 +200,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
               <EnterpriseEntryTabOne 
                 projectData={projectData}
                 handleInputChange={handleInputChange}
+                handleDropdownChange={handleDropdownChange}
               />
 
               <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
@@ -236,4 +244,4 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   );
 };
 
-export {ProjectDescriptionTabOne, ProjectDetails };
+export default ProjectDetails;

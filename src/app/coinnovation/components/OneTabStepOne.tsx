@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-
 import ProblemInput from "./ProblemInput";
-import { ProjectDetails } from "./ProjectDetails";
+import ProjectDetails from "./ProjectDetails";
 
 interface OneTabStepOneProps {
   problemStatement: string;
