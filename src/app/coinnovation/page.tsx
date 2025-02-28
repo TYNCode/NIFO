@@ -78,7 +78,7 @@ const Page: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-4">
+            <div className="my-8">
               {tabContent[selectedTab] || <div>Select a step to continue.</div>}
             </div>
           </div>

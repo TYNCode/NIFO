@@ -11,6 +11,7 @@ interface OneTabStepOneProps {
   projectID: string | null;
   setProjectID: React.Dispatch<React.SetStateAction<string | null>>;
   setQuestionnaireData: any;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
@@ -21,6 +22,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   projectID,
   setProjectID,
   setQuestionnaireData,
+  setActiveTab
 }) => {
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -126,6 +128,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             setQuestionnaireData={setQuestionnaireData}
             projectDescription={responseData}
             problemStatement={problemStatement}
+            setActiveTab={setActiveTab}
           />
         </div>
       )}

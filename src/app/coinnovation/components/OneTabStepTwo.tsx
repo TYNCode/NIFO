@@ -29,6 +29,7 @@ interface OneTabStepTwoProps {
   problemStatement:string
   jsonForDocument: Record<string, any> | null;  
   setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({ 
@@ -38,7 +39,8 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
   setQuestionnaireData ,
   problemStatement, 
   jsonForDocument,
-  setJsonForDocument
+  setJsonForDocument,
+  setActiveTab
 }) => {
   return (
     <div className="p-4 w-full flex min-h-screen bg-[#F4FCFF]">
@@ -64,6 +66,7 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
           projectID={projectID}
           jsonForDocument={jsonForDocument}
           setJsonForDocument={setJsonForDocument}
+          setActiveTab = {setActiveTab}
         />
       </div>
     </div>

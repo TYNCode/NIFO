@@ -7,6 +7,7 @@ import { MdOutlineModeEdit } from "react-icons/md";
 import axios from 'axios';
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import { LuLoaderCircle } from "react-icons/lu";
 
 
 interface Answer {
@@ -36,6 +37,7 @@ interface QuestionnaireProps {
   projectID: string |null;
   jsonForDocument: Record<string, any> | null;  
   setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({
@@ -46,10 +48,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   projectDescription,
   jsonForDocument,
   setJsonForDocument,
+  setActiveTab
 }) => {
-
-  console.log("questionnaireData", JSON.stringify(questionnaireData));
-
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     {}
   );
@@ -61,9 +61,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     Record<string, boolean>
   >({});
   const [newQuestionText, setNewQuestionText] = useState<string>("");
-  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(
-    new Set()
-  );
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+  const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState<boolean>(false); 
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -129,8 +128,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     );
     if (!hasSelectedInCategory) return;
 
-    console.log("Deleting selected questions from category:", category);
-
     setQuestionnaireData((prevData) => {
       const updatedCategories = { ...prevData.categories };
       const updatedQuestions = updatedCategories[category].questions.filter(
@@ -195,6 +192,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       project_id: projectID
     };
 
+    setIsPDDJsonGenerating(true); 
+
     axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
       headers: {
         'Content-Type': 'application/json',
@@ -202,7 +201,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     })
       .then(response => {
         setJsonForDocument(response.data.json);  
-        console.log("Successfully generated challenge document", response.data.json)
+        setActiveTab("01.c")
       })
       .catch(error => {
         console.error('Error generating document:', error);
@@ -386,7 +385,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                             type="text"
                             defaultValue={q.answer.assumed}
                             readOnly={!editingAnswers[`${category}-${i}`]}
-                            className="w-full rounded-lg border-blue-400 border-solid border p-2"
+                            className="w-full p-2 rounded-lg focus:ring-0 focus:border-[#9ED0EE] focus:border-[2px] border-[#9ED0EE] text-[13px] text-[#979797]"
                           />
                           {editingAnswers[`${category}-${i}`] ? (
                             <div className="flex space-x-2">
@@ -396,7 +395,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                                   const value = input ? input.value : '';
                                   handleSaveAnswer(category, i, value);
                                 }}
-                                className="bg-blue-400 text-white px-4 py-2 rounded-lg"
+                                className="bg-[#2286C0] text-white px-4 py-2 rounded-lg text-[12px]"
                               >
                                 Save
                               </button>
@@ -407,14 +406,14 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                                     [`${category}-${i}`]: false,
                                   }))
                                 }
-                                className="bg-gray-400 text-white px-4 py-2 rounded-lg"
+                                className="bg-[#979797] text-white px-4 py-2 rounded-lg text-[12px]"
                               >
                                 Cancel
                               </button>
                             </div>
                           ) : (
                             <MdOutlineModeEdit
-                              className="text-blue-400 cursor-pointer"
+                              className="text-[#2286C0] cursor-pointer"
                               size={26}
                               onClick={() => handleEditAnswer(category, i)}
                             />
@@ -431,14 +430,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <div className="flex justify-end">
-        <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleGeneratePDD}>
-          <div>
-            <img src="/coinnovation/savepdd-icon.svg"/>
-          </div>
-          <div>
-            Save & Continue
-          </div>
-        </button>
+        {isPDDJsonGenerating ? (
+          <div className="flex bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px] ">
+            <LuLoaderCircle className="animate-spin" size={20}/>
+        </div>
+        ):(
+            <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleGeneratePDD}>
+              <div>
+                <img src="/coinnovation/savepdd-icon.svg" />
+              </div>
+              <div>
+                Save & Continue
+              </div>
+            </button>
+        )}
+       
       </div>
     </div>
   );

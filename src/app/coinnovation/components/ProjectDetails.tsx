@@ -33,13 +33,16 @@ interface ProjectDetailsProps {
   projectDescription: string;
   problemStatement: string;
   setQuestionnaireData: any;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ProjectDetails: React.FC<ProjectDetailsProps> = ({
+const 
+ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
   projectDescription,
   problemStatement,
-  setQuestionnaireData
+  setQuestionnaireData,
+  setActiveTab
 }) => {
   const [projectData, setProjectData] = useState<ProjectData>({
     project_id: projectID,
@@ -68,7 +71,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [responseMessage, setResponseMessage] = useState("");
-
+  const [dateError, setDateError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -111,8 +114,33 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setProjectData({ ...projectData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Update the state with the new value
+    setProjectData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    if (name === "end_date" && value && projectData.start_date) {
+      // Ensure the end_date is after the start_date
+      if (value <= projectData.start_date) {
+        setDateError("Target Closure date should be after Start Date and not the same.");
+      } else {
+        setDateError(null); // Clear error if valid
+      }
+    } else if (name === "start_date" && value && projectData.end_date) {
+      // Ensure the start_date is before the end_date
+      if (projectData.end_date <= value) {
+        setDateError("Start Date should be before Target Closure.");
+      } else {
+        setDateError(null); // Clear error if valid
+      }
+    } else {
+      setDateError(null); // Clear error if no relevant date change
+    }
   };
+
 
   const handleSelectPriority = (option: string) => {
     setProjectData({ ...projectData, priority: option });
@@ -123,6 +151,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     setProjectData({ ...projectData, status: option });
     setIsOpenStatus(false);
   };
+
+  
 
   const handleDropdownChange = (field: string, value: string) => {
     setProjectData((prevData) => ({
@@ -165,6 +195,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         questionairreBody 
       );
       setQuestionnaireData(responseofquestionairre.data.data)
+      setActiveTab("01.b"); 
     } catch (error) {
       setResponseMessage("Failed to update project. Please try again.");
       console.error("Error:", error);
@@ -229,12 +260,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                   {loading ? "Saving & Generating Questionairre..." : "Save & Continue"}
                 </div>
               </div>
-              <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
+              {/* <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
                 <div>
                   <CiPlay1 />
                 </div>
                 <div className="font-semibold">Skip</div>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
