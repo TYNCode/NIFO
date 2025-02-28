@@ -1,5 +1,6 @@
 import { IoChevronDownOutline } from "react-icons/io5";
 import { ProjectData } from "../ProjectDetails";
+import { useState } from "react";
 
 interface ProjectEntryTabOneProps {
   projectData: ProjectData;
@@ -34,6 +35,12 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
     "Waiting for Approval",
     "Cancelled",
   ];
+
+  const minEndDate = projectData.start_date
+    ? new Date(new Date(projectData.start_date).getTime() + 24 * 60 * 60 * 1000) 
+      .toISOString()
+      .split('T')[0] 
+    : undefined;
 
   return (
     <div className="flex flex-col gap-4 w-2/6">
@@ -124,30 +131,32 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-[13px] text-[#4A4D4E]">Start Date</label>
-          <input
-            type="date"
-            name="start_date"
-            placeholder="MM/DD/YYYY"
-            value={projectData.start_date}
-            onChange={handleInputChange}
-            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[13px] text-[#4A4D4E]">Target Closure</label>
-          <input
-            type="date"
-            name="end_date"
-             placeholder="MM/DD/YYYY"
-            value={projectData.end_date}
-            onChange={handleInputChange}
-            className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]"
-          />
-        </div>
+     <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-1">
+        <label className="text-[13px] text-[#4A4D4E]">Start Date</label>
+        <input
+          type="date"
+          name="start_date"
+          placeholder="MM/DD/YYYY"
+          value={projectData.start_date}
+          onChange={handleInputChange}
+          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
+        />
       </div>
+      <div className="flex flex-col gap-1">
+        <label className="text-[13px] text-[#4A4D4E]">Target Closure</label>
+        <input
+          type="date"
+          name="end_date"
+          placeholder="MM/DD/YYYY"
+          value={projectData.end_date}
+          onChange={handleInputChange}
+          className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
+          disabled={!projectData.start_date} 
+          min={minEndDate}
+        />
+      </div>
+    </div>
     </div>
   );
 };
