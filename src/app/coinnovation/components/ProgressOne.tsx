@@ -16,7 +16,6 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const [jsonForDocument, setJsonForDocument] = useState<Record<string, any>>({});
 
-  // Load from localStorage on initial mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       setActiveTab(localStorage.getItem("activeTab") || "01.a");
@@ -30,7 +29,6 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
     }
   }, [setProjectID]);
 
-  // Persist to localStorage when state changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("activeTab", activeTab);

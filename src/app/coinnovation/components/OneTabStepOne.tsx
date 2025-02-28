@@ -88,7 +88,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
   return (
     <div className="bg-[#F4FCFF] w-full shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
-      {!responseData ? (
+      {!projectID ? (
         <div className="flex flex-col justify-center items-center gap-10 w-full">
           <div className="flex flex-col gap-1 justify-center items-center">
             <div className="text-base font-semibold">Let us define the</div>
@@ -111,27 +111,16 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center gap-12 mt-16 w-full">
-          <ProblemInput
-            textareaRef={textareaRef}
-            problemStatement={problemStatement}
-            handleChange={handleChange}
-            lineHeight={lineHeight}
-            maxRows={maxRows}
-            handleSubmit={handleSubmit}
-            loading={loading}
-            files={files}
-            setFiles={setFiles}
-          />
-
           <ProjectDetails
             projectID={projectID}
             setQuestionnaireData={setQuestionnaireData}
-            projectDescription={responseData}
+            projectDescription={responseData || ""}
             problemStatement={problemStatement}
             setActiveTab={setActiveTab}
           />
         </div>
       )}
+      
     </div>
   );
 };
