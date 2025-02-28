@@ -111,6 +111,17 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center gap-12 mt-16 w-full">
+           <ProblemInput
+            textareaRef={textareaRef}
+            problemStatement={problemStatement}
+            handleChange={handleChange}
+            lineHeight={lineHeight}
+            maxRows={maxRows}
+            handleSubmit={handleSubmit}
+            loading={loading}
+            files={files}
+            setFiles={setFiles}
+          />
           <ProjectDetails
             projectID={projectID}
             setQuestionnaireData={setQuestionnaireData}
