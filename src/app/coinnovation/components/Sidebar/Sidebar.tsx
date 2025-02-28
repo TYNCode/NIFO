@@ -1,4 +1,6 @@
-import { useRouter } from "next/navigation";
+"use client";
+
+import { useRouter, usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FaSuitcase, FaBars } from "react-icons/fa6";
 import { PiCirclesFour } from "react-icons/pi";
@@ -14,33 +16,16 @@ interface SidebarOption {
 
 const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [isActive, setIsActive] = useState<string>("Co-Innovation");
   const router = useRouter();
-
+  const pathname = usePathname(); 
   const sidebarOptions: SidebarOption[] = [
-    { id: 1, title: "Home", icon: <PiCirclesFour size={20} />, route: "/" },
-    {
-      id: 2,
-      title: "Co-Innovation",
-      icon: <FaSuitcase size={20} />,
-      route: "/coinnovation",
-    },
-    {
-      id: 3,
-      title: "Notification",
-      icon: <MdOutlineNotificationsActive size={20} />,
-      route: "/notification",
-    },
-    {
-      id: 4,
-      title: "Settings",
-      icon: < IoSettingsOutline size={20} />,
-      route: "/settings",
-    },
-    // { id: 5, title: "Chat", icon: <FaSuitcase size={24} />, route: "/chat" },
+    { id: 1, title: "Summary", icon: <PiCirclesFour size={20} />, route: "/summary" },
+    { id: 2, title: "Co-Innovation", icon: <FaSuitcase size={20} />, route: "/coinnovation" },
+    { id: 3, title: "Notification", icon: <MdOutlineNotificationsActive size={20} />, route: "/notification" },
+    { id: 4, title: "Settings", icon: <IoSettingsOutline size={20} />, route: "/settings" },
   ];
 
-  const handleSidebarClick = (id: number, route: string) => {
+  const handleSidebarClick = (route: string) => {
     router.push(route);
   };
 
@@ -54,18 +39,23 @@ const Sidebar: React.FC = () => {
       >
         <FaBars size={20} className="text-[#0070C0]" />
       </div>
+      <div className="flex flex-col gap-2 mt-2">
+        {sidebarOptions.map((option) => {
+          const isActive = pathname.startsWith(option.route);
 
-      <div className="flex flex-col gap-4">
-      {sidebarOptions.map((option) => (
-        <div
-          key={option.id}
-          className={`flex items-center py-2 px-2 cursor-pointer  rounded-lg transition-all  ${isActive === option.title ? "bg-[#0070C0]  text-white" : "bg-white text-[#0070C0] hover:bg-gray-100"}`}
-          onClick={() => handleSidebarClick(option.id, option.route)}
-        >
-          {option.icon}
-          {isExpanded && <span className="ml-4">{option.title}</span>}
-        </div>
-      ))}
+          return (
+            <div
+              key={option.id}
+              className={`flex items-center py-2 px-4 cursor-pointer rounded-lg transition-all ${
+                isActive ? "bg-[#0070C0] text-white" : "bg-white text-[#0070C0] hover:bg-gray-100"
+              }`}
+              onClick={() => handleSidebarClick(option.route)}
+            >
+              {option.icon}
+              {isExpanded && <span className="ml-4">{option.title}</span>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
