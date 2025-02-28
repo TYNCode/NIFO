@@ -71,23 +71,28 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     };
 
     const callGenerateDocxAPI = async (jsonData) => {
+        const wrappedData = {
+            final_document: jsonData  
+        };
         setIsGeneratingDocx(true);
         try {
             const response = await axios.post(
                 `${API_BASE_URL}/generate-docx/`,
-                jsonData,
+                wrappedData,   
                 {
                     headers: { "Content-Type": "application/json" },
-                    responseType: "blob" 
+                    responseType: "blob"  
                 }
             );
+
             const blob = new Blob([response.data], {
                 type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             });
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "Final_Document.docx"; 
+            a.download = "Final_Document.docx";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -99,6 +104,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
             setIsGeneratingDocx(false);
         }
     };
+
 
     const kpiTable = jsonForDocument["Operational KPI Metrics Table"];
     const metricKeys = Object.keys(kpiTable);
@@ -287,7 +293,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
                 </button> */}
                 <button
                     className='flex flex-row gap-2 bg-[#2286C0] text-white px-4 py-2 rounded-[12px] items-center justify-center shadow-[6px_10px_20px_0px_rgba(7, 7, 7, 0.1)]'
-                    onClick={() => callGenerateDocxAPI(jsonData)} 
+                    onClick={() => callGenerateDocxAPI(jsonForDocument)} 
                 >
                     <div>
                         <img src='/coinnovation/pdd-icon.svg' className='' alt="PDD Icon" />
