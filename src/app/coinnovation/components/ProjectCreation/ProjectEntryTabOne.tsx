@@ -44,7 +44,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
 
   return (
     <div className="flex flex-col gap-4 w-2/6">
-      <div className="text-[#4A4D4E] text-[15px] font-semibold">
+      <div className="text-[#4A4D4E] text-[14px] font-semibold">
         Project Entry Details
       </div>
 

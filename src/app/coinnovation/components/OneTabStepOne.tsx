@@ -39,9 +39,13 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     }
   }, [problemStatement]);
 
+
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log('Current value:', e.target.value);
     setProblemStatement(e.target.value);
   };
+
 
   const handleSubmit = async () => {
     if (!problemStatement.trim() && files.length === 0) {

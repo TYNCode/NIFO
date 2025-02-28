@@ -71,17 +71,17 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
 
     return (
         <div className="flex flex-col gap-4 w-2/6">
-            <div className="text-lg font-semibold text-[#4A4D4E]">Enterprise Details</div>
+            <div className="text-[14px] font-semibold text-[#4A4D4E]">Enterprise Details</div>
 
             {/* Group Company Dropdown */}
             <div className="flex flex-col gap-1">
-                <label className="text-sm text-[#4A4D4E]">Group Company</label>
+                <label className="text-[#4A4D4E] text-[13px]">Group Company</label>
                 <div className="relative w-full">
                     <div
                         className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full"
                         onClick={() => setIsOpenGroupCompany(!isOpenGroupCompany)}
                     >
-                        <span className="text-[#4A4D4E] text-sm">
+                        <span className="text-[#4A4D4E] text-[13px]">
                             {projectData.group_company || "Select Group Company"}
                         </span>
                         <IoChevronDownOutline className={`transition-transform ${isOpenGroupCompany ? "rotate-180" : ""}`} />
@@ -92,7 +92,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                             {groupCompanyOptions.map((option, index) => (
                                 <div
                                     key={index}
-                                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer"
+                                    className="px-3 py-2 hover:bg-[#2286C0] hover:text-white cursor-pointer text-[#4A4D4E] text-[13px]"
                                     onClick={() => handleSelectGroupCompany(option)}
                                 >
                                     {option}
@@ -105,15 +105,15 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
 
             {/* Enterprise Dropdown */}
             <div className="flex flex-col gap-1">
-                <label className="text-sm text-[#4A4D4E]">Enterprise</label>
+                <label className="text-[#4A4D4E] text-[13px]">Enterprise</label>
                 <div className="relative w-full">
                     <div
-                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 ${
+                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3  ${
                             projectData.group_company ? "cursor-pointer" : "cursor-not-allowed"
                         } bg-white w-full`}
                         onClick={() => projectData.group_company && setIsOpenEnterprise(!isOpenEnterprise)}
                     >
-                        <span className="text-[#4A4D4E] text-sm">
+                        <span className="text-[#4A4D4E] text-[13px]">
                             {projectData.enterprise || (projectData.group_company ? "Select Enterprise" : "Select Group Company first")}
                         </span>
                         <IoChevronDownOutline className={`transition-transform ${isOpenEnterprise ? "rotate-180" : ""}`} />
@@ -124,12 +124,12 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                             {getEnterpriseList().map((enterprise, index) => (
                                 <div
                                     key={index}
-                                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer flex items-center gap-2"
+                                    className="px-3 py-2 hover:bg-[#2286C0] hover:text-white cursor-pointer flex items-center gap-2 text-[13px] text-[#4A4D4E]"
                                     onClick={() => handleSelectEnterprise(enterprise)}
                                 >
-                                    {enterprise.imageurl && (
+                                    {/* {enterprise.imageurl && (
                                         <img src={enterprise.imageurl} alt={enterprise.title} className="w-5 h-5 rounded-full" />
-                                    )}
+                                    )} */}
                                     {enterprise.title}
                                 </div>
                             ))}
@@ -142,7 +142,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
             <div className="grid grid-cols-2 gap-4">
                 {["owner", "approver", "category", "department", "business_unit", "location"].map((field, index) => (
                     <div key={index} className="flex flex-col gap-1">
-                        <label className="text-sm text-[#4A4D4E]">
+                        <label className="text-[#4A4D4E] text-[13px]">
                             {field.replace("_", " ").charAt(0).toUpperCase() + field.replace("_", " ").slice(1)}
                         </label>
                         <input
@@ -150,7 +150,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                             name={field}
                             value={projectData[field as keyof typeof projectData]?.toString()}
                             onChange={handleInputChange}
-                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm"
+                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm focus:ring-0 focus:border-[#56A8F0]"
                         />
                     </div>
                 ))}
