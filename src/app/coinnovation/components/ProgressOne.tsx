@@ -9,9 +9,8 @@ const ProgressOne: React.FC = () => {
   const [responseData, setResponseData] = useState<string | null>(null);
   const [projectID, setProjectID] = useState<string | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState(null);
-
-  console.log("questionnaireData===>", questionnaireData);
-
+  const [jsonForDocument , setJsonForDocument] = useState({})
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       setActiveTab(localStorage.getItem("activeTab") || "01.a");
@@ -76,12 +75,17 @@ const ProgressOne: React.FC = () => {
         {activeTab === "01.b"  && (
           <OneTabStepTwo
             projectID={projectID}
+            problemStatement={problemStatement}
             projectDescription={responseData}
             questionnaireData={questionnaireData}
             setQuestionnaireData={setQuestionnaireData}
+            jsonForDocument={jsonForDocument}
+            setJsonForDocument={setJsonForDocument}
           />
         )}
-        {activeTab === "01.c" && <OneTabStepThree />}
+        {activeTab === "01.c" && <OneTabStepThree 
+        jsonForDocument = {jsonForDocument}
+        setJsonForDocument = {setJsonForDocument}/>}
       </div>
     </div>
   );
