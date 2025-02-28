@@ -26,16 +26,20 @@ interface OneTabStepTwoProps {
   projectDescription: string | null;
   questionnaireData: QuestionnaireData;
   setQuestionnaireData: React.Dispatch<React.SetStateAction<QuestionnaireData>>;
+  problemStatement:string
+  jsonForDocument: Record<string, any> | null;  
+  setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
 }
 
 const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({ 
   projectID, 
   projectDescription, 
   questionnaireData, 
-  setQuestionnaireData 
+  setQuestionnaireData ,
+  problemStatement, 
+  jsonForDocument,
+  setJsonForDocument
 }) => {
-  console.log("questionnaireINSIDEONETAB", questionnaireData);
-  
   return (
     <div className="p-4 w-full flex min-h-screen bg-[#F4FCFF]">
       <div className="w-[30%]">
@@ -55,6 +59,11 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
         <Questionairre
           questionnaireData={questionnaireData} 
           setQuestionnaireData={setQuestionnaireData} 
+          problemStatement={problemStatement}
+          projectDescription={projectDescription}
+          projectID={projectID}
+          jsonForDocument={jsonForDocument}
+          setJsonForDocument={setJsonForDocument}
         />
       </div>
     </div>

@@ -4,6 +4,10 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdOutlineModeEdit } from "react-icons/md";
+import axios from 'axios';
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
 
 interface Answer {
   assumed: string;
@@ -27,13 +31,24 @@ interface QuestionnaireData {
 interface QuestionnaireProps {
   questionnaireData: QuestionnaireData;
   setQuestionnaireData: React.Dispatch<React.SetStateAction<QuestionnaireData>>;
+  problemStatement: string;
+  projectDescription: string;
+  projectID: string |null;
+  jsonForDocument: Record<string, any> | null;  
+  setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({
   questionnaireData,
-  setQuestionnaireData
+  setQuestionnaireData,
+  problemStatement,
+  projectID,
+  projectDescription,
+  jsonForDocument,
+  setJsonForDocument,
 }) => {
-  console.log("questionnaireData", questionnaireData);
+
+  console.log("questionnaireData", JSON.stringify(questionnaireData));
 
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     {}
@@ -131,7 +146,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       return { categories: updatedCategories };
     });
 
-    // Clear selections for this category only
     setSelectedQuestions((prev) => {
       const newSet = new Set(prev);
       Array.from(prev).forEach((id) => {
@@ -173,14 +187,99 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     }));
   };
 
-  const handleGeneratePDD = ()=>{
-    
-  }
+  const handleGeneratePDD = () => {
+    const data = {
+      problem_statement: problemStatement,
+      context: projectDescription,
+      categories: questionnaireData,
+      project_id: projectID
+    };
+
+    axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => {
+        setJsonForDocument(response.data.json);  
+        console.log("Successfully generated challenge document", response.data.json)
+      })
+      .catch(error => {
+        console.error('Error generating document:', error);
+      });
+  };
+
+  const handleDownloadQuestionnaire = async () => {
+    if (Object.keys(questionnaireData.categories).length === 0) {
+      alert("No questions available to download.");
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Questionnaire");
+
+    const headerStyle = {
+      font: { name: "Raleway", size: 10, bold: true },
+      alignment: { horizontal: "center" as "center", vertical: "middle" as "middle" },
+      fill: { type: "pattern" as "pattern", pattern: "solid" as "solid", fgColor: { argb: "D9EAD3" } }
+    };
+
+    const normalStyle = {
+      font: { name: "Raleway", size: 10 },
+      alignment: { vertical: "middle" as "middle" },
+    };
+
+    worksheet.addRow(["SI No", "Questions", "Assumed Answers", "Actual Answers"]).eachCell((cell) => {
+      cell.style = headerStyle;
+    });
+
+    let rowIndex = 2;
+
+    Object.keys(questionnaireData.categories).forEach((category) => {
+      const categoryRow = worksheet.addRow([category, "", "", ""]);
+      categoryRow.eachCell((cell) => {
+        cell.style = headerStyle;
+      });
+      worksheet.mergeCells(`A${rowIndex}:D${rowIndex}`);
+      rowIndex++;
+
+      questionnaireData.categories[category].questions.forEach((questionObj, index) => {
+        const question = questionObj.question;
+        const assumedAnswer = questionObj.answer.assumed || "No Answer Provided";
+        const actualAnswer = questionObj.answer.actual || "No Answer Provided";
+
+        const questionRow = worksheet.addRow([
+          index + 1,
+          question,
+          assumedAnswer,
+          actualAnswer,
+        ]);
+        questionRow.eachCell((cell) => {
+          cell.style = normalStyle;
+        });
+        rowIndex++;
+      });
+    });
+
+    worksheet.columns = [
+      { width: 10 },
+      { width: 80 },
+      { width: 60 },
+      { width: 60 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(blob, "Briefing_Questionnaire.xlsx");
+  };
+
+
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center text-black py-2 rounded-md">
-        <h1 className="text-xl font-bold">Questionnaire</h1>
-        <button>
+        <h1 className="text-[14px] font-semibold text-[#4A4D4E]">Questionnaire</h1>
+        <button onClick={handleDownloadQuestionnaire}>
           <Image
             alt="Download Questionnaire"
             src="/coinnovation/download_questionairre.svg"
@@ -195,10 +294,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
           ([category, details], index) => (
             <div key={category} className="mb-4">
               <div className="flex justify-between items-center bg-white p-3 rounded-lg">
-                <h2 className="text-lg font-semibold">
+                <h2 className="text-[14px] font-semibold text-[#4A4D4E]">
                   {index + 1}. {category}
                 </h2>
-                <div className="flex space-x-4 text-blue-500 cursor-pointer">
+                <div className="flex flex-row gap-8 text-[#2286C0] cursor-pointer">
                   <span onClick={() => handleAddQuestion(category)}>
                     <IoMdAdd />
                   </span>
@@ -262,15 +361,16 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                             onChange={() =>
                               toggleQuestionSelection(category, i)
                             }
-                            className="h-4 w-4"
+                            className="h-[12px] w-[12px] border-[#2286C0] rounded-[3px] focus:ring-0 focus:border-0 focus:outline-none appearance-none checked:border-[#2286C0] checked:bg-[#2286C0] checked:transition-all"
                           />
-                          <p className="font-medium">
-                            Q{i + 1} {q.question}
+                          <p className="flex flex-row gap-2 text-[14px] text-[#4A4D4E]">
+                            <span className="font-semibold">Q{i + 1}</span> 
+                            <span>{q.question}</span>
                           </p>
                         </div>
                         <span
                           onClick={() => toggleAnswer(q.question)}
-                          className="text-blue-500 cursor-pointer"
+                          className="text-[#2286C0] cursor-pointer"
                         >
                           {openAnswers[q.question] ? (
                             <FaChevronUp />

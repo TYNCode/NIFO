@@ -6,9 +6,12 @@ import data from '../../data/ccd.json'
 import jsonData from '../../data/ccd.json'
 import axios from 'axios';
 interface OneTabStepThreeProps {
+    jsonForDocument: Record<string, any> | null;
+    setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>;
 }
 
-const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
+
+const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJsonForDocument}) => {
     const [challengeTab, setChallengeTab] = useState("Focus Areas");
     const [endUserTab, setEndUserTab] = useState("Roles");
     const [outcomeTab, setOutcomeTab] = useState("Functional Requirements");
@@ -18,10 +21,10 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
     const [docxFileUrl, setDocxFileUrl] = useState('')
     const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
-    const challengeScenarioData = data?.final_document?.["Challenge Scenario"]?.[0] || {};
-    const endUserProfileData = data?.final_document?.["Profile of the End-Users"]?.[0] || {};
+    const challengeScenarioData = jsonForDocument["Challenge Scenario"]?.[0] || {};
+    const endUserProfileData = jsonForDocument["Profile of the End-Users"]?.[0] || {};
     const getChallengeTabData = (key) => {
-        const scenarioArray = data.final_document["Challenge Scenario"] || [];
+        const scenarioArray = jsonForDocument["Challenge Scenario"] || [];
         const foundObject = scenarioArray.find((item) => item[key]);
         return foundObject ? foundObject[key] : [];
     };
@@ -42,7 +45,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
         const jsonKey = outcomeTabMapping[tabKey];
         if (!jsonKey) return ["No data available"];
 
-        const outcomeData = data.final_document["Outcomes (Requirements & KPIs)"] || {};
+        const outcomeData = jsonForDocument["Outcomes (Requirements & KPIs)"] || {};
         return outcomeData[jsonKey] ? outcomeData[jsonKey] : ["No data available"];
     };
 
@@ -50,12 +53,11 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     const getEndUserTabData = (tabKey) => {
         const jsonKey = tabMapping[tabKey];
         if (!jsonKey) return ["No data available"];
-        const endUserArray = data.final_document["Profile of the End-Users"] || [];
+        const endUserArray = jsonForDocument["Profile of the End-Users"] || [];
+        console.log(JSON.stringify(endUserArray));
         for (const obj of endUserArray) {
             const objKey = Object.keys(obj)[0];
-            console.log(`Checking key: ${objKey} against ${jsonKey}`);
             if (objKey === jsonKey) {
-                console.log("Match found:", obj[objKey]);
                 return Array.isArray(obj[objKey]) ? obj[objKey] : [obj[objKey]];
             }
         }
@@ -69,10 +71,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
     };
 
     const callGenerateDocxAPI = async (jsonData) => {
-        console.log("Generating document...");
-
         setIsGeneratingDocx(true);
-
         try {
             const response = await axios.post(
                 `${API_BASE_URL}/generate-docx/`,
@@ -101,8 +100,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
         }
     };
 
-    const kpiTable = data.final_document["Operational KPI Metrics Table"];
-    console.log(kpiTable);
+    const kpiTable = jsonForDocument["Operational KPI Metrics Table"];
     const metricKeys = Object.keys(kpiTable);
 
     return (
@@ -125,7 +123,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = (props) => {
                 {isChallengeOpen && (
                     <div className='flex flex-col gap-4 py-4 px-4 rounded-[8px] bg-white'>
                         <div className='text-[#4A4D4E] text-[14px]'>
-                            {data.final_document['Challenge Scenario'][0]?.Overview}
+                            {jsonForDocument['Challenge Scenario'][0]?.Overview}
                         </div>
                         <div className='flex flex-col justify-center items-center bg-[#F4FCFF] px-4 pb-4 rounded-[8px]'>
                             <div className="flex border-b w-full border-gray-300 justify-center items-center">

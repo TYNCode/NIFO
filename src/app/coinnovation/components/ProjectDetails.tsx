@@ -57,8 +57,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     location: "",
     project_description: "",
     problem_statement:
-      "Excessive energy consumption in aluminum smelting is causing overheating and reduced efficiency.",
-    context: "Full extracted text from document analysis.",
+      "",
+    context: "",
   });
 
   const [isOpenPriority, setIsOpenPriority] = useState(false);

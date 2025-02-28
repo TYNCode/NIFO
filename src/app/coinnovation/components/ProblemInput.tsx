@@ -51,7 +51,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     <div className="flex justify-center items-center w-full">
       <div className="flex flex-col w-full max-w-[80vw]">
         <div className="flex flex-row gap-4 justify-center items-center w-full">
-          {/* Textarea Container */}
           <div className="w-full flex items-center relative">
             <textarea
               ref={textareaRef}
@@ -77,7 +76,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             className={`flex flex-row items-center gap-1 px-4 py-2 text-white shadow-md rounded-xl 
                         ${isProblemEntered || files.length > 0 ? "bg-[#2286C0] cursor-pointer" : "bg-[#979797] cursor-default"}`}
@@ -90,8 +88,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
             </span>
           </button>
         </div>
-
-        {/* Uploaded Files Section */}
         {files.length > 0 && (
           <div className="text-gray-600 text-sm mt-2 w-full">
             <span className="font-semibold text-[12px]">Uploaded Files:</span>
