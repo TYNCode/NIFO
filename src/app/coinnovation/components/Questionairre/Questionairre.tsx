@@ -194,7 +194,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
     setIsPDDJsonGenerating(true); 
 
-    axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
+    axios.post('https://tyn-server.azurewebsites.net/coinnovation/generate-challenge-document/', data, {
       headers: {
         'Content-Type': 'application/json',
       }

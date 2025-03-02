@@ -20,7 +20,7 @@ const ProjectLists: React.FC = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/coinnovation/create-project/");
+      const response = await axios.get("https://tyn-server.azurewebsites.net/coinnovation/create-project/");
       setProjects(response.data);
     } catch (err) {
       setError("Failed to fetch projects");
