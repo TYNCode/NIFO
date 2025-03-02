@@ -115,29 +115,25 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-
-    // Update the state with the new value
     setProjectData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
 
     if (name === "end_date" && value && projectData.start_date) {
-      // Ensure the end_date is after the start_date
       if (value <= projectData.start_date) {
         setDateError("Target Closure date should be after Start Date and not the same.");
       } else {
-        setDateError(null); // Clear error if valid
+        setDateError(null);
       }
     } else if (name === "start_date" && value && projectData.end_date) {
-      // Ensure the start_date is before the end_date
       if (projectData.end_date <= value) {
         setDateError("Start Date should be before Target Closure.");
       } else {
-        setDateError(null); // Clear error if valid
+        setDateError(null)
       }
     } else {
-      setDateError(null); // Clear error if no relevant date change
+      setDateError(null);
     }
   };
 
