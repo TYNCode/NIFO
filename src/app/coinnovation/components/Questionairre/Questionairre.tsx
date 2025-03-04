@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
@@ -8,6 +8,8 @@ import axios from 'axios';
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { LuLoaderCircle } from "react-icons/lu";
+import QuestionnaireUploadModal from "./QuestionnaireUploadModal";
+import * as XLSX from 'xlsx';
 
 
 interface Answer {
@@ -38,6 +40,7 @@ interface QuestionnaireProps {
   jsonForDocument: Record<string, any> | null;  
   setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  setIsQuestionnaireUploadOpen: React.Dispatch<React.SetStateAction<boolean> | null>;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({
@@ -62,7 +65,75 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   >({});
   const [newQuestionText, setNewQuestionText] = useState<string>("");
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
-  const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState<boolean>(false); 
+  const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState<boolean>(false);
+  const [isQuestionnaireModalOpen, setIsQuestionnaireModalOpen] = useState<boolean>(false); 
+  const [questionnaireFile, setQuestionnaireFile] = useState<File>();
+
+  console.log("Questionnaire Data", questionnaireData);
+  console.log("Questionnaire File", questionnaireFile);
+
+  useEffect(() => {
+    if (questionnaireFile) {
+      processUploadedQuestionnaire(questionnaireFile);
+    }
+  }, [questionnaireFile]);
+
+
+
+  const processUploadedQuestionnaire = async (file: File) => {
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      console.log("📊 Raw JSON Data from Excel:", jsonData);
+
+      const expectedHeaders = ["SI No", "Questions", "Assumed Answers", "Actual Answers"];
+      const fileHeaders = jsonData[0] || [];
+
+      const isValidTemplate = expectedHeaders.every(
+        (header, index) => fileHeaders[index]?.trim() === header
+      );
+
+      if (!isValidTemplate) {
+        alert("Invalid file format. Expected headers: SI No, Questions, Assumed Answers, Actual Answers.");
+        return;
+      }
+
+      const parsedData: QuestionnaireData = { categories: {} };
+
+      let currentCategory: string | null = null;
+
+      jsonData.slice(1).forEach((row: any[]) => {
+        const siNo = row[0] ? row[0].toString().trim() : "";
+        const question = row[1] ? row[1].toString().trim() : "";
+        const assumedAnswer = row[2] ? row[2].toString().trim() : "";
+        const actualAnswer = row[3] ? row[3].toString().trim() : "";
+
+        if (siNo !== "" && question === "" && assumedAnswer === "" && actualAnswer === "") {
+          currentCategory = siNo;
+          parsedData.categories[currentCategory] = { questions: [] };
+        } else if (currentCategory && question !== "") {
+          parsedData.categories[currentCategory].questions.push({
+            question,
+            answer: {
+              assumed: assumedAnswer,
+              actual: actualAnswer || null,
+            }
+          });
+        }
+      });
+
+      console.log("✅ Final Parsed Questionnaire Data:", parsedData);
+      setQuestionnaireData(parsedData);
+
+    } catch (error) {
+      console.error("Error processing questionnaire file:", error);
+      alert("An error occurred while processing the file. Please try again.");
+    }
+  };
 
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -213,27 +284,21 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       alert("No questions available to download.");
       return;
     }
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Questionnaire");
-
     const headerStyle = {
       font: { name: "Raleway", size: 10, bold: true },
       alignment: { horizontal: "center" as "center", vertical: "middle" as "middle" },
       fill: { type: "pattern" as "pattern", pattern: "solid" as "solid", fgColor: { argb: "D9EAD3" } }
     };
-
     const normalStyle = {
       font: { name: "Raleway", size: 10 },
       alignment: { vertical: "middle" as "middle" },
     };
-
     worksheet.addRow(["SI No", "Questions", "Assumed Answers", "Actual Answers"]).eachCell((cell) => {
       cell.style = headerStyle;
     });
-
     let rowIndex = 2;
-
     Object.keys(questionnaireData.categories).forEach((category) => {
       const categoryRow = worksheet.addRow([category, "", "", ""]);
       categoryRow.eachCell((cell) => {
@@ -241,12 +306,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       });
       worksheet.mergeCells(`A${rowIndex}:D${rowIndex}`);
       rowIndex++;
-
       questionnaireData.categories[category].questions.forEach((questionObj, index) => {
         const question = questionObj.question;
         const assumedAnswer = questionObj.answer.assumed || "No Answer Provided";
         const actualAnswer = questionObj.answer.actual || "No Answer Provided";
-
         const questionRow = worksheet.addRow([
           index + 1,
           question,
@@ -272,7 +335,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     saveAs(blob, "Briefing_Questionnaire.xlsx");
   };
 
-
+  const handleQuestionnaireUpload = ()=>{
+   setIsQuestionnaireModalOpen(true);
+  }
 
   return (
     <div className="w-full">
@@ -429,7 +494,13 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         )}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex flex-row gap-8 justify-end" onClick={handleQuestionnaireUpload}>
+        <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]">
+          <div>
+            <img src="/coinnovation/uploadfilewhite.svg" />
+          </div>
+          <div>Upload</div>
+        </button>
         {isPDDJsonGenerating ? (
           <div className="flex bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px] ">
             <LuLoaderCircle className="animate-spin" size={20}/>
@@ -446,6 +517,20 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         )}
        
       </div>
+
+      {
+        isQuestionnaireModalOpen && (
+          <div>
+            <QuestionnaireUploadModal
+            setIsQuestionnaireModalOpen = {setIsQuestionnaireModalOpen}
+            isQuestionnaireModalOpen = {isQuestionnaireModalOpen}
+            questionnaireFile = {questionnaireFile}
+            setQuestionnaireFile={setQuestionnaireFile}
+            />
+          </div>
+        )
+      }
+
     </div>
   );
 };
