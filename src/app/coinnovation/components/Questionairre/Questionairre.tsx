@@ -494,8 +494,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         )}
       </div>
 
-      <div className="flex flex-row gap-8 justify-end" onClick={handleQuestionnaireUpload}>
-        <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]">
+      <div className="flex flex-row gap-8 justify-end" >
+        <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleQuestionnaireUpload}>
           <div>
             <img src="/coinnovation/uploadfilewhite.svg" />
           </div>
