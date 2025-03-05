@@ -55,10 +55,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         </label>
         <input
           type="text"
-          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]"
+          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]  cursor-default"
           name="project_id"
           value={projectData.project_id}
-          onChange={handleInputChange}
+          readOnly
         />
       </div>
 
