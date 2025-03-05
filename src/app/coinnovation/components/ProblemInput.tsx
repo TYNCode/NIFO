@@ -5,9 +5,11 @@ import FileUploadModal from "./FileUploadModal";
 interface ProblemInputProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   problemStatement: string;
+  setProblemStatement:any;
   handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   lineHeight?: number;
   maxRows?: number;
+  projectData:any;
   handleSubmit: (
     event:
       | React.FormEvent<HTMLFormElement>
@@ -21,6 +23,8 @@ interface ProblemInputProps {
 const ProblemInput: React.FC<ProblemInputProps> = ({
   textareaRef,
   problemStatement,
+  setProblemStatement,
+  projectData,
   handleChange,
   lineHeight ,
   maxRows,
@@ -32,12 +36,19 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   const isProblemEntered = problemStatement.trim().length > 0;
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
 
+  console.log("projd ",projectData)
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, lineHeight * maxRows)}px`;
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
+
+  useEffect(() => {
+    if (projectData?.problem_statement) {
+      setProblemStatement(projectData.problem_statement);
+    }
+  }, [projectData, setProblemStatement]);
 
   const handleFileUpload = () => {
     setIsFileUploadModalOpen(true);
@@ -46,6 +57,8 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   const removeFile = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
   };
+
+  console.log("problem statement--->", problemStatement)
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -113,7 +126,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         )}
       </div>
 
-      {/* File Upload Modal */}
       {isFileUploadModalOpen && (
         <FileUploadModal
           isFileUploadModalOpen={isFileUploadModalOpen}

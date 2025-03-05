@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ProblemInput from "./ProblemInput";
-import ProjectDetails from "./ProjectDetails";
+import ProjectDetails, { ProjectData } from "./ProjectDetails";
 
 interface OneTabStepOneProps {
   problemStatement: string;
@@ -30,6 +30,30 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   const maxRows = 7;
   const [files, setFiles] = useState<File[]>([]);
 
+  const [projectData, setProjectData] = useState<ProjectData>({
+    project_id: projectID,
+    project_name: "",
+    priority: "",
+    status: "",
+    start_date: "",
+    end_date: "",
+    group_company: "", 
+    enterprise: "",
+    owner: "",
+    approver: "",
+    category: "",
+    department: "",
+    business_unit: "",
+    location: "",
+    project_description: "",
+    problem_statement:
+      "",
+    context: "",
+    enterprise_img:"",
+  });
+
+  console.log("problem statment inside onetabstepone", problemStatement)
+  console.log("response data inside onetabstepone", responseData)
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -68,13 +92,16 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      const problemStatementResponse =
-        uploadResponse.data.problem_statement || "No response from API";
+      const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
       setResponseData(problemStatementResponse);
 
       const createProjectResponse = await axios.post(
         "http://127.0.0.1:8000/coinnovation/create-project/",
-        { project_description: problemStatementResponse },
+
+        { project_description: problemStatementResponse ,
+          context: problemStatementResponse,
+          problem_statement: problemStatement
+        },
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -103,6 +130,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             <ProblemInput
               textareaRef={textareaRef}
               problemStatement={problemStatement}
+              setProblemStatement={setProblemStatement}
+              projectData={projectData}
               handleChange={handleChange}
               lineHeight={lineHeight}
               maxRows={maxRows}
@@ -118,9 +147,11 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
            <ProblemInput
             textareaRef={textareaRef}
             problemStatement={problemStatement}
+            setProblemStatement={setProblemStatement}
             handleChange={handleChange}
             lineHeight={lineHeight}
             maxRows={maxRows}
+            projectData={projectData}
             handleSubmit={handleSubmit}
             loading={loading}
             files={files}
@@ -128,6 +159,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
           />
           <ProjectDetails
             projectID={projectID}
+            projectData={projectData}
+            setProjectData={setProjectData}
             setQuestionnaireData={setQuestionnaireData}
             projectDescription={responseData || ""}
             problemStatement={problemStatement}
