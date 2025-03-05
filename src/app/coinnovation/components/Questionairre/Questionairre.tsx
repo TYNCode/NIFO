@@ -40,7 +40,6 @@ interface QuestionnaireProps {
   jsonForDocument: Record<string, any> | null;  
   setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
-  setIsQuestionnaireUploadOpen: React.Dispatch<React.SetStateAction<boolean> | null>;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({
@@ -256,6 +255,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   const handleGeneratePDD = () => {
+    const hasQuestions = Object.values(questionnaireData.categories).some(
+      (category) => category.questions.length > 0
+    );
+
+    if (!hasQuestions) {
+      alert("No questions are available. Please upload a questionnaire file or add questions before proceeding.");
+      return;  
+    }
+
     const data = {
       problem_statement: problemStatement,
       context: projectDescription,
@@ -263,7 +271,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       project_id: projectID
     };
 
-    setIsPDDJsonGenerating(true); 
+    setIsPDDJsonGenerating(true);
 
     axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
       headers: {
@@ -271,13 +279,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       }
     })
       .then(response => {
-        setJsonForDocument(response.data.json);  
-        setActiveTab("01.c")
+        setJsonForDocument(response.data.json);
+        setActiveTab("01.c");
       })
       .catch(error => {
         console.error('Error generating document:', error);
+      })
+      .finally(() => {
+        setIsPDDJsonGenerating(false);
       });
   };
+
 
   const handleDownloadQuestionnaire = async () => {
     if (Object.keys(questionnaireData.categories).length === 0) {
