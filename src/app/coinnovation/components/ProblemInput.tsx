@@ -14,6 +14,7 @@ interface ProblemInputProps {
     event:
       | React.FormEvent<HTMLFormElement>
       | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
   ) => void;
   loading: boolean;
   files: File[];
@@ -72,6 +73,12 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
               value={problemStatement}
               onChange={handleChange}
               placeholder="Type your problem statement"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault(); 
+                  handleSubmit(e);
+                }
+              }}
               style={{
                 minHeight: `${lineHeight}px`,
                 maxHeight: `${lineHeight * maxRows}px`,

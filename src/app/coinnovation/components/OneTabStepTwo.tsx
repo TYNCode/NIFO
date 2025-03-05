@@ -61,15 +61,15 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
 
       <div className="w-[70%] mx-3">
         <Questionairre
-          questionnaireData={questionnaireData} 
-          setQuestionnaireData={setQuestionnaireData} 
+          questionnaireData={questionnaireData}
+          setQuestionnaireData={setQuestionnaireData}
           problemStatement={problemStatement}
           projectDescription={projectDescription}
           projectID={projectID}
           jsonForDocument={jsonForDocument}
           setJsonForDocument={setJsonForDocument}
-          setActiveTab = {setActiveTab}
-        />
+          setActiveTab={setActiveTab} 
+          />
       </div>
     </div>
   );

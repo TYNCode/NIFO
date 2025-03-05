@@ -33,13 +33,13 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-[#4A4D4E] text-lg font-semibold">Project Entry Details</div>
+      <div className="text-[#4A4D4E] text-[14px] font-semibold">Project Entry Details</div>
 
       <div className="flex flex-col">
-        <label className="text-sm text-[#4A4D4E]">Project ID</label>
+        <label className="text-[#4A4D4E] text-[13px]">Project ID</label>
         <input
           type="text"
-          className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+          className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] ${
             readOnly ? "bg-gray-100" : ""
           }`}
           name="project_id"
@@ -50,10 +50,10 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
       </div>
 
       <div className="flex flex-col">
-        <label className="text-sm text-[#4A4D4E]">Project Name</label>
+        <label className="text-[13px] text-[#4A4D4E]">Project Name</label>
         <input
           type="text"
-          className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+          className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full  text-[#4A4D4E] text-[13px]  ${
             readOnly ? "bg-gray-100" : ""
           }`}
           name="project_name"
@@ -64,10 +64,10 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
       </div>
 
       <div className="relative">
-        <label className="text-sm text-[#4A4D4E]">Priority</label>
+        <label className="text-[13px] text-[#4A4D4E]">Priority</label>
         {readOnly ? (
-          <div className="rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 bg-gray-100 w-full flex items-center">
-            <span className="text-[#4A4D4E] text-sm">{projectData.priority || "Not set"}</span>
+          <div className="rounded-md border-[#56A8F0] border-[1px] h-[32px] cursor-pointer px-3 bg-gray-100 w-full flex items-center  text-[#4A4D4E] text-[13px]">
+            <span className="text-[#4A4D4E] text-[13px]">{projectData.priority || "Not set"}</span>
           </div>
         ) : (
           <>
@@ -75,7 +75,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
               className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[28px] px-3 cursor-pointer bg-white w-full"
               onClick={() => setIsOpenPriority(!isOpenPriority)}
             >
-              <span className="text-[#4A4D4E] text-sm">{projectData.priority || "Select an option"}</span>
+              <span className="text-[#4A4D4E] text-[13px]">{projectData.priority || "Select an option"}</span>
               <IoChevronDownOutline className={`transition-transform text-sm font-light text-[#979797] ${isOpenPriority ? "rotate-180" : ""}`} />
             </div>
 
@@ -84,7 +84,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
                 {optionsPriority.map((option, index) => (
                   <div
                     key={index}
-                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
+                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-[13px] text-[#4A4D4E]"
                     onClick={() => {
                       onSelectPriority(option);
                       setIsOpenPriority(false);
@@ -100,7 +100,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
       </div>
 
       <div className="relative">
-        <label className="text-sm text-[#4A4D4E]">Status</label>
+        <label className="text-[13px] text-[#4A4D4E]">Status</label>
         {readOnly ? (
           <div className="rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 bg-gray-100 w-full flex items-center">
             <span className="text-[#4A4D4E] text-sm">{projectData.status || "Not set"}</span>
@@ -108,7 +108,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
         ) : (
           <>
             <div
-              className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-sm"
+                className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-[13px]"
               onClick={() => setIsOpenStatus(!isOpenStatus)}
             >
               <span className="text-[#4A4D4E]">{projectData.status || "Select an option"}</span>
@@ -120,7 +120,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
                 {optionsStatus.map((option, index) => (
                   <div
                     key={index}
-                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-sm text-[#4A4D4E]"
+                    className="px-3 py-2 hover:bg-[#56A8F0] hover:text-white cursor-pointer transition text-[13px] text-[#4A4D4E]"
                     onClick={() => {
                       onSelectStatus(option);
                       setIsOpenStatus(false);
@@ -136,27 +136,27 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col">
-          <label className="text-sm text-[#4A4D4E]">Start Date</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] text-[#4A4D4E]">Start Date</label>
           <input
             type="date"
             name="start_date"
             value={projectData.start_date}
             onChange={onInputChange}
-            className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+            className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] ${
               readOnly ? "bg-gray-100" : ""
             }`}
             readOnly={readOnly}
           />
         </div>
-        <div className="flex flex-col">
-          <label className="text-sm text-[#4A4D4E]">Target Closure</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-[#4A4D4E] text-[13px] ">Target Closure</label>
           <input
             type="date"
             name="end_date"
             value={projectData.end_date}
             onChange={onInputChange}
-            className={`rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full ${
+            className={`rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] ${
               readOnly ? "bg-gray-100" : ""
             }`}
             readOnly={readOnly}

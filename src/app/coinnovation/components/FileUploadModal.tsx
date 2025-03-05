@@ -13,6 +13,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
     files,
     setFiles
 }) => {
+
     if (!isFileUploadModalOpen) return null;
     const [tempFiles, setTempFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -20,9 +21,21 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
-        setTempFiles([...tempFiles, ...selectedFiles]); 
+        const allowedExtensions = ['.pdf', '.txt', '.xlsx', '.docx'];
+        const filteredFiles = selectedFiles.filter(file =>
+            allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+        );
+
+        if (filteredFiles.length < selectedFiles.length) {
+            alert("Only PDF, TXT, XLSX, or DOCX files are allowed.");
+        }
+
+        setTempFiles([...tempFiles, ...filteredFiles]);
         setUploadComplete(false);
     };
+
+
+    
 
     const handleUploadClick = () => {
         if (tempFiles.length === 0) {

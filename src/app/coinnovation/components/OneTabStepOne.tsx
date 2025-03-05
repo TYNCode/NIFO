@@ -80,6 +80,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     try {
       setLoading(true);
       setResponseData(null);
+
       const formData = new FormData();
       if (problemStatement.trim()) {
         formData.append("text", problemStatement);
@@ -95,6 +96,13 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
       setResponseData(problemStatementResponse);
 
+      // Check for the unwanted response
+      if (problemStatementResponse.trim() === "I could not find any problem to be solved.") {
+        alert("The system could not identify a valid problem statement. Please provide a clearer description.");
+        return; // 🔥 Stop further processing (skip project creation)
+      }
+
+      // If valid response, proceed to project creation
       const createProjectResponse = await axios.post(
         "http://127.0.0.1:8000/coinnovation/create-project/",
 
@@ -105,9 +113,9 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         { headers: { "Content-Type": "application/json" } }
       );
 
-      const projectResponse =
-        createProjectResponse.data || "No response from API";
+      const projectResponse = createProjectResponse.data || "No response from API";
       setProjectID(projectResponse.project_id);
+
     } catch (error) {
       console.error("Error in API call:", error);
       setResponseData("Failed to process the request.");
@@ -116,6 +124,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       setLoading(false);
     }
   };
+
 
   return (
     <div className="bg-[#F4FCFF] w-full shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">

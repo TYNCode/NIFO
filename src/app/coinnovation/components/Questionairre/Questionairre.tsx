@@ -36,11 +36,10 @@ interface QuestionnaireProps {
   setQuestionnaireData: React.Dispatch<React.SetStateAction<QuestionnaireData>>;
   problemStatement: string;
   projectDescription: string;
-  projectID: string |null;
-  jsonForDocument: Record<string, any> | null;  
-  setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>; 
+  projectID: string | null;
+  jsonForDocument: Record<string, any> | null;
+  setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
-  setIsQuestionnaireUploadOpen: React.Dispatch<React.SetStateAction<boolean> | null>;
 }
 
 const Questionnaire: React.FC<QuestionnaireProps> = ({
@@ -66,7 +65,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [newQuestionText, setNewQuestionText] = useState<string>("");
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState<boolean>(false);
-  const [isQuestionnaireModalOpen, setIsQuestionnaireModalOpen] = useState<boolean>(false); 
+  const [isQuestionnaireModalOpen, setIsQuestionnaireModalOpen] = useState<boolean>(false);
   const [questionnaireFile, setQuestionnaireFile] = useState<File>();
 
   console.log("Questionnaire Data", questionnaireData);
@@ -126,7 +125,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         }
       });
 
-      console.log("✅ Final Parsed Questionnaire Data:", parsedData);
+      console.log("Final Parsed Questionnaire Data:", parsedData);
       setQuestionnaireData(parsedData);
 
     } catch (error) {
@@ -243,6 +242,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       newAnswer,
     });
 
+    const hasSelectedInCategory = (category: string) => {
+      return Array.from(selectedQuestions).some((id) => id.startsWith(`${category}-`));
+    };
+
+
     setQuestionnaireData((prevData) => {
       const updatedCategories = { ...prevData.categories };
       updatedCategories[category].questions[questionIndex].answer.assumed =
@@ -256,6 +260,15 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   const handleGeneratePDD = () => {
+    const hasQuestions = Object.values(questionnaireData.categories).some(
+      (category) => category.questions.length > 0
+    );
+
+    if (!hasQuestions) {
+      alert("No questions are available. Please upload a questionnaire file or add questions before proceeding.");
+      return;
+    }
+
     const data = {
       problem_statement: problemStatement,
       context: projectDescription,
@@ -263,7 +276,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       project_id: projectID
     };
 
-    setIsPDDJsonGenerating(true); 
+    setIsPDDJsonGenerating(true);
 
     axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
       headers: {
@@ -271,13 +284,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       }
     })
       .then(response => {
-        setJsonForDocument(response.data.json);  
-        setActiveTab("01.c")
+        setJsonForDocument(response.data.json);
+        setActiveTab("01.c");
       })
       .catch(error => {
         console.error('Error generating document:', error);
+      })
+      .finally(() => {
+        setIsPDDJsonGenerating(false);
       });
   };
+
 
   const handleDownloadQuestionnaire = async () => {
     if (Object.keys(questionnaireData.categories).length === 0) {
@@ -335,8 +352,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     saveAs(blob, "Briefing_Questionnaire.xlsx");
   };
 
-  const handleQuestionnaireUpload = ()=>{
-   setIsQuestionnaireModalOpen(true);
+  const handleQuestionnaireUpload = () => {
+    setIsQuestionnaireModalOpen(true);
   }
 
   return (
@@ -354,26 +371,30 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       </div>
 
       <div className="p-3">
-        {Object?.entries(questionnaireData?.categories).map(
-          ([category, details], index) => (
+        {Object.entries(questionnaireData.categories).map(([category, details], index) => {
+          const hasSelected = Array.from(selectedQuestions).some(id => id.startsWith(`${category}-`));
+
+          return (
             <div key={category} className="mb-4">
               <div className="flex justify-between items-center bg-white p-3 rounded-lg">
                 <h2 className="text-[14px] font-semibold text-[#4A4D4E]">
                   {index + 1}. {category}
                 </h2>
-                <div className="flex flex-row gap-8 text-[#2286C0] cursor-pointer">
-                  <span onClick={() => handleAddQuestion(category)}>
+                <div className="flex flex-row gap-8">
+                  <span className="text-[#2286C0] cursor-pointer" onClick={() => handleAddQuestion(category)}>
                     <IoMdAdd />
                   </span>
-                  <span onClick={() => handleDeleteSelected(category)}>
+                  <span
+                    className={`${hasSelected ? "text-[#2286C0] cursor-pointer" : "text-[#A1AEBE] cursor-default"
+                      }`}
+                    onClick={() => {
+                      if (hasSelected) handleDeleteSelected(category);
+                    }}
+                  >
                     <RiDeleteBin6Line />
                   </span>
-                  <span onClick={() => toggleCategory(category)}>
-                    {openCategories[category] ? (
-                      <FaChevronUp />
-                    ) : (
-                      <FaChevronDown />
-                    )}
+                  <span className="text-[#2286C0] cursor-pointer" onClick={() => toggleCategory(category)}>
+                    {openCategories[category] ? <FaChevronUp /> : <FaChevronDown />}
                   </span>
                 </div>
               </div>
@@ -381,30 +402,30 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
               {openCategories[category] && (
                 <div className="mt-2">
                   {newQuestionInputs[category] && (
-                    <div className="px-4 py-2 bg-white rounded-lg mt-2">
+                    <div className="px-4 py-2 bg-white rounded-[8px] mt-2">
                       <input
                         type="text"
                         value={newQuestionText}
                         onChange={(e) => setNewQuestionText(e.target.value)}
                         placeholder="Enter new question"
-                        className="w-full p-2 rounded-lg border-blue-400 border"
+                        className="w-full p-2 rounded-lg focus:ring-0 focus:border-[#9ED0EE] focus:border-[2px] border-[#9ED0EE] text-[13px] text-[#979797]"
                       />
                       <div className="flex justify-end mt-2 space-x-2">
                         <button
                           onClick={() => handleSaveNewQuestion(category)}
-                          className="bg-blue-400 text-white px-4 py-2 rounded-lg"
+                          className="bg-[#2286C0] text-white px-4 py-2 rounded-lg text-[12px]"
                         >
                           Save
                         </button>
                         <button
                           onClick={() => {
-                            setNewQuestionInputs((prev) => ({
+                            setNewQuestionInputs(prev => ({
                               ...prev,
                               [category]: false,
                             }));
                             setNewQuestionText("");
                           }}
-                          className="bg-gray-400 text-white px-4 py-2 rounded-lg"
+                          className="bg-[#979797] text-white px-4 py-2 rounded-lg text-[12px]"
                         >
                           Cancel
                         </button>
@@ -413,22 +434,17 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                   )}
 
                   {details.questions.map((q, i) => (
-                    <div
-                      key={q.question}
-                      className="px-4 py-2 bg-white rounded-lg mt-2"
-                    >
+                    <div key={q.question} className="px-4 py-2 bg-white rounded-lg mt-2">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <input
                             type="checkbox"
                             checked={selectedQuestions.has(`${category}-${i}`)}
-                            onChange={() =>
-                              toggleQuestionSelection(category, i)
-                            }
+                            onChange={() => toggleQuestionSelection(category, i)}
                             className="h-[12px] w-[12px] border-[#2286C0] rounded-[3px] focus:ring-0 focus:border-0 focus:outline-none appearance-none checked:border-[#2286C0] checked:bg-[#2286C0] checked:transition-all"
                           />
                           <p className="flex flex-row gap-2 text-[14px] text-[#4A4D4E]">
-                            <span className="font-semibold">Q{i + 1}</span> 
+                            <span className="font-semibold">Q{i + 1}</span>
                             <span>{q.question}</span>
                           </p>
                         </div>
@@ -436,11 +452,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                           onClick={() => toggleAnswer(q.question)}
                           className="text-[#2286C0] cursor-pointer"
                         >
-                          {openAnswers[q.question] ? (
-                            <FaChevronUp />
-                          ) : (
-                            <FaChevronDown />
-                          )}
+                          {openAnswers[q.question] ? <FaChevronUp /> : <FaChevronDown />}
                         </span>
                       </div>
 
@@ -456,7 +468,9 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                             <div className="flex space-x-2">
                               <button
                                 onClick={(e) => {
-                                  const input = (e.target as HTMLElement).closest('.mt-2')?.querySelector('input');
+                                  const input = (e.target as HTMLElement)
+                                    .closest('.mt-2')
+                                    ?.querySelector('input');
                                   const value = input ? input.value : '';
                                   handleSaveAnswer(category, i, value);
                                 }}
@@ -465,12 +479,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                                 Save
                               </button>
                               <button
-                                onClick={() =>
-                                  setEditingAnswers((prev) => ({
-                                    ...prev,
-                                    [`${category}-${i}`]: false,
-                                  }))
-                                }
+                                onClick={() => setEditingAnswers(prev => ({
+                                  ...prev,
+                                  [`${category}-${i}`]: false,
+                                }))}
                                 className="bg-[#979797] text-white px-4 py-2 rounded-lg text-[12px]"
                               >
                                 Cancel
@@ -490,9 +502,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
                 </div>
               )}
             </div>
-          )
-        )}
+          );
+        })}
       </div>
+
 
       <div className="flex flex-row gap-8 justify-end" >
         <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleQuestionnaireUpload}>
@@ -503,29 +516,29 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
         </button>
         {isPDDJsonGenerating ? (
           <div className="flex bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px] ">
-            <LuLoaderCircle className="animate-spin" size={20}/>
-        </div>
-        ):(
-            <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleGeneratePDD}>
-              <div>
-                <img src="/coinnovation/savepdd-icon.svg" />
-              </div>
-              <div>
-                Save & Continue
-              </div>
-            </button>
+            <LuLoaderCircle className="animate-spin" size={20} />
+          </div>
+        ) : (
+          <button className="flex flex-row gap-2 bg-[#0071C1] text-white px-4 py-2 rounded-[12px] items-center justify-center text-[14px]" onClick={handleGeneratePDD}>
+            <div>
+              <img src="/coinnovation/savepdd-icon.svg" />
+            </div>
+            <div>
+              Save & Continue
+            </div>
+          </button>
         )}
-       
+
       </div>
 
       {
         isQuestionnaireModalOpen && (
           <div>
             <QuestionnaireUploadModal
-            setIsQuestionnaireModalOpen = {setIsQuestionnaireModalOpen}
-            isQuestionnaireModalOpen = {isQuestionnaireModalOpen}
-            questionnaireFile = {questionnaireFile}
-            setQuestionnaireFile={setQuestionnaireFile}
+              setIsQuestionnaireModalOpen={setIsQuestionnaireModalOpen}
+              isQuestionnaireModalOpen={isQuestionnaireModalOpen}
+              questionnaireFile={questionnaireFile}
+              setQuestionnaireFile={setQuestionnaireFile}
             />
           </div>
         )
