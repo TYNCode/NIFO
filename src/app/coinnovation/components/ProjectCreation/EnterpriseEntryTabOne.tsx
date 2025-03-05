@@ -108,7 +108,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                 <label className="text-[#4A4D4E] text-[13px]">Enterprise</label>
                 <div className="relative w-full">
                     <div
-                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3  ${
+                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 text-[#4A4D4E] text-[13px]  ${
                             projectData.group_company ? "cursor-pointer" : "cursor-not-allowed"
                         } bg-white w-full`}
                         onClick={() => projectData.group_company && setIsOpenEnterprise(!isOpenEnterprise)}
@@ -150,7 +150,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                             name={field}
                             value={projectData[field as keyof typeof projectData]?.toString()}
                             onChange={handleInputChange}
-                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm focus:ring-0 focus:border-[#56A8F0]"
+                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm focus:ring-0 focus:border-[#56A8F0] text-[#4A4D4E] text-[13px]"
                         />
                     </div>
                 ))}
