@@ -52,8 +52,6 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     enterprise_img:"",
   });
 
-  console.log("problem statment inside onetabstepone", problemStatement)
-  console.log("response data inside onetabstepone", responseData)
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -66,9 +64,29 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log('Current value:', e.target.value);
     setProblemStatement(e.target.value);
   };
+
+  const fetchProjectData = async (projectID: string) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+      );
+
+      if (response.data) {
+        const formattedData = {
+          ...response.data,
+          start_date: response.data.start_date?.split("T")[0] || "",
+          end_date: response.data.end_date?.split("T")[0] || "",
+        };
+
+        setProjectData(formattedData); 
+      }
+    } catch (error) {
+      console.error("Failed to fetch updated project data:", error);
+    }
+  };
+
 
 
   const handleSubmit = async () => {
@@ -96,25 +114,42 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
       setResponseData(problemStatementResponse);
 
-      // Check for the unwanted response
       if (problemStatementResponse.trim() === "I could not find any problem to be solved.") {
         alert("The system could not identify a valid problem statement. Please provide a clearer description.");
-        return; // 🔥 Stop further processing (skip project creation)
+        return;
       }
 
-      // If valid response, proceed to project creation
-      const createProjectResponse = await axios.post(
-        "http://127.0.0.1:8000/coinnovation/create-project/",
+      if (projectID) {
+        await axios.put(
+          "http://127.0.0.1:8000/coinnovation/create-project/",
+          {
+            project_id: projectID,
+            project_description: problemStatementResponse,
+            context: problemStatementResponse,
+            problem_statement: problemStatement
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
-        { project_description: problemStatementResponse ,
-          context: problemStatementResponse,
-          problem_statement: problemStatement
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+        await fetchProjectData(projectID);  // ✅ Fetch fresh data after update
+        alert("Project updated successfully.");
+      } else {
+        const createProjectResponse = await axios.post(
+          "http://127.0.0.1:8000/coinnovation/create-project/",
+          {
+            project_description: problemStatementResponse,
+            context: problemStatementResponse,
+            problem_statement: problemStatement
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
-      const projectResponse = createProjectResponse.data || "No response from API";
-      setProjectID(projectResponse.project_id);
+        const projectResponse = createProjectResponse.data || "No response from API";
+        setProjectID(projectResponse.project_id);
+
+        await fetchProjectData(projectResponse.project_id);  // ✅ Fetch full project data after creation
+        alert("Project created successfully.");
+      }
 
     } catch (error) {
       console.error("Error in API call:", error);
@@ -124,6 +159,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       setLoading(false);
     }
   };
+
 
 
   return (

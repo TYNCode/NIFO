@@ -37,7 +37,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   const isProblemEntered = problemStatement.trim().length > 0;
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
 
-  console.log("projd ",projectData)
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -58,8 +57,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   const removeFile = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
   };
-
-  console.log("problem statement--->", problemStatement)
 
   return (
     <div className="flex justify-center items-center w-full">
