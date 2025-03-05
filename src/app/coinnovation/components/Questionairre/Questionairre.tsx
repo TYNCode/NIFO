@@ -10,6 +10,7 @@ import { saveAs } from "file-saver";
 import { LuLoaderCircle } from "react-icons/lu";
 import QuestionnaireUploadModal from "./QuestionnaireUploadModal";
 import * as XLSX from 'xlsx';
+import { toast } from "react-toastify";
 
 
 interface Answer {
@@ -97,7 +98,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       );
 
       if (!isValidTemplate) {
-        alert("Invalid file format. Expected headers: SI No, Questions, Assumed Answers, Actual Answers.");
+        toast.info("Invalid file format. Expected headers: SI No, Questions, Assumed Answers, Actual Answers.");
         return;
       }
 
@@ -130,7 +131,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
     } catch (error) {
       console.error("Error processing questionnaire file:", error);
-      alert("An error occurred while processing the file. Please try again.");
+      toast.error("An error occurred while processing the file. Please try again.");
     }
   };
 
@@ -265,7 +266,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     );
 
     if (!hasQuestions) {
-      alert("No questions are available. Please upload a questionnaire file or add questions before proceeding.");
+      toast.error("No questions are available. Please upload a questionnaire file or add questions before proceeding.");
       return;
     }
 
@@ -298,7 +299,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const handleDownloadQuestionnaire = async () => {
     if (Object.keys(questionnaireData.categories).length === 0) {
-      alert("No questions available to download.");
+      toast.info("No questions available to download.");
       return;
     }
     const workbook = new ExcelJS.Workbook();

@@ -3,6 +3,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 import axios from 'axios';
 import { LuSave } from 'react-icons/lu';
+import { toast } from 'react-toastify';
 
 interface OneTabStepThreeProps {
     jsonForDocument: Record<string, any> | null;
@@ -104,7 +105,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error generating DOCX document:", error);
-            alert("Failed to generate DOCX document.");
+            toast.error("Failed to generate DOCX document.");
         } finally {
             setIsGeneratingDocx(false);
         }
@@ -260,7 +261,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
                                         key={tab}
                                         onClick={() => {
                                             if (isEditingChallenge) {
-                                                alert("Please save your changes before switching tabs.");
+                                                toast.info("Please save your changes before switching tabs.");
                                                 return;
                                             }
                                             setChallengeTab(tab);
@@ -325,7 +326,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
                                         key={tab}
                                         onClick={() => {
                                             if (isEditingEndUser) {
-                                                alert("Please save your changes before switching tabs.");
+                                                toast.info("Please save your changes before switching tabs.");
                                                 return;
                                             }
                                             setEndUserTab(tab);
@@ -396,7 +397,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
                                         key={tab}
                                         onClick={() => {
                                             if (isEditingOutcome) {
-                                                alert("Please save your changes before switching tabs.");
+                                                toast.info("Please save your changes before switching tabs.");
                                                 return;
                                             }
                                             setOutcomeTab(tab);

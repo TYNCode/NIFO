@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 
 interface QuestionnaireUploadModalProps {
@@ -21,7 +22,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({ set
         const filteredFiles = selectedFiles.filter(file => file.name.endsWith(".xlsx") || file.name.endsWith(".csv"));
 
         if (filteredFiles.length === 0) {
-            alert("Only .xlsx or .csv files are allowed.");
+            toast.info("Only .xlsx or .csv files are allowed.");
             return;
         }
 
@@ -31,7 +32,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({ set
 
     const handleUploadClick = async() => {
         if (tempFiles.length === 0) {
-            alert("Please select a valid .xlsx or .csv file first.");
+            toast.info("Please select a valid .xlsx or .csv file first.");
             return;
         }
 
@@ -54,7 +55,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({ set
             );
 
             if (!isValidTemplate) {
-                alert("Invalid template file. Please upload a file with headers: SI No, Questions, Assumed Answers, Actual Answers.");
+                toast.info("Invalid template file. Please upload a the briefing questionnaire file");
                 setUploading(false);
                 return;
             }
@@ -89,7 +90,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({ set
                 }, 1000);
             }, 2000); 
         } catch (error) {
-            alert("An error occurred while processing the file. Please try again.");
+            toast.error("An error occurred while processing the file. Please try again.");
             setUploading(false);
         }
     };

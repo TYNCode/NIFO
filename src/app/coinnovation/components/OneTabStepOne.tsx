@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ProblemInput from "./ProblemInput";
 import ProjectDetails, { ProjectData } from "./ProjectDetails";
+import { toast } from "react-toastify";
 
 interface OneTabStepOneProps {
   problemStatement: string;
@@ -91,7 +92,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
   const handleSubmit = async () => {
     if (!problemStatement.trim() && files.length === 0) {
-      alert("Please enter a problem statement or upload at least one file.");
+      toast.info("Please enter a problem statement or upload at least one file.");
       return;
     }
 
@@ -115,7 +116,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       setResponseData(problemStatementResponse);
 
       if (problemStatementResponse.trim() === "I could not find any problem to be solved.") {
-        alert("The system could not identify a valid problem statement. Please provide a clearer description.");
+        toast.warn("The system could not identify a valid problem statement. Please provide a clearer description.");
         return;
       }
 
@@ -131,8 +132,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
           { headers: { "Content-Type": "application/json" } }
         );
 
-        await fetchProjectData(projectID);  // ✅ Fetch fresh data after update
-        alert("Project updated successfully.");
+        await fetchProjectData(projectID); 
+        toast.success("Project created successfully!");
       } else {
         const createProjectResponse = await axios.post(
           "http://127.0.0.1:8000/coinnovation/create-project/",
@@ -147,14 +148,14 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         const projectResponse = createProjectResponse.data || "No response from API";
         setProjectID(projectResponse.project_id);
 
-        await fetchProjectData(projectResponse.project_id);  // ✅ Fetch full project data after creation
-        alert("Project created successfully.");
+        await fetchProjectData(projectResponse.project_id);  
+        toast.success("Project created successfully.");
       }
 
     } catch (error) {
       console.error("Error in API call:", error);
       setResponseData("Failed to process the request.");
-      alert("Error: Failed to analyze the problem statement.");
+      toast.error("Error: Failed to analyze the problem statement.");
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import axios from "axios";
 import ProjectEntryTabOne from "./ProjectCreation/ProjectEntryTabOne";
 import EnterpriseEntryTabOne from "./ProjectCreation/EnterpriseEntryTabOne";
 import ProjectDescriptionTabOne from "./ProjectCreation/ProjectDescriptionTabOne";
+import { toast } from "react-toastify";
 
 export interface ProjectData {
   project_id: string;
@@ -183,7 +184,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         { headers: { "Content-Type": "application/json" } }
       );
 
-      setResponseMessage("Project updated successfully");
+      toast.success("Project updated successfully");
       const responseofquestionairre = await axios.post(
         `http://127.0.0.1:8000/coinnovation/generate-questions/`,
         questionairreBody
@@ -191,7 +192,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       setQuestionnaireData(responseofquestionairre.data.data);
       setActiveTab("01.b");
     } catch (error) {
-      setResponseMessage("Failed to update project. Please try again.");
+      toast.error("Failed to update project. Please try again.");
       console.error("Error:", error);
     } finally {
       setLoading(false);
