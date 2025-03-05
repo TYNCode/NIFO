@@ -268,7 +268,7 @@ export default function HomePage() {
     } finally {
       setCompareResultsLoading((prev) => ({
         ...prev,
-        [messageIndex]: false, // Reset only this index
+        [messageIndex]: false, 
       }));
     }
   };
@@ -350,7 +350,6 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* Comparison Table - Shows only if there are results */}
                 {message?.compareResults &&
                   message?.compareResults.length > 0 && (
                     <ComparisonTable data={message.compareResults} />

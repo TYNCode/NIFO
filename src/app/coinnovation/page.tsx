@@ -5,6 +5,7 @@ import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
 import ProgressOne from "./components/ProgressOne";
 import NavBarCoin from "./components/NavBar/NavBarCoin";
 import Sidebar from "./components/Sidebar/Sidebar";
+import WithAuth from "../utils/withAuth"
 
 interface ProcessStep {
   id: number;
@@ -87,4 +88,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default WithAuth(Page);
