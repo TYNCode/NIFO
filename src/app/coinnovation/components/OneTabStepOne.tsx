@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ProblemInput from "./ProblemInput";
-import ProjectDetails from "./ProjectDetails";
+import ProjectDetails, { ProjectData } from "./ProjectDetails";
+import { toast } from "react-toastify";
 
 interface OneTabStepOneProps {
   problemStatement: string;
@@ -30,6 +31,28 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   const maxRows = 7;
   const [files, setFiles] = useState<File[]>([]);
 
+  const [projectData, setProjectData] = useState<ProjectData>({
+    project_id: projectID,
+    project_name: "",
+    priority: "",
+    status: "",
+    start_date: "",
+    end_date: "",
+    group_company: "", 
+    enterprise: "",
+    owner: "",
+    approver: "",
+    category: "",
+    department: "",
+    business_unit: "",
+    location: "",
+    project_description: "",
+    problem_statement:
+      "",
+    context: "",
+    enterprise_img:"",
+  });
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -42,20 +65,41 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log('Current value:', e.target.value);
     setProblemStatement(e.target.value);
   };
+
+  const fetchProjectData = async (projectID: string) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+      );
+
+      if (response.data) {
+        const formattedData = {
+          ...response.data,
+          start_date: response.data.start_date?.split("T")[0] || "",
+          end_date: response.data.end_date?.split("T")[0] || "",
+        };
+
+        setProjectData(formattedData); 
+      }
+    } catch (error) {
+      console.error("Failed to fetch updated project data:", error);
+    }
+  };
+
 
 
   const handleSubmit = async () => {
     if (!problemStatement.trim() && files.length === 0) {
-      alert("Please enter a problem statement or upload at least one file.");
+      toast.info("Please enter a problem statement or upload at least one file.");
       return;
     }
 
     try {
       setLoading(true);
       setResponseData(null);
+
       const formData = new FormData();
       if (problemStatement.trim()) {
         formData.append("text", problemStatement);
@@ -68,27 +112,56 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      const problemStatementResponse =
-        uploadResponse.data.problem_statement || "No response from API";
+      const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
       setResponseData(problemStatementResponse);
 
-      const createProjectResponse = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
-        { project_description: problemStatementResponse },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      if (problemStatementResponse.trim() === "I could not find any problem to be solved.") {
+        toast.warn("The system could not identify a valid problem statement. Please provide a clearer description.");
+        return;
+      }
 
-      const projectResponse =
-        createProjectResponse.data || "No response from API";
-      setProjectID(projectResponse.project_id);
+      if (projectID) {
+        await axios.put(
+          "http://127.0.0.1:8000/coinnovation/create-project/",
+          {
+            project_id: projectID,
+            project_description: problemStatementResponse,
+            context: problemStatementResponse,
+            problem_statement: problemStatement
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        await fetchProjectData(projectID); 
+        toast.success("Project created successfully!");
+      } else {
+        const createProjectResponse = await axios.post(
+          "http://127.0.0.1:8000/coinnovation/create-project/",
+          {
+            project_description: problemStatementResponse,
+            context: problemStatementResponse,
+            problem_statement: problemStatement
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        const projectResponse = createProjectResponse.data || "No response from API";
+        setProjectID(projectResponse.project_id);
+
+        await fetchProjectData(projectResponse.project_id);  
+        toast.success("Project created successfully.");
+      }
+
     } catch (error) {
       console.error("Error in API call:", error);
       setResponseData("Failed to process the request.");
-      alert("Error: Failed to analyze the problem statement.");
+      toast.error("Error: Failed to analyze the problem statement.");
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="bg-[#F4FCFF] w-full shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
@@ -103,6 +176,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             <ProblemInput
               textareaRef={textareaRef}
               problemStatement={problemStatement}
+              setProblemStatement={setProblemStatement}
+              projectData={projectData}
               handleChange={handleChange}
               lineHeight={lineHeight}
               maxRows={maxRows}
@@ -118,9 +193,11 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
            <ProblemInput
             textareaRef={textareaRef}
             problemStatement={problemStatement}
+            setProblemStatement={setProblemStatement}
             handleChange={handleChange}
             lineHeight={lineHeight}
             maxRows={maxRows}
+            projectData={projectData}
             handleSubmit={handleSubmit}
             loading={loading}
             files={files}
@@ -128,6 +205,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
           />
           <ProjectDetails
             projectID={projectID}
+            projectData={projectData}
+            setProjectData={setProjectData}
             setQuestionnaireData={setQuestionnaireData}
             projectDescription={responseData || ""}
             problemStatement={problemStatement}

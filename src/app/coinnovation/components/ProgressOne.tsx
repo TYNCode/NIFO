@@ -16,7 +16,7 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const [jsonForDocument, setJsonForDocument] = useState<Record<string, any>>(null);
 
-  console.log("jsonForDocument",jsonForDocument)
+  console.log("jsonForDocument", problemStatement)
   useEffect(() => {
     if (typeof window !== "undefined") {
       setActiveTab(localStorage.getItem("activeTab") || "01.a");

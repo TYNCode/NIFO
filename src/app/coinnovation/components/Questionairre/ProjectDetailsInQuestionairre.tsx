@@ -36,7 +36,6 @@ const ProjectDetailsInQuestionairre: React.FC<
   const [fetchLoading, setFetchLoading] = useState(true);
   const [fetchError, setFetchError] = useState("");
 
-  // Fetch project details only
   useEffect(() => {
     const fetchProjectData = async () => {
       if (!projectID) return;
@@ -84,7 +83,7 @@ const ProjectDetailsInQuestionairre: React.FC<
     };
 
     fetchProjectData();
-  }, [projectID, projectDescription]);
+  }, []);
 
   // These handlers won't update the backend, just the local state for view consistency
   const handleInputChange = (

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import StoreProvider from './redux/StoreProvider';
-// import LeftFrame from "./components/LeftFrame/LeftFrame";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -25,7 +27,7 @@ export default function RootLayout({
       </head>
       <body className={montserrat.className}>
         <StoreProvider>
-          {/* <LeftFrame/> */}
+          <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
           {children}
         </StoreProvider>
       </body>

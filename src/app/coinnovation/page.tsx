@@ -5,6 +5,7 @@ import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
 import ProgressOne from "./components/ProgressOne";
 import NavBarCoin from "./components/NavBar/NavBarCoin";
 import Sidebar from "./components/Sidebar/Sidebar";
+import WithAuth from "../utils/withAuth"
 
 interface ProcessStep {
   id: number;
@@ -23,7 +24,6 @@ const Page: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(1);
   const [projectID, setProjectID] = useState<string | null>(null);
 
-  // Move `tabContent` **inside** so it can use `projectID` and `setProjectID`
   const tabContent: Record<number, JSX.Element> = {
     1: <ProgressOne projectID={projectID} setProjectID={setProjectID} />,
     2: <div>Step 2</div>,
@@ -88,4 +88,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default WithAuth(Page);

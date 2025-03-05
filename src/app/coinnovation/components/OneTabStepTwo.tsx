@@ -42,10 +42,12 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
   setJsonForDocument,
   setActiveTab
 }) => {
+  console.log("projectId in onetabsteptwoo",projectID)
+  console.log("projectDescription in onetabsteptwoo", projectDescription)
   return (
     <div className="p-4 w-full flex min-h-screen bg-[#F4FCFF]">
       <div className="w-[30%]">
-        {projectID && projectDescription ? (
+        {projectID ? (
           <ProjectDetailsInQuestionairre
             projectID={projectID}
             projectDescription={projectDescription}
@@ -59,15 +61,15 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
 
       <div className="w-[70%] mx-3">
         <Questionairre
-          questionnaireData={questionnaireData} 
-          setQuestionnaireData={setQuestionnaireData} 
+          questionnaireData={questionnaireData}
+          setQuestionnaireData={setQuestionnaireData}
           problemStatement={problemStatement}
           projectDescription={projectDescription}
           projectID={projectID}
           jsonForDocument={jsonForDocument}
           setJsonForDocument={setJsonForDocument}
-          setActiveTab = {setActiveTab}
-        />
+          setActiveTab={setActiveTab} 
+          />
       </div>
     </div>
   );

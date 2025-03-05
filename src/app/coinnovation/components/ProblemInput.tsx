@@ -5,13 +5,16 @@ import FileUploadModal from "./FileUploadModal";
 interface ProblemInputProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   problemStatement: string;
+  setProblemStatement:any;
   handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   lineHeight?: number;
   maxRows?: number;
+  projectData:any;
   handleSubmit: (
     event:
       | React.FormEvent<HTMLFormElement>
       | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
   ) => void;
   loading: boolean;
   files: File[];
@@ -21,6 +24,8 @@ interface ProblemInputProps {
 const ProblemInput: React.FC<ProblemInputProps> = ({
   textareaRef,
   problemStatement,
+  setProblemStatement,
+  projectData,
   handleChange,
   lineHeight ,
   maxRows,
@@ -38,6 +43,12 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, lineHeight * maxRows)}px`;
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
+
+  useEffect(() => {
+    if (projectData?.problem_statement) {
+      setProblemStatement(projectData.problem_statement);
+    }
+  }, [projectData, setProblemStatement]);
 
   const handleFileUpload = () => {
     setIsFileUploadModalOpen(true);
@@ -59,6 +70,12 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
               value={problemStatement}
               onChange={handleChange}
               placeholder="Type your problem statement"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault(); 
+                  handleSubmit(e);
+                }
+              }}
               style={{
                 minHeight: `${lineHeight}px`,
                 maxHeight: `${lineHeight * maxRows}px`,
@@ -113,7 +130,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         )}
       </div>
 
-      {/* File Upload Modal */}
       {isFileUploadModalOpen && (
         <FileUploadModal
           isFileUploadModalOpen={isFileUploadModalOpen}

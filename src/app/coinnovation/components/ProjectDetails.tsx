@@ -6,6 +6,7 @@ import axios from "axios";
 import ProjectEntryTabOne from "./ProjectCreation/ProjectEntryTabOne";
 import EnterpriseEntryTabOne from "./ProjectCreation/EnterpriseEntryTabOne";
 import ProjectDescriptionTabOne from "./ProjectCreation/ProjectDescriptionTabOne";
+import { toast } from "react-toastify";
 
 export interface ProjectData {
   project_id: string;
@@ -14,7 +15,7 @@ export interface ProjectData {
   status: string;
   start_date: string;
   end_date: string;
-  group_company: string; 
+  group_company: string;
   enterprise_img: any;
   enterprise: string;
   owner: string;
@@ -31,40 +32,25 @@ export interface ProjectData {
 interface ProjectDetailsProps {
   projectID: string;
   projectDescription: string;
+  projectData: any;
+  setProjectData: any;
   problemStatement: string;
   setQuestionnaireData: any;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const 
-ProjectDetails: React.FC<ProjectDetailsProps> = ({
+const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   projectID,
+  projectData,
+  setProjectData,
   projectDescription,
   problemStatement,
   setQuestionnaireData,
-  setActiveTab
+  setActiveTab,
 }) => {
-  const [projectData, setProjectData] = useState<ProjectData>({
-    project_id: projectID,
-    project_name: "",
-    priority: "",
-    status: "",
-    start_date: "",
-    end_date: "",
-    group_company: "", 
-    enterprise: "",
-    owner: "",
-    approver: "",
-    category: "",
-    department: "",
-    business_unit: "",
-    location: "",
-    project_description: "",
-    problem_statement:
-      "",
-    context: "",
-    enterprise_img:"",
-  });
+  console.log("projectDAta", projectData);
+  console.log("projectDescription", projectDescription);
+  console.log("problemStatement", problemStatement);
 
   const [isOpenPriority, setIsOpenPriority] = useState(false);
   const [isOpenStatus, setIsOpenStatus] = useState(false);
@@ -72,6 +58,21 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const [fetchLoading, setFetchLoading] = useState(true);
   const [responseMessage, setResponseMessage] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
+
+  const isFormValid = () => {
+    const { project_id, project_name, priority, status, start_date, end_date } = projectData;
+
+    return (
+      String(project_id || "").trim() !== "" &&
+      String(project_name || "").trim() !== "" &&
+      String(priority || "").trim() !== "" &&
+      String(status || "").trim() !== "" &&
+      String(start_date || "").trim() !== "" &&
+      String(end_date || "").trim() !== "" &&
+      end_date > start_date
+    );
+  };
+
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -122,7 +123,9 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
     if (name === "end_date" && value && projectData.start_date) {
       if (value <= projectData.start_date) {
-        setDateError("Target Closure date should be after Start Date and not the same.");
+        setDateError(
+          "Target Closure date should be after Start Date and not the same."
+        );
       } else {
         setDateError(null);
       }
@@ -130,13 +133,12 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
       if (projectData.end_date <= value) {
         setDateError("Start Date should be before Target Closure.");
       } else {
-        setDateError(null)
+        setDateError(null);
       }
     } else {
       setDateError(null);
     }
   };
-
 
   const handleSelectPriority = (option: string) => {
     setProjectData({ ...projectData, priority: option });
@@ -148,21 +150,18 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
     setIsOpenStatus(false);
   };
 
-  
-
   const handleDropdownChange = (field: string, value: string) => {
     setProjectData((prevData) => ({
-        ...prevData,
-        [field]: value
+      ...prevData,
+      [field]: value,
     }));
-};
-
+  };
 
   const questionairreBody = {
-    "project_id": projectID,
-    "problem_statement": problemStatement,
-    "context": projectDescription,
-  }
+    project_id: projectID,
+    problem_statement: problemStatement,
+    context: projectDescription ? projectDescription : projectData?.context,
+  };
 
   const handleSaveandContinue = async () => {
     setLoading(true);
@@ -185,15 +184,15 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
         { headers: { "Content-Type": "application/json" } }
       );
 
-      setResponseMessage("Project updated successfully");
+      toast.success("Project updated successfully");
       const responseofquestionairre = await axios.post(
         `https://tyn-server.azurewebsites.net/coinnovation/generate-questions/`,
         questionairreBody 
       );
-      setQuestionnaireData(responseofquestionairre.data.data)
-      setActiveTab("01.b"); 
+      setQuestionnaireData(responseofquestionairre.data.data);
+      setActiveTab("01.b");
     } catch (error) {
-      setResponseMessage("Failed to update project. Please try again.");
+      toast.error("Failed to update project. Please try again.");
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -210,7 +209,7 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
         ) : (
           <div>
             <div className="flex flex-row gap-6 max-w-[80vw] w-full justify-center">
-              <ProjectEntryTabOne 
+              <ProjectEntryTabOne
                 projectData={projectData}
                 handleInputChange={handleInputChange}
                 isOpenPriority={isOpenPriority}
@@ -223,7 +222,7 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
               <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
 
-              <EnterpriseEntryTabOne 
+              <EnterpriseEntryTabOne
                 projectData={projectData}
                 handleInputChange={handleInputChange}
                 handleDropdownChange={handleDropdownChange}
@@ -231,7 +230,7 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
               <div className="border-[1px] border-[#C3E3FF] flex items-center justify-center"></div>
 
-              <ProjectDescriptionTabOne 
+              <ProjectDescriptionTabOne
                 projectData={projectData}
                 handleInputChange={handleInputChange}
               />
@@ -246,14 +245,17 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 </div>
               )}
               <div
-                className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer"
-                onClick={handleSaveandContinue}
+                  className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 
+  ${isFormValid() ? "bg-[#0070C0] hover:bg-[#005A9C]" : "bg-gray-400 cursor-auto"}`}
+                  onClick={isFormValid() ? handleSaveandContinue : undefined} 
               >
                 <div>
                   <BiSave />
                 </div>
                 <div className="font-semibold">
-                  {loading ? "Saving & Generating Questionairre..." : "Save & Continue"}
+                  {loading
+                    ? "Saving & Generating Questionairre..."
+                    : "Save & Continue"}
                 </div>
               </div>
               {/* <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
