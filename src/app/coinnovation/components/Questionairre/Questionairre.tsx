@@ -274,27 +274,45 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       problem_statement: problemStatement,
       context: projectDescription,
       categories: questionnaireData,
-      project_id: projectID
+      project_id: projectID,
     };
 
     setIsPDDJsonGenerating(true);
 
-    axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
+    axios.get('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', {
+      params: { project_id: projectID }
     })
       .then(response => {
-        setJsonForDocument(response.data.json);
+        setJsonForDocument(response.data.data.json);
         setActiveTab("01.c");
       })
       .catch(error => {
-        console.error('Error generating document:', error);
-      })
-      .finally(() => {
-        setIsPDDJsonGenerating(false);
+        if (error.response && error.response.status === 404) {
+          axios.post('http://127.0.0.1:8000/coinnovation/generate-challenge-document/', data, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+            .then(response => {
+              setJsonForDocument(response.data.data.json);  
+              setActiveTab("01.c");
+              toast.success("PDD generated successfully!");
+            })
+            .catch(postError => {
+              console.error('Error generating document:', postError);
+              toast.error("Failed to generate PDD.");
+            })
+            .finally(() => {
+              setIsPDDJsonGenerating(false);
+            });
+        } else {
+          console.error('Error checking existing document:', error);
+          toast.error("Failed to check existing PDD.");
+          setIsPDDJsonGenerating(false);
+        }
       });
   };
+
 
 
   const handleDownloadQuestionnaire = async () => {
