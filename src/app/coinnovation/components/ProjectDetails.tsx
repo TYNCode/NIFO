@@ -73,6 +73,21 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const [responseMessage, setResponseMessage] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
 
+  const isFormValid = () => {
+    const { project_id, project_name, priority, status, start_date, end_date } = projectData;
+
+    return (
+      String(project_id || "").trim() !== "" &&
+      String(project_name || "").trim() !== "" &&
+      String(priority || "").trim() !== "" &&
+      String(status || "").trim() !== "" &&
+      String(start_date || "").trim() !== "" &&
+      String(end_date || "").trim() !== "" &&
+      end_date > start_date
+    );
+  };
+
+
   useEffect(() => {
     const fetchProjectData = async () => {
       if (!projectID) return;
@@ -246,8 +261,9 @@ ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 </div>
               )}
               <div
-                className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer"
-                onClick={handleSaveandContinue}
+                  className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 
+  ${isFormValid() ? "bg-[#0070C0] hover:bg-[#005A9C]" : "bg-gray-400 cursor-auto"}`}
+                  onClick={isFormValid() ? handleSaveandContinue : undefined} 
               >
                 <div>
                   <BiSave />

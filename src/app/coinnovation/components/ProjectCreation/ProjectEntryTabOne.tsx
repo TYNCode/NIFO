@@ -49,7 +49,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-[#4A4D4E] text-[13px]">Project ID</label>
+        <label className="text-[#4A4D4E] text-[13px]">
+          Project ID
+          <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]"
@@ -60,7 +63,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-[#4A4D4E] text-[13px]">Project Name</label>
+        <label className="text-[#4A4D4E] text-[13px]">
+          Project Name
+          <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full placeholder:text-xs text-[#4A4D4E] text-[13px]"
@@ -73,7 +79,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative flex flex-col gap-1">
-          <label className="text-[#4A4D4E] text-[13px]">Priority</label>
+          <label className="text-[#4A4D4E] text-[13px]">
+            Priority
+            <span className="text-red-500">*</span>
+          </label>
           <div
             className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-[#4A4D4E] text-[13px]"
             onClick={() => setIsOpenPriority(!isOpenPriority)}
@@ -102,7 +111,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         </div>
 
         <div className="relative">
-          <label className="text-[#4A4D4E] text-[13px]">Status</label>
+          <label className="text-[#4A4D4E] text-[13px]">
+            Status
+            <span className="text-red-500">*</span>
+          </label>
           <div
             className="flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 cursor-pointer bg-white w-full text-[#4A4D4E] text-[13px]"
             onClick={() => setIsOpenStatus(!isOpenStatus)}
@@ -133,7 +145,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
 
      <div className="grid grid-cols-2 gap-4">
       <div className="flex flex-col gap-1">
-        <label className="text-[13px] text-[#4A4D4E]">Start Date</label>
+        <label className="text-[13px] text-[#4A4D4E]">
+          Start Date
+            <span className="text-red-500">*</span>
+          </label>
         <input
           type="date"
           name="start_date"
@@ -144,7 +159,10 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-[13px] text-[#4A4D4E]">Target Closure</label>
+        <label className="text-[13px] text-[#4A4D4E]">
+          Target Closure
+          <span className="text-red-500">*</span>
+        </label>
         <input
           type="date"
           name="end_date"

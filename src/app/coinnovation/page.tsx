@@ -23,7 +23,6 @@ const Page: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(1);
   const [projectID, setProjectID] = useState<string | null>(null);
 
-  // Move `tabContent` **inside** so it can use `projectID` and `setProjectID`
   const tabContent: Record<number, JSX.Element> = {
     1: <ProgressOne projectID={projectID} setProjectID={setProjectID} />,
     2: <div>Step 2</div>,
