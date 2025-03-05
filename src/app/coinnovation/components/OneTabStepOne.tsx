@@ -71,7 +71,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   const fetchProjectData = async (projectID: string) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
       );
 
       if (response.data) {
@@ -122,7 +122,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
 
       if (projectID) {
         await axios.put(
-          "http://127.0.0.1:8000/coinnovation/create-project/",
+          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
           {
             project_id: projectID,
             project_description: problemStatementResponse,
@@ -136,7 +136,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         toast.success("Project created successfully!");
       } else {
         const createProjectResponse = await axios.post(
-          "http://127.0.0.1:8000/coinnovation/create-project/",
+          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
           {
             project_description: problemStatementResponse,
             context: problemStatementResponse,
