@@ -113,7 +113,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         )}
       </div>
 
-      {/* File Upload Modal */}
       {isFileUploadModalOpen && (
         <FileUploadModal
           isFileUploadModalOpen={isFileUploadModalOpen}
