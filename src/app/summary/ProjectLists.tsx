@@ -31,6 +31,7 @@ const ProjectLists: React.FC = () => {
 
   const handleCreateProject = ()=> {
     localStorage.removeItem('projectID')
+    localStorage.removeItem('problemStatement')
     console.log("handleCreateProjectttt")
     router.push("/coinnovation")
   }
