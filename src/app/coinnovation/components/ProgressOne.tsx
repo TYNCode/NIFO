@@ -11,39 +11,29 @@ interface ProgressOneProps {
 }
 
 const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) => {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("activeTab") || "01.a";
-    }
-    return "01.a";
-  });
-
-  const [problemStatement, setProblemStatement] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("problemStatement") || "";
-    }
-    return "";
-  });
-
-  const [responseData, setResponseData] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("responseData") || null;
-    }
-    return null;
-  });
-
+  // Use state to store the active tab
+  const [activeTab, setActiveTab] = useState<string>("01.a");
+  const [problemStatement, setProblemStatement] = useState<string>("");
+  const [responseData, setResponseData] = useState<string | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const [jsonForDocument, setJsonForDocument] = useState<Record<string, any>>(null);
 
+  // Load data from localStorage on first render
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const storedTab = localStorage.getItem("activeTab") || "01.a";
+      const storedProblemStatement = localStorage.getItem("problemStatement") || "";
+      const storedResponseData = localStorage.getItem("responseData") || null;
       const storedProjectID = localStorage.getItem("projectID");
-      if (storedProjectID) {
-        setProjectID(storedProjectID);
-      }
+
+      setActiveTab(storedTab);
+      setProblemStatement(storedProblemStatement);
+      setResponseData(storedResponseData);
+      if (storedProjectID) setProjectID(storedProjectID);
     }
   }, [setProjectID]);
 
+  // Sync state with localStorage when values change
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("activeTab", activeTab);
@@ -54,6 +44,8 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
       } else {
         localStorage.removeItem("responseData");
       }
+
+      console.log("Setting projectID in localStorage:", projectID);
 
       if (projectID) {
         localStorage.setItem("projectID", projectID);
@@ -71,6 +63,7 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
 
   return (
     <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
+      {/* Tabs Navigation */}
       <div className="flex flex-row gap-1 justify-center items-center w-full shadow-sm">
         {tabs.map((tab) => (
           <div
@@ -86,6 +79,7 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
         ))}
       </div>
 
+      {/* Tab Content */}
       <div>
         {activeTab === "01.a" && (
           <OneTabStepOne
