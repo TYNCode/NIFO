@@ -5,6 +5,7 @@ import axios from "axios";
 import NavBarCoin from "../components/NavBar/NavBarCoin";
 import Sidebar from "../components/Sidebar/Sidebar";
 import ProgressOne from "../components/ProgressOne";
+import WithAuth from "../../utils/withAuth";
 
 interface ProcessStep {
     id: number;
@@ -115,4 +116,4 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     );
 };
 
-export default ProjectSummaryPage;
+export default WithAuth(ProjectSummaryPage);

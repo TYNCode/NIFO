@@ -88,8 +88,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      console.log("📊 Raw JSON Data from Excel:", jsonData);
-
       const expectedHeaders = ["SI No", "Questions", "Assumed Answers", "Actual Answers"];
       const fileHeaders = jsonData[0] || [];
 
@@ -313,28 +311,46 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       });
   };
 
-
-
   const handleDownloadQuestionnaire = async () => {
     if (Object.keys(questionnaireData.categories).length === 0) {
       toast.info("No questions available to download.");
       return;
     }
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Questionnaire");
+
+    worksheet.protect('', { 
+      selectLockedCells: true,
+      selectUnlockedCells: true,
+      formatCells: false,
+      formatColumns: false,
+      formatRows: false,
+      insertColumns: false,
+      insertRows: false,
+      deleteColumns: false,
+      deleteRows: false
+    });
+
     const headerStyle = {
       font: { name: "Raleway", size: 10, bold: true },
       alignment: { horizontal: "center" as "center", vertical: "middle" as "middle" },
-      fill: { type: "pattern" as "pattern", pattern: "solid" as "solid", fgColor: { argb: "D9EAD3" } }
+      fill: { type: "pattern" as "pattern", pattern: "solid" as "solid", fgColor: { argb: "D9EAD3" } },
+      protection: { locked: true }  // ✅ Lock the header cells
     };
+
     const normalStyle = {
       font: { name: "Raleway", size: 10 },
       alignment: { vertical: "middle" as "middle" },
+      protection: { locked: false } 
     };
+
     worksheet.addRow(["SI No", "Questions", "Assumed Answers", "Actual Answers"]).eachCell((cell) => {
       cell.style = headerStyle;
     });
+
     let rowIndex = 2;
+
     Object.keys(questionnaireData.categories).forEach((category) => {
       const categoryRow = worksheet.addRow([category, "", "", ""]);
       categoryRow.eachCell((cell) => {
@@ -342,19 +358,23 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       });
       worksheet.mergeCells(`A${rowIndex}:D${rowIndex}`);
       rowIndex++;
+
       questionnaireData.categories[category].questions.forEach((questionObj, index) => {
         const question = questionObj.question;
         const assumedAnswer = questionObj.answer.assumed || "No Answer Provided";
         const actualAnswer = questionObj.answer.actual || "No Answer Provided";
+
         const questionRow = worksheet.addRow([
           index + 1,
           question,
           assumedAnswer,
           actualAnswer,
         ]);
+
         questionRow.eachCell((cell) => {
           cell.style = normalStyle;
         });
+
         rowIndex++;
       });
     });
@@ -365,11 +385,11 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       { width: 60 },
       { width: 60 },
     ];
-
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     saveAs(blob, "Briefing_Questionnaire.xlsx");
   };
+
 
   const handleQuestionnaireUpload = () => {
     setIsQuestionnaireModalOpen(true);
@@ -568,3 +588,10 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 };
 
 export default Questionnaire;
+
+
+
+
+
+
+
