@@ -27,7 +27,6 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Retrieve project ID from localStorage if not available in params
     useEffect(() => {
         const storedProjectID = localStorage.getItem("projectID");
         if (params.id) {
@@ -45,6 +44,11 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
                 `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
             );
             setProject(response.data);
+            
+            if (response.data && response.data.project_description) {
+                localStorage.setItem("responseData", response.data.project_description);
+                console.log("Saved project_description to localStorage:", response.data.project_description);
+            }
         } catch (err) {
             setError("Failed to fetch project details");
         } finally {

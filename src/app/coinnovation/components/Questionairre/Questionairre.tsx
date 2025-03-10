@@ -54,6 +54,7 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   setJsonForDocument,
   setActiveTab,
 }) => {
+  console.log("projectDescriptioninQuestionairre",projectDescription)
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     {}
   );

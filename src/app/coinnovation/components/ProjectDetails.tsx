@@ -49,7 +49,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   setActiveTab,
 }) => {
   console.log("projectDAta", projectData);
-  console.log("projectDescription", projectDescription);
+  console.log("projectDescriptioninprojectdetails", projectDescription);
   console.log("problemStatement", problemStatement);
 
   const [isOpenPriority, setIsOpenPriority] = useState(false);
