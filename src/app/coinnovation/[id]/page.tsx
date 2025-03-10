@@ -27,16 +27,22 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Retrieve project ID from localStorage if not available in params
     useEffect(() => {
+        const storedProjectID = localStorage.getItem("projectID");
         if (params.id) {
             setProjectID(params.id);
+            localStorage.setItem("projectID", params.id);
+        } else if (storedProjectID) {
+            setProjectID(storedProjectID);
         }
     }, [params.id]);
 
     const fetchProjectDetails = async () => {
+        if (!projectID) return;
         try {
             const response = await axios.get(
-                `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${params.id}`
+                `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
             );
             setProject(response.data);
         } catch (err) {
@@ -48,12 +54,11 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
 
     useEffect(() => {
         fetchProjectDetails();
-    }, [params.id]);
+    }, [projectID]);
 
     if (loading) return <p>Loading project details...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
-   
     const tabContent: Record<number, JSX.Element> = {
         1: <ProgressOne projectID={projectID} setProjectID={setProjectID} />,
         2: <div>Step 2</div>,
