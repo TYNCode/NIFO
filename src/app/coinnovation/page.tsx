@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
 import ProgressOne from "./components/ProgressOne";
 import NavBarCoin from "./components/NavBar/NavBarCoin";
 import Sidebar from "./components/Sidebar/Sidebar";

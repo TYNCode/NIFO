@@ -45,7 +45,7 @@ const ProjectDetailsInQuestionairre: React.FC<
       
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+          `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
         );
         
         if (response.data) {

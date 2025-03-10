@@ -26,7 +26,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     const [isEditingChallenge, setIsEditingChallenge] = useState(false);
     const [editableChallengeText, setEditableChallengeText] = useState('');
 
-    const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
+    const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
     const challengeScenarioData = jsonForDocument["Challenge Scenario"]?.[0] || {};
     const endUserProfileData = jsonForDocument["Profile of the End-Users"]?.[0] || {};
     const getChallengeTabData = (key) => {

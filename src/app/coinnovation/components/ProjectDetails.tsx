@@ -81,7 +81,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       setFetchLoading(true);
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+          `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
         );
 
         if (response.data) {
@@ -179,15 +179,15 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/coinnovation/create-project/`,
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/`,
         formattedProjectData,
         { headers: { "Content-Type": "application/json" } }
       );
 
       toast.success("Project updated successfully");
       const responseofquestionairre = await axios.post(
-        `http://127.0.0.1:8000/coinnovation/generate-questions/`,
-        questionairreBody
+        `https://tyn-server.azurewebsites.net/coinnovation/generate-questions/`,
+        questionairreBody 
       );
       setQuestionnaireData(responseofquestionairre.data.data);
       setActiveTab("01.b");

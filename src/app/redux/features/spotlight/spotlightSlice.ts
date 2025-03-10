@@ -23,7 +23,7 @@ export const fetchSpotlights = createAsyncThunk<
 >("spotlights/fetchSpotlights", async (_, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      "http://127.0.0.1:8000/spotlight/getspotlight/"
+      "https://tyn-server.azurewebsites.net/spotlight/getspotlight/"
     );
     return response.data;
   } catch (error: any) {
@@ -40,7 +40,7 @@ export const fetchSpotlightById = createAsyncThunk<
 >("spotlights/fetchSpotlightById", async (spotlightId, { rejectWithValue }) => {
   try {
     const response = await getRequest(
-      `http://127.0.0.1:8000/spotlight/getspotlight/${spotlightId}/`
+      `https://tyn-server.azurewebsites.net/spotlight/getspotlight/${spotlightId}/`
     );
     return response.data;
   } catch (error: any) {

@@ -19,32 +19,32 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
     const groupCompanyOptions = ["Vedanta", "Tata"];
 
     const vedantaCompanies = [
-        { id: 1, title: "Bharat Aluminium Company", imageurl: "" },
+        { id: 1, title: "Bharat Aluminium Company", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582642/WhatsApp_Image_2025-02-28_at_12.21.51_13f713d1_o2otmq.jpg" },
         { id: 2, title: "Vedanta Aluminium", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740722126/tatasteel_tpdier.jpg" },
-        { id: 3, title: "Jharsuguda Aluminium Smelter", imageurl: "" },
-        { id: 4, title: "Cairn Oil & Gas", imageurl: "" },
+        { id: 3, title: "Jharsuguda Aluminium Smelter", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582642/WhatsApp_Image_2025-02-28_at_12.22.57_2ae23bbe_eperen.jpg" },
+        { id: 4, title: "Cairn Oil & Gas", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582585/IMG-20250228-WA0017_vuv0lg.jpg" },
         { id: 5, title: "Mangala Oil Field", imageurl: "" },
         { id: 6, title: "Ravva Oil Field", imageurl: "" },
-        { id: 7, title: "Electrosteel Steels", imageurl: "" },
-        { id: 8, title: "Sesa Goa Iron Ore", imageurl: "" },
-        { id: 9, title: "Hindustan Zinc", imageurl: "" },
-        { id: 10, title: "Sterlite Copper", imageurl: "" },
-        { id: 11, title: "Talwandi Sabo Power Limited", imageurl: "" },
-        { id: 12, title: "Malco Energy", imageurl: "" },
-        { id: 13, title: "Ferro Alloys Corporation", imageurl: "" },
+        { id: 7, title: "Electrosteel Steels", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582622/IMG-20250228-WA0018_inudvl.jpg" },
+        { id: 8, title: "Sesa Goa Iron Ore", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582622/IMG-20250228-WA0019_azbfyr.jpg" },
+        { id: 9, title: "Hindustan Zinc", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582621/IMG-20250228-WA0020_t4sd6n.jpg" },
+        { id: 10, title: "Sterlite Copper", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582621/IMG-20250228-WA0021_mvu2gm.jpg" },
+        { id: 11, title: "Talwandi Sabo Power Limited", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582622/IMG-20250228-WA0022_myymdz.jpg" },
+        { id: 12, title: "Malco Energy", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582642/IMG-20250228-WA0023_jpgk3h.jpg" },
+        { id: 13, title: "Ferro Alloys Corporation", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1741582642/IMG-20250228-WA0024_ixzzgs.jpg" },
     ];
 
     const tataCompanies = [
         { id: 1, title: "Tata Steel", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740722126/tatasteel_tpdier.jpg" },
-        { id: 2, title: "Tata Power", imageurl: "" },
-        { id: 3, title: "Tata Projects", imageurl: "" },
-        { id: 4, title: "Tata Housing", imageurl: "" },
-        { id: 5, title: "Tata Motors", imageurl: "" },
-        { id: 6, title: "Tata Chemicals", imageurl: "" },
-        { id: 7, title: "Tata Digital", imageurl: "" },
-        { id: 8, title: "Titan Company", imageurl: "" },
-        { id: 9, title: "Tata Consumer Products", imageurl: "" },
-        { id: 10, title: "Air India Limited", imageurl: "" },
+        { id: 2, title: "Tata Power", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0006_d4ignv.jpg" },
+        { id: 3, title: "Tata Projects", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0007_rnzonp.jpg" },
+        { id: 4, title: "Tata Housing", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0008_v2bigw.jpg" },
+        { id: 5, title: "Tata Motors", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0009_rqxpdo.jpg" },
+        { id: 6, title: "Tata Chemicals", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0010_myaxmi.jpg" },
+        { id: 7, title: "Tata Digital", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0011_udknbd.jpg" },
+        { id: 8, title: "Titan Company", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739888/IMG-20250228-WA0012_h4rwst.jpg" },
+        { id: 9, title: "Tata Consumer Products", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739887/IMG-20250228-WA0013_ouvjng.jpg" },
+        { id: 10, title: "Air India Limited", imageurl: "https://res.cloudinary.com/dkgfu1pvh/image/upload/v1740739888/IMG-20250228-WA0014_mk78dk.jpg" },
     ];
 
     const handleSelectGroupCompany = (group: string) => {
