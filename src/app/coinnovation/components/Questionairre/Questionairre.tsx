@@ -76,8 +76,8 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
   const [questionnaireFile, setQuestionnaireFile] = useState<File>();
 
   // Constants
-  const API_BASE_URL = "http://127.0.0.1:8000";
-  const LOCAL_API_BASE_URL = "http://127.0.0.1:8000";
+  const API_BASE_URL = "https://tyn-server.azurewebsites.net/";
+  const LOCAL_API_BASE_URL = "https://tyn-server.azurewebsites.net/";
 
   useEffect(() => {
     if (questionnaireFile) {
