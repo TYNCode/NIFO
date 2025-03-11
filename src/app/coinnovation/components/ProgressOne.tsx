@@ -115,6 +115,7 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
           <OneTabStepThree
             jsonForDocument={jsonForDocument}
             setJsonForDocument={setJsonForDocument}
+            projectID={projectID}
           />
         )}
       </div>

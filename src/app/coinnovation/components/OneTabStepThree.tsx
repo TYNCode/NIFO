@@ -8,8 +8,9 @@ import { toast } from 'react-toastify';
 interface OneTabStepThreeProps {
     jsonForDocument: Record<string, any> | null;
     setJsonForDocument: React.Dispatch<React.SetStateAction<Record<string, any> | null>>;
+    projectID: String;
 }
-const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJsonForDocument}) => {
+const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJsonForDocument, projectID}) => {
     const [challengeTab, setChallengeTab] = useState("Focus Areas");
     const [endUserTab, setEndUserTab] = useState("Roles");
     const [outcomeTab, setOutcomeTab] = useState("Functional Requirements");
@@ -25,11 +26,26 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     const [editableEndUserText, setEditableEndUserText] = useState('');
     const [isEditingChallenge, setIsEditingChallenge] = useState(false);
     const [editableChallengeText, setEditableChallengeText] = useState('');
-    const [projectDetails, setProjectDetails] = useState([]);
+    const [projectDetails, setProjectDetails] = useState<Record<string, any>>({});
 
-    useEffect(()=>{
 
-    })
+   
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(
+                    `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+                );
+                console.log("Response->",response.data)
+                setProjectDetails(response.data);
+            } catch (error) {
+                console.error("Failed to fetch updated project data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
     const challengeScenarioData = jsonForDocument["Challenge Scenario"]?.[0] || {};
@@ -39,6 +55,8 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
         const foundObject = scenarioArray.find((item) => item[key]);
         return foundObject ? foundObject[key] : [];
     };
+
+    const { owner, approver, category, business_unit: businessUnit, location, department } = projectDetails || {};
 
     const endUserTabMapping = {
         "Roles": "Role",
@@ -83,8 +101,18 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
 
     const callGenerateDocxAPI = async (jsonData) => {
         const wrappedData = {
+            project_id: projectDetails?.project_id || "N/A",
+            project_name: projectDetails?.project_name || "Untitled Project",
+            owner: projectDetails?.owner || "N/A",
+            approver: projectDetails?.approver || "N/A",
+            category: projectDetails?.category || "N/A",
+            business_unit: projectDetails?.business_unit || "N/A",
+            location: projectDetails?.location || "N/A",
+            department: projectDetails?.department || "N/A",
             final_document: jsonData  
         };
+
+        console.log("wrappedData-->", wrappedData);
         setIsGeneratingDocx(true);
         try {
             const response = await axios.post(
