@@ -27,8 +27,6 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     const [isEditingChallenge, setIsEditingChallenge] = useState(false);
     const [editableChallengeText, setEditableChallengeText] = useState('');
     const [projectDetails, setProjectDetails] = useState<Record<string, any>>({});
-
-
    
 
     useEffect(() => {
@@ -59,7 +57,7 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     const { owner, approver, category, business_unit: businessUnit, location, department } = projectDetails || {};
 
     const endUserTabMapping = {
-        "Roles": "Role",
+        "Roles": "Roles",
         "Current Methods Employed": "Current methods to overcome the challenge"
     };
 
