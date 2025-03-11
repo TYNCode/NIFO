@@ -48,10 +48,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   setQuestionnaireData,
   setActiveTab,
 }) => {
-  console.log("projectDAta", projectData);
-  console.log("projectDescription", projectDescription);
-  console.log("problemStatement", problemStatement);
-
   const [isOpenPriority, setIsOpenPriority] = useState(false);
   const [isOpenStatus, setIsOpenStatus] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -167,27 +163,34 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     setLoading(true);
     setResponseMessage("");
 
-    const formattedProjectData = {
-      ...projectData,
-      start_date: projectData.start_date
-        ? new Date(projectData.start_date).toISOString().split("T")[0]
-        : "",
-      end_date: projectData.end_date
-        ? new Date(projectData.end_date).toISOString().split("T")[0]
-        : "",
-    };
-
     try {
+      const formData = new FormData();
+
+      Object.keys(projectData).forEach((key) => {
+        if (projectData[key] !== null && projectData[key] !== undefined) {
+          formData.append(key, projectData[key]);
+        }
+      });
+
+      if (projectData.start_date) {
+        formData.append("start_date", new Date(projectData.start_date).toISOString().split("T")[0]);
+      }
+      if (projectData.end_date) {
+        formData.append("end_date", new Date(projectData.end_date).toISOString().split("T")[0]);
+      }
+      
       const response = await axios.put(
         `https://tyn-server.azurewebsites.net/coinnovation/create-project/`,
-        formattedProjectData,
-        { headers: { "Content-Type": "application/json" } }
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       toast.success("Project updated successfully");
+
       const responseofquestionairre = await axios.post(
         `https://tyn-server.azurewebsites.net/coinnovation/generate-questions/`,
-        questionairreBody 
+        questionairreBody ,
+        { headers: { "Content-Type": "application/json" } }
       );
       setQuestionnaireData(responseofquestionairre.data.data);
       setActiveTab("01.b");

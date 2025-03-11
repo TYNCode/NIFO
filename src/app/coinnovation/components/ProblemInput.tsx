@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { CiPlay1 } from "react-icons/ci";
 import FileUploadModal from "./FileUploadModal";
+import axios from "axios";
+
+interface StoredFile {
+  id: number;
+  original_name: string;  
+  name: string;           
+  url: string;
+}
+
 
 interface ProblemInputProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
@@ -19,6 +28,9 @@ interface ProblemInputProps {
   loading: boolean;
   files: File[];
   setFiles: (files: File[]) => void;
+  storedFiles:StoredFile[];
+  setStoredFiles: (files: StoredFile[]) => void;
+  projectID: string;
 }
 
 const ProblemInput: React.FC<ProblemInputProps> = ({
@@ -33,6 +45,9 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   loading,
   files,
   setFiles,
+  storedFiles,
+  setStoredFiles,
+  projectID
 }) => {
   const isProblemEntered = problemStatement.trim().length > 0;
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
@@ -44,11 +59,47 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
 
+  useEffect(()=>{
+      fetchProjectData(projectID);
+    },[projectID])
+
   useEffect(() => {
     if (projectData?.problem_statement) {
       setProblemStatement(projectData.problem_statement);
     }
   }, [projectData, setProblemStatement]);
+
+  const fetchProjectData = async (projectID) => {
+    if (!projectID) return;
+    try {
+      const response = await axios.get(
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+      );
+
+      if (response.data) {
+        const formattedData = {
+          ...response.data,
+          start_date: response.data.start_date?.split("T")[0] || "",
+          end_date: response.data.end_date?.split("T")[0] || "",
+        };
+
+        if (formattedData.files) {
+          const formattedFiles = formattedData.files.map((file: any) => ({
+            id: file.id,
+            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()), // ✅ Use `original_name` if available, fallback to extracting from URL
+            name: file.original_name || decodeURIComponent(file.file.split("/").pop()), // ✅ Keep `name` as a fallback
+            url: `https://tyn-server.azurewebsites.net${file.file}`,
+          }));
+
+
+          setStoredFiles(formattedFiles);
+          console.log("Storeddddddddddd fileeeeeeeee---------->", formattedFiles)
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch updated project data:", error);
+    }
+  };
 
   const handleFileUpload = () => {
     setIsFileUploadModalOpen(true);
@@ -56,6 +107,10 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
 
   const removeFile = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const removeStoredFile = (index: number) => {
+    setStoredFiles(storedFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -105,10 +160,32 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
             </span>
           </button>
         </div>
-        {files.length > 0 && (
+        {(files.length > 0 || storedFiles.length > 0) && (
           <div className="text-gray-600 text-sm mt-2 w-full">
             <span className="font-semibold text-[12px]">Uploaded Files:</span>
             <ul className="mt-1 space-y-1 w-full">
+              {storedFiles.map((file, index) => (
+                <li
+                  key={`stored-${index}`}
+                  className="flex items-center justify-between bg-white px-3 py-2 rounded-md w-full border"
+                >
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate text-[#0071C1] text-[12px] font-semibold"
+                  >
+                    {file.original_name} 
+                  </a>
+                  <button
+                    className="text-[#0071C1] font-light text-[12px] px-2"
+                    onClick={() => removeStoredFile(index)}
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+
               {files.map((file, index) => (
                 <li
                   key={index}

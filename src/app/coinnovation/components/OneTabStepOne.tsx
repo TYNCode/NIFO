@@ -3,6 +3,7 @@ import axios from "axios";
 import ProblemInput from "./ProblemInput";
 import ProjectDetails, { ProjectData } from "./ProjectDetails";
 import { toast } from "react-toastify";
+import fs from "fs";
 
 interface OneTabStepOneProps {
   problemStatement: string;
@@ -13,6 +14,13 @@ interface OneTabStepOneProps {
   setProjectID: React.Dispatch<React.SetStateAction<string | null>>;
   setQuestionnaireData: any;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+}
+
+interface StoredFile {
+  id: number;
+  original_name: string;
+  name: string;
+  url: string;
 }
 
 const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
@@ -30,6 +38,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   const lineHeight = 24;
   const maxRows = 7;
   const [files, setFiles] = useState<File[]>([]);
+  const [storedFiles, setStoredFiles] = useState<StoredFile[]>([]);
 
   const [projectData, setProjectData] = useState<ProjectData>({
     project_id: projectID,
@@ -53,6 +62,10 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     enterprise_img:"",
   });
 
+  useEffect(()=>{
+    fetchProjectData(projectID);
+  },[projectID])
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -62,13 +75,8 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     }
   }, [problemStatement]);
 
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setProblemStatement(e.target.value);
-  };
-
-  const fetchProjectData = async (projectID: string) => {
+  const fetchProjectData = async (projectID) => {
+    if (!projectID) return;
     try {
       const response = await axios.get(
         `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
@@ -81,13 +89,25 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
           end_date: response.data.end_date?.split("T")[0] || "",
         };
 
-        setProjectData(formattedData); 
+        setProjectData(formattedData);
+        if (formattedData.files) {
+          const formattedFiles = formattedData.files.map((file: any) => ({
+            id: file.id,
+            name: decodeURIComponent(file.file.split("/").pop()),
+            url: `https://tyn-server.azurewebsites.net${file.file}`,
+          }));
+
+          setStoredFiles(formattedFiles);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch updated project data:", error);
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setProblemStatement(e.target.value);
+  };
 
 
   const handleSubmit = async () => {
@@ -121,34 +141,55 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       }
 
       if (projectID) {
+        const formData = new FormData();
+        formData.append("project_id", projectID);
+        formData.append("project_description", problemStatementResponse);
+        formData.append("context", problemStatementResponse);
+        formData.append("problem_statement", problemStatement);
+
+        if (files && files.length > 0) {
+          files.forEach((file) => {
+            formData.append("file", file);
+          });
+        }
+
         await axios.put(
           "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
-          {
-            project_id: projectID,
-            project_description: problemStatementResponse,
-            context: problemStatementResponse,
-            problem_statement: problemStatement
-          },
-          { headers: { "Content-Type": "application/json" } }
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
 
         await fetchProjectData(projectID); 
         toast.success("Project created successfully!");
       } else {
+
+        const formData = new FormData();
+        formData.append("project_description", problemStatementResponse);
+        formData.append("context", problemStatementResponse);
+        formData.append("problem_statement", problemStatement);
+
+        if (files && files.length > 0) {
+          files.forEach((file) => {
+            formData.append("file", file);
+          });
+        }
+
         const createProjectResponse = await axios.post(
           "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
+          formData,
           {
-            project_description: problemStatementResponse,
-            context: problemStatementResponse,
-            problem_statement: problemStatement
-          },
-          { headers: { "Content-Type": "application/json" } }
+            headers: {
+              "Content-Type": "multipart/form-data",
+            }
+          }
         );
+
 
         const projectResponse = createProjectResponse.data || "No response from API";
         setProjectID(projectResponse.project_id);
 
         await fetchProjectData(projectResponse.project_id);  
+        setFiles([]);
         toast.success("Project created successfully.");
       }
 
@@ -185,6 +226,9 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
               loading={loading}
               files={files}
               setFiles={setFiles}
+              storedFiles={storedFiles}
+              setStoredFiles={setStoredFiles}
+              projectID={projectID}
             />
           </div>
         </div>
@@ -202,6 +246,9 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             loading={loading}
             files={files}
             setFiles={setFiles}
+            storedFiles={storedFiles}
+            setStoredFiles={setStoredFiles}
+            projectID={projectID}
           />
           <ProjectDetails
             projectID={projectID}
