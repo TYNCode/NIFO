@@ -2,6 +2,7 @@
 
 import NavBarCoin from "../coinnovation/components/NavBar/NavBarCoin";
 import Sidebar from "../coinnovation/components/Sidebar/Sidebar";
+import WithAuth from "../utils/withAuth";
 import ProjectLists from "./ProjectLists";
 
 const SummaryCoinnovation = ()=> {
@@ -22,4 +23,4 @@ const SummaryCoinnovation = ()=> {
  )
 }
 
-export default SummaryCoinnovation;
+export default WithAuth(SummaryCoinnovation);

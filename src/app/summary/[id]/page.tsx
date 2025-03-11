@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import WithAuth from '../../utils/withAuth';
 
 const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   const [project, setProject] = useState<any>(null);
@@ -41,4 +42,4 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default ProjectSummaryPage;
+export default WithAuth(ProjectSummaryPage);
