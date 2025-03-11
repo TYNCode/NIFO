@@ -33,7 +33,6 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   setQuestionnaireData,
   setActiveTab
 }) => {
-  console.log("responsedatainsideontap-------",responseData)
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const lineHeight = 24;
