@@ -21,13 +21,13 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
-        const allowedExtensions = ['.pdf', '.txt', '.xlsx', '.docx'];
+        const allowedExtensions = ['.pdf', '.txt', '.docx'];
         const filteredFiles = selectedFiles.filter(file =>
             allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
         );
 
         if (filteredFiles.length < selectedFiles.length) {
-            alert("Only PDF, TXT, XLSX, or DOCX files are allowed.");
+            alert("Only PDF, TXT or DOCX files are allowed.");
         }
 
         setTempFiles([...tempFiles, ...filteredFiles]);
@@ -81,9 +81,6 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                     {tempFiles.length > 0 ? (
                         tempFiles.map((file, index) => (
                             <div key={index} className="w-full flex flex-row items-center gap-4">
-                                {file.name.endsWith('.xlsx') && (
-                                    <img src="/coinnovation/excel-icon.svg" className="flex-shrink-0" alt="File Icon" />
-                                )}
                                 {file.name.endsWith('.docx') && (
                                     <img src="/coinnovation/docx-icon.svg" className="flex-shrink-0" alt="File Icon" />
                                 )}
@@ -124,7 +121,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                                 <img src="/coinnovation/uploadfileicon.svg" alt="File Upload Icon" />
                             </div>
                             <div className="text-[#979797] text-[13px]">Drag & Drop or Click to upload</div>
-                            <div className="text-[#979797] text-[12px]">Accepted file formats: PDF, TXT, XLSX, DOCX</div>
+                            <div className="text-[#979797] text-[12px]">Accepted file formats: PDF, TXT, DOCX</div>
                         </div>
                     )}
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 import axios from 'axios';
@@ -25,6 +25,11 @@ const OneTabStepThree: React.FC<OneTabStepThreeProps> = ({jsonForDocument, setJs
     const [editableEndUserText, setEditableEndUserText] = useState('');
     const [isEditingChallenge, setIsEditingChallenge] = useState(false);
     const [editableChallengeText, setEditableChallengeText] = useState('');
+    const [projectDetails, setProjectDetails] = useState([]);
+
+    useEffect(()=>{
+
+    })
 
     const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
     const challengeScenarioData = jsonForDocument["Challenge Scenario"]?.[0] || {};
