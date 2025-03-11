@@ -48,6 +48,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   setQuestionnaireData,
   setActiveTab,
 }) => {
+  console.log("projectDAta", projectData);
+  console.log("projectDescriptioninprojectdetails", projectDescription);
+  console.log("problemStatement", problemStatement);
+
   const [isOpenPriority, setIsOpenPriority] = useState(false);
   const [isOpenStatus, setIsOpenStatus] = useState(false);
   const [loading, setLoading] = useState(false);

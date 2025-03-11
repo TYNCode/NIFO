@@ -28,17 +28,27 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const storedProjectID = localStorage.getItem("projectID");
         if (params.id) {
             setProjectID(params.id);
+            localStorage.setItem("projectID", params.id);
+        } else if (storedProjectID) {
+            setProjectID(storedProjectID);
         }
     }, [params.id]);
 
     const fetchProjectDetails = async () => {
+        if (!projectID) return;
         try {
             const response = await axios.get(
-                `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${params.id}`
+                `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
             );
             setProject(response.data);
+            
+            if (response.data && response.data.project_description) {
+                localStorage.setItem("responseData", response.data.project_description);
+                console.log("Saved project_description to localStorage:", response.data.project_description);
+            }
         } catch (err) {
             setError("Failed to fetch project details");
         } finally {
@@ -48,12 +58,11 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
 
     useEffect(() => {
         fetchProjectDetails();
-    }, [params.id]);
+    }, [projectID]);
 
     if (loading) return <p>Loading project details...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
-   
     const tabContent: Record<number, JSX.Element> = {
         1: <ProgressOne projectID={projectID} setProjectID={setProjectID} />,
         2: <div>Step 2</div>,
