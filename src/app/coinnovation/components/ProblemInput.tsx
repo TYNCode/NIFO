@@ -59,12 +59,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
 
-  useEffect(() => {
-    if (projectID) {
-      fetchProjectData(projectID);
-    }
-  }, [projectID]);
-
 
   useEffect(() => {
     if (projectData?.problem_statement) {

@@ -90,10 +90,12 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         };
 
         setProjectData(formattedData);
+
         if (formattedData.files) {
           const formattedFiles = formattedData.files.map((file: any) => ({
             id: file.id,
-            name: decodeURIComponent(file.file.split("/").pop()),
+            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
+            name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
             url: `https://tyn-server.azurewebsites.net${file.file}`,
           }));
 
@@ -101,9 +103,10 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         }
       }
     } catch (error) {
-      console.error("Failed to fetch updated project data:", error);
+      console.error("Failed to fetch project data:", error);
     }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setProblemStatement(e.target.value);
