@@ -11,57 +11,41 @@ interface ProgressOneProps {
 }
 
 const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) => {
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("activeTab") || "01.a";
-    }
-    return "01.a";
-  });
-
-  const [problemStatement, setProblemStatement] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("problemStatement") || "";
-    }
-    return "";
-  });
-
-  const [responseData, setResponseData] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("responseData") || null;
-    }
-    return null;
-  });
-
+  const [activeTab, setActiveTab] = useState<string>("01.a");
+  const [problemStatement, setProblemStatement] = useState<string>("");
+  const [responseData, setResponseData] = useState<string | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
-  const [jsonForDocument, setJsonForDocument] = useState<Record<string, any>>(null);
+  const [jsonForDocument, setJsonForDocument] = useState<Record<string, any> | null>(null);
+  const [isClient, setIsClient] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsClient(true);
+
     if (typeof window !== "undefined") {
+      const storedActiveTab = localStorage.getItem("activeTab");
+      const storedProblemStatement = localStorage.getItem("problemStatement");
+      const storedResponseData = localStorage.getItem("responseData");
       const storedProjectID = localStorage.getItem("projectID");
-      if (storedProjectID) {
-        setProjectID(storedProjectID);
-      }
+
+      if (storedActiveTab) setActiveTab(storedActiveTab);
+      if (storedProblemStatement) setProblemStatement(storedProblemStatement);
+      if (storedResponseData) setResponseData(storedResponseData);
+      if (storedProjectID) setProjectID(storedProjectID);
     }
   }, [setProjectID]);
 
+  // Persist state changes to localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("activeTab", activeTab);
-      localStorage.setItem("problemStatement", problemStatement);
+    if (!isClient) return;
 
-      if (responseData) {
-        localStorage.setItem("responseData", responseData);
-      } else {
-        localStorage.removeItem("responseData");
-      }
+    localStorage.setItem("activeTab", activeTab);
+    localStorage.setItem("problemStatement", problemStatement);
+    if (responseData) localStorage.setItem("responseData", responseData);
+    else localStorage.removeItem("responseData");
 
-      if (projectID) {
-        localStorage.setItem("projectID", projectID);
-      } else {
-        localStorage.removeItem("projectID");
-      }
-    }
-  }, [activeTab, problemStatement, responseData, projectID]);
+    if (projectID) localStorage.setItem("projectID", projectID);
+    else localStorage.removeItem("projectID");
+  }, [activeTab, problemStatement, responseData, projectID, isClient]);
 
   const tabs = [
     { id: "01.a", label: "Identification of the use case", enabled: true },

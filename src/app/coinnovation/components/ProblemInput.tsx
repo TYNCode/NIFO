@@ -59,15 +59,19 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
 
-  useEffect(()=>{
+  useEffect(() => {
+    if (projectID) {
       fetchProjectData(projectID);
-    },[projectID])
+    }
+  }, [projectID]);
+
 
   useEffect(() => {
     if (projectData?.problem_statement) {
       setProblemStatement(projectData.problem_statement);
     }
-  }, [projectData, setProblemStatement]);
+  }, [projectData.problem_statement]);
+
 
   const fetchProjectData = async (projectID) => {
     if (!projectID) return;
@@ -86,13 +90,14 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         if (formattedData.files) {
           const formattedFiles = formattedData.files.map((file: any) => ({
             id: file.id,
-            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()), // ✅ Use `original_name` if available, fallback to extracting from URL
-            name: file.original_name || decodeURIComponent(file.file.split("/").pop()), // ✅ Keep `name` as a fallback
+            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()), 
+            name: file.original_name || decodeURIComponent(file.file.split("/").pop()), 
             url: `https://tyn-server.azurewebsites.net${file.file}`,
           }));
 
 
-          setStoredFiles(formattedFiles);
+          setStoredFiles([...formattedFiles]); 
+
           console.log("Storeddddddddddd fileeeeeeeee---------->", formattedFiles)
         }
       }
