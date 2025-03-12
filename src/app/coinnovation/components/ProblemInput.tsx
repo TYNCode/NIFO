@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CiPlay1 } from "react-icons/ci";
 import FileUploadModal from "./FileUploadModal";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 interface StoredFile {
   id: number;
@@ -29,7 +30,7 @@ interface ProblemInputProps {
   files: File[];
   setFiles: (files: File[]) => void;
   storedFiles:StoredFile[];
-  setStoredFiles: (files: StoredFile[]) => void;
+  setStoredFiles: React.Dispatch<React.SetStateAction<StoredFile[]>>;
   projectID: string;
 }
 
@@ -108,9 +109,23 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const removeStoredFile = (index: number) => {
-    setStoredFiles(storedFiles.filter((_, i) => i !== index));
+  const removeStoredFile = async (fileId: number) => {
+    if (!fileId) return;
+
+    try {
+      await axios.delete(
+        `http://127.0.0.1:8000/coinnovation/delete-file/?file_id=${fileId}`
+      );
+
+      setStoredFiles((prevFiles: StoredFile[]) => prevFiles.filter((file) => file.id !== fileId));
+
+      toast.success("File deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      toast.error("Failed to delete file. Please try again.");
+    }
   };
+
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -178,7 +193,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
                   </a>
                   <button
                     className="text-[#0071C1] font-light text-[12px] px-2"
-                    onClick={() => removeStoredFile(index)}
+                    onClick={() => removeStoredFile(file.id)} 
                   >
                     ✕
                   </button>
