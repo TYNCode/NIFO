@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
+import { ProjectData } from "../Types/CoinnovationTypes";
 
-interface ProjectData {
-  project_id: string;
-  project_name: string;
-  priority: string;
-  status: string;
-  start_date: string;
-  end_date: string;
-}
 
 interface ProjectEntryProps {
   projectData: ProjectData;

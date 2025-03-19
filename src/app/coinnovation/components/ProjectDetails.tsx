@@ -1,33 +1,11 @@
 import React, { useEffect, useState } from "react";
-
-import { CiPlay1 } from "react-icons/ci";
 import { BiSave } from "react-icons/bi";
 import axios from "axios";
 import ProjectEntryTabOne from "./ProjectCreation/ProjectEntryTabOne";
 import EnterpriseEntryTabOne from "./ProjectCreation/EnterpriseEntryTabOne";
 import ProjectDescriptionTabOne from "./ProjectCreation/ProjectDescriptionTabOne";
 import { toast } from "react-toastify";
-
-export interface ProjectData {
-  project_id: string;
-  project_name: string;
-  priority: string;
-  status: string;
-  start_date: string;
-  end_date: string;
-  group_company: string;
-  enterprise_img: any;
-  enterprise: string;
-  owner: string;
-  approver: string;
-  category: string;
-  department: string;
-  business_unit: string;
-  location: string;
-  project_description: string;
-  problem_statement: string;
-  context: string;
-}
+import { RiRefreshLine } from "react-icons/ri";
 
 interface ProjectDetailsProps {
   projectID: string;
@@ -60,7 +38,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const [dateError, setDateError] = useState<string | null>(null);
 
   const isFormValid = () => {
-    const { project_id, project_name, priority, status, start_date, end_date } = projectData;
+    const { project_id, project_name, priority, status, start_date, end_date } =
+      projectData;
 
     return (
       String(project_id || "").trim() !== "" &&
@@ -72,7 +51,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       end_date > start_date
     );
   };
-
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -177,12 +155,18 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       });
 
       if (projectData.start_date) {
-        formData.append("start_date", new Date(projectData.start_date).toISOString().split("T")[0]);
+        formData.append(
+          "start_date",
+          new Date(projectData.start_date).toISOString().split("T")[0]
+        );
       }
       if (projectData.end_date) {
-        formData.append("end_date", new Date(projectData.end_date).toISOString().split("T")[0]);
+        formData.append(
+          "end_date",
+          new Date(projectData.end_date).toISOString().split("T")[0]
+        );
       }
-      
+
       const response = await axios.put(
         `https://tyn-server.azurewebsites.net/coinnovation/create-project/`,
         formData,
@@ -193,7 +177,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
       const responseofquestionairre = await axios.post(
         `https://tyn-server.azurewebsites.net/coinnovation/generate-questions/`,
-        questionairreBody ,
+        questionairreBody,
         { headers: { "Content-Type": "application/json" } }
       );
       setQuestionnaireData(responseofquestionairre.data.data);
@@ -205,6 +189,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       setLoading(false);
     }
   };
+
+  const handleRegenerate = () => {
+  
+  }
 
   return (
     <>
@@ -252,9 +240,18 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 </div>
               )}
               <div
-                  className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 
+                className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 
   ${isFormValid() ? "bg-[#0070C0] hover:bg-[#005A9C]" : "bg-gray-400 cursor-auto"}`}
-                  onClick={isFormValid() ? handleSaveandContinue : undefined} 
+              >
+                <div>
+                  <RiRefreshLine />
+                </div>{" "}
+                <div className="font-semibold" onClick={handleRegenerate}> Regenerate</div>
+              </div>
+              <div
+                className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 
+  ${isFormValid() ? "bg-[#0070C0] hover:bg-[#005A9C]" : "bg-gray-400 cursor-auto"}`}
+                onClick={isFormValid() ? handleSaveandContinue : undefined}
               >
                 <div>
                   <BiSave />
@@ -265,12 +262,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                     : "Save & Continue"}
                 </div>
               </div>
-              {/* <div className="flex flex-row justify-center items-center text-white text-normal gap-1.5 bg-[#0070C0] px-4 rounded-[12px] text-sm py-2 cursor-pointer">
-                <div>
-                  <CiPlay1 />
-                </div>
-                <div className="font-semibold">Skip</div>
-              </div> */}
             </div>
           </div>
         )}

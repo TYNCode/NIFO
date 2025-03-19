@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ProblemInput from "./ProblemInput";
-import ProjectDetails, { ProjectData } from "./ProjectDetails";
+import ProjectDetails from "./ProjectDetails";
 import { toast } from "react-toastify";
-import fs from "fs";
+import { ProjectData } from "./Types/CoinnovationTypes";
 
 interface OneTabStepOneProps {
   problemStatement: string;

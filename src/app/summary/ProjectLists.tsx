@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { ProjectData } from "../coinnovation/components/ProjectDetails";
+import { ProjectData } from "../coinnovation/components/Types/CoinnovationTypes";
 
 
 const ProjectLists: React.FC = () => {

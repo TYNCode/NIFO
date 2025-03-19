@@ -1,4 +1,5 @@
-import { ProjectData } from "../ProjectDetails";
+import { ProjectData } from "../Types/CoinnovationTypes";
+
 
 interface ProjectDescriptionTabOneProps {
     projectData: ProjectData;

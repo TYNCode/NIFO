@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
-import { ProjectData } from "../ProjectDetails";
+import { ProjectData } from "../Types/CoinnovationTypes";
 
 interface EnterpriseEntryTabOneProps {
     projectData: ProjectData;

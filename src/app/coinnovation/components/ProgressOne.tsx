@@ -8,9 +8,10 @@ import OneTabStepThree from "./OneTabStepThree";
 interface ProgressOneProps {
   projectID: string | null;
   setProjectID: (id: string | null) => void;
+  setSelectedTab: (id: number) => void;
 }
 
-const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) => {
+const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID ,setSelectedTab }) => {
   const [activeTab, setActiveTab] = useState<string>("01.a");
   const [problemStatement, setProblemStatement] = useState<string>("");
   const [responseData, setResponseData] = useState<string | null>(null);
@@ -34,7 +35,6 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
     }
   }, [setProjectID]);
 
-  // Persist state changes to localStorage
   useEffect(() => {
     if (!isClient) return;
 
@@ -100,6 +100,7 @@ const ProgressOne: React.FC<ProgressOneProps> = ({ projectID, setProjectID }) =>
             jsonForDocument={jsonForDocument}
             setJsonForDocument={setJsonForDocument}
             projectID={projectID}
+            setSelectedTab={setSelectedTab}
           />
         )}
       </div>
