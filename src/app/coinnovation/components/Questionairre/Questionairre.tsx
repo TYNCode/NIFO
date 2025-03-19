@@ -237,7 +237,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
     setQuestionnaireData((prevData) => {
       const updatedCategories = { ...prevData.categories };
       
-      // Get the indices to delete and filter out questions
       const indicesToDelete = Array.from(selectedQuestions)
         .filter(id => id.startsWith(`${category}-`))
         .map(id => parseInt(id.split('-')[1]));
@@ -259,7 +258,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
       return updated;
     });
 
-    // Clean up selected questions
     setSelectedQuestions((prev) => {
       const newSet = new Set(prev);
       Array.from(prev).forEach((id) => {
@@ -383,18 +381,6 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({
 
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Questionnaire");
-
-      worksheet.protect("", {
-        selectLockedCells: true,
-        selectUnlockedCells: true,
-        formatCells: false,
-        formatColumns: false,
-        formatRows: false,
-        insertColumns: false,
-        insertRows: false,
-        deleteColumns: false,
-        deleteRows: false,
-      });
 
       const headerStyle: Partial<ExcelJS.Style> = {
         font: { name: "Raleway", size: 10, bold: true },

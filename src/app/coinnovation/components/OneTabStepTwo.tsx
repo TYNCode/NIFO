@@ -42,8 +42,6 @@ const OneTabStepTwo: React.FC<OneTabStepTwoProps> = ({
   setJsonForDocument,
   setActiveTab
 }) => {
-  console.log("projectId in onetabsteptwoo",projectID)
-  console.log("projectDescription in onetabsteptwoo", projectDescription)
   return (
     <div className="p-4 w-full flex min-h-screen bg-[#F4FCFF]">
       <div className="w-[30%]">
