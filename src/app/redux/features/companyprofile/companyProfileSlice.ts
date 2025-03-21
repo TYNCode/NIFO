@@ -177,6 +177,7 @@ const companyProfileSlice = createSlice({
       .addCase(
         fetchAllCompanies.fulfilled,
         (state, action: PayloadAction<StartupType[]>) => {
+          console.log("companies=>", action.payload);
           state.companies = action.payload;
           state.loading = false;
         }

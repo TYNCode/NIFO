@@ -25,29 +25,89 @@ const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingStartups, setIsLoadingStartups] = useState(true);
   const [startups, setStartups] = useState([]);
+  const [consultantsData, setConsultants] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [StartupsCount, setStartupsCount] = useState(0);
+  const [ConsultantsCount, setConsultantsCount] = useState(0);
+  const [IsLoadingConsultants, setIsLoadingConsultants] = useState(true);
 
   useEffect(() => {
-    const fetchStartups = async () => {
+    fetchStartups(currentPage);
+  }, [currentPage]);
+
+  const fetchStartups = async (page) => {
+    try {
+      setIsLoadingStartups(true);
+      const response = await fetch(
+        `http://127.0.0.1:8000/adminroutes/api/startups/?page=${page}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch startups");
+
+      const data = await response.json();
+      console.log("Data results=>", data.results);
+      setStartups(data.results);
+      setStartupsCount(data.count);
+    } catch (error) {
+      console.error("Error fetching startups:", error);
+    } finally {
+      setIsLoadingStartups(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchConsultants = async () => {
       try {
-        setIsLoadingStartups(true);
+        setIsLoadingConsultants(true);
         const response = await fetch(
-          "http://127.0.0.1:8000/adminroutes/api/startups/"
+          "http://127.0.0.1:8000/adminroutes/api/consultants/"
         );
-        if (!response.ok) throw new Error("Failed to fetch startups");
+        if (!response.ok) throw new Error("Failed to fetch consultants");
 
         const data = await response.json();
-        setStartups(data);
+        setConsultants(data);
+        setConsultantsCount(data.length);
       } catch (error) {
-        console.error("Error fetching startups:", error);
+        console.error("Error fetching consultants:", error);
       } finally {
-        setIsLoadingStartups(false);
+        setIsLoadingConsultants(false);
       }
     };
 
-    fetchStartups();
+    fetchConsultants();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setIsLoading(true);
+
+  //       const [startupsRes, consultantsRes] = await Promise.all([
+  //         fetch("http://127.0.0.1:8000/adminroutes/api/startups/"),
+  //         fetch("http://127.0.0.1:8000/adminroutes/api/consultants/"),
+  //       ]);
+
+  //       if (!startupsRes.ok || !consultantsRes.ok)
+  //         throw new Error("Failed to fetch data");
+
+  //       const [startupsData, consultantsData] = await Promise.all([
+  //         startupsRes.json(),
+  //         consultantsRes.json(),
+  //       ]);
+
+  //       setStartupsCount(startupsData.length);
+  //       setConsultantsCount(consultantsData.length);
+  //       setStartups(startupsData);
+  //       setConsultants(consultantsData);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
     fetchUsers(currentPage);
@@ -221,23 +281,24 @@ const Dashboard: React.FC = () => {
             />
           ) : view === "ConsultantManage" ? (
             <ConsultantManage
-              users={users}
-              setUsers={setUsers}
-              isLoading={isLoading}
-              totalCount={totalCount}
+              ConsultantData={consultantsData}
+              setUsers={setConsultants}
+              isLoading={IsLoadingConsultants}
+              totalCount={ConsultantsCount}
               currentPage={currentPage}
               onPageChange={handlePageChange}
             />
-          ) 
-          : view === "ManageStartup" ? (
+          ) : view === "ManageStartup" ? (
             <ManageStartups
               data={startups}
               entityName="Startups"
               setData={setStartups}
               isLoading={isLoadingStartups}
+              totalCount={StartupsCount}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
             />
-          )
-           : view === "ManageUsers" ? (
+          ) : view === "ManageUsers" ? (
             <ManageUsers
               users={users}
               setUsers={setUsers}

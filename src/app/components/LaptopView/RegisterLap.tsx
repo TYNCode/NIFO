@@ -44,6 +44,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
+    console.log(companies.length);
     if (query && companies.length > 0) {
       const filtered = companies
         .filter((company) =>

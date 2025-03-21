@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import TableManage from "./TableManage";
 import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
+import TableMain from "./TableMain";
 
 const StartupManage = ({
   users,
@@ -18,7 +19,7 @@ const StartupManage = ({
       <h2 className="text-2xl font-semibold mb-4 ml-2">
         Manage Startups Users
       </h2>
-      <TableManage
+      <TableMain
         data={StartupUserData}
         title="Startups"
         entityName="Startups Users"
