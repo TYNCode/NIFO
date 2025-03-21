@@ -1,14 +1,11 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { FormData, StartupType } from "../../interfaces";
+import { FormData, StartupType, StartupNameType } from "../../interfaces";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import RegistrationModel from "../RegisterModel/RegisterModel";
-import {
-  fetchAllCompanies,
-  fetchCompanyByName,
-} from "../../redux/features/companyprofile/companyProfileSlice";
+import { fetchAllCompanies } from "../../redux/features/companyprofile/companyProfileSlice";
 
 interface RegisterLapProps {
   onSubmit: SubmitHandler<FormData>;
@@ -33,44 +30,24 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     mode: "onChange",
   });
 
+  const [filteredCompanies, setFilteredCompanies] = useState<StartupNameType[]>(
+    []
+  );
   const [query, setQuery] = useState("");
-  console.log("qiery;evfb", query.length);
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     null
   );
   const [showModal, setShowModal] = useState(false);
 
-  const { companies, loading: companyLoading } = useAppSelector(
-    (state) => state.companyProfile
-  );
-
-  console.log("companies in the state", companies);
-
-  const debounce = useCallback((func: Function, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
-  }, []);
-
-  const debouncedFetchCompanies = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(fetchCompanyByName(searchTerm));
-      }, 500),
-    [dispatch, debounce]
-  );
+  const { companies } = useAppSelector((state) => state.companyProfile);
 
   useEffect(() => {
-    if (query.trim().length > 1) {
-      debouncedFetchCompanies(query);
-    }
-  }, [query, debouncedFetchCompanies]);
+    dispatch(fetchAllCompanies());
+  }, [dispatch]);
 
   useEffect(() => {
-    console.log(companies.length);
     if (query && companies.length > 0) {
+      console.log(companies.length);
       const filtered = companies
         .filter((company) =>
           company.startup_name?.toLowerCase().includes(query.toLowerCase())
@@ -82,51 +59,42 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
     }
   }, [query, companies]);
 
-  console.log("filterCompanies", filteredCompanies);
+  const handleCompanySelect = (company: StartupNameType) => {
+    setQuery(company.startup_name);
+    setSelectedCompanyId(company.startup_id);
+    setFilteredCompanies([]);
+    setValue("organization_id", company.startup_id);
+  };
 
-  const handleCompanySelect = useCallback(
-    (company: StartupType) => {
-      setQuery(company.startup_name);
-      setSelectedCompanyId(company.startup_id);
-      setValue("organization_id", company.startup_id);
-    },
-    [setValue]
-  );
+  const handleFormSubmit: SubmitHandler<FormData> = (data) => {
+    if (selectedCompanyId) {
+      data.organization_id = selectedCompanyId;
+    }
+    delete data.organization_name;
+    console.log("Data to submit:", data);
+    onSubmit(data);
+  };
 
-  const handleFormSubmit: SubmitHandler<FormData> = useCallback(
-    (data) => {
-      if (selectedCompanyId) {
-        data.organization_id = selectedCompanyId;
-      }
-      delete data.organization_name;
-      onSubmit(data);
-    },
-    [selectedCompanyId, onSubmit]
-  );
-
-  const handleOpenModal = useCallback((event: React.MouseEvent) => {
+  const handleOpenModal = (event: React.MouseEvent) => {
     event.preventDefault();
     setShowModal(true);
-  }, []);
+  };
 
-  const handleCloseModal = useCallback(() => {
+  const handleCloseModal = () => {
     setShowModal(false);
     dispatch(fetchAllCompanies());
-  }, [dispatch]);
+  };
 
-  const showAddOrganizationButton = useMemo(() => {
-    return (
-      query &&
-      !filteredCompanies.some(
-        (company) => company.startup_name.toLowerCase() === query.toLowerCase()
-      ) &&
-      selectedCompanyId === null
-    );
-  }, [query, filteredCompanies, selectedCompanyId]);
+  const showAddOrganizationButton =
+    query &&
+    !filteredCompanies.some(
+      (company) => company.startup_name.toLowerCase() === query.toLowerCase()
+    ) &&
+    selectedCompanyId === null;
 
   return (
-    <div className="flex h-screen">
-      <div className="w-7/12 h-full flex items-center justify-center bg-gradient-to-b from-yellow-100 to-yellow-400">
+    <div className="flex justify-evenly items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
+      <div className="w-7/12 h-screen flex items-center justify-center">
         <div>
           <Image
             src="/tyn-login.png"
@@ -137,7 +105,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
         </div>
       </div>
       <div className="w-5/12 bg-white order-2 md:order-2 h-screen">
-        <div className="flex flex-col gap-y-2 xl:gap-4 p-8">
+        <div className="flex items-start justify-start flex-col gap-y-2 xl:gap-4 p-8">
           <h2 className="font-bold text-3xl xl:text-5xl">Get started</h2>
           <p className="font-light text-base xl:text-xl text-gray-400">
             Start your journey by creating an account
@@ -211,14 +179,14 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
               autoComplete="off"
               id="organization"
               placeholder="Enter your organization"
-              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300 w-80"
+              className="text-base placeholder-text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] border-none placeholder-text-gray-300  w-80"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
-                setSelectedCompanyId(null);
+                setSelectedCompanyId(null); // Reset selected company when user types new query
               }}
             />
-            {query.length > 1 && filteredCompanies.length > 0 && (
+            {filteredCompanies.length > 0 && (
               <ul className="border border-gray-300 mt-2 w-full max-h-48 overflow-y-auto bg-white z-10">
                 {filteredCompanies.map((company) => (
                   <li
@@ -266,7 +234,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
-        <div className="flex justify-center items-center p-8">
+        <div className="p-8">
           <span className="text-sm xl:text-base text-gray-400 font-light">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-blue-500">
