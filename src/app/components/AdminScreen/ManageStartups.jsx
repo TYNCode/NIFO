@@ -5,13 +5,6 @@ import { IoIosSearch } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { subDays, startOfWeek, startOfMonth, isAfter } from "date-fns";
-import { SearchFilter } from "./ManageTable/SearchFilter";
-import BulkDeleteButton from "./ManageTable/BulkDeleteButton";
-import { EditStartupForm } from "./ManageTable/EditStartupForm";
-import { StartupDetails } from "./ManageTable/StartupDetails";
-import { ConfirmationModal } from "./ManageTable/ConfirmationModal";
-import { UserDetailsModal } from "./ManageTable/UserDetailsModal";
-import { Pagination } from "./ManageTable/Pagination";
 
 const TableLoader = () => (
   <div className="animate-pulse">
@@ -28,15 +21,7 @@ const TableLoader = () => (
   </div>
 );
 
-const ManageStartups = ({
-  data,
-  entityName,
-  setData,
-  isLoading = false,
-  totalCount,
-  currentPage,
-  onPageChange,
-}) => {
+const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   const [filter, setFilter] = useState("");
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -44,15 +29,12 @@ const ManageStartups = ({
   const [isEditing, setIsEditing] = useState(false);
   const [showBulkConfirmation, setShowBulkConfirmation] = useState(false);
 
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
-
   const filteredData = useMemo(() => {
-    console.log("Data=>", data[0]);
+    console.log(data[0]);
     return data.filter(
       (item) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
-      //   // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||
-      //   // item.startup_industry.toLowerCase().includes(filter.toLowerCase())
+      // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||
+      // item.startup_industry.toLowerCase().includes(filter.toLowerCase())
     );
   }, [filter, data]);
 
@@ -129,21 +111,21 @@ const ManageStartups = ({
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    page,
+    page, // ✅ Correct: Now using 'page' instead of 'rows'
     nextPage,
     previousPage,
     canNextPage,
     canPreviousPage,
     pageOptions,
-    state: { pageIndex },
+    state: { pageIndex }, // ✅ Correct: pageIndex is inside 'state'
     selectedFlatRows,
   } = useTable(
     {
       columns,
       data: filteredData,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: { pageIndex: 0, pageSize: 5 }, // ✅ Fix: Correctly setting page size
     },
-    usePagination,
+    usePagination, // ✅ Ensure pagination is properly added
     useRowSelect
   );
 
@@ -192,7 +174,7 @@ const ManageStartups = ({
   };
 
   const handleSave = async (updatedUser) => {
-    const apiUrl = `http://127.0.0.1:8000/adminroutes/api/startups/${updatedUser.startup_id}/`;
+    const apiUrl = `https://tyn-server.azurewebsites.net/adminroutes/api/startups/${updatedUser.startup_id}/`;
     const { startup_url, startup_name, ...filteredUser } = updatedUser;
 
     try {
@@ -259,18 +241,25 @@ const ManageStartups = ({
         <div className="flex-1 p-2 rounded-lg">
           <div className="w-full flex justify-between">
             <div className="mb-4 flex items-center space-x-4 justify-between w-full">
-              <SearchFilter
-                filter={filter}
-                setFilter={setFilter}
-                placeholder={`Search by startups Name, Industry, Technology`}
-              />
+              <div className="flex items-center justify-center border border-gray-300 rounded p-1 w-[40%]">
+                <IoIosSearch className="pl-1 text-gray-500 text-2xl" />
+                <input
+                  type="text"
+                  placeholder={`Search by startups Name`}
+                  className="border-none focus:outline-none focus:ring-0 w-full"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           {selectedFlatRows.length > 0 && (
-            <BulkDeleteButton
-              handleBulkDelete={handleBulkDelete}
-              selectedFlatRows={selectedFlatRows}
-            />
+            <button
+              onClick={handleBulkDelete}
+              className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+            >
+              Bulk Delete ({selectedFlatRows.length})
+            </button>
           )}
           {isLoading ? (
             <TableLoader />
@@ -324,7 +313,7 @@ const ManageStartups = ({
             </table>
           )}
 
-          {/* {!isLoading && data.length > 0 && (
+          {!isLoading && data.length > 0 && (
             <div className="flex justify-center items-center mt-4">
               <button
                 onClick={previousPage}
@@ -344,24 +333,35 @@ const ManageStartups = ({
                 <MdOutlineNavigateNext className="text-3xl" />
               </button>
             </div>
-          )} */}
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrevious={() => onPageChange(currentPage - 1)}
-            onNext={() => onPageChange(currentPage + 1)}
-            canPrevious={currentPage > 1}
-            canNext={currentPage < totalPages}
-          />
+          )}
         </div>
 
         {selectedEntity && (
-          <UserDetailsModal
-            user={selectedEntity}
-            isEditing={isEditing}
-            onClose={closeDetailsModal}
-          >
+          <div className="w-[30%] bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {isEditing ? `Edit Startup` : `Startup Details`}
+              </h3>
+              <button
+                onClick={closeDetailsModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
             {isEditing ? (
               <EditStartupForm
                 startup={selectedEntity}
@@ -371,24 +371,396 @@ const ManageStartups = ({
             ) : (
               <StartupDetails startup={selectedEntity} />
             )}
-          </UserDetailsModal>
+          </div>
         )}
 
-        <ConfirmationModal
-          isOpen={showConfirmation}
-          message="Are you sure you want to delete this user?"
-          onConfirm={confirmDelete}
-          onCancel={cancelDelete}
-        />
+        {showConfirmation && (
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl w-1/3">
+              <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
+              <p className="mb-4">Are you sure you want to delete this user?</p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={confirmDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={cancelDelete}
+                  className="px-4 py-2 bg-gray-500 text-white rounded"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-        <ConfirmationModal
-          isOpen={showBulkConfirmation}
-          message="Are you sure you want to selected delete users?"
-          onConfirm={confirmBulkDelete}
-          onCancel={cancelBulkDelete}
-        />
+        {showBulkConfirmation && (
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl w-1/3">
+              <h3 className="text-xl font-semibold mb-4">Are you sure?</h3>
+              <p className="mb-4">
+                Are you sure you want to delete {selectedFlatRows.length} users?
+              </p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={confirmBulkDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={cancelBulkDelete}
+                  className="px-4 py-2 bg-gray-500 text-white rounded"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
+  );
+};
+
+const StartupDetails = ({ startup }) => (
+  <div className="p-2 ">
+    {/* Startup Logo and Name */}
+    <div className="flex items-center space-x-4 mb-4">
+      <img
+        src={startup.startup_logo}
+        alt={`${startup.startup_name} Logo`}
+        className="w-16 h-16 rounded-full object-cover"
+      />
+      <h3 className="text-2xl font-semibold text-gray-800">
+        {startup.startup_name}
+      </h3>
+    </div>
+
+    {/* Startup Details */}
+    <dl className="flex flex-col gap-3">
+      <div>
+        <dt className="font-bold text-gray-700">Website:</dt>
+        <dd>
+          <a
+            href={`https://${startup.startup_url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            {startup.startup_url}
+          </a>
+        </dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Industry:</dt>
+        <dd className="text-gray-700">{startup.startup_industry}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Technology:</dt>
+        <dd className="text-gray-700">{startup.startup_technology}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Company Stage:</dt>
+        <dd className="text-gray-700">{startup.startup_company_stage}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Country:</dt>
+        <dd className="text-gray-700">{startup.startup_country}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Founder(s):</dt>
+        <dd className="text-gray-700">{startup.startup_founders_info}</dd>
+      </div>
+
+      <div>
+        <dt className="font-bold text-gray-700">Email:</dt>
+        <dd>
+          <a
+            href={`mailto:${startup.startup_emails}`}
+            className="text-blue-500 hover:underline"
+          >
+            {startup.startup_emails}
+          </a>
+        </dd>
+      </div>
+
+      <div className="">
+        <dt className="font-bold text-gray-700">Use Cases:</dt>
+        <dd className="text-gray-700">{startup.startup_usecases}</dd>
+      </div>
+
+      <div className="">
+        <dt className="font-bold text-gray-700">Solutions:</dt>
+        <dd className="text-gray-700">{startup.startup_solutions}</dd>
+      </div>
+
+      <div className="">
+        <dt className="font-bold text-gray-700">Overview:</dt>
+        <dd className="text-gray-700">{startup.startup_overview}</dd>
+      </div>
+
+      <div className="">
+        <dt className="font-bold text-gray-700">Description:</dt>
+        <dd className="text-gray-700">{startup.startup_description}</dd>
+      </div>
+    </dl>
+  </div>
+);
+
+const EditStartupForm = ({ startup, onSave, onCancel }) => {
+  const [editedStartup, setEditedStartup] = useState({ ...startup });
+
+  const handleChange = (e) => {
+    setEditedStartup({ ...editedStartup, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSave(editedStartup);
+      }}
+      className="p-3 "
+    >
+      <input type="hidden" name="startup_id" value={editedStartup.startup_id} />
+
+      {/* Startup Name */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_name"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Startup Name:
+        </label>
+        <input
+          type="text"
+          id="startup_name"
+          name="startup_name"
+          value={editedStartup.startup_name}
+          className="border border-gray-300 p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+          readOnly
+        />
+      </div>
+
+      {/* Website */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_url"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Website:
+        </label>
+        <input
+          type="text"
+          id="startup_url"
+          name="startup_url"
+          value={editedStartup.startup_url}
+          className="border border-gray-300 p-2 w-full rounded bg-gray-100 cursor-not-allowed"
+        />
+      </div>
+
+      {/* Industry */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_industry"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Industry:
+        </label>
+        <input
+          type="text"
+          id="startup_industry"
+          name="startup_industry"
+          value={editedStartup.startup_industry}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Technology */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_technology"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Technology:
+        </label>
+        <input
+          type="text"
+          id="startup_technology"
+          name="startup_technology"
+          value={editedStartup.startup_technology}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Company Stage */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_company_stage"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Company Stage:
+        </label>
+        <input
+          type="text"
+          id="startup_company_stage"
+          name="startup_company_stage"
+          value={editedStartup.startup_company_stage}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Country */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_country"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Country:
+        </label>
+        <input
+          type="text"
+          id="startup_country"
+          name="startup_country"
+          value={editedStartup.startup_country}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Founders Info */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_founders_info"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Founder(s):
+        </label>
+        <input
+          type="text"
+          id="startup_founders_info"
+          name="startup_founders_info"
+          value={editedStartup.startup_founders_info}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Email */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_emails"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Email:
+        </label>
+        <input
+          type="email"
+          id="startup_emails"
+          name="startup_emails"
+          value={editedStartup.startup_emails}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Use Cases */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_usecases"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Use Cases:
+        </label>
+        <textarea
+          id="startup_usecases"
+          name="startup_usecases"
+          value={editedStartup.startup_usecases}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Solutions */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_solutions"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Solutions:
+        </label>
+        <textarea
+          id="startup_solutions"
+          name="startup_solutions"
+          value={editedStartup.startup_solutions}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Overview */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_overview"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Overview:
+        </label>
+        <textarea
+          id="startup_overview"
+          name="startup_overview"
+          value={editedStartup.startup_overview}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Description */}
+      <div className="mb-4">
+        <label
+          htmlFor="startup_description"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Description:
+        </label>
+        <textarea
+          id="startup_description"
+          name="startup_description"
+          value={editedStartup.startup_description}
+          onChange={handleChange}
+          className="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      {/* Form Actions */}
+      <div className="flex justify-end space-x-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 bg-gray-500 text-white rounded"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Save
+        </button>
+      </div>
+    </form>
   );
 };
 

@@ -59,7 +59,7 @@ const MyRequests: React.FC<MyRequestsProps> = ({
 
   useEffect(() => {
     axios
-      .get("https://tyn-server.azurewebsites.net/partnerconnect/", {
+      .get(`${process.env.PUBLIC_NIFO_BASE_URL_PROD}partnerconnect/`, {
         params: {
           "assigned_to.email": userEmail,
         },

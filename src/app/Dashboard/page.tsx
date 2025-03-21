@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/adminroutes/api/users/?page=${page}`
+        `https://tyn-server.azurewebsites.net/adminroutes/api/users/?page=${page}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch users");

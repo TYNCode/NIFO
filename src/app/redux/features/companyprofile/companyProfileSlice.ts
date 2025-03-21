@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartupType } from "../../../interfaces";
+import { StartupNameType, StartupType } from "../../../interfaces";
 import {
   deleteRequest,
   getRequest,
@@ -7,16 +7,14 @@ import {
   putRequest,
 } from "../../hooks";
 
-// Define the state shape for company profiles
 interface CompanyProfileState {
   loading: boolean;
-  companies: StartupType[];
+  companies: StartupType[] | StartupNameType[];
   company: StartupType | null;
   error: string | null;
   hasMore: boolean;
 }
 
-// Initial state
 const initialState: CompanyProfileState = {
   companies: [],
   company: null,
@@ -82,6 +80,26 @@ export const fetchCompanyById = createAsyncThunk<
   }
 });
 
+export const fetchCompanyByName = createAsyncThunk<
+  StartupNameType[], 
+  string,          
+  { rejectValue: string }
+>(
+  "companyProfile/fetchCompanyByName",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await getRequest(
+        `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/?search=${encodeURIComponent(query)}`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch company data"
+      );
+    }
+  }
+);
+
 // Thunk to create a new company
 export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(
   "companyProfile/postCompany",
@@ -145,7 +163,6 @@ const companyProfileSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Fetch companies by pagination
     builder
       .addCase(fetchCompaniesByPagination.pending, (state) => {
         state.loading = true;
@@ -254,6 +271,29 @@ const companyProfileSlice = createSlice({
         updateCompanyById.rejected,
         (state, action: PayloadAction<string | undefined>) => {
           state.error = action.payload || "Failed to update company";
+          state.loading = false;
+        }
+      );
+
+    //Search by company name
+    builder
+      .addCase(fetchCompanyByName.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.companies = []; // Clear old search results to avoid confusion
+      })
+      .addCase(
+        fetchCompanyByName.fulfilled,
+        (state, action: PayloadAction<StartupNameType[]>) => {
+          state.companies = action.payload;
+          state.loading = false;
+          state.error = null;
+        }
+      )
+      .addCase(
+        fetchCompanyByName.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Failed to fetch company data";
           state.loading = false;
         }
       );

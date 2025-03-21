@@ -1,24 +1,25 @@
-import React from 'react'
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useRouter } from "next/navigation";
 
-const NavbarTrend = () => {
+const NavbarTrend: React.FC = () => {
   const router = useRouter();
 
-  const handleRoute = ()=>{
-    router.push("/")
-  }
+  const handleRoute = () => {
+    router.push("/");
+  };
 
   return (
-    <div className=' w-full relative z-50'>
-      <div className='shadow-md'>
+    <div className="w-full relative z-50">
+      <div className="shadow-md">
         <img
-        src="/nifoimage.png"
-        alt="Nifo Logo"
-        className='w-24 cursor-pointer'
-        onClick={handleRoute}/>
+          src="/nifoimage.png"
+          alt="Nifo Logo"
+          className="w-24 cursor-pointer"
+          onClick={handleRoute}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NavbarTrend
+export default NavbarTrend;
