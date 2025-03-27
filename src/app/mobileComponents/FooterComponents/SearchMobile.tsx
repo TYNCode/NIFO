@@ -228,7 +228,7 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
       ) : (
         <div className="relative flex flex-col gap-10 justify-center h-[80vh]">
           <div
-            className="absolute top-0 left-0 m-4 text-blue-500 cursor-pointer"
+            className="absolute top-0 left-0 m-4 text-blue-500 cursor-pointer "
             onClick={toggleHistory}
           >
             <FaBars size={24} />

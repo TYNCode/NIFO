@@ -5,6 +5,7 @@ import MobileHeader from "../mobileComponents/MobileHeader";
 import TrendsWeb from "../components/TrendsWeb/TrendsWeb";
 import Navbar from "../components/Navbar";
 import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
+import WithAuth from "../utils/withAuth";
 
 const PageContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
@@ -18,8 +19,8 @@ const PageContent: React.FC = () => {
       </div> */}
       <div className="hidden sm:flex flex-col h-screen relative overflow-hidden select-none">
         <div className="">
-          <NavbarTrend/>
-          <TrendsWeb/>
+          <NavbarTrend />
+          <TrendsWeb />
         </div>
       </div>
     </>
@@ -34,4 +35,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default WithAuth(Page);

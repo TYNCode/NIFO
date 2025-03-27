@@ -33,7 +33,7 @@ const AssignToMe: React.FC<AssignToMeProps> = ({
   const [openAssigneeColumn, setOpenAssigneeColumn] = useState(false);
 
   // Safely parse userInfo from localStorage
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = userInfo?.id;
   const userEmail = userInfo?.email || "";
   const userCompany = userInfo?.organization_name || "";

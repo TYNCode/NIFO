@@ -20,7 +20,7 @@ const ChangePassword: React.FC = () => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const response = await axios.post(
-        `${process.env.PUBLIC_NIFO_BASE_URL_PROD}user/forgot-password/`,
+        `https://tyn-server.azurewebsites.net/user/forgot-password/`,
         {
           email: data.email,
         }

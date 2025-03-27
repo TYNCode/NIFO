@@ -1,5 +1,6 @@
 import React from "react";
 import { ClipLoader } from "react-spinners";
+import withAuth from "../../utils/withAuth";
 
 interface CompanyProfileProps {
   company: {
@@ -116,4 +117,4 @@ const CompanyProfile: React.FC<CompanyProfileProps> = ({ company }) => {
   );
 };
 
-export default CompanyProfile;
+export default withAuth(CompanyProfile);

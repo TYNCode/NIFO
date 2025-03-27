@@ -59,6 +59,7 @@ const loginSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
         state.user = action.payload.user;
         state.message = "Login successful";
         localStorage.setItem(

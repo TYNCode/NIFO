@@ -22,12 +22,14 @@ interface LeftFrameProps {
   onNewChat: () => void;
   setSessionId: React.Dispatch<React.SetStateAction<string>>;
   setInputPrompt: Dispatch<SetStateAction<string>>;
+  setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
   onNewChat,
   setSessionId,
   setInputPrompt,
+  setIsInputEmpty,
 }) => {
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
@@ -73,7 +75,9 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
+    localStorage.removeItem("user");
+    localStorage.removeItem("jwtAccessToken");
+    localStorage.removeItem("jwtRefreshToken");
     setIsLogoutOpen(false);
     router.push("/login");
   };
@@ -120,7 +124,12 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           {(() => {
             switch (activeTab) {
               case "recommended":
-                return <RecommendedQueries setInputPrompt={setInputPrompt} />;
+                return (
+                  <RecommendedQueries
+                    setInputPrompt={setInputPrompt}
+                    setIsInputEmpty={setIsInputEmpty}
+                  />
+                );
               case "history":
                 return (
                   <>

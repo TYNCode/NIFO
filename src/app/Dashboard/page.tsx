@@ -8,7 +8,7 @@ import StartupManage from "../components/AdminScreen/StartupManage";
 import EnterpriseManage from "../components/AdminScreen/EnterPriseManage";
 import ConsultantManage from "../components/AdminScreen/ConsultantManage";
 import ManageStartups from "../components/AdminScreen/ManageStartups";
-
+import WithAuth from "../utils/withAuth";
 import { FaBuilding } from "react-icons/fa";
 import ManageUsers from "../components/UserScreen/ManageUsers";
 
@@ -315,4 +315,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default WithAuth(Dashboard);

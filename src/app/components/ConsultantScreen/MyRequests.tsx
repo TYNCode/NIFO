@@ -54,7 +54,7 @@ const MyRequests: React.FC<MyRequestsProps> = ({
     router.push("/");
   };
 
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
   const userEmail = userInfo["email"];
 
   useEffect(() => {
