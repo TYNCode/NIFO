@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import ProgressOne from "./components/ProgressOne";
 import NavBarCoin from "./components/NavBar/NavBarCoin";
 import Sidebar from "./components/Sidebar/Sidebar";
-import WithAuth from "../utils/withAuth"
+import WithAuth from "../utils/withAuth";
+import ProgressTwo from "./components/ProgressTwo";
 
 interface ProcessStep {
   id: number;
@@ -13,11 +14,11 @@ interface ProcessStep {
 }
 
 const coInnovationProcessSteps: ProcessStep[] = [
-  { id: 1, title: "Define" , enabled: true},
-  { id: 2, title: "Source" , enabled: true },
-  { id: 3, title: "Engage", enabled:false },
-  { id: 4, title: "Evaluate" , enabled:false },
-  { id: 5, title: "Finalize" , enabled:false },
+  { id: 1, title: "Define", enabled: true },
+  { id: 2, title: "Source", enabled: true },
+  { id: 3, title: "Engage", enabled: false },
+  { id: 4, title: "Evaluate", enabled: false },
+  { id: 5, title: "Finalize", enabled: false },
 ];
 
 const Page: React.FC = () => {
@@ -25,8 +26,14 @@ const Page: React.FC = () => {
   const [projectID, setProjectID] = useState<string | null>(null);
 
   const tabContent: Record<number, JSX.Element> = {
-    1: <ProgressOne projectID={projectID} setProjectID={setProjectID} setSelectedTab={setSelectedTab}/>,
-    2: <div>Step 2</div>,
+    1: (
+      <ProgressOne
+        projectID={projectID}
+        setProjectID={setProjectID}
+        setSelectedTab={setSelectedTab}
+      />
+    ),
+    2: <ProgressTwo />,
     3: <div>Step 3</div>,
     4: <div>Step 4</div>,
     5: <div>Step 5</div>,
@@ -55,12 +62,10 @@ const Page: React.FC = () => {
                         ? "bg-[#0071C1] text-white shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
                         : "bg-white text-[#0071C1] shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
                     } 
-                    ${process.enabled ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`
-                  }
-                  
+                    ${process.enabled ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
                   onClick={() => {
-                    if(process.enabled) {
-                      setSelectedTab(process.id)
+                    if (process.enabled) {
+                      setSelectedTab(process.id);
                     }
                   }}
                 >
