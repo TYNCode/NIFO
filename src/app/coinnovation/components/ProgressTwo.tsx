@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Tabs from "./Tabs";
 import TwoTabStepOne from "./TwoTabStepComponents/TwoTabStepOne";
+import TwoTabStepTwo from "./TwoTabStepComponents/TwoTabStepTwo";
 
 interface Tab {
   id: string;
@@ -9,12 +10,11 @@ interface Tab {
 }
 
 const ProgressTwo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("02.a");
+  const [activeTab, setActiveTab] = useState<string>("02.b");
 
   const tabs: Tab[] = [
     { id: "02.a", label: "Shortlisting of Solution Providers", enabled: true },
     { id: "02.b", label: "Solution Providers Comparison", enabled: false },
-    { id: "02.c", label: "Null", enabled: false },
   ];
 
   return (
@@ -27,7 +27,11 @@ const ProgressTwo: React.FC = () => {
             <TwoTabStepOne />
           </div>
         )}
-        {activeTab === "02.b" && <div>{/* <TwoTabStepTwo /> */}</div>}
+        {activeTab === "02.b" && (
+          <div>
+            <TwoTabStepTwo />
+          </div>
+        )}
         {activeTab === "02.c" && <div>{/* <TwoTabStepThree /> */}</div>}
       </div>
     </div>
