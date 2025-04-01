@@ -180,7 +180,7 @@ const TableMain = ({
   };
 
   const handleSave = async (updatedUser) => {
-    const apiUrl = `http://127.0.0.1:8000/adminroutes/api/users/${updatedUser.id}/`;
+    const apiUrl = `https://tyn-server.azurewebsites.net/adminroutes/api/users/${updatedUser.id}/`;
 
     try {
       const response = await fetch(apiUrl, {

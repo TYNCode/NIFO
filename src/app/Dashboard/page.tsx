@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
     try {
       setIsLoadingStartups(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/adminroutes/api/startups/?page=${page}`
+        `https://tyn-server.azurewebsites.net/adminroutes/api/startups/?page=${page}`
       );
       if (!response.ok) throw new Error("Failed to fetch startups");
 
@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
       try {
         setIsLoadingConsultants(true);
         const response = await fetch(
-          "http://127.0.0.1:8000/adminroutes/api/consultants/"
+          "https://tyn-server.azurewebsites.net/adminroutes/api/consultants/"
         );
         if (!response.ok) throw new Error("Failed to fetch consultants");
 
@@ -83,8 +83,8 @@ const Dashboard: React.FC = () => {
   //       setIsLoading(true);
 
   //       const [startupsRes, consultantsRes] = await Promise.all([
-  //         fetch("http://127.0.0.1:8000/adminroutes/api/startups/"),
-  //         fetch("http://127.0.0.1:8000/adminroutes/api/consultants/"),
+  //         fetch("https://tyn-server.azurewebsites.net/adminroutes/api/startups/"),
+  //         fetch("https://tyn-server.azurewebsites.net/adminroutes/api/consultants/"),
   //       ]);
 
   //       if (!startupsRes.ok || !consultantsRes.ok)
