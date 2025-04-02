@@ -1,115 +1,56 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 
 import ProjectEntry from "./ProjectEntry";
 import EnterpriseDetails from "./EnterpriseDetails";
 import ProjectDescription from "./ProjectDescription";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { fetchProjectDetails } from "../../../redux/features/coinnovation/projectSlice";
 
-interface ProjectDetailsInQuestionairreProps {
-  projectID: string;
-  projectDescription: string;
-}
+const ProjectDetailsInQuestionairre: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-const ProjectDetailsInQuestionairre: React.FC<
-  ProjectDetailsInQuestionairreProps
-> = ({ projectID, projectDescription }) => {
-  const [projectData, setProjectData] = useState({
-    project_id: projectID,
-    project_name: "",
-    priority: "",
-    status: "",
-    start_date: "",
-    end_date: "",
-    enterprise: "",
-    owner: "",
-    approver: "",
-    category: "",
-    department: "",
-    business_unit: "",
-    location: "",
-    project_description: "",
-    problem_statement:
-      "Excessive energy consumption in aluminum smelting is causing overheating and reduced efficiency.",
-    context: "Full extracted text from document analysis.",
-  });
-
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [fetchError, setFetchError] = useState("");
+  const {
+    projectID,
+    projectDetails,
+    fetching: isLoading,
+    error: fetchError,
+  } = useAppSelector((state) => ({
+    projectID: state.projects.projectID,
+    projectDetails: state.projects.projectDetails,
+    fetching: state.projects.fetching,
+    error: state.projects.error,
+  }));
 
   useEffect(() => {
-    const fetchProjectData = async () => {
-      if (!projectID) return;
+    if (projectID && !projectDetails) {
+      dispatch(fetchProjectDetails(projectID));
+    }
+  }, [dispatch, projectID]);
 
-      setFetchLoading(true);
-      setFetchError("");
+  const handleInputChange = () => {};
+  const handleSelectPriority = () => {};
+  const handleSelectStatus = () => {};
 
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/create-project/?project_id=${projectID}`
-        );
-
-        if (response.data) {
-          // Format dates from API if needed
-          const formattedData = {
-            ...response.data,
-            start_date: response.data.start_date
-              ? response.data.start_date.split("T")[0]
-              : "",
-            end_date: response.data.end_date
-              ? response.data.end_date.split("T")[0]
-              : "",
-            // Include project description from props if not in API response
-            project_description:
-              response.data.project_description || projectDescription,
-          };
-
-          setProjectData(formattedData);
-        } else {
-          // If no data, use props as fallback
-          setProjectData((prevData) => ({
-            ...prevData,
-            project_id: projectID,
-            project_description: projectDescription,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching project data:", error);
-        setFetchError(
-          "Failed to load project details. Using initial data instead."
-        );
-
-        // If fetch fails, initialize with props
-        setProjectData((prevData) => ({
-          ...prevData,
-          project_id: projectID,
-          project_description: projectDescription,
-        }));
-      } finally {
-        setFetchLoading(false);
-      }
-    };
-
-    fetchProjectData();
-  }, []);
-
-  // These handlers won't update the backend, just the local state for view consistency
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    // Not used in read-only mode, but kept to satisfy component props
-  };
-
-  const handleSelectPriority = (option: string) => {
-    // Not used in read-only mode, but kept to satisfy component props
-  };
-
-  const handleSelectStatus = (option: string) => {
-    // Not used in read-only mode, but kept to satisfy component props
+  const formattedProject = {
+    project_id: projectDetails?.project_id || projectID || "",
+    project_name: projectDetails?.project_name || "",
+    priority: projectDetails?.priority || "",
+    status: projectDetails?.status || "",
+    start_date: projectDetails?.start_date?.split("T")[0] || "",
+    end_date: projectDetails?.end_date?.split("T")[0] || "",
+    enterprise: projectDetails?.enterprise || "",
+    owner: projectDetails?.owner || "",
+    approver: projectDetails?.approver || "",
+    category: projectDetails?.category || "",
+    department: projectDetails?.department || "",
+    business_unit: projectDetails?.business_unit || "",
+    location: projectDetails?.location || "",
+    project_description: projectDetails?.project_description || "",
   };
 
   return (
     <div className="px-8 bg-[#F4FCFF]">
-      {fetchLoading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <div className="text-[#4A4D4E]">Loading project details...</div>
         </div>
@@ -123,12 +64,12 @@ const ProjectDetailsInQuestionairre: React.FC<
 
           <ProjectEntry
             projectData={{
-              project_id: projectData.project_id,
-              project_name: projectData.project_name,
-              priority: projectData.priority,
-              status: projectData.status,
-              start_date: projectData.start_date,
-              end_date: projectData.end_date,
+              project_id: formattedProject.project_id,
+              project_name: formattedProject.project_name,
+              priority: formattedProject.priority,
+              status: formattedProject.status,
+              start_date: formattedProject.start_date,
+              end_date: formattedProject.end_date,
             }}
             onInputChange={handleInputChange}
             onSelectPriority={handleSelectPriority}
@@ -138,20 +79,20 @@ const ProjectDetailsInQuestionairre: React.FC<
 
           <EnterpriseDetails
             projectData={{
-              enterprise: projectData.enterprise,
-              owner: projectData.owner,
-              approver: projectData.approver,
-              category: projectData.category,
-              department: projectData.department,
-              business_unit: projectData.business_unit,
-              location: projectData.location,
+              enterprise: formattedProject.enterprise,
+              owner: formattedProject.owner,
+              approver: formattedProject.approver,
+              category: formattedProject.category,
+              department: formattedProject.department,
+              business_unit: formattedProject.business_unit,
+              location: formattedProject.location,
             }}
             onInputChange={handleInputChange}
             readOnly={true}
           />
 
           <ProjectDescription
-            projectDescription={projectData.project_description}
+            projectDescription={formattedProject.project_description}
             onInputChange={handleInputChange}
             readOnly={true}
           />

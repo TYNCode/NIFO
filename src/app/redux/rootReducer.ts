@@ -6,7 +6,10 @@ import loginSlice from "./features/auth/loginSlice";
 import registerSlice from "./features/auth/registerSlice";
 import spotlightSlice from "./features/spotlight/spotlightSlice";
 import partnerConnectSlice from "./features/connection/connectionSlice";
-import companyProfileSlice from "./features/companyprofile/companyProfileSlice";
+import companyProfileSlice from "./features/companyprofile/companyProfile";
+import projectSlice from "./features/coinnovation/projectSlice";
+import challengeSlice from "./features/coinnovation/challengeSlice";
+import fileSlice from "./features/coinnovation/fileSlice";
 import solutionProviderSlice from "./features/source/solutionProviderSlice";
 import solutionProviderDetailsSlice from "./features/source/solutionProviderDetailsSlice";
 
@@ -21,6 +24,9 @@ const rootReducer = combineReducers({
   companyProfile: companyProfileSlice,
   solutionProvider: solutionProviderSlice,
   solutionProviderDetails: solutionProviderDetailsSlice,
+  projects: projectSlice,
+  challenge: challengeSlice,
+  file: fileSlice,
 });
 
 export default rootReducer;
