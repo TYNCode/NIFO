@@ -20,12 +20,7 @@ const coInnovationProcessSteps: ProcessStep[] = [
   { id: 2, title: "Source", enabled: true },
   { id: 3, title: "Engage", enabled: false },
   { id: 4, title: "Evaluate", enabled: false },
-  { id: 5, title: "Finalize", enabled: false },
-  { id: 1, title: "Define", enabled: true },
-  { id: 2, title: "Source", enabled: true },
-  { id: 3, title: "Engage", enabled: false },
-  { id: 4, title: "Evaluate", enabled: false },
-  { id: 5, title: "Finalize", enabled: false },
+  { id: 5, title: "Finalize", enabled: false }
 ];
 
 const Page: React.FC = () => {
