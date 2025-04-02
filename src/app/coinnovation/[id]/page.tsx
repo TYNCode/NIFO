@@ -6,6 +6,12 @@ import NavBarCoin from "../components/NavBar/NavBarCoin";
 import Sidebar from "../components/Sidebar/Sidebar";
 import ProgressOne from "../components/ProgressOne";
 import WithAuth from "../../utils/withAuth";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import {
+  fetchProjectDetails,
+  setProjectID,
+  setSelectedTab,
+} from "../../redux/features/coinnovation/projectSlice";
 
 interface ProcessStep {
   id: number;

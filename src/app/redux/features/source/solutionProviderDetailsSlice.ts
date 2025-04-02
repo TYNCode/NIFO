@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface SolutionProviderDetails {
@@ -14,10 +14,14 @@ interface SolutionProviderDetails {
   other_usecases: string[];
 }
 
-interface SolutionProviderDetailsState {
-  details: SolutionProviderDetails | null;
+interface ProviderState {
+  data: SolutionProviderDetails | null;
   loading: boolean;
   error: string | null;
+}
+
+interface SolutionProviderDetailsState {
+  [solution_provider_id: string]: ProviderState;
 }
 
 export const fetchSolutionProviderDetails = createAsyncThunk(
@@ -35,34 +39,50 @@ export const fetchSolutionProviderDetails = createAsyncThunk(
         { project_id, solution_provider_id },
         { headers: { "Content-Type": "application/json" } }
       );
-      return response.data.provider_details;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch details");
+      return {
+        solution_provider_id,
+        details: response.data.provider_details,
+      };
+    } catch (error: any) {
+      return rejectWithValue({
+        solution_provider_id,
+        error: error.response?.data || "Failed to fetch details",
+      });
     }
   }
 );
 
+const initialState: SolutionProviderDetailsState = {};
+
 const solutionProviderDetailsSlice = createSlice({
   name: "solutionProviderDetails",
-  initialState: {
-    details: null,
-    loading: false,
-    error: null,
-  } as SolutionProviderDetailsState,
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSolutionProviderDetails.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(fetchSolutionProviderDetails.pending, (state, action) => {
+        const id = action.meta.arg.solution_provider_id;
+        state[id] = {
+          data: null,
+          loading: true,
+          error: null,
+        };
       })
       .addCase(fetchSolutionProviderDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.details = action.payload;
+        const { solution_provider_id, details } = action.payload;
+        state[solution_provider_id] = {
+          data: details,
+          loading: false,
+          error: null,
+        };
       })
-      .addCase(fetchSolutionProviderDetails.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+      .addCase(fetchSolutionProviderDetails.rejected, (state, action: any) => {
+        const { solution_provider_id, error } = action.payload;
+        state[solution_provider_id] = {
+          data: null,
+          loading: false,
+          error,
+        };
       });
   },
 });

@@ -26,12 +26,23 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { details, loading, error } = useSelector(
-    (state: RootState) => state.solutionProviderDetails
-  );
+
+  const {
+    data: details,
+    loading,
+    error,
+  } = useSelector(
+    (state: RootState) =>
+      state.solutionProviderDetails[company.solution_provider_id]
+  ) || {
+    loading: false,
+    error: null,
+    data: null,
+  };
 
   useEffect(() => {
     if (isOpen && !details) {
+      console.log("Fetching details happening");
       dispatch(
         fetchSolutionProviderDetails({
           project_id,
