@@ -6,20 +6,19 @@ import { toast } from "react-toastify";
 
 interface StoredFile {
   id: number;
-  original_name: string;  
-  name: string;           
+  original_name: string;
+  name: string;
   url: string;
 }
-
 
 interface ProblemInputProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   problemStatement: string;
-  setProblemStatement:any;
+  setProblemStatement: any;
   handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   lineHeight?: number;
   maxRows?: number;
-  projectData:any;
+  projectData: any;
   handleSubmit: (
     event:
       | React.FormEvent<HTMLFormElement>
@@ -29,7 +28,7 @@ interface ProblemInputProps {
   loading: boolean;
   files: File[];
   setFiles: (files: File[]) => void;
-  storedFiles:StoredFile[];
+  storedFiles: StoredFile[];
   setStoredFiles: React.Dispatch<React.SetStateAction<StoredFile[]>>;
   projectID: string;
 }
@@ -40,7 +39,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   setProblemStatement,
   projectData,
   handleChange,
-  lineHeight ,
+  lineHeight,
   maxRows,
   handleSubmit,
   loading,
@@ -48,7 +47,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
   setFiles,
   storedFiles,
   setStoredFiles,
-  projectID
+  projectID,
 }) => {
   const isProblemEntered = problemStatement.trim().length > 0;
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
@@ -60,19 +59,17 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     }
   }, [problemStatement, textareaRef, lineHeight, maxRows]);
 
-
   useEffect(() => {
     if (projectData?.problem_statement) {
       setProblemStatement(projectData.problem_statement);
     }
   }, [projectData.problem_statement]);
 
-
   const fetchProjectData = async (projectID) => {
     if (!projectID) return;
     try {
       const response = await axios.get(
-        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
       );
 
       if (response.data) {
@@ -85,15 +82,21 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         if (formattedData.files) {
           const formattedFiles = formattedData.files.map((file: any) => ({
             id: file.id,
-            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()), 
-            name: file.original_name || decodeURIComponent(file.file.split("/").pop()), 
-            url: `https://tyn-server.azurewebsites.net${file.file}`,
+            original_name:
+              file.original_name ||
+              decodeURIComponent(file.file.split("/").pop()),
+            name:
+              file.original_name ||
+              decodeURIComponent(file.file.split("/").pop()),
+            url: `http://127.0.0.1:8000${file.file}`,
           }));
 
+          setStoredFiles([...formattedFiles]);
 
-          setStoredFiles([...formattedFiles]); 
-
-          console.log("Storeddddddddddd fileeeeeeeee---------->", formattedFiles)
+          console.log(
+            "Storeddddddddddd fileeeeeeeee---------->",
+            formattedFiles
+          );
         }
       }
     } catch (error) {
@@ -117,7 +120,9 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
         `http://127.0.0.1:8000/coinnovation/delete-file/?file_id=${fileId}`
       );
 
-      setStoredFiles((prevFiles: StoredFile[]) => prevFiles.filter((file) => file.id !== fileId));
+      setStoredFiles((prevFiles: StoredFile[]) =>
+        prevFiles.filter((file) => file.id !== fileId)
+      );
 
       toast.success("File deleted successfully.");
     } catch (error) {
@@ -125,7 +130,6 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
       toast.error("Failed to delete file. Please try again.");
     }
   };
-
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -141,7 +145,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
               placeholder="Type your problem statement"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault(); 
+                  e.preventDefault();
                   handleSubmit(e);
                 }
               }}
@@ -189,11 +193,11 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
                     rel="noopener noreferrer"
                     className="truncate text-[#0071C1] text-[12px] font-semibold"
                   >
-                    {file.original_name} 
+                    {file.original_name}
                   </a>
                   <button
                     className="text-[#0071C1] font-light text-[12px] px-2"
-                    onClick={() => removeStoredFile(file.id)} 
+                    onClick={() => removeStoredFile(file.id)}
                   >
                     ✕
                   </button>

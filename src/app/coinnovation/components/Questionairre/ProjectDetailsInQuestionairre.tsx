@@ -39,29 +39,34 @@ const ProjectDetailsInQuestionairre: React.FC<
   useEffect(() => {
     const fetchProjectData = async () => {
       if (!projectID) return;
-      
+
       setFetchLoading(true);
       setFetchError("");
-      
+
       try {
         const response = await axios.get(
-          `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+          `http://127.0.0.1:8000/create-project/?project_id=${projectID}`
         );
-        
+
         if (response.data) {
           // Format dates from API if needed
           const formattedData = {
             ...response.data,
-            start_date: response.data.start_date ? response.data.start_date.split('T')[0] : "",
-            end_date: response.data.end_date ? response.data.end_date.split('T')[0] : "",
+            start_date: response.data.start_date
+              ? response.data.start_date.split("T")[0]
+              : "",
+            end_date: response.data.end_date
+              ? response.data.end_date.split("T")[0]
+              : "",
             // Include project description from props if not in API response
-            project_description: response.data.project_description || projectDescription,
+            project_description:
+              response.data.project_description || projectDescription,
           };
-          
+
           setProjectData(formattedData);
         } else {
           // If no data, use props as fallback
-          setProjectData(prevData => ({
+          setProjectData((prevData) => ({
             ...prevData,
             project_id: projectID,
             project_description: projectDescription,
@@ -69,13 +74,15 @@ const ProjectDetailsInQuestionairre: React.FC<
         }
       } catch (error) {
         console.error("Error fetching project data:", error);
-        setFetchError("Failed to load project details. Using initial data instead.");
-        
+        setFetchError(
+          "Failed to load project details. Using initial data instead."
+        );
+
         // If fetch fails, initialize with props
-        setProjectData(prevData => ({
+        setProjectData((prevData) => ({
           ...prevData,
           project_id: projectID,
-          project_description: projectDescription
+          project_description: projectDescription,
         }));
       } finally {
         setFetchLoading(false);
@@ -113,7 +120,7 @@ const ProjectDetailsInQuestionairre: React.FC<
               {fetchError}
             </div>
           )}
-          
+
           <ProjectEntry
             projectData={{
               project_id: projectData.project_id,

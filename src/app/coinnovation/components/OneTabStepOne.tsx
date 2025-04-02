@@ -31,7 +31,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
   projectID,
   setProjectID,
   setQuestionnaireData,
-  setActiveTab
+  setActiveTab,
 }) => {
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -47,7 +47,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     status: "",
     start_date: "",
     end_date: "",
-    group_company: "", 
+    group_company: "",
     enterprise: "",
     owner: "",
     approver: "",
@@ -56,16 +56,14 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     business_unit: "",
     location: "",
     project_description: "",
-    problem_statement:
-      "",
+    problem_statement: "",
     context: "",
-    enterprise_img:"",
+    enterprise_img: "",
   });
 
-  
-  useEffect(()=>{
+  useEffect(() => {
     fetchProjectData(projectID);
-  },[projectID])
+  }, [projectID]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -80,7 +78,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     if (!projectID) return;
     try {
       const response = await axios.get(
-        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
       );
 
       if (response.data) {
@@ -95,9 +93,13 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         if (formattedData.files) {
           const formattedFiles = formattedData.files.map((file: any) => ({
             id: file.id,
-            original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
-            name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
-            url: `https://tyn-server.azurewebsites.net${file.file}`,
+            original_name:
+              file.original_name ||
+              decodeURIComponent(file.file.split("/").pop()),
+            name:
+              file.original_name ||
+              decodeURIComponent(file.file.split("/").pop()),
+            url: `http://127.0.0.1:8000${file.file}`,
           }));
 
           setStoredFiles(formattedFiles);
@@ -108,15 +110,15 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     }
   };
 
-
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setProblemStatement(e.target.value);
   };
 
-
   const handleSubmit = async () => {
     if (!problemStatement.trim() && files.length === 0) {
-      toast.info("Please enter a problem statement or upload at least one file.");
+      toast.info(
+        "Please enter a problem statement or upload at least one file."
+      );
       return;
     }
 
@@ -131,16 +133,22 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       files.forEach((file) => formData.append("file", file));
 
       const uploadResponse = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/upload-file/",
+        "http://127.0.0.1:8000/coinnovation/upload-file/",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      const problemStatementResponse = uploadResponse.data.problem_statement || "No response from API";
+      const problemStatementResponse =
+        uploadResponse.data.problem_statement || "No response from API";
       setResponseData(problemStatementResponse);
 
-      if (problemStatementResponse.trim() === "I could not find any problem to be solved.") {
-        toast.warn("The system could not identify a valid problem statement. Please provide a clearer description.");
+      if (
+        problemStatementResponse.trim() ===
+        "I could not find any problem to be solved."
+      ) {
+        toast.warn(
+          "The system could not identify a valid problem statement. Please provide a clearer description."
+        );
         return;
       }
 
@@ -158,15 +166,14 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         }
 
         await axios.put(
-          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
+          "http://127.0.0.1:8000/coinnovation/create-project/",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
 
-        await fetchProjectData(projectID); 
+        await fetchProjectData(projectID);
         toast.success("Project created successfully!");
       } else {
-
         const formData = new FormData();
         formData.append("project_description", problemStatementResponse);
         formData.append("context", problemStatementResponse);
@@ -179,24 +186,23 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         }
 
         const createProjectResponse = await axios.post(
-          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
+          "http://127.0.0.1:8000/coinnovation/create-project/",
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-            }
+            },
           }
         );
 
-
-        const projectResponse = createProjectResponse.data || "No response from API";
+        const projectResponse =
+          createProjectResponse.data || "No response from API";
         setProjectID(projectResponse.project_id);
 
-        await fetchProjectData(projectResponse.project_id);  
+        await fetchProjectData(projectResponse.project_id);
         setFiles([]);
         toast.success("Project created successfully.");
       }
-
     } catch (error) {
       console.error("Error in API call:", error);
       setResponseData("Failed to process the request.");
@@ -206,8 +212,6 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     }
   };
 
-
-
   return (
     <div className="bg-[#F4FCFF] w-full shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
       {!projectID ? (
@@ -216,7 +220,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             <div className="text-base font-semibold">Let us define the</div>
             <div className="text-2xl font-semibold">Problem Statement</div>
           </div>
-          
+
           <div className="w-full">
             <ProblemInput
               textareaRef={textareaRef}
@@ -238,7 +242,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center gap-12 mt-16 w-full">
-           <ProblemInput
+          <ProblemInput
             textareaRef={textareaRef}
             problemStatement={problemStatement}
             setProblemStatement={setProblemStatement}
@@ -265,7 +269,6 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
           />
         </div>
       )}
-      
     </div>
   );
 };

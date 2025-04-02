@@ -7,6 +7,7 @@ import registerSlice from "./features/auth/registerSlice";
 import spotlightSlice from "./features/spotlight/spotlightSlice";
 import partnerConnectSlice from "./features/connection/connectionSlice";
 import companyProfileSlice from "./features/companyprofile/companyProfileSlice";
+import solutionProviderSlice from "./features/source/solutionProviderSlice";
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   spotlight: spotlightSlice,
   partnerConnect: partnerConnectSlice,
   companyProfile: companyProfileSlice,
+  solutionProvider: solutionProviderSlice,
 });
 
 export default rootReducer;

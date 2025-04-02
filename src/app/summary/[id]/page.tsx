@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
-import WithAuth from '../../utils/withAuth';
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import axios from "axios";
+import WithAuth from "../../utils/withAuth";
 
 const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   const [project, setProject] = useState<any>(null);
@@ -13,11 +13,11 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   const fetchProjectDetails = async () => {
     try {
       const response = await axios.get(
-        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${params.id}`
+        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${params.id}`
       );
       setProject(response.data);
     } catch (err) {
-      setError('Failed to fetch project details');
+      setError("Failed to fetch project details");
     } finally {
       setLoading(false);
     }
@@ -32,11 +32,21 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Project Summary - {project.project_id}</h2>
-      <p><strong>Name:</strong> {project.project_name ?? 'N/A'}</p>
-      <p><strong>Description:</strong> {project.project_description}</p>
-      <p><strong>Status:</strong> {project.status}</p>
-      <p><strong>Priority:</strong> {project.priority}</p>
+      <h2 className="text-2xl font-bold mb-4">
+        Project Summary - {project.project_id}
+      </h2>
+      <p>
+        <strong>Name:</strong> {project.project_name ?? "N/A"}
+      </p>
+      <p>
+        <strong>Description:</strong> {project.project_description}
+      </p>
+      <p>
+        <strong>Status:</strong> {project.status}
+      </p>
+      <p>
+        <strong>Priority:</strong> {project.priority}
+      </p>
       {/* Add more fields here as needed */}
     </div>
   );

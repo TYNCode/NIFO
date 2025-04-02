@@ -10,7 +10,7 @@ interface Tab {
 }
 
 const ProgressTwo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("02.b");
+  const [activeTab, setActiveTab] = useState<string>("02.a");
 
   const tabs: Tab[] = [
     { id: "02.a", label: "Shortlisting of Solution Providers", enabled: true },
@@ -32,7 +32,6 @@ const ProgressTwo: React.FC = () => {
             <TwoTabStepTwo />
           </div>
         )}
-        {activeTab === "02.c" && <div>{/* <TwoTabStepThree /> */}</div>}
       </div>
     </div>
   );

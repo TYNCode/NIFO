@@ -59,7 +59,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       setFetchLoading(true);
       try {
         const response = await axios.get(
-          `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
+          `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
         );
 
         if (response.data) {
@@ -168,7 +168,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       }
 
       const response = await axios.put(
-        `https://tyn-server.azurewebsites.net/coinnovation/create-project/`,
+        `http://127.0.0.1:8000/coinnovation/create-project/`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -176,7 +176,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
       toast.success("Project updated successfully");
 
       const responseofquestionairre = await axios.post(
-        `https://tyn-server.azurewebsites.net/coinnovation/generate-questions/`,
+        `http://127.0.0.1:8000/coinnovation/generate-questions/`,
         questionairreBody,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -190,9 +190,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
     }
   };
 
-  const handleRegenerate = () => {
-  
-  }
+  const handleRegenerate = () => {};
 
   return (
     <>
@@ -246,7 +244,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 <div>
                   <RiRefreshLine />
                 </div>{" "}
-                <div className="font-semibold" onClick={handleRegenerate}> Regenerate</div>
+                <div className="font-semibold" onClick={handleRegenerate}>
+                  {" "}
+                  Regenerate
+                </div>
               </div>
               <div
                 className={`flex flex-row justify-center items-center text-white text-normal gap-1.5 px-4 rounded-[12px] text-sm py-2 cursor-pointer 

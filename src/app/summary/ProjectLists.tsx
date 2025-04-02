@@ -3,24 +3,25 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ProjectData } from "../coinnovation/components/Types/CoinnovationTypes";
 
-
 const ProjectLists: React.FC = () => {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const router = useRouter()
+
+  const router = useRouter();
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  const handleProjectClick = (project_id:string) => {
-    router.push(`/coinnovation/${project_id}`)
-  }
+  const handleProjectClick = (project_id: string) => {
+    router.push(`/coinnovation/${project_id}`);
+  };
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get("https://tyn-server.azurewebsites.net/coinnovation/create-project/");
+      const response = await axios.get(
+        "http://127.0.0.1:8000/coinnovation/create-project/"
+      );
       setProjects(response.data);
     } catch (err) {
       setError("Failed to fetch projects");
@@ -29,12 +30,12 @@ const ProjectLists: React.FC = () => {
     }
   };
 
-  const handleCreateProject = ()=> {
-    localStorage.removeItem('projectID')
-    localStorage.removeItem('problemStatement')
-    console.log("handleCreateProjectttt")
-    router.push("/coinnovation")
-  }
+  const handleCreateProject = () => {
+    localStorage.removeItem("projectID");
+    localStorage.removeItem("problemStatement");
+    console.log("handleCreateProjectttt");
+    router.push("/coinnovation");
+  };
 
   return (
     <div className="p-6 bg-[#F5FCFF] min-h-screen ">
@@ -42,12 +43,15 @@ const ProjectLists: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Project Management</h2>
         <div className="flex flex-row gap-5">
-        <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
-          View Status
-        </button>
-        <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]" onClick={handleCreateProject}>
-          + Create Project
-        </button>
+          <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
+            View Status
+          </button>
+          <button
+            className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]"
+            onClick={handleCreateProject}
+          >
+            + Create Project
+          </button>
         </div>
       </div>
 
@@ -72,12 +76,15 @@ const ProjectLists: React.FC = () => {
           <div
             key={project.project_id}
             className="bg-white shadow rounded-xl p-4 grid grid-cols-7 gap-2 items-center mb-2 cursor-pointer"
-            onClick={()=>handleProjectClick(project.project_id)}
+            onClick={() => handleProjectClick(project.project_id)}
           >
             {/* Enterprise */}
             <div className="col-span-1 font-medium text-gray-800">
               {/* {project.enterprise ?? "N/A"} */}
-              <img src={project.enterprise_img ?? "N/A"} alt={project.enterprise} />
+              <img
+                src={project.enterprise_img ?? "N/A"}
+                alt={project.enterprise}
+              />
             </div>
 
             {/* Project ID and Name */}
@@ -109,7 +116,9 @@ const ProjectLists: React.FC = () => {
             {/* <div className="col-span-1 text-xs text-gray-600">-</div> */}
 
             {/* Status */}
-            <div className={`col-span-1 font-medium ${statusColor(project.status)}`}>
+            <div
+              className={`col-span-1 font-medium ${statusColor(project.status)}`}
+            >
               {project.status}
             </div>
 
