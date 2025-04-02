@@ -44,7 +44,6 @@ export const fetchSessionMessages = createAsyncThunk<
       const data = response.data.conversations;
       return data;
     } catch (error: any) {
-      // Ensure proper error typing
       return rejectWithValue(
         error.response?.data || "Error in fetching conversations using session"
       );
@@ -52,7 +51,6 @@ export const fetchSessionMessages = createAsyncThunk<
   }
 );
 
-// Create the slice
 const sessionMessageSlice = createSlice({
   name: "sessionMessage",
   initialState,
