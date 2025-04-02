@@ -117,7 +117,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
 
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/coinnovation/delete-file/?file_id=${fileId}`
+        `https://tyn-server.azurewebsites.net/coinnovation/delete-file/?file_id=${fileId}`
       );
 
       setStoredFiles((prevFiles: StoredFile[]) =>

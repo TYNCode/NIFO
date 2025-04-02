@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "http://127.0.0.1:8000/coinnovation";
+const API_BASE_URL = "https://tyn-server.azurewebsites.net/coinnovation";
 
 export const fetchProjectDetails = async (projectId: string) => {
   try {
