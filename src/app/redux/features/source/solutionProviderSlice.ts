@@ -1,3 +1,4 @@
+// solutionProviderSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -35,6 +36,39 @@ export const fetchSolutionProviders = createAsyncThunk<
   }
 });
 
+// New Thunk for adding solution provider
+export const addSolutionProvider = createAsyncThunk<
+  SolutionProvider,
+  {
+    project_id: string;
+    solution_provider_name: string;
+    contact_person: string;
+    phone_number: string;
+    email: string;
+    solution_provider_url: string;
+  },
+  { rejectValue: string }
+>(
+  "solutionProvider/addSolutionProvider",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/coinnovation/add-solution-provider/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data.provider_details;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const solutionProviderSlice = createSlice({
   name: "solutionProvider",
   initialState: {
@@ -56,6 +90,20 @@ const solutionProviderSlice = createSlice({
       .addCase(fetchSolutionProviders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "An error occurred";
+      });
+
+    builder
+      .addCase(addSolutionProvider.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addSolutionProvider.fulfilled, (state, action) => {
+        state.loading = false;
+        state.solutionProviders.push(action.payload);
+      })
+      .addCase(addSolutionProvider.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to add solution provider";
       });
   },
 });

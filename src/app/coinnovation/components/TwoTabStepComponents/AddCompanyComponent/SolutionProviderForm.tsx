@@ -1,3 +1,4 @@
+// SolutionProviderForm.tsx
 import { useState } from "react";
 import Modal from "./Model";
 import Button from "../Button";
@@ -6,11 +7,13 @@ import { LiaSave } from "react-icons/lia";
 interface SolutionProviderFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onAdd: (formData: any) => void;
 }
 
 const SolutionProviderForm: React.FC<SolutionProviderFormProps> = ({
   isOpen,
   onClose,
+  onAdd,
 }) => {
   const [formData, setFormData] = useState({
     companyName: "",
@@ -26,8 +29,15 @@ const SolutionProviderForm: React.FC<SolutionProviderFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    onClose();
+    const newSolutionProvider = {
+      project_id: localStorage.getItem("project_id") || "",
+      solution_provider_name: formData.companyName,
+      contact_person: formData.contactPerson,
+      phone_number: formData.contactNo,
+      email: formData.email,
+      solution_provider_url: formData.url,
+    };
+    onAdd(newSolutionProvider);
   };
 
   return (
