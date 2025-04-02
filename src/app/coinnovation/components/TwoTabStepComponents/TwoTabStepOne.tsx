@@ -1,6 +1,10 @@
-import React, { useEffect } from "react";
+// TwoTabStepOne.tsx
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSolutionProviders } from "../../../redux/features/source/solutionProviderSlice"; // import the thunk
+import {
+  fetchSolutionProviders,
+  addSolutionProvider,
+} from "../../../redux/features/source/solutionProviderSlice";
 import { FaRegFileAlt } from "react-icons/fa";
 import Button from "./Button";
 import CompanyCard from "./CompanyCard";
@@ -26,8 +30,8 @@ const TwoTabStepOne: React.FC = () => {
       };
     }) => state.solutionProvider
   );
-  const [selectedCompanies, setSelectedCompanies] = React.useState<number>(0);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("project_id");
 
   useEffect(() => {
@@ -38,6 +42,11 @@ const TwoTabStepOne: React.FC = () => {
 
   const handleSelection = (selected: boolean) => {
     setSelectedCompanies((prev) => (selected ? prev + 1 : prev - 1));
+  };
+
+  const handleAddSolutionProvider = async (formData: any) => {
+    await dispatch(addSolutionProvider(formData));
+    setIsModalOpen(false);
   };
 
   if (!project_id) {
@@ -81,6 +90,7 @@ const TwoTabStepOne: React.FC = () => {
         <SolutionProviderForm
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          onAdd={handleAddSolutionProvider}
         />
       )}
     </div>
