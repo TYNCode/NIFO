@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import ProgressOne from "./components/ProgressOne";
-import NavBarCoin from "./components/NavBar/NavBarCoin";
-import Sidebar from "./components/Sidebar/Sidebar";
 import WithAuth from "../utils/withAuth";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setSelectedTab } from "../redux/features/coinnovation/projectSlice";
+import NavBarCoin from "../coinnovation/components/NavBar/NavBarCoin";
+import Sidebar from "../coinnovation/components/Sidebar/Sidebar";
+import ProgressOne from "../coinnovation/components/ProgressOne";
+import ProgressOne2 from "./Steps/ProgressOne2";
 
 interface ProcessStep {
   id: number;
@@ -26,10 +27,8 @@ const Page: React.FC = () => {
   const dispatch = useAppDispatch();
   const selectedTab = useAppSelector((state) => state.projects.selectedTab);
 
-  console.log("selectedTab inside the page.jsx", selectedTab);
-
   const tabContent: Record<number, JSX.Element> = {
-    1: <ProgressOne />,
+    1: <ProgressOne2 />,
     2: <div>Step 2</div>,
     3: <div>Step 3</div>,
     4: <div>Step 4</div>,
