@@ -81,24 +81,21 @@ export const fetchCompanyById = createAsyncThunk<
 });
 
 export const fetchCompanyByName = createAsyncThunk<
-  StartupNameType[], 
-  string,          
+  StartupNameType[],
+  string,
   { rejectValue: string }
->(
-  "companyProfile/fetchCompanyByName",
-  async (query, { rejectWithValue }) => {
-    try {
-      const response = await getRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/?search=${encodeURIComponent(query)}`
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data || "Failed to fetch company data"
-      );
-    }
+>("companyProfile/fetchCompanyByName", async (query, { rejectWithValue }) => {
+  try {
+    const response = await getRequest(
+      `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/?search=${encodeURIComponent(query)}`
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data || "Failed to fetch company data"
+    );
   }
-);
+});
 
 // Thunk to create a new company
 export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(

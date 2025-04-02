@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchCompanyById } from "../redux/features/companyprofile/companyProfileSlice";
+import WithAuth from "../utils/withAuth";
 
 const CompanyProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -56,4 +57,4 @@ const CompanyProfilePage: React.FC = () => {
   );
 };
 
-export default CompanyProfilePage;
+export default WithAuth(CompanyProfilePage);

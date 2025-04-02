@@ -128,7 +128,6 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
     usePagination, // ✅ Ensure pagination is properly added
     useRowSelect
   );
-  
 
   const handleEdit = (entity) => {
     setSelectedEntity(entity);

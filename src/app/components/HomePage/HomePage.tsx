@@ -189,7 +189,7 @@ export default function HomePage() {
   const handleGetConvo = async () => {
     const jwtAccessToken = localStorage.getItem("jwtAccessToken");
 
-    console.log("session id inside handleGetConvo", sessionId)
+    console.log("session id inside handleGetConvo", sessionId);
     if (jwtAccessToken) {
       try {
         const response = await axios.get(
@@ -259,7 +259,7 @@ export default function HomePage() {
       setMessages((prevMessages) =>
         prevMessages.map((msg, index) =>
           index === messageIndex
-            ? { ...msg, compareResults: response?.data?.answer?.response}
+            ? { ...msg, compareResults: response?.data?.answer?.response }
             : msg
         )
       );
@@ -268,7 +268,7 @@ export default function HomePage() {
     } finally {
       setCompareResultsLoading((prev) => ({
         ...prev,
-        [messageIndex]: false, 
+        [messageIndex]: false,
       }));
     }
   };
@@ -277,7 +277,7 @@ export default function HomePage() {
     return messages.map((message: any, index: number) => {
       let markdownText = "";
 
-      console.log("message-----------<))))))))))))))))))", message)
+      console.log("message-----------<))))))))))))))))))", message);
 
       if (typeof message?.response?.response === "string") {
         markdownText = message?.response?.response.replace(/\n/g, "  \n");
@@ -410,6 +410,7 @@ export default function HomePage() {
               onNewChat={handleNewChat}
               setSessionId={setSessionId}
               setInputPrompt={setInputPrompt}
+              setIsInputEmpty={setIsInputEmpty}
             />
           </div>
         )}
