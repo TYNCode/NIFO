@@ -78,7 +78,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
     if (!projectID) return;
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
       );
 
       if (response.data) {
@@ -99,7 +99,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
             name:
               file.original_name ||
               decodeURIComponent(file.file.split("/").pop()),
-            url: `http://127.0.0.1:8000${file.file}`,
+            url: `https://tyn-server.azurewebsites.net/coinnovation${file.file}`,
           }));
 
           setStoredFiles(formattedFiles);
@@ -133,7 +133,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
       files.forEach((file) => formData.append("file", file));
 
       const uploadResponse = await axios.post(
-        "http://127.0.0.1:8000/coinnovation/upload-file/",
+        "https://tyn-server.azurewebsites.net/coinnovation/upload-file/",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -166,7 +166,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         }
 
         await axios.put(
-          "http://127.0.0.1:8000/coinnovation/create-project/",
+          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -186,7 +186,7 @@ const OneTabStepOne: React.FC<OneTabStepOneProps> = ({
         }
 
         const createProjectResponse = await axios.post(
-          "http://127.0.0.1:8000/coinnovation/create-project/",
+          "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
           formData,
           {
             headers: {

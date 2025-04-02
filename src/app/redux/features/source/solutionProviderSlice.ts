@@ -24,7 +24,7 @@ export const fetchSolutionProviders = createAsyncThunk<
     if (!projectId) throw new Error("Project ID is missing in localStorage");
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/coinnovation/source-solution-providers/",
+      "https://tyn-server.azurewebsites.net/coinnovation/source-solution-providers/",
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } }
     );

@@ -28,14 +28,21 @@ const TwoTabStepOne: React.FC = () => {
   );
   const [selectedCompanies, setSelectedCompanies] = React.useState<number>(0);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const project_id = localStorage.getItem("project_id");
 
   useEffect(() => {
-    dispatch(fetchSolutionProviders());
-  }, [dispatch]);
+    if (project_id) {
+      dispatch(fetchSolutionProviders());
+    }
+  }, [dispatch, project_id]);
 
   const handleSelection = (selected: boolean) => {
     setSelectedCompanies((prev) => (selected ? prev + 1 : prev - 1));
   };
+
+  if (!project_id) {
+    return <p style={{ color: "red" }}>Project ID is missing</p>;
+  }
 
   return (
     <div className="w-full mx-auto p-6">
@@ -49,7 +56,12 @@ const TwoTabStepOne: React.FC = () => {
       </div>
 
       {solutionProviders.map((company, index) => (
-        <CompanyCard key={index} company={company} onSelect={handleSelection} />
+        <CompanyCard
+          key={index}
+          company={company}
+          onSelect={handleSelection}
+          project_id={project_id}
+        />
       ))}
 
       <div className="flex justify-end gap-3">

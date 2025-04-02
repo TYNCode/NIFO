@@ -69,7 +69,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
     if (!projectID) return;
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
       );
 
       if (response.data) {
@@ -88,7 +88,7 @@ const ProblemInput: React.FC<ProblemInputProps> = ({
             name:
               file.original_name ||
               decodeURIComponent(file.file.split("/").pop()),
-            url: `http://127.0.0.1:8000${file.file}`,
+            url: `https://tyn-server.azurewebsites.net/coinnovation${file.file}`,
           }));
 
           setStoredFiles([...formattedFiles]);

@@ -41,7 +41,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     if (!projectID) return;
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/coinnovation/create-project/?project_id=${projectID}`
+        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
       );
       setProject(response.data);
 

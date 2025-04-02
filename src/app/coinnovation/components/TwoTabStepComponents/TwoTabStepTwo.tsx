@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FaStar, FaRegStar } from "react-icons/fa"; // Star rating icons
+import { FaStar, FaRegStar } from "react-icons/fa";
 import Button from "./Button";
 import { MdDeleteOutline } from "react-icons/md";
 import { RiAddCircleLine } from "react-icons/ri";
 import { IoChevronBack } from "react-icons/io5";
 
-// Define TypeScript types
 interface CompanyData {
   [company: string]: number[];
 }
@@ -93,11 +92,7 @@ const TwoTabStepTwo: React.FC = () => {
 
       <div className="flex justify-end gap-3 mt-4">
         <Button label="Back" icon={<IoChevronBack />} />
-        <Button
-          label="Add"
-          icon={<RiAddCircleLine />}
-          //   onClick={() => setIsModalOpen(true)}
-        />
+        <Button label="Add" icon={<RiAddCircleLine />} />
         <Button label="Delete" icon={<MdDeleteOutline />} />
       </div>
     </div>
