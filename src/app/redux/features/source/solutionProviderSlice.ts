@@ -109,11 +109,7 @@ const solutionProviderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      // FETCH PROVIDERS
-      .addCase(fetchSolutionProviders.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+
       .addCase(fetchSolutionProviders.fulfilled, (state, action) => {
         state.loading = false;
         state.solutionProviders = action.payload || [];
@@ -124,14 +120,9 @@ const solutionProviderSlice = createSlice({
         state.error = action.payload || "Failed to fetch solution providers";
       })
 
-      // ADD PROVIDER
       .addCase(addSolutionProvider.pending, (state) => {
         state.loading = true;
         state.error = null;
-      })
-      .addCase(fetchSolutionProviders.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to fetch solution providers.";
       })
 
       .addCase(addSolutionProvider.fulfilled, (state, action) => {
