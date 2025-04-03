@@ -19,7 +19,7 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
   const dispatch = useAppDispatch();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { projectID, problemStatement, saving } = useAppSelector(
+  const { projectID, problemStatement, creating } = useAppSelector(
     (state) => state.projects
   );
   const { storedFiles } = useAppSelector((state) => state.file);
@@ -87,11 +87,11 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
           <button
             className={`flex items-center gap-1 px-4 py-2 text-white rounded-xl shadow-md ${isProblemEntered || files.length > 0 ? "bg-[#2286C0]" : "bg-[#979797]"}`}
             onClick={handleSubmit}
-            disabled={!(isProblemEntered || files.length > 0) || saving}
+            disabled={!(isProblemEntered || files.length > 0) || creating}
           >
             <CiPlay1 className="text-lg" />
             <span className="font-semibold text-[13px]">
-              {saving ? "Processing" : "Describe"}
+              {creating ? "Processing" : "Describe"}
             </span>
           </button>
         </div>

@@ -4,6 +4,8 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import QuestionCard from "./QuestionCard";
 import NewQuestionInput from "./NewQuestionInput";
+import { updateQuestionnaire } from "../../../../redux/features/coinnovation/challengeSlice";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 
 interface Answer {
   assumed: string;
@@ -42,12 +44,22 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
   const [newQuestionText, setNewQuestionText] = useState("");
 
   const [openAnswers, setOpenAnswers] = useState<Record<string, boolean>>({});
-  const [editingAnswers, setEditingAnswers] = useState<Record<string, boolean>>({});
-  const [editedAnswerValues, setEditedAnswerValues] = useState<Record<string, string>>({});
+  const [editingAnswers, setEditingAnswers] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [editedAnswerValues, setEditedAnswerValues] = useState<
+    Record<string, string>
+  >({});
 
+  const projectID = useAppSelector((state) => state.projects.projectID);
+  const dispatch = useAppDispatch();
+
+  console.log("editedAnswerValues", openAnswers);
   const toggleSelect = (questionId: string) => {
     const updated = new Set(selectedQuestions);
-    updated.has(questionId) ? updated.delete(questionId) : updated.add(questionId);
+    updated.has(questionId)
+      ? updated.delete(questionId)
+      : updated.add(questionId);
     setSelectedQuestions(updated);
   };
 
@@ -59,9 +71,42 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
     setEditedAnswerValues((prev) => ({ ...prev, [id]: current }));
   };
 
-  const handleSaveEdit = (id: string) => {
-    // Ideally dispatch updateQuestionnaire here
-    setEditingAnswers((prev) => ({ ...prev, [id]: false }));
+  const fullCategories = useAppSelector(
+    (state) => state.challenge.questionnaireData.categories
+  );
+
+  const handleSaveEdit = (questionId: string) => {
+    const [categoryKey, questionIndexStr] = questionId.split("-");
+    const questionIndex = parseInt(questionIndexStr);
+    const updatedCategories = JSON.parse(
+      JSON.stringify(fullCategories)
+    ) as Record<string, Category>;
+
+    updatedCategories[categoryKey].questions[questionIndex].answer.assumed =
+      editedAnswerValues[questionId];
+
+    dispatch(updateQuestionnaire({ projectID, updatedCategories }));
+
+    setEditingAnswers((prev) => ({ ...prev, [questionId]: false }));
+  };
+
+  const handleAddNewQuestion = () => {
+    if (!newQuestionText.trim()) return;
+
+    const newQuestion: Question = {
+      question: newQuestionText,
+      answer: { assumed: "", actual: null },
+    };
+
+    const updatedCategories = JSON.parse(
+      JSON.stringify(fullCategories)
+    ) as Record<string, Category>;
+    updatedCategories[category].questions.push(newQuestion);
+
+    dispatch(updateQuestionnaire({ projectID, updatedCategories }));
+
+    setNewQuestionText("");
+    setIsAddingNew(false);
   };
 
   const handleCancelEdit = (id: string) => {
@@ -80,14 +125,20 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
           {index + 1}. {category}
         </h2>
         <div className="flex gap-6">
-          <IoMdAdd className="text-[#2286C0] cursor-pointer" onClick={() => setIsAddingNew(true)} />
+          <IoMdAdd
+            className="text-[#2286C0] cursor-pointer"
+            onClick={() => setIsAddingNew(true)}
+          />
           <RiDeleteBin6Line
             className={`cursor-pointer ${
               hasSelected ? "text-[#2286C0]" : "text-[#A1AEBE]"
             }`}
             onClick={() => hasSelected && onDeleteSelected(category)}
           />
-          <span className="text-[#2286C0] cursor-pointer" onClick={() => setIsOpen((prev) => !prev)}>
+          <span
+            className="text-[#2286C0] cursor-pointer"
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
             {isOpen ? <FaChevronUp /> : <FaChevronDown />}
           </span>
         </div>
@@ -99,10 +150,7 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
             <NewQuestionInput
               value={newQuestionText}
               onChange={(e) => setNewQuestionText(e.target.value)}
-              onSave={() => {
-                setNewQuestionText("");
-                setIsAddingNew(false);
-              }}
+              onSave={handleAddNewQuestion}
               onCancel={() => {
                 setNewQuestionText("");
                 setIsAddingNew(false);
@@ -126,7 +174,10 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
                 onToggleAnswer={() => toggleAnswer(questionId)}
                 onEditClick={() => toggleEdit(questionId, q.answer.assumed)}
                 onEditChange={(e) =>
-                  setEditedAnswerValues((prev) => ({ ...prev, [questionId]: e.target.value }))
+                  setEditedAnswerValues((prev) => ({
+                    ...prev,
+                    [questionId]: e.target.value,
+                  }))
                 }
                 onSaveEdit={() => handleSaveEdit(questionId)}
                 onCancelEdit={() => handleCancelEdit(questionId)}
