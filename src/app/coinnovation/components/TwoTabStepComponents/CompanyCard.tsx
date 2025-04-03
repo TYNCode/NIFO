@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import {
+  FaChevronUp,
+  FaChevronDown,
+  FaPhone,
+  FaEnvelope,
+  FaGlobe,
+  FaLinkedin,
+} from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Badge from "./Badge";
 import { FiEdit2 } from "react-icons/fi";
@@ -42,7 +49,6 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 
   useEffect(() => {
     if (isOpen && !details) {
-      console.log("Fetching details happening");
       dispatch(
         fetchSolutionProviderDetails({
           project_id,
@@ -51,6 +57,43 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
       );
     }
   }, [isOpen, dispatch, company.solution_provider_id, project_id, details]);
+
+  // Helper to parse and format use cases
+  const formatUseCases = (usecases: string[]) => {
+    return usecases.map((uc, idx) => {
+      try {
+        const parsed = JSON.parse(uc.replace(/'/g, '"')); // convert to valid JSON
+        return (
+          <li key={idx} className="mb-1">
+            <span className="font-semibold">{parsed.industry}:</span>{" "}
+            {parsed.impact}
+          </li>
+        );
+      } catch {
+        return <li key={idx}>{uc}</li>;
+      }
+    });
+  };
+
+  const ContactBadge = ({
+    icon,
+    text,
+    href,
+  }: {
+    icon: React.ReactNode;
+    text: string;
+    href?: string;
+  }) => (
+    <a
+      href={href || "#"}
+      target={href ? "_blank" : "_self"}
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 px-3 py-1 text-sm  text-[#0071C1] rounded-xl mb-2 bg-[#E3F2FE]  "
+    >
+      {icon}
+      {text}
+    </a>
+  );
 
   return (
     <div className="border rounded-lg shadow-sm bg-white p-4 mb-4">
@@ -91,13 +134,11 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             hoverColor="hover:text-green-500"
             onClick={() => console.log("Edit clicked")}
           />
-          <div className="flex items-center gap-3">
-            <IconButton
-              icon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
-              color="text-[#2286C0]"
-              onClick={() => setIsOpen(!isOpen)}
-            />
-          </div>
+          <IconButton
+            icon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
+            color="text-[#2286C0]"
+            onClick={() => setIsOpen(!isOpen)}
+          />
         </div>
       </div>
 
@@ -106,50 +147,50 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
           {loading && <p>Loading provider details...</p>}
           {error && <p style={{ color: "red" }}>{error}</p>}
           {details && (
-            <>
-              <p className="text-sm">
-                <div className="font-bold mb-1">Key Customer:</div>
-                <div>{details.key_customer}</div>
-              </p>
-              <p className="text-sm">
-                <div className="font-bold mb-1">USP:</div>
-                <div>{details.usp}</div>
-              </p>
-              <p className="text-sm">
-                <div className="font-bold mb-1">Email:</div>
-                <div>{details.email}</div>
-              </p>
-              <p className="text-sm">
-                <div className="font-bold mb-1">Phone:</div>
-                <div>{details.phone_number}</div>
-              </p>
-              <p className="text-sm">
-                <div className="font-bold mb-1">Website:</div>
-                <a
+            <div className="flex gap-6">
+              <div className="w-[70%]">
+                <div className="mb-4">
+                  <div className="font-bold mb-1">Key Customer</div>
+                  <div className="text-sm">{details.key_customer}</div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="font-bold mb-1">
+                    Unique Selling Proposition (USP)
+                  </div>
+                  <div className="text-sm">{details.usp}</div>
+                </div>
+
+                <div className="mb-2 font-bold">Other Use Cases</div>
+                <ul className="list-disc list-inside text-sm">
+                  {formatUseCases(details.other_usecases)}
+                </ul>
+              </div>
+
+              <div className="w-[30%] flex flex-col gap-2 mt-1">
+                <div className="font-bold mb-1">Contact Details:</div>
+                <ContactBadge
+                  icon={<FaEnvelope />}
+                  text={details.email}
+                  href={`mailto:${details.email}`}
+                />
+                <ContactBadge
+                  icon={<FaPhone />}
+                  text={details.phone_number}
+                  href={`tel:${details.phone_number}`}
+                />
+                <ContactBadge
+                  icon={<FaGlobe />}
+                  text="Website"
                   href={details.solution_provider_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {details.solution_provider_url}
-                </a>
-              </p>
-              <p className="text-sm">
-                <div className="font-bold mb-1">LinkedIn:</div>
-                <a
+                />
+                <ContactBadge
+                  icon={<FaLinkedin />}
+                  text="LinkedIn"
                   href={details.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {details.linkedin_url}
-                </a>
-              </p>
-              <div className="font-bold mb-1">Other Use Cases:</div>
-              <ul className="list-disc list-inside text-sm">
-                {details.other_usecases.map((usecase, index) => (
-                  <li key={index}>{usecase}</li>
-                ))}
-              </ul>
-            </>
+                />
+              </div>
+            </div>
           )}
         </div>
       )}
