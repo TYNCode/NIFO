@@ -54,8 +54,10 @@ const OneTabStepThree: React.FC = () => {
 
   const getTabData = (section: string, tab: string) => {
     if (!jsonForDocument) return [];
+
     if (section === 'challenge') {
-      return jsonForDocument['Challenge Scenario']?.[0]?.[tab] || [];
+      const sectionItem = jsonForDocument['Challenge Scenario']?.find((item: any) => item[tab]);
+      return sectionItem?.[tab] || [];
     } else if (section === 'endUser') {
       const jsonKey = endUserTabMapping[tab];
       const entry = jsonForDocument['Profile of the End-Users']?.find((item: any) => item[jsonKey]);
@@ -64,6 +66,7 @@ const OneTabStepThree: React.FC = () => {
       const jsonKey = outcomeTabMapping[tab];
       return jsonForDocument['Outcomes (Requirements & KPIs)']?.[jsonKey] || [];
     }
+
     return [];
   };
 
@@ -78,14 +81,33 @@ const OneTabStepThree: React.FC = () => {
       section === 'challenge'
         ? 'Challenge Scenario'
         : section === 'endUser'
-        ? 'Profile of the End-Users'
-        : 'Outcomes (Requirements & KPIs)';
-    const valueArray = editableText.split('\n').map(line => line.trim()).filter(Boolean);
+          ? 'Profile of the End-Users'
+          : 'Outcomes (Requirements & KPIs)';
+
+    const lines = editableText
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const shouldConvertToObject =
+      section === 'challenge' ||
+      (section === 'outcome' && ['Functional Requirements', 'List of Features & Functionalities'].includes(tabKey));
+
+    const valueArray: string[] | { Title: string; Description: string }[] = shouldConvertToObject
+      ? lines.map(line => {
+        const [title, ...descParts] = line.split(':');
+        return {
+          Title: title.trim(),
+          Description: descParts.join(':').trim() || ''
+        };
+      })
+      : lines; 
 
     dispatch(updateJsonSection({ section: sectionKey, key: jsonKey, value: valueArray }));
     await saveDocument();
     setEdit(false);
   };
+
 
   const handleEditClick = (
     section: string,
@@ -95,9 +117,23 @@ const OneTabStepThree: React.FC = () => {
     setText: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const display = getTabData(section, tabKey);
-    setText(display.join('\n'));
+
+    const formattedText = display
+      .map((item: any) => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object' && item !== null) {
+          const title = item.Title || 'Untitled';
+          const description = item.Description || '';
+          return `${title}: ${description}`;
+        }
+        return JSON.stringify(item);
+      })
+      .join('\n');
+
+    setText(formattedText);
     setEdit(true);
   };
+
 
   const handleKpiCellChange = (rowIndex: number, columnKey: string, value: string) => {
     dispatch(updateKpiTableCell({ rowIndex, column: columnKey, value }));

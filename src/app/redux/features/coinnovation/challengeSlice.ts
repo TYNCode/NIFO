@@ -139,13 +139,24 @@ const challengeSlice = createSlice({
 
     updateJsonSection: (
       state,
-      action: PayloadAction<{ section: string; key: string; value: string[] }>
+      action: PayloadAction<{ section: string; key: string; value: string[] | { Title: string; Description: string }[] }>
     ) => {
       const { section, key, value } = action.payload;
-      if (state.jsonForDocument && state.jsonForDocument[section]) {
+      if (!state.jsonForDocument || !state.jsonForDocument[section]) return;
+      const sectionData = state.jsonForDocument[section];
+
+      if (Array.isArray(sectionData)) {
+        const itemIndex = sectionData.findIndex((item: any) => item[key] !== undefined);
+        if (itemIndex !== -1) {
+          sectionData[itemIndex][key] = value;
+        } else {
+          sectionData.push({ [key]: value });
+        }
+      } else {
         state.jsonForDocument[section][key] = value;
       }
     },
+
     updateKpiTableCell: (
       state,
       action: PayloadAction<{ column: string; rowIndex: number; value: string }>
