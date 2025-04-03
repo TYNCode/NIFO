@@ -58,7 +58,7 @@ const OneTabStepOne: React.FC = () => {
       };
 
       const result = await dispatch(
-        createOrUpdateProject({ projectID, projectData: payload })
+        createOrUpdateProject({ projectID, projectData: payload , mode: "describe" })
       ).unwrap();
 
       if (!projectID && result.project_id) {

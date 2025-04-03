@@ -6,6 +6,7 @@ interface ProjectState {
   projects: ProjectData[];
   projectDetails: ProjectData | null;
   projectID: string | null;
+  creating: boolean;
   fetching: boolean;
   saving: boolean;
   error: string | null;
@@ -17,6 +18,7 @@ const initialState: ProjectState = {
   projects: [],
   projectDetails: null,
   projectID: null,
+  creating: false,
   fetching: false,
   saving: false,
   error: null,
@@ -62,7 +64,11 @@ export const createOrUpdateProject = createAsyncThunk(
     {
       projectID,
       projectData,
-    }: { projectID: string | null; projectData: ProjectData },
+    }: {
+      projectID: string | null;
+      projectData: ProjectData;
+      mode: "describe" | "save";
+    },
     { rejectWithValue }
   ) => {
     try {
@@ -143,7 +149,7 @@ const projectSlice = createSlice({
         fetchProjectDetails.fulfilled,
         (state, action: PayloadAction<ProjectData>) => {
           state.projectDetails = action.payload;
-          state.problemStatement = action.payload.problem_statement || ""; // ✅ sync
+          state.problemStatement = action.payload.problem_statement || "";
           state.fetching = false;
         }
       )
@@ -151,19 +157,23 @@ const projectSlice = createSlice({
         state.fetching = false;
         state.error = action.payload as string;
       })
-      .addCase(createOrUpdateProject.pending, (state) => {
-        state.saving = true;
+      .addCase(createOrUpdateProject.pending, (state, action) => {
+        const mode = action.meta.arg.mode;
+        if (mode === "describe") state.creating = true;
+        if (mode === "save") state.saving = true;
       })
       .addCase(
         createOrUpdateProject.fulfilled,
         (state, action: PayloadAction<ProjectData>) => {
           state.projectDetails = action.payload;
           state.saving = false;
+          state.creating = false;
         }
       )
       .addCase(createOrUpdateProject.rejected, (state, action) => {
         state.saving = false;
         state.error = action.payload as string;
+        state.creating = false;
       });
   },
 });

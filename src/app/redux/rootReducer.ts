@@ -12,6 +12,7 @@ import challengeSlice from "./features/coinnovation/challengeSlice";
 import fileSlice from "./features/coinnovation/fileSlice";
 import solutionProviderSlice from "./features/source/solutionProviderSlice";
 import solutionProviderDetailsSlice from "./features/source/solutionProviderDetailsSlice";
+import solutionComparison from "./features/source/solutionCompareSlice";
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   projects: projectSlice,
   challenge: challengeSlice,
   file: fileSlice,
+  solutionComparison: solutionComparison,
 });
 
 export default rootReducer;

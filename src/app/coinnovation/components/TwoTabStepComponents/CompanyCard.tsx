@@ -26,7 +26,7 @@ interface CompanyCardProps {
     key_customers: string[];
     solution_provider_id: string;
   };
-  onSelect: (selected: boolean) => void;
+  onSelect: (selected: boolean, solution_provider_id: string) => void;
   project_id: string;
 }
 
@@ -117,7 +117,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
           <input
             type="checkbox"
             className="w-4 h-4 rounded-sm border-2 border-blue-400"
-            onChange={(e) => onSelect(e.target.checked)}
+            onChange={(e) => onSelect(e.target.checked , company.solution_provider_id)}
           />
           <div className="flex flex-col gap-2 justify-center">
             <h3 className="text-base font-semibold text-[#0071C1]">

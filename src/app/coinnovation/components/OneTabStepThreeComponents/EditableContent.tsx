@@ -4,7 +4,7 @@ interface EditableContentProps {
   isEditing: boolean;
   editableText: string;
   setEditableText: (text: string) => void;
-  displayItems: string[];
+  displayItems: any[];
 }
 
 const EditableContent: React.FC<EditableContentProps> = ({
@@ -13,6 +13,24 @@ const EditableContent: React.FC<EditableContentProps> = ({
   setEditableText,
   displayItems
 }) => {
+  const renderItem = (item: any, index: number) => {
+    if (typeof item === 'string' || typeof item === 'number') {
+      return <li key={index}>{item}</li>;
+    }
+
+    if (typeof item === 'object' && item !== null) {
+      const title = item.Title || '';
+      const description = item.Description || '';
+      return (
+        <li key={index}>
+          <span className="font-semibold">{title}</span>: {description}
+        </li>
+      );
+    }
+
+    return <li key={index}>{JSON.stringify(item)}</li>;
+  };
+
   return (
     <>
       {isEditing ? (
@@ -23,9 +41,11 @@ const EditableContent: React.FC<EditableContentProps> = ({
         />
       ) : (
         <ul className="list-disc list-inside space-y-2">
-          {displayItems.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
+          {Array.isArray(displayItems) && displayItems.length > 0 ? (
+            displayItems.map(renderItem)
+          ) : (
+            <li className="text-gray-400 italic">No data available</li>
+          )}
         </ul>
       )}
     </>

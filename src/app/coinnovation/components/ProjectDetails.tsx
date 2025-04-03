@@ -101,7 +101,7 @@ const ProjectDetails: React.FC = () => {
     };
 
     await dispatch(
-      createOrUpdateProject({ projectID, projectData: formatted })
+      createOrUpdateProject({ projectID, projectData: formatted , mode: "save" })
     );
 
     const response = await dispatch(

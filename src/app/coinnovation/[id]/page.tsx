@@ -8,6 +8,7 @@ import ProgressOne from "../components/ProgressOne";
 import WithAuth from "../../utils/withAuth";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchProjectDetails, setProjectID, setSelectedTab } from "../../redux/features/coinnovation/projectSlice";
+import ProgressTwo from "../components/ProgressTwo";
 
 interface ProcessStep {
   id: number;
@@ -48,7 +49,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
 
   const tabContent: Record<number, JSX.Element> = {
     1: <ProgressOne />,
-    2: <div>Step 2</div>,
+    2: <ProgressTwo />,
     3: <div>Step 3</div>,
     4: <div className="p-4 bg-gray-100">Step 4</div>,
     5: <div className="p-4 bg-gray-100">Step 5</div>,

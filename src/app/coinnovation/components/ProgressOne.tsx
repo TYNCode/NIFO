@@ -81,7 +81,6 @@ const ProgressOne: React.FC = () => {
         ))}
       </div>
 
-      {/* Tab Panel Content */}
       <div>
         {activeTab === "01.a" && <OneTabStepOne />}
 
