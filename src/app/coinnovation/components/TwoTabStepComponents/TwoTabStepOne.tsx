@@ -34,6 +34,7 @@ const TwoTabStepOne: React.FC = () => {
   );
 
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
+  const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
 console.log("solutionProviders", solutionProviders);
@@ -44,8 +45,14 @@ console.log("solutionProviders", solutionProviders);
     }
   }, [dispatch, project_id]);
 
-  const handleSelection = (selected: boolean) => {
+  const handleSelection = (selected: boolean, solution_provider_id:string) => {
+    console.log("selected--->", selected);
     setSelectedCompanies((prev) => (selected ? prev + 1 : prev - 1));
+    console.log("selectedCompanies", solution_provider_id);
+    setSelectedCompanyIDs( 
+      (prev) => 
+        selected ? [...prev, solution_provider_id]: prev.filter((id)=> id !== solution_provider_id)
+    )
   };
 
   const handleAddSolutionProvider = async (formData: any) => {
@@ -60,7 +67,10 @@ console.log("solutionProviders", solutionProviders);
 
   const handleCompareClick = () => {
     dispatch(setActiveTabSource("02.b"));
-    // dispatch(compareSolutionProviders(project_id, ))
+    let bodyForCompare = {
+      project_id, solution_provider_ids : selectedCompanyIDs
+    }
+    dispatch(compareSolutionProviders( bodyForCompare))
   };
 
   if (!project_id) {
