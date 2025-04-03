@@ -82,14 +82,36 @@ const solutionProviderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // FETCH PROVIDERS
+      .addCase(fetchSolutionProviders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchSolutionProviders.fulfilled, (state, action) => {
         state.solutionProviders = action.payload || [];
+        state.loading = false;
+      })
+      .addCase(fetchSolutionProviders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch solution providers";
+      })
+
+      // ADD PROVIDER
+      .addCase(addSolutionProvider.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(addSolutionProvider.fulfilled, (state, action) => {
         state.solutionProviders.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(addSolutionProvider.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to add solution provider";
       });
   },
 });
+
 
 export const { setActiveTabSource } = solutionProviderSlice.actions;
 export default solutionProviderSlice.reducer;

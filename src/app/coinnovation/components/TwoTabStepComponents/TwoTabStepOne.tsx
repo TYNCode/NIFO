@@ -37,7 +37,7 @@ const TwoTabStepOne: React.FC = () => {
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
-console.log("solutionProviders", solutionProviders);
+  console.log("solutionProviders", solutionProviders);
 
   useEffect(() => {
     if (project_id) {
@@ -45,14 +45,15 @@ console.log("solutionProviders", solutionProviders);
     }
   }, [dispatch, project_id]);
 
-  const handleSelection = (selected: boolean, solution_provider_id:string) => {
+  const handleSelection = (selected: boolean, solution_provider_id: string) => {
     console.log("selected--->", selected);
     setSelectedCompanies((prev) => (selected ? prev + 1 : prev - 1));
     console.log("selectedCompanies", solution_provider_id);
-    setSelectedCompanyIDs( 
-      (prev) => 
-        selected ? [...prev, solution_provider_id]: prev.filter((id)=> id !== solution_provider_id)
-    )
+    setSelectedCompanyIDs((prev) =>
+      selected
+        ? [...prev, solution_provider_id]
+        : prev.filter((id) => id !== solution_provider_id)
+    );
   };
 
   const handleAddSolutionProvider = async (formData: any) => {
@@ -68,9 +69,10 @@ console.log("solutionProviders", solutionProviders);
   const handleCompareClick = () => {
     dispatch(setActiveTabSource("02.b"));
     let bodyForCompare = {
-      project_id, solution_provider_ids : selectedCompanyIDs
-    }
-    dispatch(compareSolutionProviders( bodyForCompare))
+      project_id,
+      solution_provider_ids: selectedCompanyIDs,
+    };
+    dispatch(compareSolutionProviders(bodyForCompare));
   };
 
   if (!project_id) {
@@ -79,47 +81,53 @@ console.log("solutionProviders", solutionProviders);
 
   return (
     <div className="w-full mx-auto p-6">
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <div className="flex mb-4 font-semibold text-lg">
-        <p className="w-[16%] ml-4">Company Name</p>
-        <p className="w-[51%]">Relevant Usecase</p>
-        <p className="">Key Customers</p>
-      </div>
-
-      {solutionProviders.map((company, index) => (
-        <CompanyCard
-          key={index}
-          company={company}
-          onSelect={handleSelection}
-          project_id={project_id}
-        />
-      ))}
-
-      <div className="flex justify-end gap-3">
-        <Button
-          label="Add"
-          icon={<RiAddCircleLine />}
-          onClick={() => setIsModalOpen(true)}
-        />
-        <Button
-          label="Compare"
-          icon={<FaRegFileAlt />}
-          disabled={selectedCompanies < 2}
-          onClick={handleCompareClick}
-        />
-      </div>
-
-      {isModalOpen && (
-        <SolutionProviderForm
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onAdd={handleAddSolutionProvider}
-        />
+      {loading ? (
+        <p className="text-gray-600">Loading solution providers...</p>
+      ) : (
+        <>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+  
+          <div className="flex mb-4 font-semibold text-lg">
+            <p className="w-[16%] ml-4">Company Name</p>
+            <p className="w-[51%]">Relevant Usecase</p>
+            <p className="">Key Customers</p>
+          </div>
+  
+          {solutionProviders.map((company, index) => (
+            <CompanyCard
+              key={index}
+              company={company}
+              onSelect={handleSelection}
+              project_id={project_id}
+            />
+          ))}
+  
+          <div className="flex justify-end gap-3">
+            <Button
+              label="Add"
+              icon={<RiAddCircleLine />}
+              onClick={() => setIsModalOpen(true)}
+            />
+            <Button
+              label="Compare"
+              icon={<FaRegFileAlt />}
+              disabled={selectedCompanies < 2}
+              onClick={handleCompareClick}
+            />
+          </div>
+  
+          {isModalOpen && (
+            <SolutionProviderForm
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onAdd={handleAddSolutionProvider}
+            />
+          )}
+        </>
       )}
     </div>
   );
+  
 };
 
 export default TwoTabStepOne;
