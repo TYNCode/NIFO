@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Tabs from "./Tabs";
 import TwoTabStepOne from "./TwoTabStepComponents/TwoTabStepOne";
 import TwoTabStepTwo from "./TwoTabStepComponents/TwoTabStepTwo";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setActiveTabSource } from "../../redux/features/source/solutionProviderSlice";
 
 interface Tab {
   id: string;
@@ -10,28 +12,29 @@ interface Tab {
 }
 
 const ProgressTwo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("02.a");
-
+  const dispatch = useAppDispatch();
+  const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
+  const solutionProviders = useAppSelector((state) => state.solutionProvider.solutionProviders);
   const tabs: Tab[] = [
     { id: "02.a", label: "Shortlisting of Solution Providers", enabled: true },
-    { id: "02.b", label: "Solution Providers Comparison", enabled: false },
+    {
+      id: "02.b",
+      label: "Solution Providers Comparison",
+      enabled: solutionProviders.length > 0,
+    },
   ];
 
+  const handleTabChange = (tabId: string) => {
+    dispatch(setActiveTabSource(tabId));
+  };
+
   return (
-    <div className=" h-full px-4 py-4 shadow-md rounded-[16px]">
-      <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="h-full px-4 py-4 shadow-md rounded-[16px]">
+      <Tabs tabs={tabs} activeTab={activeTabSource} setActiveTab={handleTabChange} />
 
       <div>
-        {activeTab === "02.a" && (
-          <div>
-            <TwoTabStepOne />
-          </div>
-        )}
-        {activeTab === "02.b" && (
-          <div>
-            <TwoTabStepTwo />
-          </div>
-        )}
+        {activeTabSource === "02.a" && <TwoTabStepOne />}
+        {activeTabSource === "02.b" && <TwoTabStepTwo />}
       </div>
     </div>
   );

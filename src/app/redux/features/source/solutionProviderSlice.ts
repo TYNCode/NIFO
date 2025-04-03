@@ -1,5 +1,5 @@
 // solutionProviderSlice.ts
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface SolutionProvider {
@@ -13,7 +13,15 @@ interface SolutionProviderState {
   solutionProviders: SolutionProvider[];
   loading: boolean;
   error: string | null;
+  activeTabSource: string;
 }
+
+const initialState: SolutionProviderState = {
+  solutionProviders: [],
+  loading: false,
+  error: null,
+  activeTabSource: "02.a",
+};
 
 export const fetchSolutionProviders = createAsyncThunk<
   SolutionProvider[],
@@ -22,7 +30,7 @@ export const fetchSolutionProviders = createAsyncThunk<
 >("solutionProvider/fetchSolutionProviders", async (_, { rejectWithValue }) => {
   try {
     const projectId = localStorage.getItem("projectID");
-    if (!projectId) throw new Error("Project ID is missing in localStorage");
+    if (!projectId) throw new Error("Project ID is missing");
 
     const response = await axios.post(
       "https://tyn-server.azurewebsites.net/coinnovation/source-solution-providers/",
@@ -36,7 +44,6 @@ export const fetchSolutionProviders = createAsyncThunk<
   }
 });
 
-// New Thunk for adding solution provider
 export const addSolutionProvider = createAsyncThunk<
   SolutionProvider,
   {
@@ -55,11 +62,7 @@ export const addSolutionProvider = createAsyncThunk<
       const response = await axios.post(
         "http://127.0.0.1:8000/coinnovation/add-solution-provider/",
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       return response.data.provider_details;
@@ -71,41 +74,22 @@ export const addSolutionProvider = createAsyncThunk<
 
 const solutionProviderSlice = createSlice({
   name: "solutionProvider",
-  initialState: {
-    solutionProviders: [],
-    loading: false,
-    error: null,
-  } as SolutionProviderState,
-  reducers: {},
+  initialState,
+  reducers: {
+    setActiveTabSource: (state, action: PayloadAction<string>) => {
+      state.activeTabSource = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSolutionProviders.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(fetchSolutionProviders.fulfilled, (state, action) => {
-        state.loading = false;
         state.solutionProviders = action.payload || [];
       })
-      .addCase(fetchSolutionProviders.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "An error occurred";
-      });
-
-    builder
-      .addCase(addSolutionProvider.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(addSolutionProvider.fulfilled, (state, action) => {
-        state.loading = false;
         state.solutionProviders.push(action.payload);
-      })
-      .addCase(addSolutionProvider.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to add solution provider";
       });
   },
 });
 
+export const { setActiveTabSource } = solutionProviderSlice.actions;
 export default solutionProviderSlice.reducer;

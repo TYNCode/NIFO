@@ -1,9 +1,9 @@
-// TwoTabStepOne.tsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSolutionProviders,
   addSolutionProvider,
+  setActiveTabSource,
 } from "../../../redux/features/source/solutionProviderSlice";
 import { FaRegFileAlt } from "react-icons/fa";
 import Button from "./Button";
@@ -11,6 +11,7 @@ import CompanyCard from "./CompanyCard";
 import { RiAddCircleLine } from "react-icons/ri";
 import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
+import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -21,6 +22,7 @@ interface SolutionProvider {
 
 const TwoTabStepOne: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const { solutionProviders, loading, error } = useSelector(
     (state: {
       solutionProvider: {
@@ -30,9 +32,11 @@ const TwoTabStepOne: React.FC = () => {
       };
     }) => state.solutionProvider
   );
+
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
+console.log("solutionProviders", solutionProviders);
 
   useEffect(() => {
     if (project_id) {
@@ -45,8 +49,18 @@ const TwoTabStepOne: React.FC = () => {
   };
 
   const handleAddSolutionProvider = async (formData: any) => {
+    if (!project_id) {
+      console.error("Project ID is missing");
+      return;
+    }
+    formData.project_id = project_id;
     await dispatch(addSolutionProvider(formData));
     setIsModalOpen(false);
+  };
+
+  const handleCompareClick = () => {
+    dispatch(setActiveTabSource("02.b"));
+    // dispatch(compareSolutionProviders(project_id, ))
   };
 
   if (!project_id) {
@@ -83,6 +97,7 @@ const TwoTabStepOne: React.FC = () => {
           label="Compare"
           icon={<FaRegFileAlt />}
           disabled={selectedCompanies < 2}
+          onClick={handleCompareClick}
         />
       </div>
 
