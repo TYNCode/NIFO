@@ -52,6 +52,36 @@ export const fetchSolutionProviderDetails = createAsyncThunk(
   }
 );
 
+export const updateSolutionProvider = createAsyncThunk<
+  {
+    solution_provider_id: string;
+    data: SolutionProviderDetails;
+  },
+  {
+    solution_provider_id: string;
+    updatedData: any;
+  },
+  { rejectValue: string }
+>(
+  "solutionProviderDetails/updateSolutionProvider",
+  async ({ solution_provider_id, updatedData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/coinnovation/edit-solution-provider/${solution_provider_id}/`,
+        updatedData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      return {
+        solution_provider_id,
+        data: response.data.provider_details,
+      };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const initialState: SolutionProviderDetailsState = {};
 
 const solutionProviderDetailsSlice = createSlice({
@@ -82,6 +112,22 @@ const solutionProviderDetailsSlice = createSlice({
           data: null,
           loading: false,
           error,
+        };
+      })
+      .addCase(updateSolutionProvider.fulfilled, (state, action) => {
+        const { solution_provider_id, data } = action.payload;
+        state[solution_provider_id] = {
+          data,
+          loading: false,
+          error: null,
+        };
+      })
+      .addCase(updateSolutionProvider.rejected, (state, action: any) => {
+        const id = action.meta.arg.solution_provider_id;
+        state[id] = {
+          ...state[id],
+          loading: false,
+          error: action.payload || "Failed to update solution provider.",
         };
       });
   },

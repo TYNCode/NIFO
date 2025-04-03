@@ -14,6 +14,10 @@ import IconButton from "./IconButton";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSolutionProviderDetails } from "../../../redux/features/source/solutionProviderDetailsSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
+import { updateSolutionProvider } from "../../../redux/features/source/solutionProviderDetailsSlice";
+import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProviderForm";
+import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 interface CompanyCardProps {
   company: {
@@ -33,6 +37,18 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const [editOpen, setEditOpen] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleUpdate = (updatedData: any) => {
+    dispatch(
+      updateSolutionProvider({
+        solution_provider_id: company.solution_provider_id,
+        updatedData,
+      })
+    );
+  };
 
   const {
     data: details,
@@ -58,11 +74,10 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
     }
   }, [isOpen, dispatch, company.solution_provider_id, project_id, details]);
 
-  // Helper to parse and format use cases
   const formatUseCases = (usecases: string[]) => {
     return usecases.map((uc, idx) => {
       try {
-        const parsed = JSON.parse(uc.replace(/'/g, '"')); // convert to valid JSON
+        const parsed = JSON.parse(uc.replace(/'/g, '"'));
         return (
           <li key={idx} className="mb-1">
             <span className="font-semibold">{parsed.industry}:</span>{" "}
@@ -126,14 +141,28 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             icon={<RiDeleteBin6Line />}
             color="text-[#2286C0]"
             hoverColor="hover:text-red-500"
-            onClick={() => console.log("Delete clicked")}
+            onClick={() => setShowDeleteModal(true)}
           />
           <IconButton
             icon={<FiEdit2 />}
             color="text-[#2286C0]"
             hoverColor="hover:text-green-500"
-            onClick={() => console.log("Edit clicked")}
+            onClick={() => {
+              setEditOpen(true);
+              if (!details) {
+                setLoadingEdit(true);
+                dispatch(
+                  fetchSolutionProviderDetails({
+                    project_id,
+                    solution_provider_id: company.solution_provider_id,
+                  })
+                ).finally(() => {
+                  setLoadingEdit(false);
+                });
+              }
+            }}
           />
+
           <IconButton
             icon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
             color="text-[#2286C0]"
@@ -142,6 +171,32 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
         </div>
       </div>
 
+      <ConfirmDeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={() => {
+          dispatch(
+            deleteSolutionProvider({
+              project_id,
+              solution_provider_id: company.solution_provider_id,
+            })
+          );
+        }}
+        title={`Delete ${company.solution_provider_name}?`}
+        message="This action cannot be undone."
+      />
+
+      {editOpen && (
+        <EditSolutionProviderForm
+          isOpen={editOpen}
+          onClose={() => setEditOpen(false)}
+          onUpdate={handleUpdate}
+          initialData={
+            loadingEdit || !details ? null : { ...details, ...company }
+          }
+          loading={loadingEdit || !details}
+        />
+      )}
       {isOpen && (
         <div className="mt-4 p-4 border-t">
           {loading && <p>Loading provider details...</p>}
@@ -150,10 +205,13 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             <div className="flex gap-6">
               <div className="w-[70%]">
                 <div className="mb-4">
+                  <div className="font-bold mb-1">Product/Services Offered</div>
+                  <div className="text-sm">{details.offerings}</div>
+                </div>
+                <div className="mb-4">
                   <div className="font-bold mb-1">Key Customer</div>
                   <div className="text-sm">{details.key_customer}</div>
                 </div>
-
                 <div className="mb-4">
                   <div className="font-bold mb-1">
                     Unique Selling Proposition (USP)

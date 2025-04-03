@@ -36,7 +36,6 @@ const TwoTabStepOne: React.FC = () => {
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
-console.log("solutionProviders", solutionProviders);
 
   useEffect(() => {
     if (project_id) {
