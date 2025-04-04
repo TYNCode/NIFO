@@ -33,7 +33,7 @@ const KpiTable: React.FC<KpiTableProps> = ({
           }}
           className="bg-[#2286C0] text-white text-[12px] px-3 py-1 rounded-md"
         >
-          {isEditing ? "Save" : "+ Add Row"}
+          {isEditing ? "Save" : "Add Row / Edit"}
         </button>
       </div>
 

@@ -13,6 +13,8 @@ const EditableContent: React.FC<EditableContentProps> = ({
   setEditableText,
   displayItems
 }) => {
+
+  console.log('EditableContent', { isEditing, editableText, displayItems });
   const renderItem = (item: any, index: number) => {
     if (typeof item === 'string' || typeof item === 'number') {
       return <li key={index}>{item}</li>;
