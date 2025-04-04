@@ -86,13 +86,13 @@ const TwoTabStepOne: React.FC = () => {
       ) : (
         <>
           {error && <p style={{ color: "red" }}>{error}</p>}
-  
+
           <div className="flex mb-4 font-semibold text-lg">
             <p className="w-[16%] ml-4">Company Name</p>
             <p className="w-[51%]">Relevant Usecase</p>
             <p className="">Key Customers</p>
           </div>
-  
+
           {solutionProviders.map((company, index) => (
             <CompanyCard
               key={index}
@@ -101,7 +101,7 @@ const TwoTabStepOne: React.FC = () => {
               project_id={project_id}
             />
           ))}
-  
+
           <div className="flex justify-end gap-3">
             <Button
               label="Add"
@@ -115,7 +115,7 @@ const TwoTabStepOne: React.FC = () => {
               onClick={handleCompareClick}
             />
           </div>
-  
+
           {isModalOpen && (
             <SolutionProviderForm
               isOpen={isModalOpen}
@@ -127,7 +127,6 @@ const TwoTabStepOne: React.FC = () => {
       )}
     </div>
   );
-  
 };
 
 export default TwoTabStepOne;

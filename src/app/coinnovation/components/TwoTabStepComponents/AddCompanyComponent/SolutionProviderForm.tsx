@@ -41,7 +41,12 @@ const SolutionProviderForm: React.FC<SolutionProviderFormProps> = ({
   };
 
   return (
-    <Modal title="New Solution Provider" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      title="New Solution Provider"
+      isOpen={isOpen}
+      onClose={onClose}
+      type="add"
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {[
           { label: "Company Name", name: "companyName" },
