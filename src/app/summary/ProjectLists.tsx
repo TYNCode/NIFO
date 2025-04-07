@@ -40,9 +40,9 @@ const ProjectLists: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Project Management</h2>
         <div className="flex flex-row gap-5">
-          <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
+          {/* <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
             View Status
-          </button>
+          </button> */}
           <button
             className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]"
             onClick={handleCreateProject}

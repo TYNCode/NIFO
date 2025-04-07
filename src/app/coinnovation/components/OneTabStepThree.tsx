@@ -4,7 +4,7 @@ import {
   updatePDD,
   setJsonForDocument,
 } from "../../redux/features/coinnovation/challengeSlice";
-import { setSelectedTab } from "../../redux/features/coinnovation/projectSlice";
+import { enableStep, setSelectedTab } from "../../redux/features/coinnovation/projectSlice";
 
 import Accordion from "./OneTabStepThreeComponents/Accordian";
 import TabPanel from "./OneTabStepThreeComponents/TabPanel";
@@ -32,6 +32,10 @@ const OneTabStepThree: React.FC = () => {
   const [isEditingOutcome, setIsEditingOutcome] = useState(false);
   const [isEditingKpiTable, setIsEditingKpiTable] = useState(false);
 
+  const handleSourceSolution = () => {
+    dispatch(enableStep(2))
+    dispatch(setSelectedTab(2))
+  }
   const endUserTabMapping = {
     Roles: "Roles",
     "Current Methods Employed": "Current methods to overcome the challenge",
@@ -238,9 +242,9 @@ const OneTabStepThree: React.FC = () => {
       <div className="flex justify-end gap-4">
         <div
           className="cursor-pointer bg-[#2286C0] text-white px-4 py-2 rounded-lg shadow-md text-sm"
-          onClick={() => dispatch(setSelectedTab(2))}
+          onClick={() => handleSourceSolution()}
         >
-          Continue to source solution providers
+          Source solution providers
         </div>
         <DownloadButton onClick={() => {}} isLoading={false} />
       </div>

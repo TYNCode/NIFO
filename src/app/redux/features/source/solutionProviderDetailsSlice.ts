@@ -67,7 +67,7 @@ export const updateSolutionProvider = createAsyncThunk<
   async ({ solution_provider_id, updatedData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/coinnovation/edit-solution-provider/${solution_provider_id}/`,
+        `http://127.0.0.1:8000/coinnovation/edit-solution-provider/`,
         updatedData,
         { headers: { "Content-Type": "application/json" } }
       );

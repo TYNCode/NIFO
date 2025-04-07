@@ -11,6 +11,7 @@ interface ProjectState {
   saving: boolean;
   error: string | null;
   selectedTab: number;
+  enabledSteps: number[];
   problemStatement: string | null;
 }
 
@@ -23,6 +24,7 @@ const initialState: ProjectState = {
   saving: false,
   error: null,
   selectedTab: 1,
+  enabledSteps: [1],
   problemStatement: null,
 };
 
@@ -108,6 +110,11 @@ const projectSlice = createSlice({
     setSelectedTab: (state, action: PayloadAction<number>) => {
       state.selectedTab = action.payload;
     },
+    enableStep: (state, action: PayloadAction<number>) => {
+        if(!state.enabledSteps.includes(action.payload)) {
+          state.enabledSteps.push(action.payload)
+        }
+    },
     setProblemStatement: (state, action: PayloadAction<string | null>) => {
       state.problemStatement = action.payload;
     },
@@ -181,6 +188,7 @@ const projectSlice = createSlice({
 export const {
   setProjectID,
   setSelectedTab,
+  enableStep,
   clearProjectState,
   setProblemStatement,
   updateProjectField,
