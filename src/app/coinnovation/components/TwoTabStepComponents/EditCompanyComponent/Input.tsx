@@ -10,7 +10,7 @@ interface InputProps {
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
-  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>; // Accept both FieldError and merged error types
+  error?: any
 }
 
 const Input: React.FC<InputProps> = ({
@@ -23,7 +23,6 @@ const Input: React.FC<InputProps> = ({
   readOnly = false,
   error,
 }) => {
-  // Extract the error message from FieldError or string, ensuring it's a string
   const errorMessage = error && typeof error !== "string" ? (error as FieldError).message : error;
 
   return (
