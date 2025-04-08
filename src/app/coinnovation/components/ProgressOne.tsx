@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import OneTabStepOne from "./OneTabStepOne";
 import OneTabStepTwo from "./OneTabStepTwo";
 import OneTabStepThree from "./OneTabStepThree";
@@ -8,29 +8,43 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setProjectID } from "../../redux/features/coinnovation/projectSlice";
 import { setActiveDefineStepTab } from "../../redux/features/coinnovation/challengeSlice";
 
+type DefineStepTab = "01.a" | "01.b" | "01.c";
+
 const ProgressOne: React.FC = () => {
   const dispatch = useAppDispatch();
+
   const projectID = useAppSelector((state) => state.projects.projectID);
   const questionnaireData = useAppSelector(
-    (state) => state.challenge?.questionnaireData
+    (state) => state.challenge.questionnaireData
   );
   const jsonForDocument = useAppSelector(
-    (state) => state.challenge?.jsonForDocument
+    (state) => state.challenge.jsonForDocument
   );
   const activeTab = useAppSelector(
-    (state) => state.challenge?.activeDefineStepTab || "01.a"
+    (state) => (state.challenge.activeDefineStepTab || "01.a") as DefineStepTab
   );
+
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  // Restore from localStorage on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedTab = localStorage.getItem("activeTab");
-      const storedProjectID = localStorage.getItem("projectID");
-      if (storedTab) dispatch(setActiveDefineStepTab(storedTab));
-      if (storedProjectID) dispatch(setProjectID(storedProjectID));
+    const storedTab = localStorage.getItem("activeTab") as DefineStepTab | null;
+    const storedProjectID = localStorage.getItem("projectID");
+
+    if (storedProjectID) {
+      dispatch(setProjectID(storedProjectID));
     }
+    if (storedTab) {
+      dispatch(setActiveDefineStepTab(storedTab));
+    }
+
+    setInitialLoading(false);
   }, [dispatch]);
 
+  // Save to localStorage when things change
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     localStorage.setItem("activeTab", activeTab);
     if (projectID) {
       localStorage.setItem("projectID", projectID);
@@ -38,6 +52,11 @@ const ProgressOne: React.FC = () => {
       localStorage.removeItem("projectID");
     }
   }, [activeTab, projectID]);
+
+  // Auto scroll to top on tab change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeTab]);
 
   const tabs = [
     { id: "01.a", label: "Identification of the use case", enabled: true },
@@ -53,6 +72,19 @@ const ProgressOne: React.FC = () => {
     },
   ];
 
+  const shouldWaitForData =
+    initialLoading ||
+    (activeTab === "01.b" && !questionnaireData) ||
+    (activeTab === "01.c" && !jsonForDocument);
+
+  if (shouldWaitForData) {
+    return (
+      <div className="flex justify-center items-center py-12 text-gray-500">
+        Loading step data...
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
       {/* Tabs Navigation */}
@@ -61,7 +93,8 @@ const ProgressOne: React.FC = () => {
           <div
             key={tab.id}
             onClick={() =>
-              tab.enabled && dispatch(setActiveDefineStepTab(tab.id))
+              tab.enabled &&
+              dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
             }
             className={`flex-1 text-center flex flex-row items-center justify-center gap-2 text-sm font-medium px-4 rounded-t-lg cursor-pointer transition-all duration-200
               ${
@@ -81,12 +114,11 @@ const ProgressOne: React.FC = () => {
         ))}
       </div>
 
+      {/* Tab Content */}
       <div>
         {activeTab === "01.a" && <OneTabStepOne />}
-
-        {activeTab === "01.b" && questionnaireData && <OneTabStepTwo />}
-
-        {activeTab === "01.c" && jsonForDocument && <OneTabStepThree />}
+        {activeTab === "01.b" && <OneTabStepTwo />}
+        {activeTab === "01.c" && <OneTabStepThree />}
       </div>
     </div>
   );
