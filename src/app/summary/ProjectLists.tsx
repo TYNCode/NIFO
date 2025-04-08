@@ -5,6 +5,7 @@ import {
   clearProjectState,
   fetchProjects,
 } from "../redux/features/coinnovation/projectSlice";
+import { resetChallenge } from "../redux/features/coinnovation/challengeSlice";
 
 const ProjectLists: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ const ProjectLists: React.FC = () => {
     localStorage.removeItem("problemStatement");
     console.log("clearing the project state --->");
     dispatch(clearProjectState());
+    dispatch(resetChallenge())
     console.log("handleCreateProjectttt");
     router.push("/coinnovation");
   };
