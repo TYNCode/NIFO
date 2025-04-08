@@ -101,7 +101,7 @@ const ProjectDetails: React.FC = () => {
     };
 
     await dispatch(
-      createOrUpdateProject({ projectID, projectData: formatted })
+      createOrUpdateProject({ projectID, projectData: formatted , mode: "save" })
     );
 
     const response = await dispatch(
@@ -156,11 +156,11 @@ const ProjectDetails: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-4 mt-5">
-            <div className="flex items-center gap-2 bg-gray-300 text-white px-4 py-2 rounded-[12px] text-sm cursor-not-allowed">
+          <div className="flex justify-end gap-4 my-5">
+            {/* <div className="flex items-center gap-2 bg-gray-300 text-white px-4 py-2 rounded-[12px] text-sm cursor-not-allowed">
               <RiRefreshLine />
               <span>Regenerate</span>
-            </div>
+            </div> */}
             <div
               className={`flex items-center gap-2 px-4 py-2 rounded-[12px] text-sm text-white font-semibold ${
                 isFormValid()

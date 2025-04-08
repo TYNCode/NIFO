@@ -24,7 +24,6 @@ const ProgressOne: React.FC = () => {
     if (typeof window !== "undefined") {
       const storedTab = localStorage.getItem("activeTab");
       const storedProjectID = localStorage.getItem("projectID");
-
       if (storedTab) dispatch(setActiveDefineStepTab(storedTab));
       if (storedProjectID) dispatch(setProjectID(storedProjectID));
     }
@@ -82,7 +81,6 @@ const ProgressOne: React.FC = () => {
         ))}
       </div>
 
-      {/* Tab Panel Content */}
       <div>
         {activeTab === "01.a" && <OneTabStepOne />}
 

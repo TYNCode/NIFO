@@ -288,17 +288,19 @@ const Dashboard: React.FC = () => {
               currentPage={currentPage}
               onPageChange={handlePageChange}
             />
-          ) : view === "ManageStartup" ? (
-            <ManageStartups
-              data={startups}
-              entityName="Startups"
-              setData={setStartups}
-              isLoading={isLoadingStartups}
-              totalCount={StartupsCount}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          ) : view === "ManageUsers" ? (
+          ) 
+          // : view === "ManageStartup" ? (
+          //   <ManageStartups
+          //     data={startups}
+          //     entityName="Startups"
+          //     setData={setStartups}
+          //     isLoading={isLoadingStartups}
+          //     totalCount={StartupsCount}
+          //     currentPage={currentPage}
+          //     onPageChange={handlePageChange}
+          //   />
+          // ) 
+          : view === "ManageUsers" ? (
             <ManageUsers
               users={users}
               setUsers={setUsers}

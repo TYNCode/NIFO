@@ -21,14 +21,17 @@ import ActionButtons from "./components/ActionButtons";
 const Questionnaire: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { questionnaireData } = useAppSelector((state: RootState) => state.challenge);
-  const { projectID, projectDetails } = useAppSelector((state: RootState) => state.projects);
+  const { questionnaireData } = useAppSelector((state) => state.challenge);
+  const { projectID, projectDetails } = useAppSelector((state) => state.projects);
+  const projectName = projectDetails?.project_name
 
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [isQuestionnaireModalOpen, setIsQuestionnaireModalOpen] = useState(false);
   const [questionnaireFile, setQuestionnaireFile] = useState<File>();
   const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState(false);
 
+
+  console.log("selectedQuestions", selectedQuestions)
   const handleDeleteSelected = (category: string) => {
     if (!questionnaireData || !projectID) return;
 
@@ -109,7 +112,7 @@ const Questionnaire: React.FC = () => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "Briefing_Questionnaire.xlsx");
+    saveAs(blob, `${projectID}_${projectName}_questions.xlsx`);
 
     toast.success("Downloaded successfully!");
   };

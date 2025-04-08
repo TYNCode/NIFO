@@ -1,13 +1,18 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { clearProjectState, fetchProjects } from "../redux/features/coinnovation/projectSlice";
+import {
+  clearProjectState,
+  fetchProjects,
+} from "../redux/features/coinnovation/projectSlice";
 
 const ProjectLists: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { projects, fetching:loading, error } = useAppSelector(
-    (state) => state.projects
-  );
+  const {
+    projects,
+    fetching: loading,
+    error,
+  } = useAppSelector((state) => state.projects);
 
   const router = useRouter();
 
@@ -16,7 +21,6 @@ const ProjectLists: React.FC = () => {
       dispatch(fetchProjects());
     }
   }, [dispatch, projects.length]);
-  
 
   const handleProjectClick = (project_id: string) => {
     router.push(`/coinnovation/${project_id}`);
@@ -26,7 +30,7 @@ const ProjectLists: React.FC = () => {
     localStorage.removeItem("projectID");
     localStorage.removeItem("problemStatement");
     console.log("clearing the project state --->");
-    dispatch(clearProjectState())
+    dispatch(clearProjectState());
     console.log("handleCreateProjectttt");
     router.push("/coinnovation");
   };
@@ -36,9 +40,9 @@ const ProjectLists: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Project Management</h2>
         <div className="flex flex-row gap-5">
-          <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
+          {/* <button className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]">
             View Status
-          </button>
+          </button> */}
           <button
             className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]"
             onClick={handleCreateProject}
@@ -104,8 +108,8 @@ const statusColor = (status: string) => {
   const statusMap: Record<string, string> = {
     "In Progress": "text-blue-500",
     "To Do": "text-gray-500",
-    "Blocked": "text-red-500",
-    "Done": "text-green-500",
+    Blocked: "text-red-500",
+    Done: "text-green-500",
   };
   return statusMap[status] || "text-gray-800";
 };
