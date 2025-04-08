@@ -18,6 +18,7 @@ import { updateSolutionProvider } from "../../../redux/features/source/solutionP
 import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProviderForm";
 import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { useAppSelector } from "../../../redux/hooks";
 
 interface CompanyCardProps {
   company: {
@@ -40,10 +41,13 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   const [editOpen, setEditOpen] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  const projectID = useAppSelector((state)=> state.projects.projectID)
 
   const handleUpdate = (updatedData: any) => {
     dispatch(
       updateSolutionProvider({
+        project_id:projectID,
         solution_provider_id: company.solution_provider_id,
         updatedData,
       })

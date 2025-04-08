@@ -60,15 +60,20 @@ export const updateSolutionProvider = createAsyncThunk<
   {
     solution_provider_id: string;
     updatedData: any;
+    project_id: string;
   },
   { rejectValue: string }
 >(
   "solutionProviderDetails/updateSolutionProvider",
-  async ({ solution_provider_id, updatedData }, { rejectWithValue }) => {
+  async ({ solution_provider_id, updatedData, project_id }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/coinnovation/edit-solution-provider/`,
-        updatedData,
+        {
+          solution_provider_id,
+          project_id,
+          ...updatedData, // include the rest of the updated fields
+        },
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -81,6 +86,7 @@ export const updateSolutionProvider = createAsyncThunk<
     }
   }
 );
+
 
 const initialState: SolutionProviderDetailsState = {};
 
