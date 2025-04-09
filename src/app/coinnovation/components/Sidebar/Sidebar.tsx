@@ -21,8 +21,8 @@ const Sidebar: React.FC = () => {
   const sidebarOptions: SidebarOption[] = [
     { id: 1, title: "Summary", icon: <PiCirclesFour size={20} />, route: "/summary" },
     { id: 2, title: "Co-Innovation", icon: <FaSuitcase size={20} />, route: "/coinnovation" },
-    { id: 3, title: "Notification", icon: <MdOutlineNotificationsActive size={20} />, route: "/notification" },
-    { id: 4, title: "Settings", icon: <IoSettingsOutline size={20} />, route: "/settings" },
+    // { id: 3, title: "Notification", icon: <MdOutlineNotificationsActive size={20} />, route: "/notification" },
+    // { id: 4, title: "Settings", icon: <IoSettingsOutline size={20} />, route: "/settings" },
   ];
 
   const handleSidebarClick = (route: string) => {

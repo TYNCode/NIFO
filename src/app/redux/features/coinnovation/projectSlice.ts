@@ -3,7 +3,7 @@ import { ProjectData } from "../../../interfaces/coinnovation";
 import axios from "axios";
 
 interface ProjectState {
-  projects: ProjectData[];
+  projects: ProjectData[] | null;
   projectDetails: ProjectData | null;
   projectID: string | null;
   creating: boolean;
@@ -13,10 +13,11 @@ interface ProjectState {
   selectedTab: number;
   enabledSteps: number[];
   problemStatement: string | null;
+  hasFetchedProjects: boolean;
 }
 
 const initialState: ProjectState = {
-  projects: [],
+  projects: null,
   projectDetails: null,
   projectID: null,
   creating: false,
@@ -26,6 +27,7 @@ const initialState: ProjectState = {
   selectedTab: 1,
   enabledSteps: [1],
   problemStatement: null,
+  hasFetchedProjects: false,
 };
 
 export const fetchProjects = createAsyncThunk(
@@ -142,6 +144,7 @@ const projectSlice = createSlice({
         (state, action: PayloadAction<ProjectData[]>) => {
           state.projects = action.payload;
           state.fetching = false;
+          state.hasFetchedProjects = true;
         }
       )
       .addCase(fetchProjects.rejected, (state, action) => {

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -12,6 +14,8 @@ const ProjectLists: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const hasFetchedProjects = useAppSelector((state)=> state.projects.hasFetchedProjects)
+
   const [loadingProject, setLoadingProject] = useState(false);
 
   const {
@@ -21,17 +25,20 @@ const ProjectLists: React.FC = () => {
   } = useAppSelector((state) => state.projects);
 
   useEffect(() => {
-    if (projects.length === 0) {
+    if (!hasFetchedProjects) {
       dispatch(fetchProjects());
     }
-  }, [dispatch, projects.length]);
+  }, [hasFetchedProjects, dispatch]);
+  
+  console.log("hasFetchedProjects", hasFetchedProjects)
 
   const handleProjectClick = async (project_id: string) => {
-    localStorage.setItem("projectID", project_id); 
-    await dispatch(loadFullProjectContext(project_id));
     router.push(`/coinnovation/${project_id}`);
+    localStorage.setItem("projectID", project_id);
+    setLoadingProject(true);
+    await dispatch(loadFullProjectContext(project_id));
+    setLoadingProject(false);
   };
-  
 
   const handleCreateProject = () => {
     localStorage.removeItem("projectID");
@@ -45,14 +52,12 @@ const ProjectLists: React.FC = () => {
     <div className="p-6 bg-[#F5FCFF] min-h-screen">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Project Management</h2>
-        <div className="flex flex-row gap-5">
-          <button
-            className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]"
-            onClick={handleCreateProject}
-          >
-            + Create Project
-          </button>
-        </div>
+        <button
+          className="bg-[#0071C1] text-white px-4 py-2 rounded-lg shadow hover:bg-[#56A8F0]"
+          onClick={handleCreateProject}
+        >
+          + Create Project
+        </button>
       </div>
 
       <div className="bg-white shadow rounded-xl p-4 font-bold text-black grid grid-cols-7 gap-2 mb-2">
@@ -66,7 +71,10 @@ const ProjectLists: React.FC = () => {
         <p className="text-sm text-blue-500">Loading projects...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
+      ) : projects && projects.length === 0 ? (
+        <p className="text-gray-500 mt-4">No projects found.</p>
       ) : (
+        projects &&
         projects.map((project) => (
           <div
             key={project.project_id}
