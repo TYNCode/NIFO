@@ -52,7 +52,7 @@ const ProjectDetailsInQuestionairre: React.FC = () => {
     <div className="px-8 bg-[#F4FCFF]">
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
-          <div className="text-[#4A4D4E]">Loading project details...jjjjjj</div>
+          <div className="text-[#4A4D4E]">Loading project details...</div>
         </div>
       ) : (
         <div className="flex flex-col gap-6 justify-center">

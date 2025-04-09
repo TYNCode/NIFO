@@ -77,6 +77,9 @@ const ProgressOne: React.FC = () => {
     (activeTab === "01.b" && !questionnaireData) ||
     (activeTab === "01.c" && !jsonForDocument);
 
+  console.log("shouldWaitForData",shouldWaitForData)
+  console.log("initalLoading", initialLoading)
+  
   if (shouldWaitForData) {
     return (
       <div className="flex justify-center items-center py-12 text-gray-500">

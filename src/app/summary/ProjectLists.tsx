@@ -43,6 +43,7 @@ const ProjectLists: React.FC = () => {
   const handleCreateProject = () => {
     localStorage.removeItem("projectID");
     localStorage.removeItem("problemStatement");
+    localStorage.removeItem("activeTab");
     dispatch(clearProjectState());
     dispatch(resetChallenge());
     router.push("/coinnovation");
