@@ -24,6 +24,8 @@ const ProgressOne: React.FC = () => {
     (state) => (state.challenge.activeDefineStepTab || "01.a") as DefineStepTab
   );
 
+  console.log("activeTab in activeDefineStepTasb", activeTab)
+
   const [initialLoading, setInitialLoading] = useState(true);
 
   // Restore from localStorage on mount
