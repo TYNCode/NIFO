@@ -12,6 +12,7 @@ import { RiAddCircleLine } from "react-icons/ri";
 import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
 import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
+import { ClipLoader } from "react-spinners";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -82,7 +83,9 @@ const TwoTabStepOne: React.FC = () => {
   return (
     <div className="w-full mx-auto p-6">
       {loading ? (
-        <p className="text-gray-600">Loading solution providers...</p>
+        <div className="flex justify-center items-center h-40">
+          <ClipLoader color="#3B82F6" size={50} />
+        </div>
       ) : (
         <>
           {error && <p style={{ color: "red" }}>{error}</p>}
