@@ -129,7 +129,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                                     onClick={() => handleSelectEnterprise(enterprise)}
                                 >
                                     {/* {enterprise.imageurl && (
-                                        <img src={enterprise.imageurl} alt={enterprise.title} className="w-5 h-5 rounded-full" />
+                                        <Image src={enterprise.imageurl} alt={enterprise.title} className="w-5 h-5 rounded-full" />
                                     )} */}
                                     {enterprise.title}
                                 </div>

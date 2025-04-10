@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useState } from "react";
 
 interface FileUploadModalProps {
@@ -82,13 +83,13 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                         tempFiles.map((file, index) => (
                             <div key={index} className="w-full flex flex-row items-center gap-4">
                                 {file.name.endsWith('.docx') && (
-                                    <img src="/coinnovation/docx-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                    <Image src="/coinnovation/docx-icon.svg" className="flex-shrink-0" alt="File Icon" />
                                 )}
                                 {file.name.endsWith('.pdf') && (
-                                    <img src="/coinnovation/pdf-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                    <Image src="/coinnovation/pdf-icon.svg" className="flex-shrink-0" alt="File Icon" />
                                 )}
                                 {file.name.endsWith('.txt') && (
-                                    <img src="/coinnovation/txt-icon.svg" className="flex-shrink-0" alt="File Icon" />
+                                    <Image src="/coinnovation/txt-icon.svg" className="flex-shrink-0" alt="File Icon" />
                                 )}
                                 <div className="flex flex-col gap-2 w-full">
                                     <div className="flex flex-row justify-between items-center w-full">
@@ -118,7 +119,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                     ) : (
                         <div className="flex flex-col justify-center items-center gap-2">
                             <div>
-                                <img src="/coinnovation/uploadfileicon.svg" alt="File Upload Icon" />
+                                <Image src="/coinnovation/uploadfileicon.svg" height={100} width={100} alt="File Upload Icon" />
                             </div>
                             <div className="text-[#979797] text-[13px]">Drag & Drop or Click to upload</div>
                             <div className="text-[#979797] text-[12px]">Accepted file formats: PDF, TXT, DOCX</div>
@@ -142,10 +143,12 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                         ${tempFiles.length > 0 && !uploading ? "bg-[#2286C0] cursor-pointer" : "bg-[#979797] cursor-default"}`}
                         disabled={tempFiles.length === 0 || uploading}
                     >
-                        <img
+                        <Image
                             src="/coinnovation/uploadfilewhite.svg"
                             alt="File Upload Icon"
                             className="h-4 w-4 object-contain"
+                            width={100}
+                            height={100}
                         />
                         <div className="flex items-center">
                             {uploading ? "Uploading" : "Upload"}

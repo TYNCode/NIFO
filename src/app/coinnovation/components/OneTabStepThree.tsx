@@ -4,17 +4,23 @@ import {
   updatePDD,
   setJsonForDocument,
 } from "../../redux/features/coinnovation/challengeSlice";
-import { enableStep, setSelectedTab } from "../../redux/features/coinnovation/projectSlice";
+import {
+  enableStep,
+  setSelectedTab,
+} from "../../redux/features/coinnovation/projectSlice";
 
 import Accordion from "./OneTabStepThreeComponents/Accordian";
 import TabPanel from "./OneTabStepThreeComponents/TabPanel";
 import EditableContent from "./OneTabStepThreeComponents/EditableContent";
 import KpiTable from "./OneTabStepThreeComponents/KpiTable";
 import DownloadButton from "./OneTabStepThreeComponents/DownloadButton";
+import Button from "./TwoTabStepComponents/Button";
 
 const OneTabStepThree: React.FC = () => {
   const dispatch = useAppDispatch();
-  const jsonForDocument = useAppSelector((state) => state.challenge.jsonForDocument);
+  const jsonForDocument = useAppSelector(
+    (state) => state.challenge.jsonForDocument
+  );
   const projectID = useAppSelector((state) => state.projects.projectID);
 
   const [editableText, setEditableText] = useState("");
@@ -33,9 +39,9 @@ const OneTabStepThree: React.FC = () => {
   const [isEditingKpiTable, setIsEditingKpiTable] = useState(false);
 
   const handleSourceSolution = () => {
-    dispatch(enableStep(2))
-    dispatch(setSelectedTab(2))
-  }
+    dispatch(enableStep(2));
+    dispatch(setSelectedTab(2));
+  };
   const endUserTabMapping = {
     Roles: "Roles",
     "Current Methods Employed": "Current methods to overcome the challenge",
@@ -53,7 +59,9 @@ const OneTabStepThree: React.FC = () => {
     if (!jsonForDocument) return [];
 
     if (section === "challenge") {
-      const sectionItem = jsonForDocument["Challenge Scenario"]?.find((item: any) => item[tab]);
+      const sectionItem = jsonForDocument["Challenge Scenario"]?.find(
+        (item: any) => item[tab]
+      );
       return sectionItem?.[tab] || [];
     } else if (section === "endUser") {
       const jsonKey = endUserTabMapping[tab];
@@ -79,8 +87,8 @@ const OneTabStepThree: React.FC = () => {
       section === "challenge"
         ? "Challenge Scenario"
         : section === "endUser"
-        ? "Profile of the End-Users"
-        : "Outcomes (Requirements & KPIs)";
+          ? "Profile of the End-Users"
+          : "Outcomes (Requirements & KPIs)";
 
     const lines = editableText
       .split("\n")
@@ -89,7 +97,11 @@ const OneTabStepThree: React.FC = () => {
 
     const shouldConvertToObject =
       section === "challenge" ||
-      (section === "outcome" && ["Functional Requirements", "List of Features & Functionalities"].includes(tabKey));
+      (section === "outcome" &&
+        [
+          "Functional Requirements",
+          "List of Features & Functionalities",
+        ].includes(tabKey));
 
     const valueArray: any = shouldConvertToObject
       ? lines.map((line) => {
@@ -104,7 +116,9 @@ const OneTabStepThree: React.FC = () => {
     const updatedJson = JSON.parse(JSON.stringify(jsonForDocument));
 
     if (sectionKey === "Challenge Scenario") {
-      const index = updatedJson[sectionKey].findIndex((item: any) => item[jsonKey]);
+      const index = updatedJson[sectionKey].findIndex(
+        (item: any) => item[jsonKey]
+      );
       if (index >= 0) {
         updatedJson[sectionKey][index][jsonKey] = valueArray;
       }
@@ -112,7 +126,9 @@ const OneTabStepThree: React.FC = () => {
       updatedJson[sectionKey][jsonKey] = valueArray;
     }
 
-    const result = await dispatch(updatePDD({ projectID, jsonForDocument: updatedJson })).unwrap();
+    const result = await dispatch(
+      updatePDD({ projectID, jsonForDocument: updatedJson })
+    ).unwrap();
     dispatch(setJsonForDocument(result));
     setEdit(false);
   };
@@ -128,7 +144,8 @@ const OneTabStepThree: React.FC = () => {
     const formattedText = display
       .map((item: any) => {
         if (typeof item === "string") return item;
-        if (typeof item === "object") return `${item.Title || ""}: ${item.Description || ""}`;
+        if (typeof item === "object")
+          return `${item.Title || ""}: ${item.Description || ""}`;
         return JSON.stringify(item);
       })
       .join("\n");
@@ -137,9 +154,11 @@ const OneTabStepThree: React.FC = () => {
     setEdit(true);
   };
 
-  const handleKpiCellChange = (rowIndex: number, columnKey: string, value: string) => {
-
-  };
+  const handleKpiCellChange = (
+    rowIndex: number,
+    columnKey: string,
+    value: string
+  ) => {};
 
   if (!jsonForDocument) return <div className="p-4">Loading...</div>;
 
@@ -153,8 +172,19 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setChallengeOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingChallenge
-            ? saveSection("challenge", challengeTab, undefined, setIsEditingChallenge)
-            : handleEditClick("challenge", challengeTab, undefined, setIsEditingChallenge, setEditableText)
+            ? saveSection(
+                "challenge",
+                challengeTab,
+                undefined,
+                setIsEditingChallenge
+              )
+            : handleEditClick(
+                "challenge",
+                challengeTab,
+                undefined,
+                setIsEditingChallenge,
+                setEditableText
+              )
         }
       >
         <TabPanel
@@ -180,8 +210,19 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setEndUserOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingEndUser
-            ? saveSection("endUser", endUserTab, endUserTabMapping, setIsEditingEndUser)
-            : handleEditClick("endUser", endUserTab, endUserTabMapping, setIsEditingEndUser, setEditableText)
+            ? saveSection(
+                "endUser",
+                endUserTab,
+                endUserTabMapping,
+                setIsEditingEndUser
+              )
+            : handleEditClick(
+                "endUser",
+                endUserTab,
+                endUserTabMapping,
+                setIsEditingEndUser,
+                setEditableText
+              )
         }
       >
         <TabPanel
@@ -207,8 +248,19 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setOutcomeOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingOutcome
-            ? saveSection("outcome", outcomeTab, outcomeTabMapping, setIsEditingOutcome)
-            : handleEditClick("outcome", outcomeTab, outcomeTabMapping, setIsEditingOutcome, setEditableText)
+            ? saveSection(
+                "outcome",
+                outcomeTab,
+                outcomeTabMapping,
+                setIsEditingOutcome
+              )
+            : handleEditClick(
+                "outcome",
+                outcomeTab,
+                outcomeTabMapping,
+                setIsEditingOutcome,
+                setEditableText
+              )
         }
       >
         <TabPanel
@@ -240,12 +292,10 @@ const OneTabStepThree: React.FC = () => {
       />
 
       <div className="flex justify-end gap-4">
-        <div
-          className="cursor-pointer bg-[#2286C0] text-white px-4 py-2 rounded-lg shadow-md text-sm"
+        <Button
+          label="Source solution providers"
           onClick={() => handleSourceSolution()}
-        >
-          Source solution providers
-        </div>
+        />
         <DownloadButton onClick={() => {}} isLoading={false} />
       </div>
     </div>

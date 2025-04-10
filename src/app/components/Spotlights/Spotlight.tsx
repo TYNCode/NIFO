@@ -5,6 +5,7 @@ import { fetchSpotlights } from "../../redux/features/spotlight/spotlightSlice";
 import { encryptURL } from "../../utils/shareUtils";
 import SpotlightBar from "../Spotlights/SpotlightBar";
 import type { Spotlight as SpotlightType } from "../../interfaces"; // Type-only import
+import Image from "next/image";
 
 const Spotlight: React.FC = () => {
   const { spotlights } = useAppSelector((state) => state.spotlight);
@@ -40,8 +41,10 @@ const Spotlight: React.FC = () => {
           onClick={() => handleSpotlight(spotlight.id)}
         >
           <div className="w-1/5 flex items-center">
-            <img
+            <Image
               src={spotlight.spotlight_img}
+              width={100}
+              height={100}
               alt="Spotlight Logo"
               className="w-full h-auto object-contain"
             />

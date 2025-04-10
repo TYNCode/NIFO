@@ -12,6 +12,7 @@ import { RiAddCircleLine } from "react-icons/ri";
 import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
 import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
+import { enableStep, setSelectedTab } from "../../../redux/features/coinnovation/projectSlice";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -75,6 +76,11 @@ const TwoTabStepOne: React.FC = () => {
     dispatch(compareSolutionProviders(bodyForCompare));
   };
 
+  const handleShortlist = () => {
+    dispatch(enableStep(4));
+    dispatch(setSelectedTab(4));
+  };
+
   if (!project_id) {
     return <p style={{ color: "red" }}>Project ID is missing</p>;
   }
@@ -107,7 +113,9 @@ const TwoTabStepOne: React.FC = () => {
               label="Add"
               icon={<RiAddCircleLine />}
               onClick={() => setIsModalOpen(true)}
+              disabled={selectedCompanies > 0}
             />
+            <Button label="Shortlist" onClick={() => handleShortlist()} />
             <Button
               label="Compare"
               icon={<FaRegFileAlt />}

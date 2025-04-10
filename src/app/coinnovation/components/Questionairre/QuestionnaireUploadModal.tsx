@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { updateQuestionnaire } from "../../../redux/features/coinnovation/challengeSlice";
+import Image from "next/image";
 
 
 interface QuestionnaireUploadModalProps {
@@ -169,7 +170,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({
           {tempFiles.length > 0 ? (
             tempFiles.map((file, index) => (
               <div key={index} className="w-full flex flex-row items-center gap-4">
-                <img
+                <Image
                   src="/coinnovation/excel-icon.svg"
                   className="flex-shrink-0"
                   alt="File Icon"
@@ -206,7 +207,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({
           ) : (
             <div className="flex flex-col justify-center items-center gap-2">
               <div>
-                <img src="/coinnovation/uploadfileicon.svg" alt="File Upload Icon" />
+                <Image src="/coinnovation/uploadfileicon.svg" height={100} width={100} alt="File Upload Icon" />
               </div>
               <div className="text-[#979797] text-[13px]">Drag & Drop or Click to upload</div>
               <div className="text-[#979797] text-[12px]">
@@ -231,9 +232,11 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({
             ${tempFiles.length > 0 && !uploading ? "bg-[#2286C0] cursor-pointer" : "bg-[#979797] cursor-default"}`}
             disabled={tempFiles.length === 0 || uploading}
           >
-            <img
+            <Image
               src="/coinnovation/uploadfilewhite.svg"
               alt="File Upload Icon"
+              height={100}
+              width={100}
               className="h-4 w-4 object-contain"
             />
             <div className="flex items-center">{uploading ? "Uploading..." : "Upload"}</div>

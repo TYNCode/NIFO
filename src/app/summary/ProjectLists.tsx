@@ -9,6 +9,7 @@ import {
 } from "../redux/features/coinnovation/projectSlice";
 import { resetChallenge } from "../redux/features/coinnovation/challengeSlice";
 import { loadFullProjectContext } from "../redux/features/coinnovation/loadFullContext";
+import Image from "next/image";
 
 const ProjectLists: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -84,10 +85,12 @@ const ProjectLists: React.FC = () => {
           >
             <div className="col-span-1 font-medium text-gray-800">
               {project.enterprise_img ? (
-                <img
+                <Image
                   src={project.enterprise_img}
                   alt={project.enterprise}
                   className="w-8 h-8 rounded-full object-cover"
+                  height={100}
+                  width={100}
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">

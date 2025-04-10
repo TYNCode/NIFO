@@ -27,6 +27,8 @@ const Page: React.FC = () => {
   const selectedTab = useAppSelector((state) => state.projects.selectedTab);
   const enabledSteps = useAppSelector((state) => state.projects.enabledSteps);
 
+
+  console.log("selectedTabbbb in 1st page", selectedTab)
   const tabContent: Record<number, JSX.Element> = {
     1: <ProgressOne />,
     2: <ProgressTwo />,
