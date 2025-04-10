@@ -38,7 +38,6 @@ const TwoTabStepOne: React.FC = () => {
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
-  console.log("solutionProviders", solutionProviders);
 
   useEffect(() => {
     if (project_id) {
@@ -84,7 +83,7 @@ const TwoTabStepOne: React.FC = () => {
     <div className="w-full mx-auto p-6">
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <ClipLoader color="#3B82F6" size={50} />
+          <ClipLoader color="#3B82F6" size={40} />
         </div>
       ) : (
         <>

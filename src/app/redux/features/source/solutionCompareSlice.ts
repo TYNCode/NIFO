@@ -40,7 +40,7 @@ export const compareSolutionProviders = createAsyncThunk<
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/coinnovation/compare-solution-providers/",
+        "https://tyn-server.azurewebsites.net/coinnovation/compare-solution-providers/",
         payload,
         {
           headers: {

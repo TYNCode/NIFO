@@ -59,7 +59,7 @@ export const addSolutionProvider = createAsyncThunk<
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/coinnovation/add-solution-provider/",
+        "https://tyn-server.azurewebsites.net/coinnovation/add-solution-provider/",
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -79,7 +79,7 @@ export const deleteSolutionProvider = createAsyncThunk<
   async ({ project_id, solution_provider_id }, { rejectWithValue }) => {
     try {
       await axios.delete(
-        "http://127.0.0.1:8000/coinnovation/delete-solution-provider/",
+        "https://tyn-server.azurewebsites.net/coinnovation/delete-solution-provider/",
         {
           headers: { "Content-Type": "application/json" },
           data: {

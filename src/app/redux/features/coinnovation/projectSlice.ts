@@ -3,7 +3,7 @@ import { ProjectData } from "../../../interfaces/coinnovation";
 import axios from "axios";
 
 interface ProjectState {
-  projects: ProjectData[];
+  projects: ProjectData[] | null;
   projectDetails: ProjectData | null;
   projectID: string | null;
   creating: boolean;
@@ -11,11 +11,13 @@ interface ProjectState {
   saving: boolean;
   error: string | null;
   selectedTab: number;
+  enabledSteps: number[];
   problemStatement: string | null;
+  hasFetchedProjects: boolean;
 }
 
 const initialState: ProjectState = {
-  projects: [],
+  projects: null,
   projectDetails: null,
   projectID: null,
   creating: false,
@@ -23,7 +25,9 @@ const initialState: ProjectState = {
   saving: false,
   error: null,
   selectedTab: 1,
+  enabledSteps: [1],
   problemStatement: null,
+  hasFetchedProjects: false,
 };
 
 export const fetchProjects = createAsyncThunk(
@@ -108,6 +112,11 @@ const projectSlice = createSlice({
     setSelectedTab: (state, action: PayloadAction<number>) => {
       state.selectedTab = action.payload;
     },
+    enableStep: (state, action: PayloadAction<number>) => {
+        if(!state.enabledSteps.includes(action.payload)) {
+          state.enabledSteps.push(action.payload)
+        }
+    },
     setProblemStatement: (state, action: PayloadAction<string | null>) => {
       state.problemStatement = action.payload;
     },
@@ -135,6 +144,7 @@ const projectSlice = createSlice({
         (state, action: PayloadAction<ProjectData[]>) => {
           state.projects = action.payload;
           state.fetching = false;
+          state.hasFetchedProjects = true;
         }
       )
       .addCase(fetchProjects.rejected, (state, action) => {
@@ -181,6 +191,7 @@ const projectSlice = createSlice({
 export const {
   setProjectID,
   setSelectedTab,
+  enableStep,
   clearProjectState,
   setProblemStatement,
   updateProjectField,

@@ -19,6 +19,7 @@ import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProvide
 import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { ClipLoader } from "react-spinners";
+import { useAppSelector } from "../../../redux/hooks";
 
 interface CompanyCardProps {
   company: {
@@ -42,9 +43,12 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const projectID = useAppSelector((state) => state.projects.projectID);
+
   const handleUpdate = (updatedData: any) => {
     dispatch(
       updateSolutionProvider({
+        project_id: projectID,
         solution_provider_id: company.solution_provider_id,
         updatedData,
       })
@@ -205,7 +209,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
         <div className="mt-4 p-4 border-t">
           {loading && (
             <div className="flex justify-center items-center h-40">
-              <ClipLoader color="#3B82F6" size={50} />
+              <ClipLoader color="#3B82F6" size={40} />
             </div>
           )}
           {error && <p style={{ color: "red" }}>{error}</p>}

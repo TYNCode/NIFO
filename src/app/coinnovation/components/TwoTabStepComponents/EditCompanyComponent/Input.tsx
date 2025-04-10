@@ -1,5 +1,6 @@
-// components/Input.tsx
 import React from "react";
+import { FieldError } from "react-hook-form"; // Import FieldError type
+import { Merge, FieldErrorsImpl } from "react-hook-form"; // For type handling
 
 interface InputProps {
   name: string;
@@ -9,6 +10,8 @@ interface InputProps {
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
+  error?: any;
+  required?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -19,11 +22,17 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   onChange,
   readOnly = false,
+  error,
+  required = false,
 }) => {
+  const errorMessage =
+    error && typeof error !== "string" ? (error as FieldError).message : error;
+
   return (
     <div className="flex flex-col">
       <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
         {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <input
         id={name}
@@ -31,12 +40,16 @@ const Input: React.FC<InputProps> = ({
         type={type}
         className={`border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
           readOnly ? "bg-gray-100 cursor-not-allowed" : ""
-        }`}
+        } ${error ? "border-red-500" : ""}`}
         value={value}
         readOnly={readOnly}
         placeholder={placeholder}
         onChange={onChange}
       />
+      {/* Render the error message if it exists */}
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+      )}
     </div>
   );
 };

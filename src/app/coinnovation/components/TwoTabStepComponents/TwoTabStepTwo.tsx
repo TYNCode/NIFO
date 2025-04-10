@@ -8,6 +8,7 @@ import { IoChevronBack } from "react-icons/io5";
 import { RootState } from "../../../redux/store";
 import { useAppDispatch } from "../../../redux/hooks";
 import { setActiveTabSource } from "../../../redux/features/source/solutionProviderSlice";
+import { ClipLoader } from "react-spinners";
 
 interface StarRatingProps {
   rating: number;
@@ -41,11 +42,12 @@ const StarRating: React.FC<StarRatingProps> = ({ rating }) => (
   </div>
 );
 
-
 const TwoTabStepTwo: React.FC = () => {
-  const { result: comparisonResult, loading, error } = useSelector(
-    (state: RootState) => state.solutionComparison
-  );
+  const {
+    result: comparisonResult,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.solutionComparison);
 
   const dispatch = useAppDispatch();
 
@@ -65,23 +67,29 @@ const TwoTabStepTwo: React.FC = () => {
     ];
   };
 
-  const handleBackButton = ()=> {
+  const handleBackButton = () => {
     console.log("Back button clicked");
-    dispatch(setActiveTabSource('02.a'));
-  }
+    dispatch(setActiveTabSource("02.a"));
+  };
 
   return (
     <div className="p-6 rounded-lg shadow-md">
-      {loading && <p>Loading comparison data...</p>}
+      {loading && (
+        <div className="flex justify-center items-center h-40">
+          <ClipLoader color="#3B82F6" size={40} />
+        </div>
+      )}
       {error && <p className="text-red-600">{error}</p>}
-
       {!loading && comparisonResult.length > 0 && (
         <table className="w-full border-collapse bg-white border border-gray-200 text-base">
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="p-3 border border-gray-300">Parameters</th>
               {comparisonResult.map((company) => (
-                <th key={company.solution_provider_name} className="p-3 border border-gray-300">
+                <th
+                  key={company.solution_provider_name}
+                  className="p-3 border border-gray-300"
+                >
                   {company.solution_provider_name}
                 </th>
               ))}
@@ -109,7 +117,11 @@ const TwoTabStepTwo: React.FC = () => {
       )}
 
       <div className="flex justify-end gap-3 mt-4">
-        <Button label="Back" icon={<IoChevronBack />} onClick={()=>handleBackButton()} />
+        <Button
+          label="Back"
+          icon={<IoChevronBack />}
+          onClick={() => handleBackButton()}
+        />
         {/* <Button label="Add" icon={<RiAddCircleLine />} />
         <Button label="Delete" icon={<MdDeleteOutline />} /> */}
       </div>

@@ -1,8 +1,8 @@
-// SolutionProviderForm.tsx
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import Modal from "./Model";
 import Button from "../Button";
 import { LiaSave } from "react-icons/lia";
+import Input from "../EditCompanyComponent/Input";
 
 interface SolutionProviderFormProps {
   isOpen: boolean;
@@ -15,20 +15,22 @@ const SolutionProviderForm: React.FC<SolutionProviderFormProps> = ({
   onClose,
   onAdd,
 }) => {
-  const [formData, setFormData] = useState({
-    companyName: "",
-    contactPerson: "",
-    contactNo: "",
-    email: "",
-    url: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      companyName: "",
+      contactPerson: "",
+      contactNo: "",
+      email: "",
+      url: "",
+    },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (formData: any) => {
     const newSolutionProvider = {
       project_id: localStorage.getItem("project_id") || "",
       solution_provider_name: formData.companyName,
@@ -37,39 +39,115 @@ const SolutionProviderForm: React.FC<SolutionProviderFormProps> = ({
       email: formData.email,
       solution_provider_url: formData.url,
     };
+
     onAdd(newSolutionProvider);
+    reset();
   };
 
   return (
     <Modal
       title="New Solution Provider"
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        reset();
+        onClose();
+      }}
       type="add"
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {[
-          { label: "Company Name", name: "companyName" },
-          { label: "Contact Person Name", name: "contactPerson" },
-          { label: "Contact No", name: "contactNo" },
-          { label: "Email", name: "email" },
-          { label: "URL Link", name: "url" },
-        ].map(({ label, name }) => (
-          <div key={name}>
-            <label className="text-sm font-semibold">{label}</label>
-            <input
-              type="text"
-              name={name}
-              placeholder={`Please enter the ${label}`}
-              value={formData[name as keyof typeof formData]}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md mt-1"
-              required
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Controller
+          name="companyName"
+          control={control}
+          rules={{ required: "Company name is required." }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Company Name"
+              placeholder="Enter company name"
+              error={errors.companyName}
+              required={true}
             />
-          </div>
-        ))}
+          )}
+        />
+        <Controller
+          name="contactPerson"
+          control={control}
+          rules={{ required: "Contact person name is required." }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Contact Person Name"
+              placeholder="Enter contact person name"
+              error={errors.contactPerson}
+              required={true}
+            />
+          )}
+        />
+        <Controller
+          name="contactNo"
+          control={control}
+          rules={{
+            required: "Contact number is required.",
+            pattern: {
+              value: /^\d{10}$/,
+              message: "Enter a valid 10-digit phone number.",
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Contact No"
+              type="number"
+              placeholder="Enter 10-digit phone number"
+              error={errors.contactNo}
+              required={true}
+            />
+          )}
+        />
+        <Controller
+          name="email"
+          control={control}
+          rules={{
+            required: "Email is required.",
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: "Invalid email address.",
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Email"
+              type="email"
+              placeholder="Enter email address"
+              error={errors.email}
+              required={true}
+            />
+          )}
+        />
+        <Controller
+          name="url"
+          control={control}
+          rules={{
+            required: "URL is required.",
+            pattern: {
+              value: /^https?:\/\/\S+\.\S+/,
+              message: "Invalid URL (must start with http/https).",
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="URL Link"
+              type="url"
+              placeholder="https://example.com"
+              error={errors.url}
+              required={true}
+            />
+          )}
+        />
         <div className="flex justify-center">
-          <Button label="Save" icon={<LiaSave />} />
+          <Button type="submit" label="Save" icon={<LiaSave />} />
         </div>
       </form>
     </Modal>
