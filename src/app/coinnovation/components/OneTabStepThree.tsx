@@ -56,19 +56,40 @@ const OneTabStepThree: React.FC = () => {
     if (!jsonForDocument) return [];
 
     if (section === 'challenge') {
-      const sectionItem = jsonForDocument['Challenge Scenario']?.find((item: any) => item[tab]);
-      return sectionItem?.[tab] || [];
-    } else if (section === 'endUser') {
+      const sectionArray = jsonForDocument['Challenge Scenario'];
+      const sectionItem = sectionArray?.find((item: any) => item.hasOwnProperty(tab));
+
+      if (!sectionItem) return [];
+
+      const data = sectionItem[tab];
+
+      if (typeof data === 'string') {
+        return [data]; 
+      }
+
+      if (Array.isArray(data)) {
+        return data;
+      }
+
+      return [];
+    }
+
+    if (section === 'endUser') {
       const jsonKey = endUserTabMapping[tab];
-      const entry = jsonForDocument['Profile of the End-Users']?.find((item: any) => item[jsonKey]);
-      return entry ? entry[jsonKey] : [];
-    } else if (section === 'outcome') {
+      const entry = jsonForDocument['Profile of the End-Users']?.find((item: any) => item.hasOwnProperty(jsonKey));
+      const data = entry?.[jsonKey];
+      return Array.isArray(data) ? data : [data];
+    }
+
+    if (section === 'outcome') {
       const jsonKey = outcomeTabMapping[tab];
-      return jsonForDocument['Outcomes (Requirements & KPIs)']?.[jsonKey] || [];
+      const data = jsonForDocument['Outcomes (Requirements & KPIs)']?.[jsonKey];
+      return Array.isArray(data) ? data : [data];
     }
 
     return [];
   };
+
 
   const saveSection = async (
     section: string,
