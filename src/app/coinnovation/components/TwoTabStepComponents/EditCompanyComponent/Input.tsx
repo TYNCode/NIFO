@@ -10,7 +10,8 @@ interface InputProps {
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
-  error?: any
+  error?: any;
+  required?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -22,13 +23,16 @@ const Input: React.FC<InputProps> = ({
   onChange,
   readOnly = false,
   error,
+  required = false,
 }) => {
-  const errorMessage = error && typeof error !== "string" ? (error as FieldError).message : error;
+  const errorMessage =
+    error && typeof error !== "string" ? (error as FieldError).message : error;
 
   return (
     <div className="flex flex-col">
       <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
         {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <input
         id={name}
@@ -43,7 +47,9 @@ const Input: React.FC<InputProps> = ({
         onChange={onChange}
       />
       {/* Render the error message if it exists */}
-      {errorMessage && <p className="text-red-500 text-sm mt-1">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+      )}
     </div>
   );
 };

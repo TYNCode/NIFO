@@ -13,6 +13,7 @@ import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
 import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
 import { enableStep, setSelectedTab } from "../../../redux/features/coinnovation/projectSlice";
+import { ClipLoader } from "react-spinners";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -38,7 +39,6 @@ const TwoTabStepOne: React.FC = () => {
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
-  console.log("solutionProviders", solutionProviders);
 
   useEffect(() => {
     if (project_id) {
@@ -88,7 +88,9 @@ const TwoTabStepOne: React.FC = () => {
   return (
     <div className="w-full mx-auto p-6">
       {loading ? (
-        <p className="text-gray-600">Loading solution providers...</p>
+        <div className="flex justify-center items-center h-40">
+          <ClipLoader color="#3B82F6" size={40} />
+        </div>
       ) : (
         <>
           {error && <p style={{ color: "red" }}>{error}</p>}

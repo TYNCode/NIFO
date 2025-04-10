@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Modal from "../AddCompanyComponent/Model";
 import Input from "./Input";
@@ -23,11 +23,10 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
   } = useForm();
 
-  // Only set form once when data is loaded
   useEffect(() => {
     if (initialData && !loading) {
       const formattedUsecases =
@@ -80,19 +79,39 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
     onClose();
   };
 
+  const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+
+  const confirmDiscardChanges = () => {
+    setShowConfirmCancel(false);
+    onClose();
+  };
+
+  const cancelDiscard = () => {
+    setShowConfirmCancel(false);
+  };
+
+  const handleCancel = () => {
+    console.log("Cancel update.........");
+    if (isDirty) {
+      setShowConfirmCancel(true);
+    } else {
+      onClose();
+    }
+  };
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Edit Solution Provider"
-      type="edit"
-    >
-      {loading ? (
-        <div className="flex justify-center items-center py-10 text-gray-600 text-sm">
-          Loading provider details...
-        </div>
-      ) : (
-        <>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleCancel}
+        title="Edit Solution Providers"
+        type="edit"
+      >
+        {loading ? (
+          <div className="flex justify-center items-center py-10 text-gray-600 text-sm">
+            Loading provider details...
+          </div>
+        ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-6">
               <div className="flex flex-col gap-4">
@@ -120,6 +139,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                       {...field}
                       label="Relevant Usecase"
                       error={errors.relevant_usecase?.message}
+                      required={true}
                     />
                   )}
                 />
@@ -127,18 +147,13 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   name="key_customers"
                   control={control}
                   defaultValue=""
-                  rules={{
-                    required: "Key Customers are required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9, ]*$/,
-                      message: "Only alphanumeric and commas allowed",
-                    },
-                  }}
+                  rules={{ required: "Key Customers are required" }}
                   render={({ field }) => (
                     <Input
                       {...field}
                       label="Key Customers (comma separated)"
                       error={errors.key_customers?.message}
+                      required={true}
                     />
                   )}
                 />
@@ -149,7 +164,8 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   rules={{
                     required: "Email is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                       message: "Invalid email format",
                     },
                   }}
@@ -158,6 +174,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                       {...field}
                       label="Email"
                       error={errors.email?.message}
+                      required={true}
                     />
                   )}
                 />
@@ -168,8 +185,8 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   rules={{
                     required: "Phone Number is required",
                     pattern: {
-                      value: /^[0-9]{10}$/,
-                      message: "Invalid phone number",
+                      value: /^\+?[0-9\s\-()]{7,15}$/,
+                      message: "Enter a valid phone number",
                     },
                   }}
                   render={({ field }) => (
@@ -177,6 +194,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                       {...field}
                       label="Phone Number"
                       error={errors.phone_number?.message}
+                      required={true}
                     />
                   )}
                 />
@@ -184,8 +202,19 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   name="solution_provider_url"
                   control={control}
                   defaultValue=""
+                  rules={{
+                    pattern: {
+                      value: /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/.*)?$/,
+                      message: "Enter a valid URL",
+                    },
+                  }}
                   render={({ field }) => (
-                    <Input {...field} label="Website" />
+                    <Input
+                      {...field}
+                      label="Website"
+                      error={errors.solution_provider_url?.message}
+                      required={true}
+                    />
                   )}
                 />
               </div>
@@ -195,8 +224,19 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   name="linkedin_url"
                   control={control}
                   defaultValue=""
+                  rules={{
+                    pattern: {
+                      value: /^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/,
+                      message: "Enter a valid LinkedIn URL",
+                    },
+                  }}
                   render={({ field }) => (
-                    <Input {...field} label="LinkedIn" />
+                    <Input
+                      {...field}
+                      label="LinkedIn"
+                      error={errors.linkedin_url?.message}
+                      required={true}
+                    />
                   )}
                 />
                 <Controller
@@ -204,7 +244,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <TextArea {...field} label="Offerings" />
+                    <TextArea {...field} label="Offerings" required={true} />
                   )}
                 />
                 <Controller
@@ -212,7 +252,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <Input {...field} label="Key Customer" />
+                    <Input {...field} label="Key Customer" required={true} />
                   )}
                 />
                 <Controller
@@ -220,7 +260,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <TextArea {...field} label="USP" />
+                    <TextArea {...field} label="USP" required={true} />
                   )}
                 />
                 <Controller
@@ -228,20 +268,42 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <TextArea {...field} label="Other Usecases" />
+                    <TextArea
+                      {...field}
+                      label="Other Usecases"
+                      placeholder="Format: Industry: Impact"
+                      required={true}
+                    />
                   )}
                 />
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <Button label="Cancel" onClick={onClose} />
+              <Button label="Cancel" onClick={handleCancel} />
               <Button label="Update" type="submit" />
             </div>
           </form>
-        </>
+        )}
+      </Modal>
+
+      {showConfirmCancel && (
+        <Modal
+          isOpen={true}
+          onClose={cancelDiscard}
+          title="Discard Changes?"
+          type="warning"
+        >
+          <div className="py-4">
+            <p>You've made changes. Are you sure you want to discard them?</p>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button label="No" onClick={cancelDiscard} />
+              <Button label="Yes, Discard" onClick={confirmDiscardChanges} />
+            </div>
+          </div>
+        </Modal>
       )}
-    </Modal>
+    </>
   );
 };
 

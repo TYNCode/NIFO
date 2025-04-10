@@ -18,6 +18,7 @@ import { updateSolutionProvider } from "../../../redux/features/source/solutionP
 import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProviderForm";
 import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { ClipLoader } from "react-spinners";
 import { useAppSelector } from "../../../redux/hooks";
 
 interface CompanyCardProps {
@@ -41,13 +42,13 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   const [editOpen, setEditOpen] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
-  const projectID = useAppSelector((state)=> state.projects.projectID)
+
+  const projectID = useAppSelector((state) => state.projects.projectID);
 
   const handleUpdate = (updatedData: any) => {
     dispatch(
       updateSolutionProvider({
-        project_id:projectID,
+        project_id: projectID,
         solution_provider_id: company.solution_provider_id,
         updatedData,
       })
@@ -116,12 +117,14 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 
   return (
     <div className="border rounded-lg shadow-sm bg-white p-4 mb-4">
-      <div className="flex items-center justify-between cursor-pointer gap-2">
+      <div className="flex items-center justify-between  gap-2">
         <div className="flex items-center gap-6 w-[15%]">
           <input
             type="checkbox"
-            className="w-4 h-4 rounded-sm border-2 border-blue-400"
-            onChange={(e) => onSelect(e.target.checked , company.solution_provider_id)}
+            className="w-4 h-4 rounded-sm border-2 border-blue-400 cursor-pointer"
+            onChange={(e) =>
+              onSelect(e.target.checked, company.solution_provider_id)
+            }
           />
           <div className="flex flex-col gap-2 justify-center">
             <h3 className="text-base font-semibold text-[#0071C1]">
@@ -201,9 +204,14 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
           loading={loadingEdit || !details}
         />
       )}
+
       {isOpen && (
         <div className="mt-4 p-4 border-t">
-          {loading && <p>Loading provider details...</p>}
+          {loading && (
+            <div className="flex justify-center items-center h-40">
+              <ClipLoader color="#3B82F6" size={40} />
+            </div>
+          )}
           {error && <p style={{ color: "red" }}>{error}</p>}
           {details && (
             <div className="flex gap-6">
