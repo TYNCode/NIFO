@@ -17,6 +17,7 @@ import Spotlight from "../Spotlights/Spotlight";
 import { Dispatch, SetStateAction } from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import TrendsTab from "./TrendsTab";
+import Image from "next/image";
 
 interface LeftFrameProps {
   onNewChat: () => void;
@@ -89,7 +90,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   return (
     <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
       <div className="flex justify-center items-center bg-white shadow-md p-4 z-20">
-        <img src="/nifoimage.png" alt="The Yellow Network" width={160} />
+        <Image src="/nifoimage.png" alt="The Yellow Network" width={160} height={100} />
       </div>
 
       <div className="flex-grow overflow-y-auto scrollbar-thin">

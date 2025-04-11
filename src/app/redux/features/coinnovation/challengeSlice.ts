@@ -165,6 +165,7 @@ const challengeSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.isPDDJsonGenerating = false;
+      state.activeDefineStepTab = "01.a";
     },
     setActiveDefineStepTab: (state, action: PayloadAction<string>) => {
       state.activeDefineStepTab = action.payload;

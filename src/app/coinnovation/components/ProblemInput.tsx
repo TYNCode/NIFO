@@ -8,6 +8,7 @@ import {
   fetchProjectFiles,
 } from "../../redux/features/coinnovation/fileSlice";
 import { setProblemStatement } from "../../redux/features/coinnovation/projectSlice";
+import Image from "next/image";
 
 interface Props {
   handleSubmit: (e: any) => void;
@@ -77,10 +78,12 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
               className="absolute right-5 top-1/2 transform -translate-y-1/2 cursor-pointer"
               onClick={() => setIsFileUploadModalOpen(true)}
             >
-              <img
+              <Image
                 src="/coinnovation/uploadfileicon.svg"
                 alt="Upload"
                 className="h-5 w-5"
+                height={100}
+                width={100}
               />
             </div>
           </div>
