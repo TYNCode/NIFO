@@ -126,7 +126,7 @@ const TwoTabStepOne: React.FC = () => {
               onClick={() => setIsModalOpen(true)}
               disabled={selectedCompanies > 0}
             />
-            <Button label="Shortlist" onClick={() => handleShortlist()} />
+            <Button label="Shortlist" onClick={() => handleShortlist()} disabled={selectedCompanies <1}/>
             <Button
               label="Compare"
               icon={<FaRegFileAlt />}
