@@ -95,9 +95,9 @@ const TwoTabStepOne: React.FC = () => {
             <p className="">Key Customers</p>
           </div>
 
-          {solutionProviders.map((company, index) => (
+          {solutionProviders.map((company) => (
             <CompanyCard
-              key={index}
+              key={company.solution_provider_id}
               company={company}
               onSelect={handleSelection}
               project_id={project_id}

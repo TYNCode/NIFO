@@ -45,6 +45,7 @@ const Input: React.FC<InputProps> = ({
         readOnly={readOnly}
         placeholder={placeholder}
         onChange={onChange}
+        required={required}
       />
       {/* Render the error message if it exists */}
       {errorMessage && (
