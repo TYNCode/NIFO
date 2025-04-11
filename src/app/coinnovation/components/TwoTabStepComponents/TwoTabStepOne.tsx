@@ -12,7 +12,10 @@ import { RiAddCircleLine } from "react-icons/ri";
 import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
 import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
-import { enableStep, setSelectedTab } from "../../../redux/features/coinnovation/projectSlice";
+import {
+  enableStep,
+  setSelectedTab,
+} from "../../../redux/features/coinnovation/projectSlice";
 import { ClipLoader } from "react-spinners";
 
 interface SolutionProvider {
@@ -101,14 +104,20 @@ const TwoTabStepOne: React.FC = () => {
             <p className="">Key Customers</p>
           </div>
 
-          {solutionProviders.map((company) => (
-            <CompanyCard
-              key={company.solution_provider_id}
-              company={company}
-              onSelect={handleSelection}
-              project_id={project_id}
-            />
-          ))}
+          {solutionProviders.length === 0 ? (
+            <div className="text-center text-gray-500 mt-10">
+              No solution providers found. Try adding a new one.
+            </div>
+          ) : (
+            solutionProviders.map((company) => (
+              <CompanyCard
+                key={company.solution_provider_id}
+                company={company}
+                onSelect={handleSelection}
+                project_id={project_id}
+              />
+            ))
+          )}
 
           <div className="flex justify-end gap-3">
             <Button
