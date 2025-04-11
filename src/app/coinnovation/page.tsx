@@ -45,9 +45,9 @@ const Page: React.FC = () => {
       <div className="flex flex-col relative">
         <NavBarCoin />
         <div className="bg-[#F4FCFF] mt-16 px-4">
-          <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold">
+          {/* <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold">
             Create Project
-          </div>
+          </div> */}
 
           <div className="flex gap-3 mx-2 justify-between">
             {coInnovationProcessSteps.map((process) => {
