@@ -21,7 +21,7 @@ const CompanyProfile: React.FC<CompanyProfileProps> = ({ company }) => {
   if (!company) {
     return (
       <div className="flex items-center justify-center min-h-screen ">
-        <ClipLoader color="#3b82f6" size={50} />
+        <ClipLoader color="#3b82f6" size={40} />
       </div>
     );
   }

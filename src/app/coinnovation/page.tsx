@@ -7,30 +7,31 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import WithAuth from "../utils/withAuth";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setSelectedTab } from "../redux/features/coinnovation/projectSlice";
+import ProgressTwo from "./components/ProgressTwo";
 
 interface ProcessStep {
   id: number;
   title: string;
-  enabled?: boolean;
 }
 
 const coInnovationProcessSteps: ProcessStep[] = [
-  { id: 1, title: "Define", enabled: true },
-  { id: 2, title: "Source", enabled: true },
-  { id: 3, title: "Engage", enabled: false },
-  { id: 4, title: "Evaluate", enabled: false },
-  { id: 5, title: "Finalize", enabled: false },
+  { id: 1, title: "Define" },
+  { id: 2, title: "Source" },
+  { id: 3, title: "Engage" },
+  { id: 4, title: "Evaluate" },
+  { id: 5, title: "Finalize" }
 ];
 
 const Page: React.FC = () => {
   const dispatch = useAppDispatch();
   const selectedTab = useAppSelector((state) => state.projects.selectedTab);
+  const enabledSteps = useAppSelector((state) => state.projects.enabledSteps);
 
-  console.log("selectedTab inside the page.jsx", selectedTab);
 
+  console.log("selectedTabbbb in 1st page", selectedTab)
   const tabContent: Record<number, JSX.Element> = {
     1: <ProgressOne />,
-    2: <div>Step 2</div>,
+    2: <ProgressTwo />,
     3: <div>Step 3</div>,
     4: <div>Step 4</div>,
     5: <div>Step 5</div>,
@@ -49,40 +50,42 @@ const Page: React.FC = () => {
           </div>
 
           <div className="flex gap-3 mx-2 justify-between">
-            {coInnovationProcessSteps.map((process) => (
-              <div
-                key={process.id}
-                className={`relative flex flex-col w-1/5 h-full px-4 pb-4 rounded-2xl transition-all
-                  ${
-                    selectedTab === process.id
+            {coInnovationProcessSteps.map((process) => {
+              const isEnabled = enabledSteps.includes(process.id);
+              const isSelected = selectedTab === process.id;
+
+              return (
+                <div
+                  key={process.id}
+                  className={`relative flex flex-col w-1/5 h-full px-4 pb-4 rounded-2xl transition-all
+                    ${isSelected
                       ? "bg-[#0071C1] text-white shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
                       : "bg-white text-[#0071C1] shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]"
-                  } 
-                  ${process.enabled ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
-                onClick={() => {
-                  if (process.enabled) {
-                    dispatch(setSelectedTab(process.id));
-                  }
-                }}
-              >
-                <div className="h-12 text-[16px] flex items-center w-full">
-                  <div className="font-semibold text-[15px] w-1/4 text-left">
-                    0{process.id}
+                    } 
+                    ${isEnabled ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
+                  onClick={() => {
+                    if (isEnabled) {
+                      dispatch(setSelectedTab(process.id));
+                    }
+                  }}
+                >
+                  <div className="h-12 text-[16px] flex items-center w-full">
+                    <div className="font-semibold text-[15px] w-1/4 text-left">
+                      0{process.id}
+                    </div>
+                    <div className="font-semibold text-center w-2/4">
+                      {process.title}
+                    </div>
                   </div>
-                  <div className="font-semibold text-center w-2/4">
-                    {process.title}
-                  </div>
-                </div>
 
-                <div
-                  className={`w-full rounded-md h-[4px] ${
-                    selectedTab === process.id
-                      ? "bg-[#F7F701]"
-                      : "h-[2px] bg-[#E7E7E7]"
-                  }`}
-                ></div>
-              </div>
-            ))}
+                  <div
+                    className={`w-full rounded-md ${
+                      isSelected ? "h-[4px] bg-[#F7F701]" : "h-[2px] bg-[#E7E7E7]"
+                    }`}
+                  ></div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="my-8">

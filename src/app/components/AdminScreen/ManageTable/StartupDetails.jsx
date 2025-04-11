@@ -1,8 +1,10 @@
+import Image from "next/image";
+
 export const StartupDetails = ({ startup }) => (
   <div className="p-2 ">
     {/* Startup Logo and Name */}
     <div className="flex items-center space-x-4 mb-4">
-      <img
+      <Image
         src={startup.startup_logo}
         alt={`${startup.startup_name} Logo`}
         className="w-16 h-16 rounded-full object-cover"

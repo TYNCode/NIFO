@@ -5,6 +5,7 @@ import { IoIosSearch } from "react-icons/io";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { subDays, startOfWeek, startOfMonth, isAfter } from "date-fns";
+import Image from "next/image";
 
 const TableLoader = () => (
   <div className="animate-pulse">
@@ -57,7 +58,7 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
         Header: "Startup Logo",
         accessor: "startup_logo",
         Cell: ({ value }) => (
-          <img
+          <Image
             src={value}
             alt="Startup Logo"
             className="w-12 h-12 rounded-full object-cover"
@@ -430,7 +431,7 @@ const StartupDetails = ({ startup }) => (
   <div className="p-2 ">
     {/* Startup Logo and Name */}
     <div className="flex items-center space-x-4 mb-4">
-      <img
+      <Image
         src={startup.startup_logo}
         alt={`${startup.startup_name} Logo`}
         className="w-16 h-16 rounded-full object-cover"

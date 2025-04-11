@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
-  updateJsonSection,
-  updateKpiTableCell,
-  addKpiRow,
+  updatePDD,
   setJsonForDocument,
-} from '../../redux/features/coinnovation/challengeSlice';
-import { setSelectedTab } from '../../redux/features/coinnovation/projectSlice';
-import Accordion from './OneTabStepThreeComponents/Accordian';
-import TabPanel from './OneTabStepThreeComponents/TabPanel';
-import EditableContent from './OneTabStepThreeComponents/EditableContent';
-import KpiTable from './OneTabStepThreeComponents/KpiTable';
-import DownloadButton from './OneTabStepThreeComponents/DownloadButton';
-import { useDocumentData } from './OneTabStepThreeComponents/useDocumentData';
+} from "../../redux/features/coinnovation/challengeSlice";
+import {
+  enableStep,
+  setSelectedTab,
+} from "../../redux/features/coinnovation/projectSlice";
+
+import Accordion from "./OneTabStepThreeComponents/Accordian";
+import TabPanel from "./OneTabStepThreeComponents/TabPanel";
+import EditableContent from "./OneTabStepThreeComponents/EditableContent";
+import KpiTable from "./OneTabStepThreeComponents/KpiTable";
+import DownloadButton from "./OneTabStepThreeComponents/DownloadButton";
+import Button from "./TwoTabStepComponents/Button";
 
 const OneTabStepThree: React.FC = () => {
   const dispatch = useAppDispatch();
-  const jsonForDocument = useAppSelector((state) => state.challenge.jsonForDocument);
+  const jsonForDocument = useAppSelector(
+    (state) => state.challenge.jsonForDocument
+  );
   const projectID = useAppSelector((state) => state.projects.projectID);
 
-  const {
-    handleGenerateDocx,
-    isGeneratingDocx,
-    saveDocument,
-  } = useDocumentData(projectID, jsonForDocument);
+  const [editableText, setEditableText] = useState("");
 
-  const [challengeTab, setChallengeTab] = useState('Focus Areas');
-  const [endUserTab, setEndUserTab] = useState('Roles');
-  const [outcomeTab, setOutcomeTab] = useState('Functional Requirements');
+  const [challengeTab, setChallengeTab] = useState("Focus Areas");
+  const [endUserTab, setEndUserTab] = useState("Roles");
+  const [outcomeTab, setOutcomeTab] = useState("Functional Requirements");
 
   const [isChallengeOpen, setChallengeOpen] = useState(true);
   const [isEndUserOpen, setEndUserOpen] = useState(false);
@@ -38,18 +38,21 @@ const OneTabStepThree: React.FC = () => {
   const [isEditingOutcome, setIsEditingOutcome] = useState(false);
   const [isEditingKpiTable, setIsEditingKpiTable] = useState(false);
 
-  const [editableText, setEditableText] = useState('');
-
+  const handleSourceSolution = () => {
+    dispatch(enableStep(2));
+    dispatch(setSelectedTab(2));
+  };
   const endUserTabMapping = {
-    'Roles': 'Roles',
-    'Current Methods Employed': 'Current methods to overcome the challenge',
+    Roles: "Roles",
+    "Current Methods Employed": "Current methods to overcome the challenge",
   };
 
   const outcomeTabMapping = {
-    'Functional Requirements': 'Functional Requirements',
-    'Constraints': 'Constraints',
-    'Key Performance Indicators (KPIs)': 'Anticipated high-level % improvements & % reduction in KPIs possible through this initiative',
-    'List of Features & Functionalities': 'List of Features & Functionalities',
+    "Functional Requirements": "Functional Requirements",
+    Constraints: "Constraints",
+    "Key Performance Indicators (KPIs)":
+      "Anticipated high-level % improvements & % reduction in KPIs possible through this initiative",
+    "List of Features & Functionalities": "List of Features & Functionalities",
   };
 
   const getTabData = (section: string, tab: string) => {
@@ -97,38 +100,58 @@ const OneTabStepThree: React.FC = () => {
     mapping: Record<string, string> | undefined,
     setEdit: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
+    if (!projectID || !jsonForDocument) return;
+
     const jsonKey = mapping ? mapping[tabKey] : tabKey;
     const sectionKey =
-      section === 'challenge'
-        ? 'Challenge Scenario'
-        : section === 'endUser'
-          ? 'Profile of the End-Users'
-          : 'Outcomes (Requirements & KPIs)';
+      section === "challenge"
+        ? "Challenge Scenario"
+        : section === "endUser"
+          ? "Profile of the End-Users"
+          : "Outcomes (Requirements & KPIs)";
 
     const lines = editableText
-      .split('\n')
-      .map(line => line.trim())
+      .split("\n")
+      .map((line) => line.trim())
       .filter(Boolean);
 
     const shouldConvertToObject =
-      section === 'challenge' ||
-      (section === 'outcome' && ['Functional Requirements', 'List of Features & Functionalities'].includes(tabKey));
+      section === "challenge" ||
+      (section === "outcome" &&
+        [
+          "Functional Requirements",
+          "List of Features & Functionalities",
+        ].includes(tabKey));
 
-    const valueArray: string[] | { Title: string; Description: string }[] = shouldConvertToObject
-      ? lines.map(line => {
-        const [title, ...descParts] = line.split(':');
-        return {
-          Title: title.trim(),
-          Description: descParts.join(':').trim() || ''
-        };
-      })
-      : lines; 
+    const valueArray: any = shouldConvertToObject
+      ? lines.map((line) => {
+          const [title, ...descParts] = line.split(":");
+          return {
+            Title: title.trim(),
+            Description: descParts.join(":").trim(),
+          };
+        })
+      : lines;
 
-    dispatch(updateJsonSection({ section: sectionKey, key: jsonKey, value: valueArray }));
-    await saveDocument();
+    const updatedJson = JSON.parse(JSON.stringify(jsonForDocument));
+
+    if (sectionKey === "Challenge Scenario") {
+      const index = updatedJson[sectionKey].findIndex(
+        (item: any) => item[jsonKey]
+      );
+      if (index >= 0) {
+        updatedJson[sectionKey][index][jsonKey] = valueArray;
+      }
+    } else {
+      updatedJson[sectionKey][jsonKey] = valueArray;
+    }
+
+    const result = await dispatch(
+      updatePDD({ projectID, jsonForDocument: updatedJson })
+    ).unwrap();
+    dispatch(setJsonForDocument(result));
     setEdit(false);
   };
-
 
   const handleEditClick = (
     section: string,
@@ -138,33 +161,29 @@ const OneTabStepThree: React.FC = () => {
     setText: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const display = getTabData(section, tabKey);
-
     const formattedText = display
       .map((item: any) => {
-        if (typeof item === 'string') return item;
-        if (typeof item === 'object' && item !== null) {
-          const title = item.Title || 'Untitled';
-          const description = item.Description || '';
-          return `${title}: ${description}`;
-        }
+        if (typeof item === "string") return item;
+        if (typeof item === "object")
+          return `${item.Title || ""}: ${item.Description || ""}`;
         return JSON.stringify(item);
       })
-      .join('\n');
+      .join("\n");
 
     setText(formattedText);
     setEdit(true);
   };
 
-
-  const handleKpiCellChange = (rowIndex: number, columnKey: string, value: string) => {
-    dispatch(updateKpiTableCell({ rowIndex, column: columnKey, value }));
-  };
+  const handleKpiCellChange = (
+    rowIndex: number,
+    columnKey: string,
+    value: string
+  ) => {};
 
   if (!jsonForDocument) return <div className="p-4">Loading...</div>;
 
   return (
     <div className="bg-[#F4FCFF] px-4 py-4 flex flex-col gap-4">
-      {/* Challenge Scenario */}
       <Accordion
         title="1. Challenge Scenario"
         subtitle="Use cases, requirements, constraints, benefits"
@@ -173,12 +192,23 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setChallengeOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingChallenge
-            ? saveSection('challenge', challengeTab, undefined, setIsEditingChallenge)
-            : handleEditClick('challenge', challengeTab, undefined, setIsEditingChallenge, setEditableText)
+            ? saveSection(
+                "challenge",
+                challengeTab,
+                undefined,
+                setIsEditingChallenge
+              )
+            : handleEditClick(
+                "challenge",
+                challengeTab,
+                undefined,
+                setIsEditingChallenge,
+                setEditableText
+              )
         }
       >
         <TabPanel
-          tabs={['Focus Areas', 'Technical Requirements', 'Expected Benefits']}
+          tabs={["Focus Areas", "Technical Requirements", "Expected Benefits"]}
           activeTab={challengeTab}
           setActiveTab={setChallengeTab}
           isEditing={isEditingChallenge}
@@ -187,12 +217,11 @@ const OneTabStepThree: React.FC = () => {
             isEditing={isEditingChallenge}
             editableText={editableText}
             setEditableText={setEditableText}
-            displayItems={getTabData('challenge', challengeTab)}
+            displayItems={getTabData("challenge", challengeTab)}
           />
         </TabPanel>
       </Accordion>
 
-      {/* End User Profile */}
       <Accordion
         title="2. Describe End Users Profile"
         subtitle="Roles and current methods"
@@ -201,12 +230,23 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setEndUserOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingEndUser
-            ? saveSection('endUser', endUserTab, endUserTabMapping, setIsEditingEndUser)
-            : handleEditClick('endUser', endUserTab, endUserTabMapping, setIsEditingEndUser, setEditableText)
+            ? saveSection(
+                "endUser",
+                endUserTab,
+                endUserTabMapping,
+                setIsEditingEndUser
+              )
+            : handleEditClick(
+                "endUser",
+                endUserTab,
+                endUserTabMapping,
+                setIsEditingEndUser,
+                setEditableText
+              )
         }
       >
         <TabPanel
-          tabs={['Roles', 'Current Methods Employed']}
+          tabs={["Roles", "Current Methods Employed"]}
           activeTab={endUserTab}
           setActiveTab={setEndUserTab}
           isEditing={isEditingEndUser}
@@ -215,12 +255,11 @@ const OneTabStepThree: React.FC = () => {
             isEditing={isEditingEndUser}
             editableText={editableText}
             setEditableText={setEditableText}
-            displayItems={getTabData('endUser', endUserTab)}
+            displayItems={getTabData("endUser", endUserTab)}
           />
         </TabPanel>
       </Accordion>
 
-      {/* Outcomes */}
       <Accordion
         title="3. Describe Outcomes (KPI's & Requirements)"
         subtitle="KPIs and feature requirements"
@@ -229,16 +268,27 @@ const OneTabStepThree: React.FC = () => {
         onToggle={() => setOutcomeOpen((prev) => !prev)}
         onEditClick={() =>
           isEditingOutcome
-            ? saveSection('outcome', outcomeTab, outcomeTabMapping, setIsEditingOutcome)
-            : handleEditClick('outcome', outcomeTab, outcomeTabMapping, setIsEditingOutcome, setEditableText)
+            ? saveSection(
+                "outcome",
+                outcomeTab,
+                outcomeTabMapping,
+                setIsEditingOutcome
+              )
+            : handleEditClick(
+                "outcome",
+                outcomeTab,
+                outcomeTabMapping,
+                setIsEditingOutcome,
+                setEditableText
+              )
         }
       >
         <TabPanel
           tabs={[
-            'Functional Requirements',
-            'Constraints',
-            'Key Performance Indicators (KPIs)',
-            'List of Features & Functionalities',
+            "Functional Requirements",
+            "Constraints",
+            "Key Performance Indicators (KPIs)",
+            "List of Features & Functionalities",
           ]}
           activeTab={outcomeTab}
           setActiveTab={setOutcomeTab}
@@ -248,28 +298,25 @@ const OneTabStepThree: React.FC = () => {
             isEditing={isEditingOutcome}
             editableText={editableText}
             setEditableText={setEditableText}
-            displayItems={getTabData('outcome', outcomeTab)}
+            displayItems={getTabData("outcome", outcomeTab)}
           />
         </TabPanel>
       </Accordion>
 
-      {/* KPI Table */}
       <KpiTable
-        kpiTable={jsonForDocument['Operational KPI Metrics Table'] || {}}
+        kpiTable={jsonForDocument["Operational KPI Metrics Table"] || {}}
         isEditing={isEditingKpiTable}
-        onAddRow={() => dispatch(addKpiRow())}
+        onAddRow={() => {}}
         onToggleEdit={() => setIsEditingKpiTable(!isEditingKpiTable)}
         onCellChange={handleKpiCellChange}
       />
 
       <div className="flex justify-end gap-4">
-        <div
-          className="cursor-pointer bg-[#2286C0] text-white px-4 py-2 rounded-lg shadow-md text-sm"
-          onClick={() => dispatch(setSelectedTab(2))}
-        >
-          Continue to source solution providers
-        </div>
-        <DownloadButton onClick={handleGenerateDocx} isLoading={isGeneratingDocx} />
+        <Button
+          label="Source solution providers"
+          onClick={() => handleSourceSolution()}
+        />
+        <DownloadButton onClick={() => {}} isLoading={false} />
       </div>
     </div>
   );

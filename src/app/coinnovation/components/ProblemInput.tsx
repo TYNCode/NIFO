@@ -8,6 +8,7 @@ import {
   fetchProjectFiles,
 } from "../../redux/features/coinnovation/fileSlice";
 import { setProblemStatement } from "../../redux/features/coinnovation/projectSlice";
+import Image from "next/image";
 
 interface Props {
   handleSubmit: (e: any) => void;
@@ -19,7 +20,7 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
   const dispatch = useAppDispatch();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { projectID, problemStatement, saving } = useAppSelector(
+  const { projectID, problemStatement, creating } = useAppSelector(
     (state) => state.projects
   );
   const { storedFiles } = useAppSelector((state) => state.file);
@@ -73,18 +74,27 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
                 }
               }}
             />
-            <div className="absolute right-5 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={() => setIsFileUploadModalOpen(true)}>
-              <img src="/coinnovation/uploadfileicon.svg" alt="Upload" className="h-5 w-5" />
+            <div
+              className="absolute right-5 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setIsFileUploadModalOpen(true)}
+            >
+              <Image
+                src="/coinnovation/uploadfileicon.svg"
+                alt="Upload"
+                className="h-5 w-5"
+                height={100}
+                width={100}
+              />
             </div>
           </div>
           <button
             className={`flex items-center gap-1 px-4 py-2 text-white rounded-xl shadow-md ${isProblemEntered || files.length > 0 ? "bg-[#2286C0]" : "bg-[#979797]"}`}
             onClick={handleSubmit}
-            disabled={!(isProblemEntered || files.length > 0) || saving}
+            disabled={!(isProblemEntered || files.length > 0) || creating}
           >
             <CiPlay1 className="text-lg" />
             <span className="font-semibold text-[13px]">
-              {saving ? "Processing" : "Describe"}
+              {creating ? "Processing" : "Describe"}
             </span>
           </button>
         </div>
@@ -94,21 +104,38 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
             <span className="font-semibold text-[12px]">Uploaded Files:</span>
             <ul className="mt-1 space-y-1 w-full">
               {storedFiles.map((file, index) => (
-                <li key={index} className="flex justify-between items-center bg-white px-3 py-2 rounded-md border">
-                  <a href={file.url} className="truncate text-[#0071C1] text-[12px] font-semibold" target="_blank" rel="noreferrer">
+                <li
+                  key={index}
+                  className="flex justify-between items-center bg-white px-3 py-2 rounded-md border"
+                >
+                  <a
+                    href={file.url}
+                    className="truncate text-[#0071C1] text-[12px] font-semibold"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {file.original_name}
                   </a>
-                  <button className="text-[#0071C1] text-xs" onClick={() => removeStoredFile(file.id)}>
+                  <button
+                    className="text-[#0071C1] text-xs"
+                    onClick={() => removeStoredFile(file.id)}
+                  >
                     ✕
                   </button>
                 </li>
               ))}
               {files.map((file, index) => (
-                <li key={index} className="flex justify-between items-center bg-white px-3 py-2 rounded-md border">
+                <li
+                  key={index}
+                  className="flex justify-between items-center bg-white px-3 py-2 rounded-md border"
+                >
                   <span className="truncate text-[#0071C1] text-[12px] font-semibold">
                     {file.name}
                   </span>
-                  <button className="text-[#0071C1] text-xs" onClick={() => removeFile(index)}>
+                  <button
+                    className="text-[#0071C1] text-xs"
+                    onClick={() => removeFile(index)}
+                  >
                     ✕
                   </button>
                 </li>

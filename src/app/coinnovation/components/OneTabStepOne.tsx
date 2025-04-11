@@ -17,7 +17,9 @@ import ProjectDetails from "./ProjectDetails";
 
 const OneTabStepOne: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { projectID, projectDetails, problemStatement } = useAppSelector((state) => state.projects);
+  const { projectID, projectDetails, problemStatement } = useAppSelector(
+    (state) => state.projects
+  );
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
@@ -25,10 +27,11 @@ const OneTabStepOne: React.FC = () => {
     if (!storedProjectID) dispatch(clearProjectState());
   }, [dispatch]);
 
-
   const handleSubmit = async () => {
     if (!problemStatement?.trim() && files.length === 0) {
-      return toast.info("Please enter a problem statement or upload at least one file.");
+      return toast.info(
+        "Please enter a problem statement or upload at least one file."
+      );
     }
 
     try {
@@ -36,10 +39,15 @@ const OneTabStepOne: React.FC = () => {
         uploadProjectFiles({ files, projectID, problemStatement })
       ).unwrap();
 
-      const project_description = uploadResult.problem_statement || problemStatement;
+      const project_description =
+        uploadResult.problem_statement || problemStatement;
 
-      if (project_description === "I could not find any problem to be solved.") {
-        return toast.warn("The system could not identify a valid problem statement.");
+      if (
+        project_description === "I could not find any problem to be solved."
+      ) {
+        return toast.warn(
+          "The system could not identify a valid problem statement."
+        );
       }
 
       const payload = {
@@ -49,7 +57,9 @@ const OneTabStepOne: React.FC = () => {
         enterprise_img: "",
       };
 
-      const result = await dispatch(createOrUpdateProject({ projectID, projectData: payload })).unwrap();
+      const result = await dispatch(
+        createOrUpdateProject({ projectID, projectData: payload , mode: "describe" })
+      ).unwrap();
 
       if (!projectID && result.project_id) {
         dispatch(setProjectID(result.project_id));
@@ -72,12 +82,20 @@ const OneTabStepOne: React.FC = () => {
             <p className="text-2xl font-semibold">Problem Statement</p>
           </div>
           <div className="w-full">
-            <ProblemInput handleSubmit={handleSubmit} files={files} setFiles={setFiles} />
+            <ProblemInput
+              handleSubmit={handleSubmit}
+              files={files}
+              setFiles={setFiles}
+            />
           </div>
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center gap-12 mt-16 w-full">
-          <ProblemInput handleSubmit={handleSubmit} files={files} setFiles={setFiles} />
+          <ProblemInput
+            handleSubmit={handleSubmit}
+            files={files}
+            setFiles={setFiles}
+          />
           <ProjectDetails />
         </div>
       )}

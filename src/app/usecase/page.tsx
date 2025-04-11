@@ -78,7 +78,7 @@ const UsecaseDescription: React.FC = () => {
      <div className="relative flex flex-col justify-center items-center text-center  py-8 mt-16 bg-[#005585] ">
   {/* Background Image */}
   <div className="absolute inset-0 z-0 opacity-15">
-    <img src="bg-usecase.png" alt="Background" className="object-cover w-full h-full" />
+    <Image src="bg-usecase.png" alt="Background" className="object-cover w-full h-full" />
   </div>
 
   {/* Text Container */}
