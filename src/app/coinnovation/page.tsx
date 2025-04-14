@@ -8,6 +8,7 @@ import WithAuth from "../utils/withAuth";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setSelectedTab } from "../redux/features/coinnovation/projectSlice";
 import ProgressTwo from "./components/ProgressTwo";
+import ProgressFour from "./components/EvaluateComponents/ProgressFour";
 
 interface ProcessStep {
   id: number;
@@ -33,7 +34,7 @@ const Page: React.FC = () => {
     1: <ProgressOne />,
     2: <ProgressTwo />,
     3: <div>Step 3</div>,
-    4: <div>Step 4</div>,
+    4: <ProgressFour/>,
     5: <div>Step 5</div>,
   };
 

@@ -25,7 +25,7 @@ const initialState: ProjectState = {
   saving: false,
   error: null,
   selectedTab: 1,
-  enabledSteps: [1],
+  enabledSteps: [1,2,3,4,5],
   problemStatement: null,
   hasFetchedProjects: false,
 };
