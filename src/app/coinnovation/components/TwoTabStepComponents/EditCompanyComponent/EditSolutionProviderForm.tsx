@@ -48,7 +48,9 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
         phone_number: initialData.phone_number || "",
         solution_provider_url: initialData.solution_provider_url || "",
         linkedin_url: initialData.linkedin_url || "",
-        offerings: initialData.offerings || "",
+        offerings: Array.isArray(initialData.offerings)
+          ? initialData.offerings.join("\n")
+          : initialData.offerings || "",
         key_customer: initialData.key_customer || "",
         usp: initialData.usp || "",
         other_usecases: formattedUsecases.join("\n"),
@@ -74,7 +76,12 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
           };
         })
         .filter((uc: any) => uc.industry && uc.impact),
+      offerings: data.offerings
+        .split("\n")
+        .map((o: string) => o.trim())
+        .filter(Boolean),
     };
+    console.log(updatedData);
     onUpdate(updatedData);
     onClose();
   };

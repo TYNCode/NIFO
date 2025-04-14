@@ -65,14 +65,17 @@ export const updateSolutionProvider = createAsyncThunk<
   { rejectValue: string }
 >(
   "solutionProviderDetails/updateSolutionProvider",
-  async ({ solution_provider_id, updatedData, project_id }, { rejectWithValue }) => {
+  async (
+    { solution_provider_id, updatedData, project_id },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.put(
         `https://tyn-server.azurewebsites.net/coinnovation/edit-solution-provider/`,
         {
           solution_provider_id,
           project_id,
-          ...updatedData, // include the rest of the updated fields
+          ...updatedData,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -86,7 +89,6 @@ export const updateSolutionProvider = createAsyncThunk<
     }
   }
 );
-
 
 const initialState: SolutionProviderDetailsState = {};
 
@@ -122,6 +124,7 @@ const solutionProviderDetailsSlice = createSlice({
       })
       .addCase(updateSolutionProvider.fulfilled, (state, action) => {
         const { solution_provider_id, data } = action.payload;
+        console.log(data);
         state[solution_provider_id] = {
           data,
           loading: false,
