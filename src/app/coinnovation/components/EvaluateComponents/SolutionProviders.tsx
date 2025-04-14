@@ -16,20 +16,20 @@ const SolutionProviders: React.FC<SolutionProvidersProps> = () => {
     };
 
     const sections = [
-        "Total Investment (CAPEX)",
-        "Existing Annual Expenses",
-        "Annual Recurring Expenses (OPEX) - Estimate",
-        "Annual Savings (Recurring Benefits)",
-        "Payback Period Calculation",
-        "Invaluable ROI"
+        { label: "Total Investment (CAPEX)", key: "CAPEX" },
+        { label: "Existing Annual Expenses", key: "Existing_Annual_Expenses" },
+        { label: "Annual Recurring Expenses (OPEX) - Estimate", key: "Annual_OPEX" },
+        { label: "Annual Savings (Recurring Benefits)", key: "Annual_Savings" },
+        { label: "Invaluable ROI", key: "Invaluable_ROI" }
     ];
+
 
     return (
         <div className="flex flex-col gap-6">
-            {sections.map((sectionTitle, index) => (
+            {sections.map((section, index) => (
                 <div key={index} className={`${openAccordions[index] ? "" : "border-b pb-2"}`}>
                     <div className="flex flex-row justify-between items-center">
-                        <div className="text-[#4A4D4E] text-sm font-semibold">{sectionTitle}</div>
+                        <div className="text-[#4A4D4E] text-sm font-semibold">{section.label}</div>
                         <div className="flex flex-row gap-8 items-center">
                             <FiEdit2 className=" text-[#2286C0]  cursor-pointer" />
                             <div onClick={() => toggleAccordion(index)} className="text-[#2286C0] cursor-pointer">
@@ -39,11 +39,12 @@ const SolutionProviders: React.FC<SolutionProvidersProps> = () => {
                     </div>
                     {openAccordions[index] && (
                         <div className="mt-2">
-                            <ParameterAccordion />
+                            <ParameterAccordion sectionKey={section.key} />
                         </div>
                     )}
                 </div>
             ))}
+
         </div>
     );
 };

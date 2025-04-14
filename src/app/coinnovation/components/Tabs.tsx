@@ -14,8 +14,6 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab }) => {
-  const solutionProviderIDs = useAppSelector((state) => state.solutionProvider.solutionProviders)
-  console.log("solutionProviderIDs", solutionProviderIDs)
   return (
     <div className="flex flex-row gap-1 justify-center items-center w-full shadow-sm">
       {tabs.map((tab) => (

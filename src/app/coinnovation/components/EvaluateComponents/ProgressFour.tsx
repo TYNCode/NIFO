@@ -19,7 +19,7 @@ const ProgressFour: React.FC<ProgressFourProps> = (props) => {
     const dispatch = useAppDispatch();
     const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
     const solutionProviders = useAppSelector((state) => state.solutionProvider.solutionProviders);
-
+ 
     const handleTabChange = (tabId: string) => {
         dispatch(setActiveTabSource(tabId));
     };
