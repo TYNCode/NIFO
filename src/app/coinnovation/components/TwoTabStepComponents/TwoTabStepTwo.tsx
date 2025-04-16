@@ -24,8 +24,11 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, reason }) => (
         )}
       </span>
     ))}
-    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-blue-600 text-white text-xs rounded-md shadow-lg px-3 py-2 z-10 w-64 text-center">
-      {reason}
+    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10 w-64 text-center">
+      <div className="relative bg-blue-600 text-white text-xs rounded-md shadow-lg px-3 py-2">
+        {reason}
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-blue-600"></div>
+      </div>
     </div>
   </div>
 );
@@ -64,6 +67,10 @@ const TwoTabStepTwo: React.FC = () => {
         </div>
       ) : error ? (
         <p className="text-red-600">{error}</p>
+      ) : comparisonResult.length === 0 ? (
+        <div className="text-center text-gray-500 mt-10">
+          No companies selected for comparison.
+        </div>
       ) : (
         comparisonResult.length > 0 && (
           <table className="w-full border-collapse border border-gray-200 text-sm">
