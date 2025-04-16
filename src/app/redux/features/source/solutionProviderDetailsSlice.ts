@@ -5,7 +5,7 @@ interface SolutionProviderDetails {
   solution_provider_id: string;
   solution_provider_name: string;
   offerings: string[];
-  key_customer: string;
+  partnerships_and_alliances: string[];
   usp: string;
   email: string;
   phone_number: string;

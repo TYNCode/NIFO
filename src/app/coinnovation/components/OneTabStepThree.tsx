@@ -79,10 +79,14 @@ const OneTabStepThree: React.FC = () => {
 
     if (section === 'endUser') {
       const jsonKey = endUserTabMapping[tab];
-      const entry = jsonForDocument['Profile of the End-Users']?.find((item: any) => item.hasOwnProperty(jsonKey));
-      const data = entry?.[jsonKey];
+      const profile = jsonForDocument['Profile of the End-Users'];
+
+      if (!profile || typeof profile !== 'object') return [];
+
+      const data = profile[jsonKey];
       return Array.isArray(data) ? data : [data];
     }
+
 
     if (section === 'outcome') {
       const jsonKey = outcomeTabMapping[tab];
