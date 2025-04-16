@@ -46,6 +46,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
+    console.log("companies", companies);
     if (query && companies.length > 0) {
       console.log(companies.length);
       const filtered = companies
@@ -183,7 +184,7 @@ const RegisterLap: React.FC<RegisterLapProps> = ({
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
-                setSelectedCompanyId(null); // Reset selected company when user types new query
+                setSelectedCompanyId(null);
               }}
             />
             {filteredCompanies.length > 0 && (
