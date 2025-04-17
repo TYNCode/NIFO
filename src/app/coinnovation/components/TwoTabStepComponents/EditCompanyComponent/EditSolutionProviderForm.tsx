@@ -4,6 +4,9 @@ import Modal from "../AddCompanyComponent/Model";
 import Input from "./Input";
 import Button from "../Button";
 import TextArea from "./TextArea";
+import { useFieldArray } from "react-hook-form";
+import { RiAddCircleLine, RiDeleteBinLine } from "react-icons/ri";
+
 
 interface EditFormProps {
   isOpen: boolean;
@@ -27,23 +30,48 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
     reset,
   } = useForm();
 
+  const {
+    fields: allianceFields,
+    append: appendAlliance,
+    remove: removeAlliance,
+  } = useFieldArray({
+    control,
+    name: "partnerships_and_alliances",
+  });
+
+  const {
+    fields: usecaseFields,
+    append: appendUsecase,
+    remove: removeUsecase,
+  } = useFieldArray({
+    control,
+    name: "other_usecases",
+  });
+
+  const {
+    fields: customerFields,
+    append: appendCustomer,
+    remove: removeCustomer,
+  } = useFieldArray({
+    control,
+    name: "key_customers",
+  });
+
   useEffect(() => {
     if (initialData && !loading) {
-      const formattedUsecases =
-        initialData.other_usecases?.map((uc: any) => {
-          try {
-            const obj =
-              typeof uc === "string" ? JSON.parse(uc.replace(/'/g, '"')) : uc;
-            return `${obj.industry}: ${obj.impact}`;
-          } catch {
-            return uc;
-          }
-        }) || [];
+      const parsedUsecases = initialData.other_usecases?.map((uc: any) => {
+        try {
+          return typeof uc === "string"
+            ? JSON.parse(uc.replace(/'/g, '"'))
+            : uc;
+        } catch {
+          return { industry: "", impact: "" };
+        }
+      }) || [];
 
       reset({
         solution_provider_name: initialData.solution_provider_name || "",
         relevant_usecase: initialData.relevant_usecase || "",
-        key_customers: initialData.key_customers?.join(", ") || "",
         email: initialData.email || "",
         phone_number: initialData.phone_number || "",
         solution_provider_url: initialData.solution_provider_url || "",
@@ -53,7 +81,15 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
           : initialData.offerings || "",
         key_customer: initialData.key_customer || "",
         usp: initialData.usp || "",
-        other_usecases: formattedUsecases.join("\n"),
+        key_customers:
+          initialData.key_customers?.map((c: string) => ({ name: c })) || [],
+        partnerships_and_alliances:
+          initialData.partnerships_and_alliances?.map((p: string) => ({
+            name: p,
+          })) || [],
+        other_usecases: parsedUsecases.length
+          ? parsedUsecases
+          : [{ industry: "", impact: "" }],
       });
     }
   }, [initialData, loading, reset]);
@@ -63,28 +99,29 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
       ...initialData,
       ...data,
       key_customers: data.key_customers
-        .split(",")
-        .map((k: string) => k.trim())
+        .map((c: any) => c.name?.trim())
+        .filter(Boolean),
+      partnerships_and_alliances: data.partnerships_and_alliances
+        .map((p: any) => p.name?.trim())
         .filter(Boolean),
       other_usecases: data.other_usecases
-        .split("\n")
-        .map((line: string) => {
-          const [industry, ...impactParts] = line.split(":");
-          return {
-            industry: industry?.trim() || "",
-            impact: impactParts.join(":").trim(),
-          };
-        })
+        .map((uc: any) => ({
+          industry: uc.industry?.trim(),
+          impact: uc.impact?.trim(),
+        }))
         .filter((uc: any) => uc.industry && uc.impact),
       offerings: data.offerings
         .split("\n")
         .map((o: string) => o.trim())
         .filter(Boolean),
     };
+
     console.log(updatedData);
     onUpdate(updatedData);
     onClose();
   };
+
+
 
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
 
@@ -119,7 +156,7 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
             Loading provider details...
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="h-[80vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-6">
               <div className="flex flex-col gap-4">
                 <Controller
@@ -136,6 +173,26 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                     />
                   )}
                 />
+                  <Controller
+                    name="phone_number"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Phone Number is required",
+                      pattern: {
+                        value: /^\+?[0-9\s\-()]{7,15}$/,
+                        message: "Enter a valid phone number",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Phone Number"
+                        error={errors.phone_number?.message}
+                        required={true}
+                      />
+                    )}
+                  />
                 <Controller
                   name="relevant_usecase"
                   control={control}
@@ -150,83 +207,74 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                     />
                   )}
                 />
-                <Controller
-                  name="key_customers"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: "Key Customers are required" }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      label="Key Customers (comma separated)"
-                      error={errors.key_customers?.message}
-                      required={true}
-                    />
-                  )}
-                />
-                <Controller
-                  name="email"
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: "Email is required",
-                    pattern: {
-                      value:
-                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                      message: "Invalid email format",
-                    },
-                  }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      label="Email"
-                      error={errors.email?.message}
-                      required={true}
-                    />
-                  )}
-                />
-                <Controller
-                  name="phone_number"
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: "Phone Number is required",
-                    pattern: {
-                      value: /^\+?[0-9\s\-()]{7,15}$/,
-                      message: "Enter a valid phone number",
-                    },
-                  }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      label="Phone Number"
-                      error={errors.phone_number?.message}
-                      required={true}
-                    />
-                  )}
-                />
-                <Controller
-                  name="solution_provider_url"
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    pattern: {
-                      value: /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/.*)?$/,
-                      message: "Enter a valid URL",
-                    },
-                  }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      label="Website"
-                      error={errors.solution_provider_url?.message}
-                      required={true}
-                    />
-                  )}
-                />
+                  <Controller
+                    name="usp"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextArea {...field} label="USP" required={true} />
+                    )}
+                  />
+            
+              
+                  <div className="flex flex-col gap-2">
+                    <label className="mb-1 text-sm font-medium text-gray-700">Key Customers</label>
+                    {customerFields.map((field, index) => (
+                      <div key={field.id} className="flex items-center gap-2">
+                        <Controller
+                          name={`key_customers[${index}].name`}
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              label={``}
+                              placeholder={`Customer ${index + 1}`}
+                              className="w-[25vw]"
+                            />
+                          )}
+                        />
+                        <button type="button" onClick={() => removeCustomer(index)}>
+                          <RiDeleteBinLine className="text-[#0071C1]" size={16} />
+                        </button>
+                      </div>
+                    ))}
+                    {customerFields.length < 4 && (
+                      <button
+                        type="button"
+                        onClick={() => appendCustomer({ name: "" })}
+                        className="flex items-center text-[#0071C1] gap-1 text-xs mt-2"
+                      >
+                        <RiAddCircleLine /> Add Customer
+                      </button>
+                    )}
+                  </div>
+
               </div>
 
               <div className="flex flex-col gap-4">
+
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: "Invalid email format",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Email"
+                        error={errors.email?.message}
+                        required={true}
+                      />
+                    )}
+                  />
                 <Controller
                   name="linkedin_url"
                   control={control}
@@ -246,6 +294,26 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                     />
                   )}
                 />
+
+                  <Controller
+                    name="solution_provider_url"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      pattern: {
+                        value: /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/.*)?$/,
+                        message: "Enter a valid URL",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        label="Website"
+                        error={errors.solution_provider_url?.message}
+                        required={true}
+                      />
+                    )}
+                  />
                 <Controller
                   name="offerings"
                   control={control}
@@ -254,38 +322,97 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
                     <TextArea {...field} label="Offerings" required={true} />
                   )}
                 />
-                <Controller
-                  name="key_customer"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input {...field} label="Key Customer" required={true} />
-                  )}
-                />
-                <Controller
-                  name="usp"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextArea {...field} label="USP" required={true} />
-                  )}
-                />
-                <Controller
-                  name="other_usecases"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextArea
-                      {...field}
-                      label="Other Usecases"
-                      placeholder="Format: Industry: Impact"
-                      required={true}
-                    />
-                  )}
-                />
-              </div>
-            </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="mb-1 text-sm font-medium text-gray-700">Partnerships and Alliances</label>
+                    {allianceFields.map((field, index) => (
+                      <div key={field.id} className="flex items-center gap-2">
+                        <Controller
+                          name={`partnerships_and_alliances[${index}].name`}
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <div className="flex items-center gap-2 ">
+                              <div className="flex-1 ">
+                                <Input
+                                  {...field}
+                                  label={``} 
+                                  placeholder={`Partner ${index + 1}`}
+                                  className="w-[25vw]"
+                                />
+                              </div>
+                              <button type="button" onClick={() => removeAlliance(index)}>
+                                <RiDeleteBinLine className="text-[#0071C1]" size={16} />
+                              </button>
+                            </div>
+                          )}
+                        />
+                      </div>
+                    ))}
+                    {allianceFields.length < 4 && (
+                      <button
+                        type="button"
+                        onClick={() => appendAlliance({ name: "" })}
+                        className="flex items-center text-[#0071C1] gap-1 text-xs"
+                      >
+                        <RiAddCircleLine /> Add Partner
+                      </button>
+                    )}
+                  </div>
 
+               
+            
+              </div>
+                
+            </div>
+              <div className="flex flex-col gap-2 mt-4">
+                <label className="mb-1 text-sm font-medium text-gray-700">Other Usecases</label>
+                {usecaseFields.map((field, index) => (
+                  <div key={field.id} className="flex flex-row gap-2 items-center">
+                    <Controller
+                      name={`other_usecases[${index}].industry`}
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          label={``}
+                          placeholder="Industry"
+                          className="w-[20vw]"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`other_usecases[${index}].impact`}
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          label={``}
+                          placeholder="Usecase"
+                          className="w-[50vw]"
+                        />
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeUsecase(index)}
+                      className=""
+                    >
+                      <RiDeleteBinLine className="text-[#0071C1]" size={16} />
+                    </button>
+                  </div>
+                ))}
+                {usecaseFields.length < 4 && (
+                  <button
+                    type="button"
+                    onClick={() => appendUsecase({ industry: "", impact: "" })}
+                    className="flex items-center text-[#0071C1] gap-1 text-xs mt-2"
+                  >
+                    <RiAddCircleLine /> Add Usecase
+                  </button>
+                )}
+              </div>
             <div className="flex justify-end gap-3 mt-6">
               <Button label="Cancel" onClick={handleCancel} />
               <Button label="Update" type="submit" />

@@ -221,8 +221,10 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                   <div className="text-sm">{details.offerings}</div>
                 </div>
                 <div className="mb-4">
-                  <div className="font-bold mb-1">Key Customer</div>
-                  <div className="text-sm">{details.key_customer}</div>
+                  <div className="font-bold mb-1">Partnerships and Alliances</div>
+                  <div className="text-sm">
+                    {details.partnerships_and_alliances?.join(", ")}
+                  </div>
                 </div>
                 <div className="mb-4">
                   <div className="font-bold mb-1">
