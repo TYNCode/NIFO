@@ -60,6 +60,13 @@ const TwoTabStepOne: React.FC = () => {
     );
   };
 
+  const handleCompanyDelete = (deletedId: string) => {
+    setSelectedCompanyIDs((prev) => prev.filter((id) => id !== deletedId));
+    setSelectedCompanies((prev) =>
+      selectedCompanyIDs.includes(deletedId) ? prev - 1 : prev
+    );
+  };
+
   const handleAddSolutionProvider = async (formData: any) => {
     if (!project_id) {
       console.error("Project ID is missing");
@@ -114,6 +121,7 @@ const TwoTabStepOne: React.FC = () => {
                 key={company.solution_provider_id}
                 company={company}
                 onSelect={handleSelection}
+                onDelete={handleCompanyDelete}
                 project_id={project_id}
               />
             ))
@@ -126,7 +134,11 @@ const TwoTabStepOne: React.FC = () => {
               onClick={() => setIsModalOpen(true)}
               disabled={selectedCompanies > 0}
             />
-            <Button label="Shortlist" onClick={() => handleShortlist()} disabled={selectedCompanies <1}/>
+            <Button
+              label="Shortlist"
+              onClick={() => handleShortlist()}
+              disabled={selectedCompanies < 1}
+            />
             <Button
               label="Compare"
               icon={<FaRegFileAlt />}
