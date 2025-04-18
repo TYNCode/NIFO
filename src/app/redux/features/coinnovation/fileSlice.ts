@@ -33,7 +33,7 @@ const initialState: FileState = {
 };
 
 // Constants
-const BASE_URL = "https://tyn-server.azurewebsites.net/";
+const BASE_URL = "https://tyn-server.azurewebsites.net";
 
 // Thunks
 

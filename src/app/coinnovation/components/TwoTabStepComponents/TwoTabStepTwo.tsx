@@ -77,7 +77,7 @@ const TwoTabStepTwo: React.FC = () => {
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="p-3 border border-gray-300">Parameters</th>
-              {comparisonResult.map((company) => (
+              {comparisonResult.map((company:any) => (
       
                 <th
                   key={company?.company}
