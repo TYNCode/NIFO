@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { updateSolutionProvider } from "./solutionProviderDetailsSlice";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -139,6 +140,20 @@ const solutionProviderSlice = createSlice({
             provider.solution_provider_id !==
             action.payload.solution_provider_id
         );
+      })
+      .addCase(updateSolutionProvider.fulfilled, (state, action) => {
+        const { solution_provider_id, data } = action.payload;
+        const index = state.solutionProviders.findIndex(
+          (provider) => provider.solution_provider_id === solution_provider_id
+        );
+
+        if (index !== -1) {
+          state.solutionProviders[index] = {
+            ...state.solutionProviders[index],
+            relevant_usecase: data.relevant_usecase,
+            key_customers: data.key_customers,
+          };
+        }
       });
   },
 });

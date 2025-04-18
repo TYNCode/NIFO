@@ -1,25 +1,22 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface ComparisonResult {
-  solution_provider_name: string;
-  customer_feedback_rating: number;
-  potential_clients_rating: number;
-  deployment_capability_rating: number;
-  channel_partners_rating: number;
-  usp_rating: number;
-  ip_protection_rating: number;
-  competitors_benchmarking_rating: number;
-  funding_stage_rating: number;
-  incorporation_timeline_rating: number;
-  product_stage_rating: number;
-  team_strength_rating: number;
+interface RatingCriteria {
+  score: number;
+  reason: string;
+}
+
+interface CompanyComparison {
+  company: string;
+  criteria: {
+    [key: string]: RatingCriteria;
+  };
 }
 
 interface ComparisonState {
   loading: boolean;
   error: string | null;
-  result: ComparisonResult[];
+  result: CompanyComparison[];
   message: string | null;
 }
 
@@ -30,9 +27,8 @@ const initialState: ComparisonState = {
   message: null,
 };
 
-// Async thunk to trigger the comparison
 export const compareSolutionProviders = createAsyncThunk<
-  { message: string; comparison_result: ComparisonResult[] },
+  { message: string; comparison_result: CompanyComparison[] },
   { project_id: string; solution_provider_ids: string[] },
   { rejectValue: string }
 >(

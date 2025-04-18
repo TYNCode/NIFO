@@ -29,12 +29,14 @@ interface CompanyCardProps {
     solution_provider_id: string;
   };
   onSelect: (selected: boolean, solution_provider_id: string) => void;
+  onDelete: (solution_provider_id: string) => void;
   project_id: string;
 }
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
   company,
   onSelect,
+  onDelete,
   project_id,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -188,6 +190,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               solution_provider_id: company.solution_provider_id,
             })
           );
+          onDelete(company.solution_provider_id);
         }}
         title={`Delete ${company.solution_provider_name}?`}
         message="This action cannot be undone."
@@ -221,7 +224,9 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                   <div className="text-sm">{details.offerings}</div>
                 </div>
                 <div className="mb-4">
-                  <div className="font-bold mb-1">Partnerships and Alliances</div>
+                  <div className="font-bold mb-1">
+                    Partnerships and Alliances
+                  </div>
                   <div className="text-sm">
                     {details.partnerships_and_alliances?.join(", ")}
                   </div>

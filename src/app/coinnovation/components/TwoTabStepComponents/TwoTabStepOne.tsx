@@ -12,7 +12,10 @@ import { RiAddCircleLine } from "react-icons/ri";
 import SolutionProviderForm from "./AddCompanyComponent/SolutionProviderForm";
 import { AppDispatch } from "../../../redux/store";
 import { compareSolutionProviders } from "../../../redux/features/source/solutionCompareSlice";
-import { enableStep, setSelectedTab } from "../../../redux/features/coinnovation/projectSlice";
+import {
+  enableStep,
+  setSelectedTab,
+} from "../../../redux/features/coinnovation/projectSlice";
 import { ClipLoader } from "react-spinners";
 
 interface SolutionProvider {
@@ -54,6 +57,13 @@ const TwoTabStepOne: React.FC = () => {
       selected
         ? [...prev, solution_provider_id]
         : prev.filter((id) => id !== solution_provider_id)
+    );
+  };
+
+  const handleCompanyDelete = (deletedId: string) => {
+    setSelectedCompanyIDs((prev) => prev.filter((id) => id !== deletedId));
+    setSelectedCompanies((prev) =>
+      selectedCompanyIDs.includes(deletedId) ? prev - 1 : prev
     );
   };
 
@@ -101,14 +111,21 @@ const TwoTabStepOne: React.FC = () => {
             <p className="">Key Customers</p>
           </div>
 
-          {solutionProviders.map((company) => (
-            <CompanyCard
-              key={company.solution_provider_id}
-              company={company}
-              onSelect={handleSelection}
-              project_id={project_id}
-            />
-          ))}
+          {solutionProviders.length === 0 ? (
+            <div className="text-center text-gray-500 mt-10">
+              No solution providers found. Try adding a new one.
+            </div>
+          ) : (
+            solutionProviders.map((company) => (
+              <CompanyCard
+                key={company.solution_provider_id}
+                company={company}
+                onSelect={handleSelection}
+                onDelete={handleCompanyDelete}
+                project_id={project_id}
+              />
+            ))
+          )}
 
           <div className="flex justify-end gap-3">
             <Button
@@ -117,7 +134,11 @@ const TwoTabStepOne: React.FC = () => {
               onClick={() => setIsModalOpen(true)}
               disabled={selectedCompanies > 0}
             />
-            <Button label="Shortlist" onClick={() => handleShortlist()} disabled={selectedCompanies <1}/>
+            <Button
+              label="Shortlist"
+              onClick={() => handleShortlist()}
+              disabled={selectedCompanies < 1}
+            />
             <Button
               label="Compare"
               icon={<FaRegFileAlt />}

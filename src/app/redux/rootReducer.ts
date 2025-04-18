@@ -6,7 +6,7 @@ import loginSlice from "./features/auth/loginSlice";
 import registerSlice from "./features/auth/registerSlice";
 import spotlightSlice from "./features/spotlight/spotlightSlice";
 import partnerConnectSlice from "./features/connection/connectionSlice";
-import companyProfileSlice from "./features/companyprofile/companyProfile";
+import companyProfileSlice from "./features/companyprofile/companyProfileSlice";
 import projectSlice from "./features/coinnovation/projectSlice";
 import challengeSlice from "./features/coinnovation/challengeSlice";
 import fileSlice from "./features/coinnovation/fileSlice";

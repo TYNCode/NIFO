@@ -12,6 +12,8 @@ interface SolutionProviderDetails {
   solution_provider_url: string;
   linkedin_url: string;
   other_usecases: string[];
+  relevant_usecase: string;
+  key_customers: string[];
 }
 
 interface ProviderState {
