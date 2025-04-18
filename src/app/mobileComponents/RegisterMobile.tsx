@@ -30,7 +30,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
     mode: "onChange",
   });
 
-  const [filteredCompanies, setFilteredCompanies] = useState<StartupType[]>([]);
+  const [filteredCompanies, setFilteredCompanies] = useState<any>([]);
   const [query, setQuery] = useState("");
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
     null
