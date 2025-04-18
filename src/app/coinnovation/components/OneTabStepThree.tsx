@@ -22,17 +22,13 @@ const OneTabStepThree: React.FC = () => {
     (state) => state.challenge.jsonForDocument
   );
   const projectID = useAppSelector((state) => state.projects.projectID);
-
   const [editableText, setEditableText] = useState("");
-
   const [challengeTab, setChallengeTab] = useState("Focus Areas");
   const [endUserTab, setEndUserTab] = useState("Roles");
   const [outcomeTab, setOutcomeTab] = useState("Functional Requirements");
-
   const [isChallengeOpen, setChallengeOpen] = useState(true);
   const [isEndUserOpen, setEndUserOpen] = useState(false);
   const [isOutcomeOpen, setOutcomeOpen] = useState(false);
-
   const [isEditingChallenge, setIsEditingChallenge] = useState(false);
   const [isEditingEndUser, setIsEditingEndUser] = useState(false);
   const [isEditingOutcome, setIsEditingOutcome] = useState(false);
@@ -42,6 +38,7 @@ const OneTabStepThree: React.FC = () => {
     dispatch(enableStep(2));
     dispatch(setSelectedTab(2));
   };
+
   const endUserTabMapping = {
     Roles: "Roles",
     "Current Methods Employed": "Current methods to overcome the challenge",
@@ -55,44 +52,52 @@ const OneTabStepThree: React.FC = () => {
     "List of Features & Functionalities": "List of Features & Functionalities",
   };
 
+  // Get data for a specific section and tab
   const getTabData = (section: string, tab: string) => {
     if (!jsonForDocument) return [];
 
-    if (section === 'challenge') {
-      const sectionArray = jsonForDocument['Challenge Scenario'];
-      const sectionItem = sectionArray?.find((item: any) => item.hasOwnProperty(tab));
+    // For 'challenge' section
+    if (section === "challenge") {
+      const sectionData = jsonForDocument["Challenge Scenario"];
 
+      // Check if the 'Challenge Scenario' is an object, not an array
+      if (typeof sectionData !== "object" || Array.isArray(sectionData)) {
+        console.error("Challenge Scenario is not an object:", sectionData);
+        return [];
+      }
+
+      const sectionItem = sectionData[tab];
       if (!sectionItem) return [];
 
-      const data = sectionItem[tab];
+      return typeof sectionItem === "string" ? [sectionItem] : sectionItem;
+    }
 
-      if (typeof data === 'string') {
-        return [data]; 
+    // For 'endUser' section
+    if (section === "endUser") {
+      const jsonKey = endUserTabMapping[tab];
+
+      const profileOfEndUsers = jsonForDocument["Profile of the End-Users"];
+      if (profileOfEndUsers && typeof profileOfEndUsers === "object") {
+        const data = profileOfEndUsers[jsonKey];
+        return data ? (Array.isArray(data) ? data : [data]) : [];
       }
 
-      if (Array.isArray(data)) {
-        return data;
-      }
-
+      console.error(
+        "'Profile of the End-Users' is not an object:",
+        profileOfEndUsers
+      );
       return [];
     }
 
-    if (section === 'endUser') {
-      const jsonKey = endUserTabMapping[tab];
-      const entry = jsonForDocument['Profile of the End-Users']?.find((item: any) => item.hasOwnProperty(jsonKey));
-      const data = entry?.[jsonKey];
-      return Array.isArray(data) ? data : [data];
-    }
-
-    if (section === 'outcome') {
+    // For 'outcome' section
+    if (section === "outcome") {
       const jsonKey = outcomeTabMapping[tab];
-      const data = jsonForDocument['Outcomes (Requirements & KPIs)']?.[jsonKey];
-      return Array.isArray(data) ? data : [data];
+      const data = jsonForDocument["Outcomes (Requirements & KPIs)"]?.[jsonKey];
+      return data ? (Array.isArray(data) ? data : [data]) : [];
     }
 
     return [];
   };
-
 
   const saveSection = async (
     section: string,
@@ -115,32 +120,54 @@ const OneTabStepThree: React.FC = () => {
       .map((line) => line.trim())
       .filter(Boolean);
 
-    const shouldConvertToObject =
-      section === "challenge" ||
-      (section === "outcome" &&
-        [
-          "Functional Requirements",
-          "List of Features & Functionalities",
-        ].includes(tabKey));
+    let valueArray: any = lines;
 
-    const valueArray: any = shouldConvertToObject
-      ? lines.map((line) => {
-          const [title, ...descParts] = line.split(":");
-          return {
-            Title: title.trim(),
-            Description: descParts.join(":").trim(),
-          };
+    // For object-type key-value editing like Focus Areas
+    const isKeyValueObject =
+      section === "challenge" &&
+      ["Focus Areas", "Technical Requirements", "Expected Benefits"].includes(
+        tabKey
+      );
+
+    const isTitleDescObject =
+      section === "outcome" &&
+      [
+        "Functional Requirements",
+        "List of Features & Functionalities",
+      ].includes(tabKey);
+
+    if (isKeyValueObject) {
+      valueArray = lines
+        .map((line) => {
+          const splitIndex = line.indexOf(":");
+          if (splitIndex === -1) return null;
+          const key = line.slice(0, splitIndex).trim();
+          const value = line.slice(splitIndex + 1).trim();
+          return { [key]: value };
         })
-      : lines;
+        .filter(Boolean);
+    }
+
+    if (isTitleDescObject) {
+      valueArray = lines
+        .map((line) => {
+          const splitIndex = line.indexOf(":");
+          if (splitIndex === -1) return null;
+          const title = line.slice(0, splitIndex).trim();
+          const description = line.slice(splitIndex + 1).trim();
+          return { Title: title, Description: description };
+        })
+        .filter(Boolean);
+    }
 
     const updatedJson = JSON.parse(JSON.stringify(jsonForDocument));
 
     if (sectionKey === "Challenge Scenario") {
-      const index = updatedJson[sectionKey].findIndex(
-        (item: any) => item[jsonKey]
-      );
-      if (index >= 0) {
-        updatedJson[sectionKey][index][jsonKey] = valueArray;
+      if (
+        typeof updatedJson[sectionKey] === "object" &&
+        !Array.isArray(updatedJson[sectionKey])
+      ) {
+        updatedJson[sectionKey][jsonKey] = valueArray;
       }
     } else {
       updatedJson[sectionKey][jsonKey] = valueArray;
@@ -161,13 +188,26 @@ const OneTabStepThree: React.FC = () => {
     setText: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const display = getTabData(section, tabKey);
+
     const formattedText = display
       .map((item: any) => {
         if (typeof item === "string") return item;
-        if (typeof item === "object")
-          return `${item.Title || ""}: ${item.Description || ""}`;
-        return JSON.stringify(item);
+        if (typeof item === "object") {
+          if (item.Title && item.Description) {
+            return `${item.Title}: ${item.Description}`;
+          }
+
+          // For { key: value } pairs like Focus Areas
+          const entries = Object.entries(item);
+          if (entries.length === 1) {
+            const [key, value] = entries[0];
+            return `${key}: ${value}`;
+          }
+        }
+
+        return ""; // fallback
       })
+      .filter(Boolean)
       .join("\n");
 
     setText(formattedText);

@@ -28,8 +28,14 @@ const coInnovationProcessSteps: ProcessStep[] = [
 
 const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   const dispatch = useAppDispatch();
-  const { projectID, selectedTab, projectDetails, fetching, error, enabledSteps } =
-    useAppSelector((state) => state.projects);
+  const {
+    projectID,
+    selectedTab,
+    projectDetails,
+    fetching,
+    error,
+    enabledSteps,
+  } = useAppSelector((state) => state.projects);
 
   useEffect(() => {
     const storedProjectID = localStorage.getItem("projectID");
@@ -65,9 +71,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
       <div className="flex flex-col relative">
         <NavBarCoin />
         <div className="bg-[#F4FCFF] mt-16 px-4">
-          {/* <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold">
-            Create Project
-          </div> */}
+          <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold"></div>
 
           <div className="flex gap-3 mx-2 justify-between">
             {coInnovationProcessSteps.map((process) => {
@@ -104,7 +108,9 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
                   </div>
                   <div
                     className={`w-full rounded-md ${
-                      isSelected ? "h-[4px] bg-[#F7F701]" : "h-[2px] bg-[#E7E7E7]"
+                      isSelected
+                        ? "h-[4px] bg-[#F7F701]"
+                        : "h-[2px] bg-[#E7E7E7]"
                     }`}
                   ></div>
                 </div>

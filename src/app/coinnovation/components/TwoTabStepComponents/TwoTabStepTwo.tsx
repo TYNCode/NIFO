@@ -16,21 +16,21 @@ interface StarRatingProps {
 
 const parameters = [
   "Customer Feedback",
-  "No. of Potential Clients",
-  "Solution Deployment Capabilities",
-  "Channel Partners",
-  "Product Differentiation / USP",
-  "Patents / IP Protection",
+  "Potential Client Fit",
+  "Deployment Capability",
+  "Channel Partner Network",
+  "Unique Selling Proposition (USP)",
+  "IP Protection Strength",
   "Competitor Benchmarking",
-  "Funding Stage",
-  "Incorporation Timeline",
-  "Product Stage",
+  "Funding Stage & Stability",
+  "Incorporation Timeline (experience)",
+  "Product Maturity Stage",
   "Team Strength",
 ];
 
 const StarRating: React.FC<StarRatingProps> = ({ rating }) => (
   <div className="flex gap-1 justify-center">
-    {[...Array(10)].map((_, index) => (
+    {[...Array(5)].map((_, index) => (
       <span key={index}>
         {index < rating ? (
           <FaStar className="text-yellow-400" />
@@ -51,26 +51,18 @@ const TwoTabStepTwo: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const getRatingArray = (company: any): number[] => {
-    return [
-      company.customer_feedback_rating,
-      company.potential_clients_rating,
-      company.deployment_capability_rating,
-      company.channel_partners_rating,
-      company.usp_rating,
-      company.ip_protection_rating,
-      company.competitors_benchmarking_rating,
-      company.funding_stage_rating,
-      company.incorporation_timeline_rating,
-      company.product_stage_rating,
-      company.team_strength_rating,
-    ];
+  const getRatingArray = (
+    criteria: Record<string, { score: number }>
+  ): number[] => {
+    return parameters.map((param) => criteria[param]?.score ?? 0);
   };
 
   const handleBackButton = () => {
     console.log("Back button clicked");
     dispatch(setActiveTabSource("02.a"));
   };
+
+  console.log("comparison results", comparisonResult)
 
   return (
     <div className="p-6 rounded-lg shadow-md">
@@ -86,11 +78,12 @@ const TwoTabStepTwo: React.FC = () => {
             <tr className="bg-gray-100 text-left">
               <th className="p-3 border border-gray-300">Parameters</th>
               {comparisonResult.map((company) => (
+      
                 <th
-                  key={company.solution_provider_name}
+                  key={company?.company}
                   className="p-3 border border-gray-300"
                 >
-                  {company.solution_provider_name}
+                  {company?.company}
                 </th>
               ))}
             </tr>
@@ -99,8 +92,9 @@ const TwoTabStepTwo: React.FC = () => {
             {parameters.map((param, rowIndex) => (
               <tr key={rowIndex} className="border border-gray-300">
                 <td className="p-3 border border-gray-300">{param}</td>
-                {comparisonResult.map((company) => {
-                  const ratings = getRatingArray(company);
+                {comparisonResult.map((company: any) => {
+                  const ratings = getRatingArray(company?.criteria);
+                  console.log("ratingsssss", company);
                   return (
                     <td
                       key={`${company.solution_provider_name}-${rowIndex}`}

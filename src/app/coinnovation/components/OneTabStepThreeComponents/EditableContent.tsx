@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface EditableContentProps {
   isEditing: boolean;
@@ -11,21 +11,35 @@ const EditableContent: React.FC<EditableContentProps> = ({
   isEditing,
   editableText,
   setEditableText,
-  displayItems
+  displayItems,
 }) => {
-
-  console.log('EditableContent', { isEditing, editableText, displayItems });
-  const renderItem = (item: any, index: number) => {
-    if (typeof item === 'string' || typeof item === 'number') {
+  const renderItem = (item: any, index: number): JSX.Element => {
+    // Handle strings
+    if (typeof item === "string" || typeof item === "number") {
       return <li key={index}>{item}</li>;
     }
 
-    if (typeof item === 'object' && item !== null) {
-      const title = item.Title || '';
-      const description = item.Description || '';
+    // Handle { Title: ..., Description: ... }
+    if (item.Title && item.Description) {
       return (
         <li key={index}>
-          <span className="font-semibold">{title}</span>: {description}
+          <span className="font-semibold">{item.Title}:</span>{" "}
+          {item.Description}
+        </li>
+      );
+    }
+
+    // Handle { key: value } style (e.g., {"Energy Optimization": "Focus on ..."})
+    if (typeof item === "object" && item !== null) {
+      const [key, rawValue] = Object.entries(item)[0];
+      const value =
+        typeof rawValue === "string" || typeof rawValue === "number"
+          ? rawValue
+          : JSON.stringify(rawValue); // fallback to string format
+
+      return (
+        <li key={index}>
+          <span className="font-semibold">{key}:</span> {value}
         </li>
       );
     }
@@ -44,7 +58,7 @@ const EditableContent: React.FC<EditableContentProps> = ({
       ) : (
         <ul className="list-disc list-inside space-y-2">
           {Array.isArray(displayItems) && displayItems.length > 0 ? (
-            displayItems.map(renderItem)
+            displayItems.map((item, index) => renderItem(item, index))
           ) : (
             <li className="text-gray-400 italic">No data available</li>
           )}

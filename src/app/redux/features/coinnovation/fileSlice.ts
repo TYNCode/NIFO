@@ -68,7 +68,7 @@ export const uploadProjectFiles = createAsyncThunk<
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
       if (projectID) formData.append("project_id", projectID);
-      if (problemStatement) formData.append("text", problemStatement); // ✅ Send the text
+      if (problemStatement) formData.append("text", problemStatement);
 
       const response = await axios.post(`${BASE_URL}/coinnovation/upload-file/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },

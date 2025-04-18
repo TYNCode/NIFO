@@ -23,6 +23,7 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
   const { projectID, problemStatement, creating } = useAppSelector(
     (state) => state.projects
   );
+  const uploading = useAppSelector((state) => state.file.uploading);
   const { storedFiles } = useAppSelector((state) => state.file);
 
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
@@ -55,6 +56,10 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
       .then(() => toast.success("File deleted successfully."))
       .catch(() => toast.error("Failed to delete file."));
   };
+
+  const isButtonDisabled =
+  !(isProblemEntered || files.length > 0) || creating || uploading;
+
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -90,11 +95,15 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
           <button
             className={`flex items-center gap-1 px-4 py-2 text-white rounded-xl shadow-md ${isProblemEntered || files.length > 0 ? "bg-[#2286C0]" : "bg-[#979797]"}`}
             onClick={handleSubmit}
-            disabled={!(isProblemEntered || files.length > 0) || creating}
+            disabled={isButtonDisabled}
           >
             <CiPlay1 className="text-lg" />
             <span className="font-semibold text-[13px]">
-              {creating ? "Processing" : "Describe"}
+              {uploading
+                ? "Processing..."
+                : creating
+                  ? "Processing"
+                  : "Describe"}
             </span>
           </button>
         </div>

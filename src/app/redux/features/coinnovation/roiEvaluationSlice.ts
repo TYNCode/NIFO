@@ -4,7 +4,7 @@ import axios from 'axios';
 export const fetchROIEvaluation = createAsyncThunk(
     'roiEvaluation/fetchROIEvaluation',
     async ({ project_id, solution_provider_id, force_refresh = false }: { project_id: string; solution_provider_id: string; force_refresh?: boolean }) => {
-        const response = await axios.post('http://127.0.0.1:8000/coinnovation/roi-evaluation/', {
+        const response = await axios.post('http://127.0.0.1:8000coinnovation/roi-evaluation/', {
             project_id,
             solution_provider_id,
             force_refresh
