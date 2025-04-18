@@ -12,6 +12,7 @@ import {
   setProjectID,
   setSelectedTab,
 } from "../../redux/features/coinnovation/projectSlice";
+import ProgressFour from "../components/EvaluateComponents/ProgressFour";
 
 interface ProcessStep {
   id: number;
@@ -59,7 +60,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
     1: <ProgressOne />,
     2: <ProgressTwo />,
     3: <div className="p-4 bg-gray-100">Step 3</div>,
-    4: <div className="p-4 bg-gray-100">Step 4</div>,
+    4: <div className="p-4 bg-gray-100"><ProgressFour/></div>,
     5: <div className="p-4 bg-gray-100">Step 5</div>,
   };
 

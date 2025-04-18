@@ -7,6 +7,7 @@ interface InputProps {
   label: string;
   value: string;
   type?: string;
+  className?: string; 
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
@@ -23,6 +24,7 @@ const Input: React.FC<InputProps> = ({
   onChange,
   readOnly = false,
   error,
+  className = "",
   required = false,
 }) => {
   const errorMessage =
@@ -38,16 +40,13 @@ const Input: React.FC<InputProps> = ({
         id={name}
         name={name}
         type={type}
-        className={`border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-          readOnly ? "bg-gray-100 cursor-not-allowed" : ""
-        } ${error ? "border-red-500" : ""}`}
+        className={`border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-0 focus:border-[#56A8F0] focus:ring-[#56A8F0] ${className} ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""} ${error ? "border-red-500" : ""}`}
         value={value}
         readOnly={readOnly}
         placeholder={placeholder}
         onChange={onChange}
         required={required}
       />
-      {/* Render the error message if it exists */}
       {errorMessage && (
         <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
       )}
