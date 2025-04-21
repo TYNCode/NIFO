@@ -33,6 +33,7 @@ const OneTabStepThree: React.FC = () => {
   const [isEditingEndUser, setIsEditingEndUser] = useState(false);
   const [isEditingOutcome, setIsEditingOutcome] = useState(false);
   const [isEditingKpiTable, setIsEditingKpiTable] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleSourceSolution = () => {
     dispatch(enableStep(2));
@@ -222,6 +223,34 @@ const OneTabStepThree: React.FC = () => {
 
   if (!jsonForDocument) return <div className="p-4">Loading...</div>;
 
+  const handleDownloadDoc = async () => {
+    setIsDownloading(true);
+    try {
+      const res = await fetch("https://tyn-server.azurewebsites.net/coinnovation/generate-docx/", {
+        method: "POST",
+        body: JSON.stringify({ project_id: projectID }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Failed to generate document");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Final_Document.docx";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Download failed:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+
   return (
     <div className="bg-[#F4FCFF] px-4 py-4 flex flex-col gap-4">
       <Accordion
@@ -356,7 +385,7 @@ const OneTabStepThree: React.FC = () => {
           label="Source solution providers"
           onClick={() => handleSourceSolution()}
         />
-        <DownloadButton onClick={() => {}} isLoading={false} />
+        <DownloadButton onClick={handleDownloadDoc} isLoading={false} />
       </div>
     </div>
   );
