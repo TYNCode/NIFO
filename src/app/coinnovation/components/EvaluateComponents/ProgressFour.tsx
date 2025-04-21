@@ -157,9 +157,9 @@ const ProgressFour: React.FC = () => {
                                 alt='Download ROI Evaluation'
                                 className='cursor-pointer' />
                         </div>
-                        <div>
+                        {/* <div>
                             <Image src="/coinnovation/uploadfileicon.svg" height={20} width={20} alt="File Upload Icon" />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
