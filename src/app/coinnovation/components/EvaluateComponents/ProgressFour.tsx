@@ -18,9 +18,6 @@ interface Tab {
 }
 
 
-
-
-
 const ProgressFour: React.FC = () => {
     const dispatch = useAppDispatch();
 
@@ -163,7 +160,11 @@ const ProgressFour: React.FC = () => {
                     <div className="text-sm font-semibold">ROI Evaluation & Customization</div>
                     <div className='flex flex-row'>
                         <div>
-                            <FaArrowDownLong onClick={handleDownloadROI} className='cursor-pointer' />
+                            <img
+                                onClick={handleDownloadROI}
+                                src='/coinnovation/download_questionairre.svg'
+                                alt='Download ROI Evaluation'
+                                className='cursor-pointer' />
                         </div>
                         <div>
 
