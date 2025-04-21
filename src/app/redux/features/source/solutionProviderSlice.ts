@@ -16,6 +16,7 @@ interface SolutionProviderState {
   loading: boolean;
   error: string | null;
   activeTabSource: string;
+  activeTabRoi: null | string;
 }
 
 const initialState: SolutionProviderState = {
@@ -24,6 +25,7 @@ const initialState: SolutionProviderState = {
   loading: false,
   error: null,
   activeTabSource: "02.a",
+  activeTabRoi: null
 };
 
 // ✅ Fetch all solution providers
@@ -117,6 +119,9 @@ const solutionProviderSlice = createSlice({
   reducers: {
     setActiveTabSource: (state, action: PayloadAction<string>) => {
       state.activeTabSource = action.payload;
+    },
+    setActiveTabRoi: (state,action:PayloadAction<string>) => {
+      state.activeTabRoi = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -174,7 +179,7 @@ const solutionProviderSlice = createSlice({
   }
 });
 
-export const { setActiveTabSource } = solutionProviderSlice.actions;
+export const {setActiveTabSource, setActiveTabRoi } = solutionProviderSlice.actions;
 export default solutionProviderSlice.reducer;
 
 // ✅ Optional selector to get full details of shortlisted providers

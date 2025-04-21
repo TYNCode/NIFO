@@ -24,7 +24,7 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedParamId, setSelectedParamId] = useState<number | null>(null);
 
-    const solutionProviderID = useAppSelector((state) => state.solutionProvider.activeTabSource);
+    const solutionProviderID = useAppSelector((state) => state.solutionProvider.activeTabRoi);
     const roiId = useAppSelector((state) => state.roiEvaluation.data?.id);
     const allData = useSelector((state: any) => state.roiEvaluation.data?.sub_parameters || []);
     const projectID = useAppSelector((state) => state.projects.projectDetails?.project_id || '');

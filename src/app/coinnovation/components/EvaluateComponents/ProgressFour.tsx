@@ -3,8 +3,8 @@ import SolutionProviders from './SolutionProviders';
 import Tabs from '../Tabs';
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import {
-    setActiveTabSource,
-    selectShortlistedProviders
+    selectShortlistedProviders,
+    setActiveTabRoi
 } from "../../../redux/features/source/solutionProviderSlice";
 
 interface Tab {
@@ -16,11 +16,11 @@ interface Tab {
 const ProgressFour: React.FC = () => {
     const dispatch = useAppDispatch();
 
-    const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
+    const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabRoi);
     const solutionProviders = useAppSelector(selectShortlistedProviders);
 
     const handleTabChange = (tabId: string) => {
-        dispatch(setActiveTabSource(tabId));
+        dispatch(setActiveTabRoi(tabId));
     };
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const ProgressFour: React.FC = () => {
 
         if (!isActiveTabValid && solutionProviders.length > 0) {
             const defaultId = solutionProviders[0].solution_provider_id;
-            dispatch(setActiveTabSource(defaultId));
+            dispatch(setActiveTabRoi(defaultId));
         }
     }, [solutionProviders, activeTabSource, dispatch]);
 

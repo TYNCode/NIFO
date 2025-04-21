@@ -14,6 +14,8 @@ interface Tab {
 const ProgressTwo: React.FC = () => {
   const dispatch = useAppDispatch();
   const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
+
+  console.log(activeTabSource,"activeTabSource")
   const solutionProviders = useAppSelector((state) => state.solutionProvider.solutionProviders);
   const tabs: Tab[] = [
     { id: "02.a", label: "Shortlisting of Solution Providers", enabled: true },
