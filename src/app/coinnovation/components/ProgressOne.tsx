@@ -43,7 +43,6 @@ const ProgressOne: React.FC = () => {
     setInitialLoading(false);
   }, [dispatch]);
 
-  // Save to localStorage when things change
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -55,7 +54,6 @@ const ProgressOne: React.FC = () => {
     }
   }, [activeTab, projectID]);
 
-  // Auto scroll to top on tab change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeTab]);
