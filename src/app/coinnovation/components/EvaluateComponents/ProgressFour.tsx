@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import SolutionProviders from './SolutionProviders';
 import Tabs from '../Tabs';
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setActiveTabSource } from "../../../redux/features/source/solutionProviderSlice";
-
-interface ProgressFourProps { }
+import {
+    setActiveTabSource,
+    selectShortlistedProviders
+} from "../../../redux/features/source/solutionProviderSlice";
 
 interface Tab {
     id: string;
@@ -12,11 +13,11 @@ interface Tab {
     enabled: boolean;
 }
 
-const ProgressFour: React.FC<ProgressFourProps> = () => {
+const ProgressFour: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
-    const solutionProviders = useAppSelector((state) => state.solutionProvider.solutionProviders);
+    const solutionProviders = useAppSelector(selectShortlistedProviders);
 
     const handleTabChange = (tabId: string) => {
         dispatch(setActiveTabSource(tabId));

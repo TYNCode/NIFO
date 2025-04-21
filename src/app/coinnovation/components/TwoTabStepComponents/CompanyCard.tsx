@@ -31,6 +31,8 @@ interface CompanyCardProps {
   onSelect: (selected: boolean, solution_provider_id: string) => void;
   onDelete: (solution_provider_id: string) => void;
   project_id: string;
+  selectedCompanies:any;
+  
 }
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
@@ -38,12 +40,15 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   onSelect,
   onDelete,
   project_id,
+  selectedCompanies
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const [editOpen, setEditOpen] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  console.log("selectedCompaniesss---->",selectedCompanies)
 
   const projectID = useAppSelector((state) => state.projects.projectID);
 

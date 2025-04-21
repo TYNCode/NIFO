@@ -4,6 +4,7 @@ import {
   fetchSolutionProviders,
   addSolutionProvider,
   setActiveTabSource,
+  saveShortlistedProviders,
 } from "../../../redux/features/source/solutionProviderSlice";
 import { FaRegFileAlt } from "react-icons/fa";
 import Button from "./Button";
@@ -40,6 +41,8 @@ const TwoTabStepOne: React.FC = () => {
 
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
+
+  console.log("selectedCompanyIDs",selectedCompanyIDs)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
 
@@ -50,9 +53,7 @@ const TwoTabStepOne: React.FC = () => {
   }, [dispatch, project_id]);
 
   const handleSelection = (selected: boolean, solution_provider_id: string) => {
-    console.log("selected--->", selected);
     setSelectedCompanies((prev) => (selected ? prev + 1 : prev - 1));
-    console.log("selectedCompanies", solution_provider_id);
     setSelectedCompanyIDs((prev) =>
       selected
         ? [...prev, solution_provider_id]
@@ -86,10 +87,25 @@ const TwoTabStepOne: React.FC = () => {
     dispatch(compareSolutionProviders(bodyForCompare));
   };
 
-  const handleShortlist = () => {
+
+const handleShortlist = async () => {
+  if (!project_id || selectedCompanyIDs.length === 0) return;
+
+  try {
+    await dispatch(
+      saveShortlistedProviders({
+        project_id,
+        selected_ids: selectedCompanyIDs,
+      })
+    ).unwrap();
+
     dispatch(enableStep(4));
     dispatch(setSelectedTab(4));
-  };
+  } catch (err) {
+    console.error("Failed to shortlist providers:", err);
+  }
+};
+
 
   if (!project_id) {
     return <p style={{ color: "red" }}>Project ID is missing</p>;
@@ -120,6 +136,7 @@ const TwoTabStepOne: React.FC = () => {
               <CompanyCard
                 key={company.solution_provider_id}
                 company={company}
+                selectedCompanies={selectedCompanies}
                 onSelect={handleSelection}
                 onDelete={handleCompanyDelete}
                 project_id={project_id}
