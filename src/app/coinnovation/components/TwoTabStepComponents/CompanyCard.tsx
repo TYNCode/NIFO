@@ -8,18 +8,20 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import Badge from "./Badge";
 import { FiEdit2 } from "react-icons/fi";
-import IconButton from "./IconButton";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSolutionProviderDetails } from "../../../redux/features/source/solutionProviderDetailsSlice";
-import { AppDispatch, RootState } from "../../../redux/store";
-import { updateSolutionProvider } from "../../../redux/features/source/solutionProviderDetailsSlice";
-import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProviderForm";
-import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
-import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { ClipLoader } from "react-spinners";
-import { useAppSelector } from "../../../redux/hooks";
+
+import Badge from "./Badge";
+import IconButton from "./IconButton";
+import EditSolutionProviderForm from "./EditCompanyComponent/EditSolutionProviderForm";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
+
+import {
+  fetchSolutionProviderDetails,
+  updateSolutionProvider,
+} from "../../../redux/features/source/solutionProviderDetailsSlice";
+import { deleteSolutionProvider } from "../../../redux/features/source/solutionProviderSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 
 interface CompanyCardProps {
   company: {
@@ -31,44 +33,51 @@ interface CompanyCardProps {
   onSelect: (selected: boolean, solution_provider_id: string) => void;
   onDelete: (solution_provider_id: string) => void;
   project_id: string;
-  selectedCompanies:any;
-  
+  selectedCompanies: any;
 }
+
+const ContactBadge: React.FC<{
+  icon: React.ReactNode;
+  text: string;
+  href?: string;
+}> = ({ icon, text, href }) => (
+  <a
+    href={href || "#"}
+    target={href ? "_blank" : "_self"}
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-2 px-3 py-1 text-sm text-[#0071C1] rounded-xl mb-2 bg-[#E3F2FE]"
+  >
+    {icon}
+    {text}
+  </a>
+);
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
   company,
   onSelect,
   onDelete,
   project_id,
-  selectedCompanies
+  selectedCompanies,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
   const [editOpen, setEditOpen] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  console.log("selectedCompaniesss---->",selectedCompanies)
 
+  console.log(selectedCompanies >=1, "selectedCompanies")
+  const dispatch = useAppDispatch();
   const projectID = useAppSelector((state) => state.projects.projectID);
-
-  const handleUpdate = (updatedData: any) => {
-    dispatch(
-      updateSolutionProvider({
-        project_id: projectID,
-        solution_provider_id: company.solution_provider_id,
-        updatedData,
-      })
-    );
-  };
+  const solutionProviders = useAppSelector(
+    (state) => state.solutionProvider.solutionProviders
+  );
 
   const {
     data: details,
     loading,
     error,
-  } = useSelector(
-    (state: RootState) =>
-      state.solutionProviderDetails[company.solution_provider_id]
+  } = useAppSelector(
+    (state) => state.solutionProviderDetails[company.solution_provider_id]
   ) || {
     loading: false,
     error: null,
@@ -86,8 +95,18 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
     }
   }, [isOpen, dispatch, company.solution_provider_id, project_id, details]);
 
-  const formatUseCases = (usecases: string[]) => {
-    return usecases.map((uc, idx) => {
+  const handleUpdate = (updatedData: any) => {
+    dispatch(
+      updateSolutionProvider({
+        project_id: projectID,
+        solution_provider_id: company.solution_provider_id,
+        updatedData,
+      })
+    );
+  };
+
+  const formatUseCases = (usecases: string[]) =>
+    usecases.map((uc, idx) => {
       try {
         const parsed = JSON.parse(uc.replace(/'/g, '"'));
         return (
@@ -100,31 +119,33 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
         return <li key={idx}>{uc}</li>;
       }
     });
+
+  const handleEditClick = () => {
+    setEditOpen(true);
+    if (!details) {
+      setLoadingEdit(true);
+      dispatch(
+        fetchSolutionProviderDetails({
+          project_id,
+          solution_provider_id: company.solution_provider_id,
+        })
+      ).finally(() => setLoadingEdit(false));
+    }
   };
 
-  const ContactBadge = ({
-    icon,
-    text,
-    href,
-  }: {
-    icon: React.ReactNode;
-    text: string;
-    href?: string;
-  }) => (
-    <a
-      href={href || "#"}
-      target={href ? "_blank" : "_self"}
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-3 py-1 text-sm  text-[#0071C1] rounded-xl mb-2 bg-[#E3F2FE]  "
-    >
-      {icon}
-      {text}
-    </a>
-  );
+  const handleDeleteConfirm = () => {
+    dispatch(
+      deleteSolutionProvider({
+        project_id,
+        solution_provider_id: company.solution_provider_id,
+      })
+    );
+    onDelete(company.solution_provider_id);
+  };
 
   return (
     <div className="border rounded-lg shadow-sm bg-white p-4 mb-4">
-      <div className="flex items-center justify-between  gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-6 w-[15%]">
           <input
             type="checkbox"
@@ -156,25 +177,15 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             color="text-[#2286C0]"
             hoverColor="hover:text-red-500"
             onClick={() => setShowDeleteModal(true)}
+            disabled={solutionProviders.length < 2 || selectedCompanies >= 1}
           />
+
           <IconButton
             icon={<FiEdit2 />}
             color="text-[#2286C0]"
             hoverColor="hover:text-green-500"
-            onClick={() => {
-              setEditOpen(true);
-              if (!details) {
-                setLoadingEdit(true);
-                dispatch(
-                  fetchSolutionProviderDetails({
-                    project_id,
-                    solution_provider_id: company.solution_provider_id,
-                  })
-                ).finally(() => {
-                  setLoadingEdit(false);
-                });
-              }
-            }}
+            onClick={handleEditClick}
+            disabled={selectedCompanies >= 1}
           />
 
           <IconButton
@@ -188,15 +199,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
       <ConfirmDeleteModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        onConfirm={() => {
-          dispatch(
-            deleteSolutionProvider({
-              project_id,
-              solution_provider_id: company.solution_provider_id,
-            })
-          );
-          onDelete(company.solution_provider_id);
-        }}
+        onConfirm={handleDeleteConfirm}
         title={`Delete ${company.solution_provider_name}?`}
         message="This action cannot be undone."
       />
@@ -215,64 +218,74 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 
       {isOpen && (
         <div className="mt-4 p-4 border-t">
-          {loading && (
+          {loading ? (
             <div className="flex justify-center items-center h-40">
               <ClipLoader color="#3B82F6" size={40} />
             </div>
-          )}
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {details && (
-            <div className="flex gap-6">
-              <div className="w-[70%]">
-                <div className="mb-4">
-                  <div className="font-bold mb-1">Product/Services Offered</div>
-                  <div className="text-sm">{details.offerings}</div>
-                </div>
-                <div className="mb-4">
-                  <div className="font-bold mb-1">
-                    Partnerships and Alliances
+          ) : error ? (
+            <p style={{ color: "red" }}>{error}</p>
+          ) : (
+            details && (
+              <div className="flex gap-6">
+                <div className="w-[70%]">
+                  <div className="mb-4">
+                    <div className="font-bold mb-1">
+                      Product/Services Offered
+                    </div>
+                    <div className="text-sm">{details.offerings}</div>
                   </div>
-                  <div className="text-sm">
-                    {details.partnerships_and_alliances?.join(", ")}
+
+                  <div className="mb-4">
+                    <div className="font-bold mb-1">
+                      Partnerships and Alliances
+                    </div>
+                    <div className="text-sm">
+                      {details.partnerships_and_alliances?.join(", ")}
+                    </div>
                   </div>
-                </div>
-                <div className="mb-4">
-                  <div className="font-bold mb-1">
-                    Unique Selling Proposition (USP)
+
+                  <div className="mb-4">
+                    <div className="font-bold mb-1">
+                      Unique Selling Proposition (USP)
+                    </div>
+                    <div className="text-sm">{details.usp}</div>
                   </div>
-                  <div className="text-sm">{details.usp}</div>
+
+                  <div className="mb-2 font-bold">Other Use Cases</div>
+                  <ul className="list-disc list-inside text-sm">
+                    {formatUseCases(details.other_usecases)}
+                  </ul>
                 </div>
 
-                <div className="mb-2 font-bold">Other Use Cases</div>
-                <ul className="list-disc list-inside text-sm">
-                  {formatUseCases(details.other_usecases)}
-                </ul>
+                <div className="w-[30%] flex flex-col gap-2 mt-1">
+                  <div className="font-bold mb-1">Contact Details:</div>
+                  {details.email && (
+                    <ContactBadge
+                      icon={<FaEnvelope />}
+                      text={details.email}
+                      href={`mailto:${details.email}`}
+                    />
+                  )}
+                  {details.phone_number && (
+                    <ContactBadge
+                      icon={<FaPhone />}
+                      text={details.phone_number}
+                      href={`tel:${details.phone_number}`}
+                    />
+                  )}
+                  <ContactBadge
+                    icon={<FaGlobe />}
+                    text="Website"
+                    href={details.solution_provider_url}
+                  />
+                  <ContactBadge
+                    icon={<FaLinkedin />}
+                    text="LinkedIn"
+                    href={details.linkedin_url}
+                  />
+                </div>
               </div>
-
-              <div className="w-[30%] flex flex-col gap-2 mt-1">
-                <div className="font-bold mb-1">Contact Details:</div>
-                <ContactBadge
-                  icon={<FaEnvelope />}
-                  text={details.email}
-                  href={`mailto:${details.email}`}
-                />
-                <ContactBadge
-                  icon={<FaPhone />}
-                  text={details.phone_number}
-                  href={`tel:${details.phone_number}`}
-                />
-                <ContactBadge
-                  icon={<FaGlobe />}
-                  text="Website"
-                  href={details.solution_provider_url}
-                />
-                <ContactBadge
-                  icon={<FaLinkedin />}
-                  text="LinkedIn"
-                  href={details.linkedin_url}
-                />
-              </div>
-            </div>
+            )
           )}
         </div>
       )}

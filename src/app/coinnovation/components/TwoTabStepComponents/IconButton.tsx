@@ -6,6 +6,7 @@ interface IconButtonProps {
   color?: string;
   hoverColor?: string;
   size?: string;
+  disabled?: any
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -14,11 +15,13 @@ const IconButton: React.FC<IconButtonProps> = ({
   color = "text-[#2286C0]",
   hoverColor = "",
   size = "w-4 h-4",
+  disabled
 }) => {
   return (
     <button
-      className={`transition-all ${color} ${hoverColor}`}
+      className={`transition-all ${disabled ? 'text-gray-300 cursor-default' : `${color} ${hoverColor}`}`}
       onClick={onClick}
+      disabled={disabled}
     >
       <div className={size}>{icon}</div>
     </button>
