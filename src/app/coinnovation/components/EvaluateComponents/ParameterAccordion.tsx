@@ -21,8 +21,10 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [autoSaving, setAutoSaving] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedParamId, setSelectedParamId] = useState<number | null>(null);
 
-    const solutionProviderID = useAppSelector((state) => state.solutionProvider.activeTabSource);
+    const solutionProviderID = useAppSelector((state) => state.solutionProvider.activeTabRoi);
     const roiId = useAppSelector((state) => state.roiEvaluation.data?.id);
     const allData = useSelector((state: any) => state.roiEvaluation.data?.sub_parameters || []);
     const projectID = useAppSelector((state) => state.projects.projectDetails?.project_id || '');
@@ -45,28 +47,19 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
     }, [solutionProviderID, projectID, dispatch]);
 
     const calculateTotal = (units: number | null, cost: number | null) => {
-        if (units != null && cost != null) {
-            return units * cost;
-        }
-        return null;
+        return units != null && cost != null ? units * cost : null;
     };
 
-    const handleInputChange = (
-        id: number,
-        field: 'uom' | 'per_unit_cost' | 'units',
-        value: string | number
-    ) => {
+    const handleInputChange = (id: number, field: 'uom' | 'per_unit_cost' | 'units', value: string | number) => {
         const item = allData.find((param: any) => param.id === id);
         if (!item) return;
 
         const updated = {
             ...item,
             [field]: value,
-            total:
-                field === 'units' || field === 'per_unit_cost'
-                    ? Number(field === 'units' ? value : item.units) *
-                    Number(field === 'per_unit_cost' ? value : item.per_unit_cost)
-                    : item.total,
+            total: field === 'units' || field === 'per_unit_cost'
+                ? Number(field === 'units' ? value : item.units) * Number(field === 'per_unit_cost' ? value : item.per_unit_cost)
+                : item.total,
         };
 
         dispatch(updateSubParameter({ id, updates: updated }));
@@ -107,23 +100,28 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
         }
     };
 
-    const handleDelete = async (id: number) => {
-        const confirmed = window.confirm("Are you sure you want to delete this parameter?");
-        if (!confirmed || !roiId || !sectionKey) return;
+    const handleDeleteClick = (id: number) => {
+        setSelectedParamId(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!selectedParamId || !roiId || !sectionKey) return;
 
         try {
-            await dispatch(deleteSubParameter({ roiId, section: sectionKey, id }) as any);
+            await dispatch(deleteSubParameter({ roiId, section: sectionKey, id: selectedParamId }) as any);
             toast.success("Parameter deleted successfully");
 
-            // Refresh the data
             await dispatch(fetchROIEvaluation({
                 project_id: String(projectID),
-                solution_provider_id: String(solutionProviderID),
-                force_refresh: true
+                solution_provider_id: String(solutionProviderID)
             }) as any);
         } catch (err) {
             toast.error("Failed to delete parameter");
             console.error(err);
+        } finally {
+            setShowDeleteModal(false);
+            setSelectedParamId(null);
         }
     };
 
@@ -141,16 +139,10 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
                         <div className="text-center">Per Unit Cost</div>
                         <div className="text-center">Total Units</div>
                         <div className="text-center">Total</div>
-                        <div className="text-right">
-                            <IoIosAddCircleOutline className="cursor-pointer inline-block" />
-                        </div>
                     </div>
 
                     {data.map((item: any) => (
-                        <div
-                            key={item.id}
-                            className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 my-1 bg-white py-3 px-3 shadow-sm rounded-md items-center"
-                        >
+                        <div key={item.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 my-1 bg-white py-3 px-3 shadow-sm rounded-md items-center">
                             <div className="truncate text-[#0071C1] font-semibold text-xs">
                                 {item.parameter_name ?? '—'}
                             </div>
@@ -160,27 +152,21 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
                                     <input
                                         type="text"
                                         value={item.uom ?? ''}
-                                        onChange={(e) =>
-                                            handleInputChange(item.id, 'uom', e.target.value)
-                                        }
+                                        onChange={(e) => handleInputChange(item.id, 'uom', e.target.value)}
                                         onBlur={handleBlur}
                                         className="text-center text-[#0071C1] font-semibold text-xs bg-transparent border-b border-gray-300 focus:outline-none"
                                     />
                                     <input
                                         type="number"
                                         value={item.per_unit_cost ?? ''}
-                                        onChange={(e) =>
-                                            handleNumericInputChange(e, item.id, 'per_unit_cost')
-                                        }
+                                        onChange={(e) => handleNumericInputChange(e, item.id, 'per_unit_cost')}
                                         onBlur={handleBlur}
                                         className="text-center text-[#0071C1] font-semibold text-xs bg-transparent border-b border-gray-300 focus:outline-none"
                                     />
                                     <input
                                         type="number"
                                         value={item.units ?? ''}
-                                        onChange={(e) =>
-                                            handleNumericInputChange(e, item.id, 'units')
-                                        }
+                                        onChange={(e) => handleNumericInputChange(e, item.id, 'units')}
                                         onBlur={handleBlur}
                                         className="text-center text-[#0071C1] font-semibold text-xs bg-transparent border-b border-gray-300 focus:outline-none"
                                     />
@@ -197,14 +183,28 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
                                 {calculateTotal(item.units, item.per_unit_cost) ?? '—'}
                             </div>
 
-                            <div
-                                className="text-red-500 cursor-pointer pl-2 text-right"
-                                onClick={() => handleDelete(item.id)}
-                            >
+                            <div className="text-red-500 cursor-pointer pl-2 text-right" onClick={() => handleDeleteClick(item.id)}>
                                 <RiDeleteBinLine />
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
+                        <p className="mb-6">Are you sure you want to delete this parameter?</p>
+                        <div className="flex justify-end space-x-4">
+                            <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                                Cancel
+                            </button>
+                            <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

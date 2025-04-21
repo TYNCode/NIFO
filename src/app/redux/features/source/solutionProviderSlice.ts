@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { updateSolutionProvider } from "./solutionProviderDetailsSlice";
 
+
 interface SolutionProvider {
   solution_provider_id: string;
   solution_provider_name: string;
@@ -11,18 +12,23 @@ interface SolutionProvider {
 
 interface SolutionProviderState {
   solutionProviders: SolutionProvider[];
+  shortlistedProviders: string[];
   loading: boolean;
   error: string | null;
   activeTabSource: string;
+  activeTabRoi: null | string;
 }
 
 const initialState: SolutionProviderState = {
   solutionProviders: [],
+  shortlistedProviders: [],
   loading: false,
   error: null,
   activeTabSource: "02.a",
+  activeTabRoi: null
 };
 
+// ✅ Fetch all solution providers
 export const fetchSolutionProviders = createAsyncThunk<
   SolutionProvider[],
   void,
@@ -44,6 +50,7 @@ export const fetchSolutionProviders = createAsyncThunk<
   }
 });
 
+// ✅ Add a solution provider
 export const addSolutionProvider = createAsyncThunk<
   SolutionProvider,
   {
@@ -55,46 +62,56 @@ export const addSolutionProvider = createAsyncThunk<
     solution_provider_url: string;
   },
   { rejectValue: string }
->(
-  "solutionProvider/addSolutionProvider",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/add-solution-provider/",
-        formData,
-        { headers: { "Content-Type": "application/json" } }
-      );
-      return response.data.provider_details;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
+>("solutionProvider/addSolutionProvider", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(
+      "https://tyn-server.azurewebsites.net/coinnovation/add-solution-provider/",
+      formData,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data.provider_details;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || error.message);
   }
-);
+});
 
+// ✅ Delete a solution provider
 export const deleteSolutionProvider = createAsyncThunk<
   { solution_provider_id: string },
   { project_id: string; solution_provider_id: string },
   { rejectValue: string }
->(
-  "solutionProvider/deleteSolutionProvider",
-  async ({ project_id, solution_provider_id }, { rejectWithValue }) => {
-    try {
-      await axios.delete(
-        "https://tyn-server.azurewebsites.net/coinnovation/delete-solution-provider/",
-        {
-          headers: { "Content-Type": "application/json" },
-          data: {
-            project_id,
-            solution_provider_id,
-          },
-        }
-      );
-      return { solution_provider_id };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
+>("solutionProvider/deleteSolutionProvider", async ({ project_id, solution_provider_id }, { rejectWithValue }) => {
+  try {
+    await axios.delete(
+      "https://tyn-server.azurewebsites.net/coinnovation/delete-solution-provider/",
+      {
+        headers: { "Content-Type": "application/json" },
+        data: { project_id, solution_provider_id }
+      }
+    );
+    return { solution_provider_id };
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || error.message);
   }
-);
+});
+
+// ✅ Save shortlist of providers
+export const saveShortlistedProviders = createAsyncThunk<
+  string[],
+  { project_id: string; selected_ids: string[] },
+  { rejectValue: string }
+>("solutionProvider/saveShortlistedProviders", async ({ project_id, selected_ids }, { rejectWithValue }) => {
+  try {
+    await axios.post(
+      "https://tyn-server.azurewebsites.net/coinnovation/shortlist-solution-providers/",
+      { project_id, selected_ids },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return selected_ids;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
 
 const solutionProviderSlice = createSlice({
   name: "solutionProvider",
@@ -103,6 +120,9 @@ const solutionProviderSlice = createSlice({
     setActiveTabSource: (state, action: PayloadAction<string>) => {
       state.activeTabSource = action.payload;
     },
+    setActiveTabRoi: (state,action:PayloadAction<string>) => {
+      state.activeTabRoi = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -110,9 +130,7 @@ const solutionProviderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-
       .addCase(fetchSolutionProviders.fulfilled, (state, action) => {
-        state.loading = false;
         state.solutionProviders = action.payload || [];
         state.loading = false;
       })
@@ -125,7 +143,6 @@ const solutionProviderSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-
       .addCase(addSolutionProvider.fulfilled, (state, action) => {
         state.solutionProviders.push(action.payload);
         state.loading = false;
@@ -134,13 +151,13 @@ const solutionProviderSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Failed to add solution provider";
       })
+
       .addCase(deleteSolutionProvider.fulfilled, (state, action) => {
         state.solutionProviders = state.solutionProviders.filter(
-          (provider) =>
-            provider.solution_provider_id !==
-            action.payload.solution_provider_id
+          (provider) => provider.solution_provider_id !== action.payload.solution_provider_id
         );
       })
+
       .addCase(updateSolutionProvider.fulfilled, (state, action) => {
         const { solution_provider_id, data } = action.payload;
         const index = state.solutionProviders.findIndex(
@@ -151,12 +168,22 @@ const solutionProviderSlice = createSlice({
           state.solutionProviders[index] = {
             ...state.solutionProviders[index],
             relevant_usecase: data.relevant_usecase,
-            key_customers: data.key_customers,
+            key_customers: data.key_customers
           };
         }
+      })
+
+      .addCase(saveShortlistedProviders.fulfilled, (state, action) => {
+        state.shortlistedProviders = action.payload;
       });
-  },
+  }
 });
 
-export const { setActiveTabSource } = solutionProviderSlice.actions;
+export const {setActiveTabSource, setActiveTabRoi } = solutionProviderSlice.actions;
 export default solutionProviderSlice.reducer;
+
+// ✅ Optional selector to get full details of shortlisted providers
+export const selectShortlistedProviders = (state) =>
+  state.solutionProvider.solutionProviders.filter((sp) =>
+    state.solutionProvider.shortlistedProviders.includes(sp.solution_provider_id)
+  );

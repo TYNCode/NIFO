@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import SolutionProviders from './SolutionProviders';
 import Tabs from '../Tabs';
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setActiveTabSource } from "../../../redux/features/source/solutionProviderSlice";
+import {
+    selectShortlistedProviders,
+    setActiveTabRoi
+} from "../../../redux/features/source/solutionProviderSlice";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { useSelector, useDispatch } from 'react-redux';
 import * as XLSX from "xlsx-js-style";
 
-
-interface ProgressFourProps { }
 
 interface Tab {
     id: string;
@@ -18,11 +19,13 @@ interface Tab {
 
 
 
-const ProgressFour: React.FC<ProgressFourProps> = () => {
+
+
+const ProgressFour: React.FC = () => {
     const dispatch = useAppDispatch();
 
-    const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabSource);
-    const solutionProviders = useAppSelector((state) => state.solutionProvider.solutionProviders);
+    const activeTabSource = useAppSelector((state) => state.solutionProvider.activeTabRoi);
+    const solutionProviders = useAppSelector(selectShortlistedProviders);
 
 
     const solutionProviderID = useAppSelector((state) => state.solutionProvider.activeTabSource);
@@ -133,7 +136,7 @@ const ProgressFour: React.FC<ProgressFourProps> = () => {
 
 
     const handleTabChange = (tabId: string) => {
-        dispatch(setActiveTabSource(tabId));
+        dispatch(setActiveTabRoi(tabId));
     };
 
     useEffect(() => {
@@ -143,7 +146,7 @@ const ProgressFour: React.FC<ProgressFourProps> = () => {
 
         if (!isActiveTabValid && solutionProviders.length > 0) {
             const defaultId = solutionProviders[0].solution_provider_id;
-            dispatch(setActiveTabSource(defaultId));
+            dispatch(setActiveTabRoi(defaultId));
         }
     }, [solutionProviders, activeTabSource, dispatch]);
 
