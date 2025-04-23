@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ParameterAccordion from './ParameterAccordion';
 import { FiEdit2 } from "react-icons/fi";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
+import { useAppSelector } from '../../../redux/hooks';
 
-interface SolutionProvidersProps { }
+interface SolutionProvidersProps {
+    providerId: string;
+}
 
-const SolutionProviders: React.FC<SolutionProvidersProps> = () => {
-    const [openAccordions, setOpenAccordions] = useState<{ [key: number]: boolean }>({});
-    const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
+const SolutionProviders: React.FC<{ providerId: string }> = ({ providerId }) => {
+    const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({});
+    const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
 
-    const toggleAccordion = (index: number) => {
+    const toggleAccordion = (sectionKey: string) => {
         setOpenAccordions(prev => ({
             ...prev,
-            [index]: !prev[index]
+            [sectionKey]: !prev[sectionKey]
         }));
     };
 
-    const toggleEditMode = (index: number) => {
-        setEditMode((prev) => ({
+    const toggleEditMode = (sectionKey: string) => {
+        setEditMode(prev => ({
             ...prev,
-            [index]: !prev[index]
+            [sectionKey]: !prev[sectionKey]
         }));
     };
 
@@ -31,31 +34,45 @@ const SolutionProviders: React.FC<SolutionProvidersProps> = () => {
         { label: "Invaluable ROI", key: "Invaluable_ROI" }
     ];
 
-
     return (
         <div className="flex flex-col gap-6">
-            {sections.map((section, index) => (
-                <div key={index} className={`${openAccordions[index] ? "" : "border-b pb-2"}`}>
-                    <div className="flex flex-row justify-between items-center">
-                        <div className="text-[#4A4D4E] text-sm font-semibold">{section.label}</div>
-                        <div className="flex flex-row gap-8 items-center">
-                            <div className="text-[#2286C0] cursor-pointer" onClick={() => toggleEditMode(index)}>
-                                {editMode[index] ? <span className="text-xs font-semibold">💾 Save</span> : <FiEdit2 />}
-                            </div>
-                            <div onClick={() => toggleAccordion(index)} className="text-[#2286C0] cursor-pointer">
-                                {openAccordions[index] ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            {sections.map((section) => {
+                const isOpen = openAccordions[section.key] ?? false;
+                const isEditing = editMode[section.key] ?? false;
+
+                return (
+                    <div key={section.key} className={`${isOpen ? "" : "border-b pb-2"}`}>
+                        <div className="flex flex-row justify-between items-center">
+                            <div className="text-[#4A4D4E] text-sm font-semibold">{section.label}</div>
+                            <div className="flex flex-row gap-8 items-center">
+                                <div
+                                    className={`text-[#2286C0] cursor-pointer transition-opacity ${!isOpen ? 'pointer-events-none text-gray-500 opacity-50' : ''}`}
+                                    onClick={() => toggleEditMode(section.key)}
+                                >
+                                    {isEditing ? (
+                                        <span className="text-xs font-semibold">💾 Save</span>
+                                    ) : (
+                                        <FiEdit2 />
+                                    )}
+                                </div>
+
+                                <div onClick={() => toggleAccordion(section.key)} className="text-[#2286C0] cursor-pointer">
+                                    {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                                </div>
                             </div>
                         </div>
+                        {isOpen && (
+                            <div className="mt-2">
+                                <ParameterAccordion sectionKey={section.key} isEditable={isEditing} />
+                            </div>
+                        )}
                     </div>
-                    {openAccordions[index] && (
-                        <div className="mt-2">
-                            <ParameterAccordion sectionKey={section.key} isEditable={editMode[index] ?? false} />
-                        </div>
-                    )}
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
+
+
 
 export default SolutionProviders;
