@@ -18,6 +18,7 @@ import {
   setSelectedTab,
 } from "../../../redux/features/coinnovation/projectSlice";
 import { ClipLoader } from "react-spinners";
+import { useAppSelector } from "../../../redux/hooks";
 
 interface SolutionProvider {
   solution_provider_id: string;
@@ -29,15 +30,10 @@ interface SolutionProvider {
 const TwoTabStepOne: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { solutionProviders, loading, error } = useSelector(
-    (state: {
-      solutionProvider: {
-        solutionProviders: SolutionProvider[];
-        loading: boolean;
-        error: string | null;
-      };
-    }) => state.solutionProvider
+  const { solutionProviders, loading, error } = useAppSelector(
+    (state) => state.solutionProvider
   );
+  
 
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
@@ -103,6 +99,7 @@ const handleShortlist = async () => {
     dispatch(setSelectedTab(4));
   } catch (err) {
     console.error("Failed to shortlist providers:", err);
+    // Optionally show UI error
   }
 };
 

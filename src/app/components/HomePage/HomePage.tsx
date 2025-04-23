@@ -17,7 +17,6 @@ import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
 import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader";
 import { ChatHistoryResponse, StartupType } from "../../interfaces";
-import { encryptURL } from "../../utils/shareUtils";
 import { postRequestWithAccessToken, useAppDispatch } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -55,9 +54,6 @@ export default function HomePage() {
     [key: number]: boolean;
   }>({});
 
-  const [comparisonTableResponse, setComparisonTableResponse] = useState<any>(
-    []
-  );
 
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("user");
@@ -433,12 +429,6 @@ export default function HomePage() {
               open={open}
               handleToggleLeftFrame={handleToggleLeftFrameNavbar}
             />
-            {/* <IoShareSocialOutline
-              size={24}
-              className="ml-4 cursor-pointer"
-              onClick={handleShareClick}
-              title="Share Chat Session"
-            /> */}
           </div>
         </div>
 
