@@ -42,36 +42,48 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
   };
 
   return (
-    <div className="w-full">
-      <div className="text-sm py-3 px-2 text-gray-400 font-semibold">
-        Query History
+    <div className="bg-[#EEF7FF]">
+      
+      <div className="mx-2 bg-white ">
+        <div className="text-xs py-3 px-2 text-gray-400 font-semibold">
+          Query History
+        </div>
+
+        {loading && <p className="px-3 py-2 text-gray-500">Loading history...</p>}
+        {error && <p className="px-3 py-2 text-red-500">Error: {error}</p>}
+
+        <div>
+          {todaySessions.length > 0 && (
+            <>
+              <div className="text-xs py-2 px-2 text-gray-500 font-semibold">Today</div>
+              <div className="text-xs">
+                {todaySessions.slice().reverse().map(renderSession)}
+              </div>
+
+            </>
+          )}
+
+          {previous7DaysSessions.length > 0 && (
+            <>
+              <div className="text-xs py-2 px-2 text-gray-500 font-semibold">Previous 7 Days</div>
+              <div className="text-xs">
+                {previous7DaysSessions.slice().reverse().map(renderSession)}
+              </div>
+            </>
+          )}
+
+          {past30DaysSessions.length > 0 && (
+            <>
+              <div className="text-xs py-2 px-2 text-gray-500 font-semibold">Past 30 Days</div>
+              <div className="text-xs">
+                {past30DaysSessions.slice().reverse().map(renderSession)}
+              </div>
+
+            </>
+          )}
+        </div>
       </div>
-
-      {loading && <p className="px-3 py-2 text-gray-500">Loading history...</p>}
-      {error && <p className="px-3 py-2 text-red-500">Error: {error}</p>}
-
-      <div>
-        {todaySessions.length > 0 && (
-          <>
-            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">Today</div>
-            {todaySessions.slice().reverse().map(renderSession)}
-          </>
-        )}
-
-        {previous7DaysSessions.length > 0 && (
-          <>
-            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">Previous 7 Days</div>
-            {previous7DaysSessions.slice().reverse().map(renderSession)}
-          </>
-        )}
-
-        {past30DaysSessions.length > 0 && (
-          <>
-            <div className="text-sm py-2 px-2 text-gray-500 font-semibold">Past 30 Days</div>
-            {past30DaysSessions.slice().reverse().map(renderSession)}
-          </>
-        )}
-      </div>
+    
     </div>
   );
 };

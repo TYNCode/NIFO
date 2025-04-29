@@ -166,7 +166,7 @@ const ProgressFour: React.FC = () => {
                 {tabs.length > 0 && activeTabSource && (
                     <>
                         <Tabs tabs={tabs} activeTab={activeTabSource} setActiveTab={handleTabChange} />
-                        <SolutionProviders />
+                        <SolutionProviders key={activeTabSource} providerId={activeTabSource} />
                     </>
                 )}
             </div>

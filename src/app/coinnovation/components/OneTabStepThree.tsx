@@ -53,7 +53,6 @@ const OneTabStepThree: React.FC = () => {
     "List of Features & Functionalities": "List of Features & Functionalities",
   };
 
-  // Get data for a specific section and tab
   const getTabData = (section: string, tab: string) => {
     if (!jsonForDocument) return [];
 
@@ -198,7 +197,6 @@ const OneTabStepThree: React.FC = () => {
             return `${item.Title}: ${item.Description}`;
           }
 
-          // For { key: value } pairs like Focus Areas
           const entries = Object.entries(item);
           if (entries.length === 1) {
             const [key, value] = entries[0];

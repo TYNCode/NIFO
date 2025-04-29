@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import HistoryBar from "./HistoryBar";
 import RecommendedQueries from "./RecommendedQueries";
-import ChatWindow from "./ChatWindow";
 import Connects from "./Connects";
-import { IoChatbubblesSharp } from "react-icons/io5";
 import { FiLink } from "react-icons/fi";
 import { LuLampDesk } from "react-icons/lu";
 import { BsFillSearchHeartFill } from "react-icons/bs";
@@ -18,6 +16,7 @@ import { Dispatch, SetStateAction } from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import TrendsTab from "./TrendsTab";
 import Image from "next/image";
+import { FaFolder } from "react-icons/fa6";
 
 interface LeftFrameProps {
   onNewChat: () => void;
@@ -89,12 +88,12 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   return (
     <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
-      <div className="flex justify-center items-center bg-white shadow-md p-4 z-20">
-        <Image src="/nifoimage.png" alt="The Yellow Network" width={160} height={100} />
+      <div className="flex justify-center items-center z-20 bg-[#EEF7FF]">
+        <Image src="/nifo.svg" alt="The Yellow Network" width={100} height={100} />
       </div>
 
       <div className="flex-grow overflow-y-auto scrollbar-thin">
-        <div className="flex flex-row justify-between mx-4 mt-6 mb-3">
+        <div className="flex flex-col gap-4 justify-between px-4 pt-6 pb-3 bg-[#EEF7FF]">
           {[
             {
               icon: BsFillSearchHeartFill,
@@ -104,18 +103,21 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
             { icon: FaHistory, tab: "history", title: "Chat History" },
             { icon: LuLampDesk, tab: "spotlight", title: "Startup Spotlight" },
             { icon: FaArrowTrendUp, tab: "trends", title: "Trends" },
-            { icon: FiLink, tab: "connects", title: "Connects" },
-            // { icon: IoChatbubblesSharp, tab: "chat", title: "Chat Window : Will be launching soon!" },
+            { icon: FiLink, tab: "connects", title: "Connections" },
+            {icon: FaFolder, tab:"Projects", title:"Projects"}
           ].map(({ icon: Icon, tab, title }) => (
             <div
               key={tab}
-              className={`cursor-pointer ${
-                activeTab === tab ? "text-yellow-500" : "text-gray-500"
+              className={`cursor-pointer flex flex-row gap-4 items-center ${
+                activeTab === tab ? "text-[#0070C0] font-semibold" : "text-gray-500"
               }`}
               onClick={() => handleTabClick(tab)}
               title={title}
             >
-              <Icon size={23} />
+              <Icon size={16} />
+              <div className="text-xs ">
+                 {title}
+              </div>
             </div>
           ))}
         </div>
@@ -133,17 +135,17 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                 );
               case "history":
                 return (
-                  <>
-                    <div className="text-sm py-3 px-2 bg-white font-semibold cursor-pointer flex justify-center">
+                  <div className="bg-[#EEF7FF]">
+                    <div className="text-sm py-3 mx-2 bg-white font-semibold cursor-pointer flex justify-center rounded-t-md">
                       <button
-                        className="bg-yellow-400 p-2 rounded-lg text-white"
+                        className="bg-[#0070C0] text-xs px-3 py-2 rounded-md text-white"
                         onClick={onNewChat}
                       >
                         New Chat
                       </button>
                     </div>
                     <HistoryBar onSelectHistory={handleHistorySelect} />
-                  </>
+                  </div>
                 );
               case "spotlight":
                 return <Spotlight />;
