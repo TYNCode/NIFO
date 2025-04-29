@@ -41,7 +41,7 @@ const SpotlightPage = () => {
     <main className="flex flex-row w-full h-screen">
       {/* Left Sidebar */}
       <div className="">
-        <LeftFrame currentRoute="/spotlights" />
+        <LeftFrame />
       </div>
 
       {/* Main Content */}

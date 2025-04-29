@@ -8,8 +8,9 @@ import { LuLampDesk } from "react-icons/lu";
 import { BsFillSearchHeartFill } from "react-icons/bs";
 import { FaHistory } from "react-icons/fa";
 import { GrLogout } from "react-icons/gr";
-import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { IoHome } from "react-icons/io5";
+import { useRouter, usePathname } from "next/navigation";
+import { useAppDispatch } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -23,7 +24,6 @@ interface LeftFrameProps {
   setSessionId?: React.Dispatch<React.SetStateAction<string>>;
   setInputPrompt?: Dispatch<SetStateAction<string>>;
   setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
-  currentRoute?: string;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -31,26 +31,15 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   setSessionId,
   setInputPrompt,
   setIsInputEmpty,
-  currentRoute = "",
 }) => {
-  const userInfo = useUserInfo();
-  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const path = window.location.pathname;
-      if (path === "/spotlights") return "spotlight";
-      if (path === "/trends") return "trends";
-      if (path === "/connections") return "connects";
-      if (path === "/coinnovation") return "projects";
-      if (path === "/usecases") return "usecases";
-    }
-    return localStorage.getItem("activeTab") || "recommended";
-  });
-
-  const dispatch = useAppDispatch();
-  const { history } = useAppSelector((state) => state.chatHistory);
-  const logoutRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const userInfo = useUserInfo();
+  const logoutRef = useRef<HTMLDivElement>(null);
+
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [subTab, setSubTab] = useState<"default" | "recommended">("default");
 
   useEffect(() => {
     dispatch(fetchChatHistory());
@@ -63,26 +52,37 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("activeTab", activeTab);
-  }, [activeTab]);
-
-  const handleTabClick = (tab: string, route?: string) => {
-    setActiveTab(tab);
-
-    if (route) {
-      router.push(route); // Navigate to new page
-    }
-  };
-
-  const handleHistorySelect = (sessionId: string) => {
-    if (setSessionId) {
-      setSessionId(sessionId);
+  const handleTabClick = async (tab: string) => {
+    if (tab === "Home") {
+      router.push("/");
+      setSubTab("default");
+    } else if (tab === "Recommended Queries") {
+      if (pathname !== "/") {
+        router.push("/"); // First move to Home page
+        setTimeout(() => {
+          setSubTab("recommended");
+        }, 50); // Small timeout so that page load and subtab is set
+      } else {
+        setSubTab("recommended");
+      }
+    } else if (tab === "Startup Spotlight") {
+      router.push("/spotlights");
+      setSubTab("default");
+    } else if (tab === "Trends") {
+      router.push("/trends");
+      setSubTab("default");
+    } else if (tab === "Connections") {
+      router.push("/connections");
+      setSubTab("default");
+    } else if (tab === "Usecases") {
+      router.push("/usecases");
+      setSubTab("default");
+    } else if (tab === "Projects") {
+      router.push("/coinnovation");
+      setSubTab("default");
     }
   };
 
@@ -90,7 +90,6 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     localStorage.removeItem("user");
     localStorage.removeItem("jwtAccessToken");
     localStorage.removeItem("jwtRefreshToken");
-    setIsLogoutOpen(false);
     router.push("/login");
   };
 
@@ -99,105 +98,68 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   };
 
   const navigationItems = [
-    {
-      icon: BsFillSearchHeartFill,
-      tab: "recommended",
-      title: "Recommended Queries",
-    },
-    // {
-    //   icon: FaHistory,
-    //   tab: "history",
-    //   title: "Chat History",
-    // },
-    {
-      icon: LuLampDesk,
-      tab: "spotlight",
-      title: "Startup Spotlight",
-      route: "/spotlights",
-    },
-    {
-      icon: FaArrowTrendUp,
-      tab: "trends",
-      title: "Trends",
-      route: "/trends",
-    },
-    {
-      icon: FiLink,
-      tab: "connects",
-      title: "Connections",
-      route: "/connections",
-    },
-    {
-      icon: BiTestTube,
-      tab: "usecases",
-      title: "Usecases",
-      route: "/usecases",
-    },
-    {
-      icon: FaFolder,
-      tab: "projects",
-      title: "Projects",
-      route: "/coinnovation",
-    },
+    { icon: IoHome, title: "Home" },
+    { icon: BsFillSearchHeartFill, title: "Recommended Queries" },
+    { icon: LuLampDesk, title: "Startup Spotlight" },
+    { icon: FaArrowTrendUp, title: "Trends" },
+    { icon: FiLink, title: "Connections" },
+    { icon: BiTestTube, title: "Usecases" },
+    { icon: FaFolder, title: "Projects" },
   ];
 
-  const renderTabContent = () => {
-    if (activeTab === "recommended") {
-      return (
-        <RecommendedQueries
-          setInputPrompt={setInputPrompt}
-          setIsInputEmpty={setIsInputEmpty}
-        />
-      );
-    } else if (activeTab === "history") {
-      return (
-        <div className="bg-[#EEF7FF]">
-          <div className="text-sm py-3 mx-2 bg-white font-semibold cursor-pointer flex justify-center rounded-t-md">
-            <button
-              className="bg-[#0070C0] text-xs px-3 py-2 rounded-md text-white"
-              onClick={onNewChat}
-            >
-              New Chat
-            </button>
-          </div>
-          <HistoryBar onSelectHistory={handleHistorySelect} />
-        </div>
-      );
-    }
-    return null;
+  const getActivePage = () => {
+    if (pathname === "/") return "Home";
+    if (pathname.startsWith("/spotlights")) return "Startup Spotlight";
+    if (pathname.startsWith("/trends")) return "Trends";
+    if (pathname.startsWith("/connections")) return "Connections";
+    if (pathname.startsWith("/usecases")) return "Usecases";
+    if (pathname.startsWith("/coinnovation")) return "Projects";
+    return "";
   };
 
+  const activePage = getActivePage();
+
   return (
-    <div className="h-screen z-50 flex flex-col bg-white relative top-0 left-0">
-      <div className="flex justify-center items-center z-20 bg-[#EEF7FF]">
+    <div className="h-screen flex flex-col bg-white">
+      {/* Logo */}
+      <div className="flex justify-center items-center bg-[#EEF7FF]">
         <Image src="/nifo.svg" alt="The Yellow Network" width={100} height={100} />
       </div>
 
+      {/* Sidebar Navigation */}
       <div className="flex-grow overflow-y-auto scrollbar-thin">
-        <div className="flex flex-col gap-4 justify-between px-4 pt-6 pb-3 bg-[#EEF7FF]">
-          {navigationItems.map(({ icon: Icon, tab, title, route }) => (
-            <div
-              key={tab}
-              className={`cursor-pointer flex flex-row gap-4 items-center ${
-                activeTab === tab ? "text-[#0070C0] font-semibold" : "text-gray-500"
-              }`}
-              onClick={() => handleTabClick(tab, route)}
-              title={title}
-            >
-              <Icon size={16} />
-              <div className="text-xs">{title}</div>
-            </div>
-          ))}
+        <div className="flex flex-col gap-4 px-4 pt-6 pb-3 bg-[#EEF7FF]">
+          {navigationItems.map(({ icon: Icon, title }) => {
+            const isActive:any =
+              (title === "Home" && pathname === "/" && subTab === "default") ||
+              (title === "Recommended Queries" && pathname === "/" && subTab === "recommended") ||
+              (title === activePage && title !== "Home");
+
+            return (
+              <div
+                key={title}
+                className={`cursor-pointer flex flex-row gap-4 items-center ${
+                  isActive ? "text-[#0070C0] font-semibold" : "text-gray-500"
+                }`}
+                onClick={() => handleTabClick(title)}
+                title={title}
+              >
+                <Icon size={16} />
+                <div className="text-xs">{title}</div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Only for recommended/history */}
-        {(activeTab === "recommended" || activeTab === "history") && (
-          <div>{renderTabContent()}</div>
+        {/* Render Recommended Queries inside Home */}
+        {pathname === "/" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
+          <RecommendedQueries setInputPrompt={setInputPrompt} setIsInputEmpty={setIsInputEmpty} />
         )}
       </div>
 
+      {/* Logout */}
       <div
-        className="px-8 py-3 shadow-md flex items-center justify-between z-20 cursor-pointer border"
+        className="px-8 py-3 shadow-md flex items-center justify-between cursor-pointer border"
         onClick={() => setIsLogoutOpen(!isLogoutOpen)}
         ref={logoutRef}
       >
@@ -205,21 +167,13 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
             {userInfo?.is_primary_user && (
-              <div
-                className="flex justify-between px-8 py-3 hover:text-yellow-500"
-                onClick={handleDashboardRoute}
-              >
+              <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleDashboardRoute}>
                 View Dashboard
               </div>
             )}
-            <div
-              className="flex justify-between px-8 py-3 hover:text-yellow-500"
-              onClick={handleLogout}
-            >
+            <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleLogout}>
               <div>Logout</div>
-              <div>
-                <GrLogout size={23} />
-              </div>
+              <div><GrLogout size={23} /></div>
             </div>
           </div>
         )}
