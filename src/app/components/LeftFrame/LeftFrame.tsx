@@ -1,7 +1,8 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import HistoryBar from "./HistoryBar";
 import RecommendedQueries from "./RecommendedQueries";
-import Connects from "./Connects";
 import { FiLink } from "react-icons/fi";
 import { LuLampDesk } from "react-icons/lu";
 import { BsFillSearchHeartFill } from "react-icons/bs";
@@ -11,20 +12,18 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
-import Spotlight from "../Spotlights/Spotlight";
-import { Dispatch, SetStateAction } from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import TrendsTab from "./TrendsTab";
 import Image from "next/image";
 import { FaFolder } from "react-icons/fa6";
 import { BiTestTube } from "react-icons/bi";
+import { Dispatch, SetStateAction } from "react";
 
 interface LeftFrameProps {
   onNewChat?: () => void;
   setSessionId?: React.Dispatch<React.SetStateAction<string>>;
   setInputPrompt?: Dispatch<SetStateAction<string>>;
   setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
-  currentRoute?: string; 
+  currentRoute?: string;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -37,15 +36,15 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const path = window.location.pathname;
-      if (path === '/spotlights') return 'spotlight';
-      if (path === '/trends') return 'trends';
-      if (path === '/connections') return 'connects';
-      if (path === '/coinnovation') return 'projects';
-      if (path === '/usecases') return 'usecases';
+      if (path === "/spotlights") return "spotlight";
+      if (path === "/trends") return "trends";
+      if (path === "/connections") return "connects";
+      if (path === "/coinnovation") return "projects";
+      if (path === "/usecases") return "usecases";
     }
-    return localStorage.getItem("activeTab") || "spotlight";
+    return localStorage.getItem("activeTab") || "recommended";
   });
 
   const dispatch = useAppDispatch();
@@ -59,14 +58,10 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        logoutRef.current &&
-        !logoutRef.current.contains(event.target as Node)
-      ) {
+      if (logoutRef.current && !logoutRef.current.contains(event.target as Node)) {
         setIsLogoutOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -79,14 +74,16 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   const handleTabClick = (tab: string, route?: string) => {
     setActiveTab(tab);
-    
+
     if (route) {
-      router.push(route);
+      router.push(route); // Navigate to new page
     }
   };
 
   const handleHistorySelect = (sessionId: string) => {
-    setSessionId(sessionId);
+    if (setSessionId) {
+      setSessionId(sessionId);
+    }
   };
 
   const handleLogout = () => {
@@ -101,88 +98,73 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     router.push("/Dashboard");
   };
 
-  // Navigation items including new Usecases tab
   const navigationItems = [
     {
       icon: BsFillSearchHeartFill,
       tab: "recommended",
       title: "Recommended Queries",
-      route: "/"
     },
-    { 
-      icon: FaHistory, 
-      tab: "history", 
-      title: "Chat History",
-      route: "/"
-    },
-    { 
-      icon: LuLampDesk, 
-      tab: "spotlight", 
+    // {
+    //   icon: FaHistory,
+    //   tab: "history",
+    //   title: "Chat History",
+    // },
+    {
+      icon: LuLampDesk,
+      tab: "spotlight",
       title: "Startup Spotlight",
-      route: "/spotlights"
+      route: "/spotlights",
     },
-    { 
-      icon: FaArrowTrendUp, 
-      tab: "trends", 
+    {
+      icon: FaArrowTrendUp,
+      tab: "trends",
       title: "Trends",
-      route: "/trends"
+      route: "/trends",
     },
-    { 
-      icon: FiLink, 
-      tab: "connects", 
+    {
+      icon: FiLink,
+      tab: "connects",
       title: "Connections",
-      route: "/connections"
+      route: "/connections",
     },
     {
-      icon: BiTestTube, 
-      tab: "usecases", 
+      icon: BiTestTube,
+      tab: "usecases",
       title: "Usecases",
-      route: "/usecases"
+      route: "/usecases",
     },
     {
-      icon: FaFolder, 
-      tab: "projects", 
+      icon: FaFolder,
+      tab: "projects",
       title: "Projects",
-      route: "/coinnovation"
-    }
+      route: "/coinnovation",
+    },
   ];
 
-  // Function to render tab content based on currently active tab
   const renderTabContent = () => {
-    switch (activeTab) {
-      case "recommended":
-        return (
-          <RecommendedQueries
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
-          />
-        );
-      case "history":
-        return (
-          <div className="bg-[#EEF7FF]">
-            <div className="text-sm py-3 mx-2 bg-white font-semibold cursor-pointer flex justify-center rounded-t-md">
-              <button
-                className="bg-[#0070C0] text-xs px-3 py-2 rounded-md text-white"
-                onClick={onNewChat}
-              >
-                New Chat
-              </button>
-            </div>
-            <HistoryBar onSelectHistory={handleHistorySelect} />
+    if (activeTab === "recommended") {
+      return (
+        <RecommendedQueries
+          setInputPrompt={setInputPrompt}
+          setIsInputEmpty={setIsInputEmpty}
+        />
+      );
+    } else if (activeTab === "history") {
+      return (
+        <div className="bg-[#EEF7FF]">
+          <div className="text-sm py-3 mx-2 bg-white font-semibold cursor-pointer flex justify-center rounded-t-md">
+            <button
+              className="bg-[#0070C0] text-xs px-3 py-2 rounded-md text-white"
+              onClick={onNewChat}
+            >
+              New Chat
+            </button>
           </div>
-        );
-      case "connects":
-        // Only show this if we're on the main route, not in the dedicated connections page
-        return !currentRoute.includes("/connections") ? <Connects /> : null;
-      case "spotlight":
-        // Only show this if we're on the main route, not in the dedicated spotlight page
-        return !currentRoute.includes("/spotlight") ? <Spotlight /> : null;
-      case "trends":
-        // Only show this if we're on the main route, not in the dedicated trends page
-        return !currentRoute.includes("/trends") ? <TrendsTab /> : null;
-      default:
-        return null;
+          <HistoryBar onSelectHistory={handleHistorySelect} />
+        </div>
+      );
     }
+    return null;
   };
 
   return (
@@ -203,21 +185,14 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
               title={title}
             >
               <Icon size={16} />
-              <div className="text-xs">
-                {title}
-              </div>
+              <div className="text-xs">{title}</div>
             </div>
           ))}
         </div>
 
-        {/* Tab Content - Only render for local tabs, not for routed pages */}
-        {(activeTab === 'recommended' || activeTab === 'history' || 
-          (activeTab === 'spotlight' && !currentRoute.includes('/spotlight')) ||
-          (activeTab === 'connects' && !currentRoute.includes('/connections')) ||
-          (activeTab === 'trends' && !currentRoute.includes('/trends'))) && (
-          <div>
-            {renderTabContent()}
-          </div>
+        {/* Only for recommended/history */}
+        {(activeTab === "recommended" || activeTab === "history") && (
+          <div>{renderTabContent()}</div>
         )}
       </div>
 
