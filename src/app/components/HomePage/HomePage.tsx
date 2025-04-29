@@ -54,7 +54,6 @@ export default function HomePage() {
     [key: number]: boolean;
   }>({});
 
-
   useEffect(() => {
     const userInfoFromStorage = localStorage.getItem("user");
     if (userInfoFromStorage) {
@@ -175,7 +174,7 @@ export default function HomePage() {
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.question === input
-            ? { question: input, presponse: errorMessage }
+            ? { question: input, response: errorMessage }
             : msg
         )
       );
@@ -269,20 +268,21 @@ export default function HomePage() {
     }
   };
 
+  const [activeTabs, setActiveTabs] = useState<{ [key: number]: string }>({});
+
   const renderMessages = () => {
     return messages.map((message: any, index: number) => {
-      let markdownText = "";
+      const activeTab = activeTabs[index] || "Breakdown";
 
-      console.log("message-----------<))))))))))))))))))", message);
-
-      if (typeof message?.response?.response === "string") {
-        markdownText = message?.response?.response.replace(/\n/g, "  \n");
-      } else if (typeof message?.response?.response === "object") {
-        markdownText =
-          "```json\n" +
-          JSON.stringify(message?.response?.response, null, 2) +
-          "\n```";
-      }
+      const responseData = typeof message.response === "object" ? message.response : message;
+      const queryType = responseData.query_type || responseData.classifier_output?.query_type;
+      const intentType = responseData.intent_type || responseData.classifier_output?.intent_type;
+      const breakdown = responseData.breakdown;
+      const expandedQuery = responseData.classifier_output?.expanded_query || message?.question;
+      const followUpQuestions = responseData.follow_up_questions || responseData.classifier_output?.follow_up_questions;
+      const chatResponse = typeof responseData.response === "string" ? responseData.response : responseData.classifier_output?.chat_response;
+      const part1 = responseData.part_1;
+      const part2 = responseData.part_2;
 
       return (
         <div key={index} className="justify-between mb-4 text-[16px] w-[50vw]">
@@ -303,54 +303,118 @@ export default function HomePage() {
                 <BounceLoading />
               </div>
             ) : (
-              <div>
-                {/* Render Markdown Correctly */}
-                <ReactMarkdown className="prose max-w-none">
-                  {markdownText}
-                </ReactMarkdown>
+              <>
+                {queryType === "valid" && intentType === "startup_discovery" ? (
+                  <div className="flex flex-col gap-6">
+                    {/* Question Title */}
+                    <div className="text-xl font-semibold">
+                      {expandedQuery}
+                    </div>
 
-                {message?.response?.follow_up_questions && (
-                  <div className="mt-4">
-                    <p className="font-semibold text-[16px] text-gray-700">
-                      Follow-up Questions:
-                    </p>
-                    <ul className="list-disc list-inside text-[15px] text-gray-600">
-                      {message?.response?.follow_up_questions.map(
-                        (question: string, i: number) => (
-                          <li key={i}>{question}</li>
-                        )
+                    {/* Tabs */}
+                    <div className="flex gap-8 border-b-2 pb-2">
+                      {["Breakdown", "Analysis", "Solution Provider"].map((tab) => (
+                        <div
+                          key={tab}
+                          onClick={() =>
+                            setActiveTabs((prev) => ({ ...prev, [index]: tab }))
+                          }
+                          className={`pb-1 cursor-pointer ${
+                            activeTab === tab
+                              ? "font-semibold text-blue-500 border-b-2 border-blue-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {tab}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="mt-4">
+                      {activeTab === "Breakdown" && (
+                        <>
+                          <div className="font-bold text-gray-700 mb-2">
+                            Problem:
+                          </div>
+                          <div className="text-[15px] text-gray-700 mb-4">
+                            {breakdown?.core_problem}
+                          </div>
+
+                          <div className="font-bold text-gray-700 mb-2">
+                            Key Requirements:
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {breakdown?.technology_requirements
+                              ?.split(",")
+                              ?.map((tech: string, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700"
+                                >
+                                  {tech.trim()}
+                                </div>
+                              ))}
+                          </div>
+                        </>
                       )}
-                    </ul>
-                  </div>
-                )}
 
-                <RenderStartup
-                  message={message}
-                  handleSendStartupData={handleSendStartupData}
-                />
+                      {activeTab === "Analysis" && (
+                        <div className="flex flex-col gap-3">
+                          {part1?.startups_brief_list?.map((startup: any, idx: number) => (
+                            <div key={idx} className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                              <div className="font-semibold">{startup.name}</div>
+                              <div className="text-[14px] text-gray-600">{startup.description}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
-                {message?.response?.startups && (
-                  <div className="flex justify-end my-2">
-                    <div
-                      onClick={() => handleCompareResults(index)}
-                      className="flex gap-2 bg-blue-400 text-white py-2 px-2 w-max items-center rounded-md justify-end text-sm cursor-pointer"
-                    >
-                      {compareResultsLoading[index] ? (
-                        <div className="cursor-not-allowed">Loading ...</div>
-                      ) : (
-                        <div className="flex gap-2 justify-center items-center cursor-pointer">
-                          Compare Results <FiPlayCircle />
+                      {activeTab === "Solution Provider" && (
+                        <div className="flex flex-col gap-3">
+                          {part2?.recommendations?.map((startup: any, idx: number) => (
+                            <div key={idx} className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                              <div className="font-bold text-[16px]">{startup.name}</div>
+                              <div className="text-[14px] text-gray-700">{startup.technology_expertise}</div>
+                              <div className="text-[13px] text-gray-500 mt-1">
+                                {startup.proven_use_case}
+                              </div>
+                              <div className="text-[13px] text-gray-500">
+                                {startup.key_clients_or_industries_served}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
                   </div>
+                ) : (
+                  <>
+                    {/* CASE 2: Nonsense or Ambiguous */}
+                    <div className="text-[16px] text-gray-800">
+                      {chatResponse}
+                    </div>
+
+                    {/* Follow-up questions if available */}
+                    {followUpQuestions && followUpQuestions.length > 0 && (
+                      <div className="mt-4">
+                        <p className="font-semibold text-[16px] text-gray-700">
+                          Follow-up Questions:
+                        </p>
+                        <ul className="list-disc list-inside text-[15px] text-gray-600">
+                          {followUpQuestions.map((q: string, idx: number) => (
+                            <li key={idx}>{q}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
                 )}
 
-                {message?.compareResults &&
-                  message?.compareResults.length > 0 && (
-                    <ComparisonTable data={message.compareResults} />
-                  )}
-              </div>
+                {message?.compareResults && message?.compareResults.length > 0 && (
+                  <ComparisonTable data={message.compareResults} />
+                )}
+              </>
             )}
           </div>
         </div>

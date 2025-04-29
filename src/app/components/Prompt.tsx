@@ -32,8 +32,6 @@ const Prompt: React.FC<PromptProps> = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
-
 
   useEffect(() => {
     scrollToBottom();
@@ -48,7 +46,7 @@ const Prompt: React.FC<PromptProps> = ({
   const autoResizeTextarea = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto"; 
+      textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
@@ -58,7 +56,6 @@ const Prompt: React.FC<PromptProps> = ({
       onSaveInput(inputPrompt);
       setInputPrompt("");
       setIsInputEmpty(true);
-      // await saveQueryData(inputPrompt); // Pass the input prompt value to saveQueryData
     }
   };
 
@@ -78,14 +75,6 @@ const Prompt: React.FC<PromptProps> = ({
     handleToggleRightFrame();
   };
 
-  const handleFeedbackIconClick = () => {
-    setIsFeedbackFormOpen(true);
-  };
-
-  const closeFeedbackForm = () => {
-    setIsFeedbackFormOpen(false);
-  };
-
   return (
     <div className="flex flex-col h-full w-full items-center justify-center relative">
       <div className="prompt-container overflow-y-auto">
@@ -103,49 +92,33 @@ const Prompt: React.FC<PromptProps> = ({
             </div>
           </>
         ) : (
-          <div className="mx-28 mb-8 md:mb-16">
-            {renderMessages()}
-            {/* <div ref={messagesEndRef} /> */}
-          </div>
+          <div className="mx-2 mb-8 md:mb-16">{renderMessages()}</div>
         )}
       </div>
-      <div className="bg-white w-4/6 rounded-lg shadow-customShadow ">
-        <div className="flex items-center ">
-          <textarea
-            className="flex-1 focus:outline-none py-4 px-4 rounded-md resize-none border-none overflow-hidden text-[14px]"
-            placeholder="Provide your problem statement to be solved..."
-            rows={1}
-            autoFocus
-            value={inputPrompt}
-            onChange={handleInputChange}
-            onClick={handleTextareaClick}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSendClick();
-              }
-            }}
-          />
-          {isInputEmpty ? (
-            <div className="px-8 opacity-10">
-              <IoMdSend size={23} />
-            </div>
-          ) : (
-            <div className="px-8 cursor-pointer" onClick={handleSendClick}>
-              <IoMdSend size={23} />
-            </div>
-          )}
-        </div>
-        {/* <div
-          className="absolute right-12 bottom-6 text-gray-500 bg-blue-200 rounded-full cursor-pointer"
-          onClick={handleFeedbackIconClick}
+
+      <div className="flex items-start w-4/6 bg-white p-4 relative">
+        <textarea
+          ref={textareaRef}
+          className="flex-1 rounded-3xl px-10 py-4 bg-transparent text-[16px] focus:outline-none placeholder-gray-500 resize-none overflow-hidden shadow-lg"
+          placeholder="Provide your problem statement to be solved..."
+          value={inputPrompt}
+          rows={3} 
+          onChange={handleInputChange}
+          onClick={handleTextareaClick}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendClick();
+            }
+          }}
+        />
+        {/* Send icon inside the box */}
+        <div
+          className="absolute right-10 bottom-10 cursor-pointer text-gray-500 hover:text-blue-500 transition-colors duration-200"
+          onClick={handleSendClick}
         >
-          <BsChatQuote size={32} />
-        </div> */}
-        {/* <FeedbackForm
-          isOpen={isFeedbackFormOpen}
-          onRequestClose={closeFeedbackForm}
-        /> */}
+          <IoMdSend size={24} />
+        </div>
       </div>
     </div>
   );
