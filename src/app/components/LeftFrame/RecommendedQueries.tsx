@@ -16,24 +16,27 @@ const RecommendedQueries: React.FC<RecommendedQueriesProps> = ({
   };
 
   return (
-    <>
-      <div className="text-sm py-3 px-2 text-gray-400 font-semibold">
-        Recommended Queries
+    <div className="bg-[#EEF7FF]">
+      <div className="mx-2 bg-white rounded-md">
+        <div className="text-xs py-3 px-2 text-gray-400 font-semibold">
+          Recommended Queries
+        </div>
+        <div className="">
+          {data.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis  whitespace-nowrap text-xs hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
+                onClick={() => sendRecommendationQuery(item)}
+              >
+                {item.shortName}
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div className="">
-        {data.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className="mx-1 px-3 py-2.5 overflow-hidden overflow-ellipsis  whitespace-nowrap text-[14px] hover:bg-gray-200 font-normal hover:font-medium rounded-sm hover:text-gray-600 cursor-pointer"
-              onClick={() => sendRecommendationQuery(item)}
-            >
-              {item.shortName}
-            </div>
-          );
-        })}
-      </div>
-    </>
+     
+    </div>
   );
 };
 

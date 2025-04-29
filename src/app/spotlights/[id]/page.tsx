@@ -47,7 +47,7 @@ const SelectSpotlight = () => {
   if (!selectedSpotlight) return <div>No Spotlight found</div>;
 
   return (
-    <div className="mb-40 md:px-96">
+    <div className="">
     {/* <NavBar/> */}
     <SpotlightPage selectedSpotlight={selectedSpotlight} handleSpotlightShare={handleSpotlightShare}/>
     </div>
