@@ -14,6 +14,7 @@ import solutionProviderSlice from "./features/source/solutionProviderSlice";
 import solutionProviderDetailsSlice from "./features/source/solutionProviderDetailsSlice";
 import solutionComparison from "./features/source/solutionCompareSlice";
 import roiEvaluationReducer from "./features/coinnovation/roiEvaluationSlice";
+import useCaseSlice from "./features/usecases/useCaseSlice"
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   file: fileSlice,
   solutionComparison: solutionComparison,
   roiEvaluation: roiEvaluationReducer,
+  useCase:useCaseSlice
 });
 
 export default rootReducer;
