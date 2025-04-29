@@ -20,7 +20,7 @@ const Page: React.FC = () => {
     useEffect(() => {
         const fetchUseCases = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/usecases/");
+                const response = await axios.get("https://tyn-server.azurewebsites.net/usecases/");
                 if (Array.isArray(response.data.usecases)) {
                     setUseCases(response.data.usecases);
                 }

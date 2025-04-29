@@ -46,12 +46,12 @@ const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
           <IoIosArrowForward size={23} />
         </div>
       )}
-      <div className="hover:text-blue-500" onClick={handleTrendsRoute}>
+      {/* <div className="hover:text-blue-500" onClick={handleTrendsRoute}>
         <IoTrendingUpSharp size={23} />
       </div>
       <div className="hover:text-blue-500" onClick={handleCoinnovationRoute}>
         <FcIdea size={23} />
-      </div>
+      </div> */}
     </div>
   );
 };
