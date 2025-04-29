@@ -34,7 +34,7 @@ const Spotlight: React.FC = () => {
       <div className="mx-2 uppercase text-semibold text-sm">
         More Spotlights
       </div>
-      {spotlights.slice(0, -1).map((spotlight: SpotlightType, index: number) => (
+      {spotlights.slice(0, -1).map((spotlight: any, index: number) => (
         <div
           key={index}
           className="p-2 flex gap-4 text-xs border border-gray-200 m-2 overflow-hidden max-w-full cursor-pointer"
