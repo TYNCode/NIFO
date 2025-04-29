@@ -131,12 +131,20 @@ export interface SpotlightContent {
 }
 
 export interface Spotlight {
-  id:number
+  id: number;
+  spotlight_startup_id: number | null; 
   spotlight_title: string;
-  spotlight_content: SpotlightContent[];
-  spotlight_img: string;
-  created_at: string;
+  spotlight_category: string | null;
+  spotlight_week: string | null;
+  spotlight_subtitle: string | null;
+  logo_url: string | null;
+  problem_address: string | null;
+  technology_leveraged: string[] | null;
+  use_case: string | null;
+  impact: string | null;
+  created_at: string; 
 }
+
 
 
 

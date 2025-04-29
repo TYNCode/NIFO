@@ -17,14 +17,14 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import TrendsTab from "./TrendsTab";
 import Image from "next/image";
 import { FaFolder } from "react-icons/fa6";
-import { BiTestTube } from "react-icons/bi"; // Added for Usecases tab
+import { BiTestTube } from "react-icons/bi";
 
 interface LeftFrameProps {
-  onNewChat: () => void;
-  setSessionId: React.Dispatch<React.SetStateAction<string>>;
-  setInputPrompt: Dispatch<SetStateAction<string>>;
-  setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
-  currentRoute?: string; // Added to track current route
+  onNewChat?: () => void;
+  setSessionId?: React.Dispatch<React.SetStateAction<string>>;
+  setInputPrompt?: Dispatch<SetStateAction<string>>;
+  setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
+  currentRoute?: string; 
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -37,7 +37,6 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>(() => {
-    // Set activeTab based on current path if available
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
       if (path === '/spotlights') return 'spotlight';
@@ -120,7 +119,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       icon: LuLampDesk, 
       tab: "spotlight", 
       title: "Startup Spotlight",
-      route: "/spotlight"
+      route: "/spotlights"
     },
     { 
       icon: FaArrowTrendUp, 
