@@ -58,7 +58,7 @@ const ChangePassword: React.FC = () => {
               autoComplete="off"
               id="email"
               placeholder="Enter your email"
-              className="text-base px-5 py-3 outline-none rounded-lg shadow border-none w-full"
+              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300  border-none w-80"
               {...register("email", { required: "Email is required" })}
             />
             {errors.email && (

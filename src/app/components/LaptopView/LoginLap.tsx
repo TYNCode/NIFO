@@ -15,7 +15,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
   const { handleSubmit, register, formState: { errors, isSubmitted, isValid } } = useForm<FormData>({ mode: "onChange" });
 
   return (
-    <div className="h-screen flex justify-evenly items-center bg-gradient-to-b from-yellow-100 to-yellow-400">
+    <div className="h-screen flex justify-evenly items-center bg-gradient-to-b from-yellow-100 via-yellow-200 to-yellow-300">
       <div className="w-7/12 h-screen flex items-center justify-center">
         <div>
           <Image src="/tyn-login.png" alt="tyn-login" width={400} height={400} />
@@ -24,7 +24,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
       <div className="w-5/12 h-full bg-white">
         <div className="flex items-start justify-start flex-col gap-4 px-10 pt-20">
           <h2 className="font-bold text-5xl">Sign in</h2>
-          <p className="font-light text-xl text-gray-400">Sign in if you have an account here</p>
+          <p className="font-light text-xl text-[#0070C0]">Sign in if you have an account here</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 px-10 justify-center items-center pt-8">
           <div className="flex flex-col items-start justify-start gap-2">
@@ -61,7 +61,7 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
           )}
 
           <div>
-            <Link href="/changePassword" className="underline">
+            <Link href="/changePassword" className="text-[#0070C0] font-semibold">
               Forgot Password?
             </Link>
           </div>
@@ -71,17 +71,17 @@ const LoginLap: React.FC<LoginLapProps> = ({ onSubmit, loading, message, error }
             disabled={!isValid || loading}
             className={`rounded-md ${
               isValid && !loading
-                ? "bg-blue-500"
+                ? "bg-[#0070C0]"
                 : "bg-gray-300 cursor-not-allowed"
-            } text-sm px-4 py-2 text-white flex items-center justify-center uppercase font-semibold`}
+            } text-sm px-4 py-2 text-white flex items-center justify-center  font-semibold`}
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <div className="flex justify-center items-center gap-2 mt-8 xl:mt-40">
-          <div>Not a member?</div>
-          <Link href="/register" className="underline">
+          <div className="font-semibold">Not a member?</div>
+          <Link href="/register" className="text-[#0070C0] font-semibold">
             Sign-up
           </Link>
         </div>

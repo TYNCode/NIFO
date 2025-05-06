@@ -321,7 +321,7 @@ export default function HomePage() {
                           }
                           className={`pb-1 cursor-pointer ${
                             activeTab === tab
-                              ? "font-semibold text-blue-500 border-b-2 border-blue-500"
+                              ? "font-semibold text-[#2286C0] border-b-2 border-[#2286C0]"
                               : "text-gray-400"
                           }`}
                         >
@@ -350,7 +350,7 @@ export default function HomePage() {
                               ?.map((tech: string, idx: number) => (
                                 <div
                                   key={idx}
-                                  className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700"
+                                  className="px-3 py-1 text-sm rounded-full bg-blue-100 text-[#2286C0] capitalize"
                                 >
                                   {tech.trim()}
                                 </div>

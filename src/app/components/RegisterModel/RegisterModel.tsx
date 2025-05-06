@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch } from "../../redux/hooks";
 import {
@@ -18,102 +18,162 @@ interface FormData {
 
 const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
   const dispatch = useAppDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormData>({
-    mode: "onChange",
-  });
+    watch,
+  } = useForm<FormData>({ mode: "onChange" });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsSubmitting(true);
+    setServerError(null);
     try {
       await dispatch(postCompany(data)).unwrap();
-
       dispatch(fetchAllCompanies());
-      onClose();
       reset();
-    } catch (error) {
+      onClose();
+    } catch (error: any) {
       console.error("Error submitting organization:", error);
+      if (error?.message) {
+        setServerError(error.message);
+      } else {
+        setServerError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const orgName = watch("organization_name") || "";
+  const website = watch("website") || "";
+  const description = watch("description") || "";
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white p-8 rounded-lg shadow-lg w-96">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative bg-white rounded-lg p-8 shadow-xl w-[90%] max-w-md">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          className="absolute top-2 right-4 text-2xl text-gray-400 hover:text-gray-600"
         >
-          X
+          &times;
         </button>
 
-        <h2 className="text-lg font-bold mb-4">Add Organization</h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+        <h2 className="text-2xl font-bold mb-4 text-black">Add Organization</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          {/* Organization Name */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
               Organization Name
             </label>
             <input
               type="text"
-              placeholder="Organization Name"
+              maxLength={30}
+              placeholder="Enter organization name"
               {...register("organization_name", {
                 required: "Organization name is required",
+                maxLength: {
+                  value: 30,
+                  message: "Max 30 characters allowed",
+                },
               })}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full"
             />
+            <div className="text-right text-xs text-gray-400">{orgName.length}/30</div>
             {errors.organization_name && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.organization_name.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.organization_name.message}</p>
             )}
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Website
-            </label>
+
+          {/* Website */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Website</label>
             <input
               type="url"
-              placeholder="Ex :  https://nifo.theyellow.network/"
+              maxLength={50}
+              placeholder="Ex: https://nifo.theyellow.network/"
               {...register("website", {
                 required: "Website is required",
                 pattern: {
                   value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
                   message: "Please enter a valid URL",
                 },
+                maxLength: {
+                  value: 50,
+                  message: "Max 50 characters allowed",
+                },
               })}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+              className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full"
             />
+            <div className="text-right text-xs text-gray-400">{website.length}/50</div>
             {errors.website && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.website.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.website.message}</p>
             )}
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
+
+          {/* Description */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Description</label>
             <textarea
-              placeholder="Description"
+              placeholder="Describe the organization"
+              maxLength={200}
               {...register("description", {
                 required: "Description is required",
+                maxLength: {
+                  value: 200,
+                  message: "Max 200 characters allowed",
+                },
               })}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+              rows={3}
+              className="text-base placeholder:text-base px-5 py-3 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full resize-none"
             />
+            <div className="text-right text-xs text-gray-400">{description.length}/200</div>
             {errors.description && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.description.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.description.message}</p>
             )}
           </div>
+
+          {/* Server Error */}
+          {serverError && (
+            <p className="text-red-500 text-sm text-center -mt-2">{serverError}</p>
+          )}
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+            disabled={isSubmitting}
+            className={`flex justify-center items-center bg-[#0070C0] text-white py-3 rounded-lg font-semibold transition w-full mt-2 ${
+              isSubmitting ? "cursor-not-allowed opacity-70" : "hover:bg-[#005fa3]"
+            }`}
           >
-            Submit
+            {isSubmitting ? (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            ) : null}
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

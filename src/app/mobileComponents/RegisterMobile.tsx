@@ -77,7 +77,7 @@ const RegisterMobile: React.FC<RegisterMobileProps> = ({
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => {
     setShowModal(false);
-    dispatch(fetchAllCompanies()); // Refresh company list after modal closes
+    dispatch(fetchAllCompanies());
   };
 
   const showAddOrganizationButton =

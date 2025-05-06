@@ -26,8 +26,8 @@ const UseCasePage = () => {
 
     return (
         <main className="flex flex-row w-full h-screen">
-            <div className="w-1/4">
-                <LeftFrame currentRoute="/usecases" />
+            <div>
+                <LeftFrame/>
             </div>
 
             <div className="flex-1 flex flex-col w-full h-full p-6 bg-[#F8FBFF] overflow-y-auto">
