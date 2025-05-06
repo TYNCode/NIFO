@@ -15,6 +15,8 @@ import solutionProviderDetailsSlice from "./features/source/solutionProviderDeta
 import solutionComparison from "./features/source/solutionCompareSlice";
 import roiEvaluationReducer from "./features/coinnovation/roiEvaluationSlice";
 import useCaseSlice from "./features/usecases/useCaseSlice"
+import changePasswordSlice from "./features/auth/forgotPasswordSlice";
+import resetPasswordSlice from "./features/auth/resetPasswordSlice";
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -22,6 +24,8 @@ const rootReducer = combineReducers({
   sessionMessage: sessionMessageSlice,
   login: loginSlice,
   register: registerSlice,
+  changePassword: changePasswordSlice,
+  resetPassword : resetPasswordSlice,
   spotlight: spotlightSlice,
   partnerConnect: partnerConnectSlice,
   companyProfile: companyProfileSlice,
@@ -32,7 +36,8 @@ const rootReducer = combineReducers({
   file: fileSlice,
   solutionComparison: solutionComparison,
   roiEvaluation: roiEvaluationReducer,
-  useCase:useCaseSlice
+  useCase:useCaseSlice,
+
 });
 
 export default rootReducer;
