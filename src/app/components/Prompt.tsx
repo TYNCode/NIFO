@@ -1,13 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { IoMdSend } from "react-icons/io";
 import DefaultCard from "./DefaultCard";
-import { BsChatQuote } from "react-icons/bs";
+import RenderMessagesInChat from "./HomePage/RenderMessagesInChat";
 
 interface PromptProps {
   open: boolean;
   onSaveInput: (input: string) => void;
   defaultPrompt: string;
-  renderMessages: () => JSX.Element[];
+  messages: any;
   inputPrompt: string;
   setInputPrompt: React.Dispatch<React.SetStateAction<string>>;
   handleToggleLeftFrame: () => void;
@@ -15,14 +15,13 @@ interface PromptProps {
   handleToggleRightFrame: () => void;
   isInputEmpty: boolean;
   setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
-  // saveQueryData;
 }
 
 const Prompt: React.FC<PromptProps> = ({
   open,
   onSaveInput,
   defaultPrompt,
-  renderMessages,
+  messages,
   inputPrompt,
   setInputPrompt,
   handleToggleLeftFrame,
@@ -35,7 +34,7 @@ const Prompt: React.FC<PromptProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [renderMessages]);
+  }, [messages]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputPrompt(event.target.value);
@@ -78,7 +77,7 @@ const Prompt: React.FC<PromptProps> = ({
   return (
     <div className="flex flex-col h-full w-full items-center justify-center relative">
       <div className="prompt-container overflow-y-auto">
-        {renderMessages().length === 0 ? (
+        {messages.length === 0 ? (
           <>
             <div className="flex justify-center items-center font-semibold text-2xl mt-12">
               What problem are you trying to solve?
@@ -92,17 +91,18 @@ const Prompt: React.FC<PromptProps> = ({
             </div>
           </>
         ) : (
-          <div className="mx-2 mb-8 md:mb-16">{renderMessages()}</div>
+          <div className="mx-2 mb-8 md:mb-16"><RenderMessagesInChat messages={messages}/></div>
         )}
       </div>
 
       <div className="flex items-start w-4/6 bg-white p-4 relative">
         <textarea
           ref={textareaRef}
-          className="flex-1 rounded-3xl px-10 py-4 bg-transparent text-[16px] focus:outline-none placeholder-gray-500 resize-none overflow-hidden shadow-lg"
+          className="flex-1 rounded-3xl px-10 py-4 bg-transparent text-[16px] focus:ring-0 focus:outline-none placeholder-gray-500 resize-none overflow-y-flow shadow-lg max-h-[150px]"
           placeholder="Provide your problem statement to be solved..."
           value={inputPrompt}
-          rows={3} 
+          rows={3}
+          maxLength={3000}
           onChange={handleInputChange}
           onClick={handleTextareaClick}
           onKeyDown={(e) => {
@@ -112,6 +112,7 @@ const Prompt: React.FC<PromptProps> = ({
             }
           }}
         />
+
         {/* Send icon inside the box */}
         <div
           className="absolute right-10 bottom-10 cursor-pointer text-gray-500 hover:text-blue-500 transition-colors duration-200"

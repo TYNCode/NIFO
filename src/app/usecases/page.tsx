@@ -26,7 +26,7 @@ const UseCasePage = () => {
 
     return (
         <main className="flex flex-row w-full h-screen">
-            <div>
+            <div className="w-[21%]">
                 <LeftFrame/>
             </div>
 

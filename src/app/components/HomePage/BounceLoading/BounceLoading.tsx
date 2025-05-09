@@ -1,12 +1,10 @@
 import React from "react";
-import "./bounceLoading.css"
+import "./bounceLoading.css";
 
 const BounceLoading = () => {
   return (
-    <div className="bouncing-loader">
-      <div></div>
-      <div></div>
-      <div></div>
+    <div className="stopwatch-spinner-wrapper">
+      <div className="stopwatch-spinner" />
     </div>
   );
 };

@@ -52,19 +52,19 @@ const SpotlightPage = () => {
 
   return (
     <main className="flex w-full h-screen overflow-hidden">
-      <div>
+      <div className="w-[21%]">
         <LeftFrame />
       </div>
 
       <div className="flex flex-col w-full bg-[#F4FCFF]">
-        <div className="w-[90%] px-6 pt-6 flex justify-between">
-          <h1 className="text-2xl text-left font-semibold text-gray-700">
+        <div className="w-[79%] px-6 pt-6 flex justify-between">
+          <h1 className="text-2xl text-left font-semibold text-[#0070C0]">
             Startup Innovation Spotlight
           </h1>
           <div className="flex gap-4">
             <div className="relative">
               <div
-                className="px-4 py-2 bg-[#2286C0] text-white border rounded-xl text-sm flex items-center justify-between cursor-pointer"
+                className="px-4 py-2 bg-[#0070C0] text-white border rounded-xl text-sm flex items-center justify-between cursor-pointer"
                 onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
               >
                 {selectedCategory || "All Technologies"}{" "}
@@ -99,7 +99,7 @@ const SpotlightPage = () => {
 
             <div className="relative">
               <div
-                className="px-4 py-2 bg-white text-[#2286C0] border border-solid border-[#2286C0] rounded-xl text-sm flex items-center justify-between cursor-pointer"
+                className="px-4 py-2 bg-white text-[#0070C0] border border-solid border-[#0070C0] rounded-xl text-sm flex items-center justify-between cursor-pointer"
                 onClick={() => setShowWeekDropdown(!showWeekDropdown)}
               >
                 {selectedWeek || "All Weeks"} <FaChevronDown className="ml-2" />
@@ -161,16 +161,16 @@ const SpotlightPage = () => {
                         className="h-20 w-20 object-contain mb-4"
                       />
                       <div className="flex flex-col items-center">
-                        <div className="h-2 w-2 bg-[#2286C0] rounded-full mb-1"></div>
+                        <div className="h-2 w-2 bg-[#0070C0] rounded-full mb-1"></div>
                         <div className="w-px h-16 bg-gray-300 mb-1"></div>
                         <h2 className="text-center font-semibold text-sm mb-2">
                           {spotlight.spotlight_title}
                         </h2>
                         <div className="w-px h-16 bg-gray-300 mb-1"></div>
-                        <div className="h-2 w-2 bg-[#2286C0] rounded-full mb-2"></div>
+                        <div className="h-2 w-2 bg-[#0070C0] rounded-full mb-2"></div>
                       </div>
                       <button
-                        className="text-[#2286C0] text-xs font-semibold hover:text-sm"
+                        className="text-[#0070C0] text-xs font-semibold hover:text-sm"
                         onClick={() => handleViewDetails(spotlight.id)}
                       >
                         View details →

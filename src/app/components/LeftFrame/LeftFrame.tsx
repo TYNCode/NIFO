@@ -1,29 +1,29 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import HistoryBar from "./HistoryBar";
-import RecommendedQueries from "./RecommendedQueries";
+import Image from "next/image";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
 import { FiLink } from "react-icons/fi";
-import { LuLampDesk } from "react-icons/lu";
-import { BsFillSearchHeartFill } from "react-icons/bs";
-import { FaHistory } from "react-icons/fa";
 import { GrLogout } from "react-icons/gr";
 import { IoHome } from "react-icons/io5";
-import { useRouter, usePathname } from "next/navigation";
+import { RiHistoryLine } from "react-icons/ri";
+import { LuLampDesk } from "react-icons/lu";
+import { BsFillSearchHeartFill } from "react-icons/bs";
+import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
+import { BiTestTube } from "react-icons/bi";
+import ChatHistory from "./ChatHistory";
+import RecommendedQueries from "./RecommendedQueries";
+import useUserInfo from "../../redux/customHooks/userHook";
 import { useAppDispatch } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
-import useUserInfo from "../../redux/customHooks/userHook";
-import { FaArrowTrendUp } from "react-icons/fa6";
-import Image from "next/image";
-import { FaFolder } from "react-icons/fa6";
-import { BiTestTube } from "react-icons/bi";
-import { Dispatch, SetStateAction } from "react";
 
 interface LeftFrameProps {
   onNewChat?: () => void;
   setSessionId?: React.Dispatch<React.SetStateAction<string>>;
   setInputPrompt?: Dispatch<SetStateAction<string>>;
   setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
+  mode?: "home" | "chat";
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -31,15 +31,25 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   setSessionId,
   setInputPrompt,
   setIsInputEmpty,
+  mode = "home",
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const userInfo = useUserInfo();
   const logoutRef = useRef<HTMLDivElement>(null);
+  const userInfo = useUserInfo();
 
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
-  const [subTab, setSubTab] = useState<"default" | "recommended">("default");
+
+  // ✅ Locally manage subTab state
+  const [subTab, setSubTab] = useState<"default" | "recommended" | "chathistory">("default");
+
+  // ✅ Initialize subTab from URL ONCE on mount
+  useEffect(() => {
+    const initialSubTab = searchParams.get("subTab") as "recommended" | "chathistory" | null;
+    if (initialSubTab) setSubTab(initialSubTab);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchChatHistory());
@@ -55,34 +65,26 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleTabClick = async (tab: string) => {
+  const handleTabClick = (tab: string) => {
     if (tab === "Home") {
-      router.push("/");
+      router.push("/", { scroll: false });
       setSubTab("default");
+    } else if (tab === "Chat History") {
+      router.push("/", { scroll: false });
+      setSubTab("chathistory");
     } else if (tab === "Recommended Queries") {
-      if (pathname !== "/") {
-        router.push("/"); // First move to Home page
-        setTimeout(() => {
-          setSubTab("recommended");
-        }, 50); // Small timeout so that page load and subtab is set
-      } else {
-        setSubTab("recommended");
-      }
+      router.push("/", { scroll: false });
+      setSubTab("recommended");
     } else if (tab === "Startup Spotlight") {
       router.push("/spotlights");
-      setSubTab("default");
     } else if (tab === "Trends") {
       router.push("/trends");
-      setSubTab("default");
     } else if (tab === "Connections") {
       router.push("/connections");
-      setSubTab("default");
     } else if (tab === "Usecases") {
       router.push("/usecases");
-      setSubTab("default");
     } else if (tab === "Projects") {
       router.push("/coinnovation");
-      setSubTab("default");
     }
   };
 
@@ -99,6 +101,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   const navigationItems = [
     { icon: IoHome, title: "Home" },
+    { icon: RiHistoryLine, title: "Chat History" },
     { icon: BsFillSearchHeartFill, title: "Recommended Queries" },
     { icon: LuLampDesk, title: "Startup Spotlight" },
     { icon: FaArrowTrendUp, title: "Trends" },
@@ -120,19 +123,18 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const activePage = getActivePage();
 
   return (
-    <div className="h-screen flex flex-col bg-white">
-      {/* Logo */}
+    <div className="h-screen flex flex-col bg-white w-72">
       <div className="flex justify-center items-center bg-[#EEF7FF]">
         <Image src="/nifo.svg" alt="The Yellow Network" width={100} height={100} />
       </div>
 
-      {/* Sidebar Navigation */}
       <div className="flex-grow overflow-y-auto scrollbar-thin">
         <div className="flex flex-col gap-4 px-4 pt-6 pb-3 bg-[#EEF7FF]">
           {navigationItems.map(({ icon: Icon, title }) => {
-            const isActive:any =
+            const isActive =
               (title === "Home" && pathname === "/" && subTab === "default") ||
               (title === "Recommended Queries" && pathname === "/" && subTab === "recommended") ||
+              (title === "Chat History" && pathname === "/" && subTab === "chathistory") ||
               (title === activePage && title !== "Home");
 
             return (
@@ -145,19 +147,20 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                 title={title}
               >
                 <Icon size={16} />
-                <div className="text-xs">{title}</div>
+                <div className={`${isActive ? "text-base" : "text-[15px]"}`}>{title}</div>
               </div>
             );
           })}
         </div>
 
-        {/* Render Recommended Queries inside Home */}
-        {pathname === "/" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
+        {/* Only render subTabs if in "home" mode */}
+        {pathname === "/" && mode === "home" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
           <RecommendedQueries setInputPrompt={setInputPrompt} setIsInputEmpty={setIsInputEmpty} />
         )}
+
+        {pathname === "/" && mode === "home" && subTab === "chathistory" && <ChatHistory />}
       </div>
 
-      {/* Logout */}
       <div
         className="px-8 py-3 shadow-md flex items-center justify-between cursor-pointer border"
         onClick={() => setIsLogoutOpen(!isLogoutOpen)}

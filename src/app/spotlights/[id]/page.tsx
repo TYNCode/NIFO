@@ -52,7 +52,7 @@ const SpotlightDetail = () => {
   return (
     <main className="flex flex-row w-full h-screen">
       {/* Left Sidebar */}
-      <div>
+      <div className="w-[21%]">
         <LeftFrame />
       </div>
 
