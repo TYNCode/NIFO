@@ -22,14 +22,14 @@ const MainSpotlightMobile: React.FC<MainSpotlightMobileProps> = ({
       <div className="flex flex-col justify-around gap-4 py-5 items-start mx-7 text-lg">
         <div className="font-medium text-xl">SPOTLIGHT</div>
         <div className="flex flex-col gap-4">
-          <div>
+          {/* <div>
             <Image
               src={lastSpotlight?.spotlight_img}
               width={500}
               height={200}
               alt="spotlight"
             />
-          </div>
+          </div> */}
           <div className="font-light text-sm">{lastSpotlight.created_at}</div>
         </div>
         <div className="leading-9 tracking-wide line-clamp-4 text-sm">
@@ -53,13 +53,13 @@ const MainSpotlightMobile: React.FC<MainSpotlightMobileProps> = ({
               onClick={() => handleSpotlight(spotlight.id)}
             >
               <div className="w-16 h-16 flex-shrink-0">
-                <Image
+                {/* <Image
                   src={spotlight?.spotlight_img}
                   alt="Spotlight Logo"
                   width={64}
                   height={64}
                   className="object-contain w-full h-full"
-                />
+                /> */}
               </div>
 
               <div className="flex-1">{spotlight?.spotlight_title}</div>

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import StoreProvider from './redux/StoreProvider';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

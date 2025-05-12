@@ -19,12 +19,12 @@ const SpotlightBar: React.FC<SpotlightBarProps> = ({
       </div>
       <div className="mx-4">
         <div className="flex justify-center items-center cursor-pointer my-2">
-          <Image
+          {/* <Image
             src={lastSpotlight?.spotlight_img}
             alt="Third AI"
             width={100}
             height={50}
-          />
+          /> */}
         </div>
         <div className="text-balance line-clamp-4">
           {lastSpotlight?.spotlight_title}

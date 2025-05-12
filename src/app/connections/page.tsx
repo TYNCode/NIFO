@@ -30,13 +30,13 @@ const ConnectsPage = () => {
   return (
     <div className="flex h-screen bg-[#F8FBFF]">
       {/* Left Frame */}
-      <div className="w-[250px] border-r">
+      <div className="w-[21%]">
         <LeftFrame />
       </div>
 
       {/* Main Content */}
       <div className="flex-grow p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-blue-700 mb-2">Connections</h1>
+        <h1 className="text-3xl font-bold text-[#0070C0] mb-2">Connections</h1>
         <p className="text-gray-600 mb-8">Manage your engagement connections and requests</p>
 
         {/* Active Conversations */}
