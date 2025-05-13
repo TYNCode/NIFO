@@ -17,10 +17,12 @@ import roiEvaluationReducer from "./features/coinnovation/roiEvaluationSlice";
 import useCaseSlice from "./features/usecases/useCaseSlice"
 import changePasswordSlice from "./features/auth/forgotPasswordSlice";
 import resetPasswordSlice from "./features/auth/resetPasswordSlice";
+import layoutSlice from "./features/layout/layoutSlice"
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
   userInfo: userInfoSlice,
+  layout:layoutSlice,
   sessionMessage: sessionMessageSlice,
   login: loginSlice,
   register: registerSlice,

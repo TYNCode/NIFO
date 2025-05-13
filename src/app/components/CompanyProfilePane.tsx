@@ -78,7 +78,6 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
             status: "requested",
           })
         );
-
         setIsModalOpen(true);
       } catch (error) {
         console.error("Error in creating partner connect:", error);

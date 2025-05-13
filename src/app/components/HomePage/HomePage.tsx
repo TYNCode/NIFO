@@ -7,13 +7,6 @@ import LeftFrame from "../LeftFrame/LeftFrame";
 import Prompt from "../Prompt";
 import NavBar from "../Navbar";
 import CompanyProfilePane from "../CompanyProfilePane";
-import BottomBar from "../../mobileComponents/BottomBar";
-import MobileHeader from "../../mobileComponents/MobileHeader";
-import SpotlightMobile from "../Spotlights/SpotlightMobile";
-import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
-import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
-import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
-import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader";
 import { ChatHistoryResponse, StartupType } from "../../interfaces";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
@@ -197,48 +190,7 @@ export default function HomePage() {
     setMessages([]);
     setInputPrompt("");
   };
-
-  const [activeTabs, setActiveTabs] = useState<{ [key: number]: string }>({});
-
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "Spotlight":
-        return <SpotlightMobile />;
-      case "Search":
-        return (
-          <SearchMobile
-            isInputEmpty={isInputEmpty}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
-            handleToggleRightFrame={handleToggleRightFrame}
-            handleToggleLeftFrame={handleToggleLeftFrame}
-            onSaveInput={handleSaveInput}
-            handleNewChat={handleNewChat}
-            messages={messages}
-            setSessionId={setSessionId}
-          />
-        );
-      case "Trends":
-        return (
-          <TrendsMobile
-            selectedSector={selectedSector}
-            selectedIndustry={selectedIndustry}
-            selectedTechnology={selectedTechnology}
-            handleSectorClick={handleSectorClick}
-            handleIndustryClick={handleIndustryClick}
-            handleTechnologyClick={handleTechnologyClick}
-            currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
-          />
-        );
-      case "More":
-        return <MoreMobile userInfo={userInfo} />;
-      default:
-        return null;
-    }
-  };
+ 
 
   return (
     <main className="flex flex-col w-full">
@@ -290,16 +242,6 @@ export default function HomePage() {
             />
           </div>
         )}
-      </div>
-
-      <div className="flex flex-col sm:hidden h-[100dvh]">
-        {activeTab === "Trends" ? (
-          <TrendsMobileHeader handleBack={handleBack} />
-        ) : (
-          <MobileHeader />
-        )}
-        <div className="flex-grow overflow-y-auto">{renderTabContent()}</div>
-        <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} />
       </div>
     </main>
   );

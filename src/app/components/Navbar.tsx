@@ -12,19 +12,7 @@ interface NavbarProps {
 }
 
 const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const handleTrendsRoute = () => {
-    router.push("/trends");
-  };
-  const handleCoinnovationRoute = () => {
-    localStorage.removeItem("projectID");
-    localStorage.removeItem("problemStatement");
-    localStorage.setItem("activeTab", "01.a");
-    dispatch(clearProjectState());
-    dispatch(resetChallenge());
-    router.push("/coinnovation");
-  };
+
   return (
     <div
       className={`flex bg-white items-center flex-col gap-8  cursor-pointer transition-all`}
@@ -46,12 +34,7 @@ const NavBar: React.FC<NavbarProps> = ({ open, handleToggleLeftFrame }) => {
           <IoIosArrowForward size={23} />
         </div>
       )}
-      {/* <div className="hover:text-blue-500" onClick={handleTrendsRoute}>
-        <IoTrendingUpSharp size={23} />
-      </div>
-      <div className="hover:text-blue-500" onClick={handleCoinnovationRoute}>
-        <FcIdea size={23} />
-      </div> */}
+
     </div>
   );
 };

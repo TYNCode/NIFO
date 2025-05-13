@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
@@ -15,8 +15,12 @@ import { BiTestTube } from "react-icons/bi";
 import ChatHistory from "./ChatHistory";
 import RecommendedQueries from "./RecommendedQueries";
 import useUserInfo from "../../redux/customHooks/userHook";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
+import {
+  setActiveSidebarTab,
+  setActivePage,
+} from "../../redux/features/layout/layoutSlice";
 
 interface LeftFrameProps {
   onNewChat?: () => void;
@@ -40,15 +44,15 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const logoutRef = useRef<HTMLDivElement>(null);
   const userInfo = useUserInfo();
 
+  const { activeSidebarTab } = useAppSelector((state) => state.layout);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
-  // ✅ Locally manage subTab state
-  const [subTab, setSubTab] = useState<"default" | "recommended" | "chathistory">("default");
-
-  // ✅ Initialize subTab from URL ONCE on mount
   useEffect(() => {
-    const initialSubTab = searchParams.get("subTab") as "recommended" | "chathistory" | null;
-    if (initialSubTab) setSubTab(initialSubTab);
+    const initialSubTab = searchParams.get("subTab") as
+      | "recommended"
+      | "chathistory"
+      | null;
+    if (initialSubTab) dispatch(setActiveSidebarTab(initialSubTab));
   }, []);
 
   useEffect(() => {
@@ -68,23 +72,26 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const handleTabClick = (tab: string) => {
     if (tab === "Home") {
       router.push("/", { scroll: false });
-      setSubTab("default");
+      dispatch(setActiveSidebarTab("default"));
+      dispatch(setActivePage("Home"));
     } else if (tab === "Chat History") {
       router.push("/", { scroll: false });
-      setSubTab("chathistory");
+      dispatch(setActiveSidebarTab("chathistory"));
+      dispatch(setActivePage("Chat History"));
     } else if (tab === "Recommended Queries") {
       router.push("/", { scroll: false });
-      setSubTab("recommended");
-    } else if (tab === "Startup Spotlight") {
-      router.push("/spotlights");
-    } else if (tab === "Trends") {
-      router.push("/trends");
-    } else if (tab === "Connections") {
-      router.push("/connections");
-    } else if (tab === "Usecases") {
-      router.push("/usecases");
-    } else if (tab === "Projects") {
-      router.push("/coinnovation");
+      dispatch(setActiveSidebarTab("recommended"));
+      dispatch(setActivePage("Recommended Queries"));
+    } else {
+      const routeMap: Record<string, string> = {
+        "Startup Spotlight": "/spotlights",
+        Trends: "/trends",
+        Connections: "/connections",
+        Usecases: "/usecases",
+        Projects: "/coinnovation",
+      };
+      router.push(routeMap[tab]);
+      dispatch(setActivePage(tab));
     }
   };
 
@@ -132,9 +139,9 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
         <div className="flex flex-col gap-4 px-4 pt-6 pb-3 bg-[#EEF7FF]">
           {navigationItems.map(({ icon: Icon, title }) => {
             const isActive =
-              (title === "Home" && pathname === "/" && subTab === "default") ||
-              (title === "Recommended Queries" && pathname === "/" && subTab === "recommended") ||
-              (title === "Chat History" && pathname === "/" && subTab === "chathistory") ||
+              (title === "Home" && pathname === "/" && activeSidebarTab === "default") ||
+              (title === "Recommended Queries" && pathname === "/" && activeSidebarTab === "recommended") ||
+              (title === "Chat History" && pathname === "/" && activeSidebarTab === "chathistory") ||
               (title === activePage && title !== "Home");
 
             return (
@@ -153,12 +160,11 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           })}
         </div>
 
-        {/* Only render subTabs if in "home" mode */}
-        {pathname === "/" && mode === "home" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
+        {pathname === "/" && mode === "home" && activeSidebarTab === "recommended" && setInputPrompt && setIsInputEmpty && (
           <RecommendedQueries setInputPrompt={setInputPrompt} setIsInputEmpty={setIsInputEmpty} />
         )}
 
-        {pathname === "/" && mode === "home" && subTab === "chathistory" && <ChatHistory />}
+        {pathname === "/" && mode === "home" && activeSidebarTab === "chathistory" && <ChatHistory />}
       </div>
 
       <div
