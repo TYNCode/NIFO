@@ -2,6 +2,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .transition-all {
   transition: all 0.3s ease-in;
 }
@@ -90,4 +96,8 @@ h3 {
 h4 {
   font-size: 1em;
   font-weight: bold;
+}
+
+.scrollbar-no-buttons::-webkit-scrollbar-button {
+  display: none !important;
 }

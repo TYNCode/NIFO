@@ -23,6 +23,7 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "flowbite-react": "^0.10.1",
+    "framer-motion": "^12.12.2",
     "html-docx-js": "^0.3.1",
     "lodash.debounce": "^4.0.8",
     "mammoth": "^1.9.0",

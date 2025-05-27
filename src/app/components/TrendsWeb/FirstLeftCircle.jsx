@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import sectorData from "../../data/data_sector.json";
 
-const FirstLeftCircle = ({ onDotClick }) => {
+const FirstLeftCircle = ({ onDotClick, onSectorHighlight }) => {
+  const [outerCircleData, setOuterCircleData] = useState([]);
+  const [activeCenterIndex, setActiveCenterIndex] = useState(null);
+  const [scrolling, setScrolling] = useState(false);
+  const scrollTimeout = useRef(null);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
+  
+
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
       if (innerArcRef.current) {
@@ -17,22 +23,36 @@ const FirstLeftCircle = ({ onDotClick }) => {
     }
   };
 
-  const sectors = sectorData.sectors;
+  useEffect(() => {
+    const fetchFilteredSectors = async () => {
+      try {
+        const usecaseResponse = await fetch("http://127.0.0.1:8000/trends/");
+        const usecaseData = await usecaseResponse.json();
+        const validSectorsSet = new Set(usecaseData.map((item) => item.sector));
+        const optionsResponse = await fetch("http://127.0.0.1:8000/trends/options/");
+        const optionsData = await optionsResponse.json();
+        const allSectors = optionsData.sectors || [];
 
-  const getInitialSectorData = () => {
-    return sectors.slice(0, 8).map((sector) => ({
-      sectorName: sector.sector,
-    }));
-  };
+        const filteredSectors = allSectors
+          .filter((item) => validSectorsSet.has(item.value))
+          .slice(0, 8) 
+          .map((item) => ({
+            sectorName: item.value,
+          }));
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSectorData()
-  );
+        setOuterCircleData(filteredSectors);
+      } catch (error) {
+        console.error("Error fetching filtered sectors:", error);
+      }
+    };
+
+    fetchFilteredSectors();
+  }, []);
+  
+ 
   const totalDots = outerCircleData.length;
   const anglePerDot = (2 * Math.PI) / totalDots;
   const [angleOffset, setAngleOffset] = useState(Math.PI / 2);
-  const [isDragging, setIsDragging] = useState(false);
-  const [lastMouseY, setLastMouseY] = useState(null);
   const [screenWidth, setScreenWidth] = useState(1024);
   const innerArcRef = useRef(null);
   const [innerArcRect, setInnerArcRect] = useState(null);
@@ -50,11 +70,9 @@ const FirstLeftCircle = ({ onDotClick }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setScreenWidth(window.innerWidth);
-
       const handleResize = () => {
         setScreenWidth(window.innerWidth);
       };
-
       window.addEventListener("resize", handleResize);
 
       return () => {
@@ -64,57 +82,19 @@ const FirstLeftCircle = ({ onDotClick }) => {
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (event) => {
-      if (isDragging) {
-        handleMouseMoveHandler(event);
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      setLastMouseY(null);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, lastMouseY]);
-
-  useEffect(() => {
     setAngleOffset((prevOffset) => prevOffset);
   }, []);
-
-  const handleMouseMoveHandler = (event) => {
-    const { clientY } = event;
-    if (lastMouseY !== null) {
-      const deltaY = clientY - lastMouseY;
-      const rotationSpeed = 0.005;
-      setAngleOffset((prevOffset) => prevOffset - deltaY * rotationSpeed);
-    }
-    setLastMouseY(clientY);
-  };
-
-  const handleMouseDown = (event) => {
-    setIsDragging(true);
-    setLastMouseY(event.clientY);
-  };
 
   const handleDotClick = (dotIndex) => {
     const normalizedAngleOffset =
       ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
     const currentCenterIndex = Math.round(
-      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-        totalDots
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
     );
 
     const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-    const shortestDistance =
-      distance <= totalDots / 2 ? distance : distance - totalDots;
+    const shortestDistance = distance <= totalDots / 2 ? distance : distance - totalDots;
     const angleDifference = shortestDistance * anglePerDot;
 
     setAngleOffset((prevOffset) => prevOffset - angleDifference);
@@ -123,6 +103,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
       onDotClick(outerCircleData[dotIndex].sectorName);
     }
   };
+  
 
   const dots = Array.from({ length: totalDots }).map((_, index) => {
     const angle = (index / totalDots) * Math.PI * 2 + angleOffset;
@@ -135,10 +116,41 @@ const FirstLeftCircle = ({ onDotClick }) => {
     ((Math.PI / 2 - angleOffset) / anglePerDot + totalDots) % totalDots
   );
 
+
+  
+  const handleWheel = (event) => {
+    const delta = event.deltaY;
+    const scrollSpeed = 0.005;
+    const newOffset = angleOffset - delta * scrollSpeed;
+    setAngleOffset(newOffset);
+    setHasUserScrolled(true);
+
+    const normalizedAngleOffset =
+      ((newOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    const currentCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+    );
+
+    setActiveCenterIndex(currentCenterIndex); 
+  };
+
+  useEffect(() => {
+    if (!outerCircleData.length || activeCenterIndex === null) return;
+
+    const activeSector = outerCircleData[activeCenterIndex]?.sectorName;
+    if (activeSector) {
+      onSectorHighlight?.(activeSector);
+    }
+  }, [activeCenterIndex]);
+  
+  
+  
+
   return (
     <div
       className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
-      onMouseDown={handleMouseDown}
+      onWheel={handleWheel}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
@@ -164,7 +176,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
 
       {innerArcRect &&
         dots.map((dot) => {
-          const isMiddleDot = dot.index === centerIndex;
+          const isMiddleDot = dot.index === activeCenterIndex; 
           const innerArcRect = innerArcRef.current?.getBoundingClientRect();
           const innerArcCenterX = innerArcRect
             ? innerArcRect.left + innerArcRect.width / 2
@@ -173,7 +185,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
             ? innerArcRect.top + innerArcRect.height / 2
             : 0;
 
-          const horizontalOffsetPercent = -0.3; 
+          const horizontalOffsetPercent = -0.3;
           const verticalOffsetPercent = -0.1;
           const horizontalOffset = innerArcRect
             ? innerArcRect.width * horizontalOffsetPercent
@@ -191,32 +203,29 @@ const FirstLeftCircle = ({ onDotClick }) => {
                 top: `${innerArcCenterY + dot.y + verticalOffset}px`,
                 transform: "translate(-50%, -50%)",
               }}
-              onMouseDown={() => {
-                setIsDragging(true);
-                setLastMouseY(null);
+              onClick={() => {
+                setActiveCenterIndex(dot.index); 
+                onDotClick(outerCircleData[dot.index].sectorName);
               }}
-              onClick={() => handleDotClick(dot.index)}
+
             >
               <div
-                className={`flex flex-row items-center justify-center ${
-                  isMiddleDot ? "border-blue-500" : "border-black"
-                }`}
+                className={`flex flex-row items-center justify-center ${isMiddleDot ? "border-blue-500" : "border-black"
+                  }`}
                 style={{ textAlign: "center" }}
               >
                 <div
-                  className={`rounded-full flex items-center justify-center ${
-                    isMiddleDot
-                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2"
+                  className={`rounded-full flex items-center justify-center ${isMiddleDot
+                      ? "bg-[#3AB8FF] border-[#FFEFA7] border-2" 
                       : "bg-[#D8D8D8]"
-                  } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
+                    } ${isMiddleDot ? "w-10 h-10" : "w-8 h-8"}`}
                   style={{ flexShrink: 0 }}
                 ></div>
                 <div
-                  className={`text-sm w-32 justify-start text-left ml-2 ${
-                    isMiddleDot
+                  className={`text-sm w-32 justify-start text-left ml-2 ${isMiddleDot
                       ? "font-semibold text-base text-[#4C4C4C]"
                       : "text-[#797979]"
-                  }`}
+                    }`}
                   style={{ wordWrap: "break-word", whiteSpace: "normal" }}
                 >
                   {outerCircleData[dot.index].sectorName || "N/A"}
@@ -225,6 +234,7 @@ const FirstLeftCircle = ({ onDotClick }) => {
             </div>
           );
         })}
+
     </div>
   );
 };
