@@ -1,322 +1,363 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartupNameType, StartupType } from "../../../interfaces";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiRequest } from "@/app/utils/apiWrapper/apiRequest";
 import {
-  deleteRequest,
-  getRequest,
-  postRequest,
-  putRequest,
-} from "../../hooks";
+  StartupEditContext,
+  StartupNameType,
+  StartupType,
+} from "@/app/admin/startups/types/company";
 
-interface CompanyProfileState {
+interface StartupState {
   loading: boolean;
-  companies: StartupType[] | StartupNameType[];
+  companies: StartupType[];
   company: StartupType | null;
-  error: string | null;
+  searchResults: StartupNameType[];
+  selectedStartup: StartupEditContext | null;
+  isModalOpen: boolean;
+  mode: "edit" | "create";
+  error?: string;
+  message?: string;
   hasMore: boolean;
+  searchHasMore: boolean;
+  isSearchMode: boolean;
 }
 
-const initialState: CompanyProfileState = {
+const initialState: StartupState = {
+  loading: false,
   companies: [],
   company: null,
-  loading: false,
-  error: null,
+  searchResults: [],
+  // searchCompanies: [],
+  selectedStartup: null,
+  isModalOpen: false,
+  mode: "create",
+  error: undefined,
+  message: undefined,
   hasMore: true,
+  searchHasMore: true,
+  isSearchMode: false,
 };
 
-// Thunk to fetch companies with pagination
 export const fetchCompaniesByPagination = createAsyncThunk<
   StartupType[],
   { page: number; page_size: number },
   { rejectValue: string }
 >(
-  "companyProfile/fetchCompaniesByPagination",
+  "startup/fetchCompaniesByPagination",
   async ({ page, page_size }, { rejectWithValue }) => {
     try {
-      const response = await getRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/?page=${page}&page_size=${page_size}/`
+      const response = await apiRequest(
+        "get",
+        `/company/view/?page=${page}&page_size=${page_size}`,
+        null,
+        false
       );
+      console.log("response.data.results ----------->", response);
       return response.data.results;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data || "Error in fetching companies with pagination"
+        error.response?.data?.message || "Failed to fetch startups"
       );
     }
   }
 );
 
-// Thunk to fetch all companies used in Register page
-export const fetchAllCompanies = createAsyncThunk<
+export const fetchCompaniesBySearch = createAsyncThunk<
   StartupType[],
-  void,
+  { query: string; page: number; page_size: number },
   { rejectValue: string }
->("companyProfile/fetchAllCompanies", async (_, { rejectWithValue }) => {
-  try {
-    const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/`
-    );
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data || "Error in fetching companies"
-    );
+>(
+  "startup/fetchCompaniesBySearch",
+  async ({ query, page, page_size }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(
+        "get",
+        `/company/view/?search=${encodeURIComponent(query)}&page=${page}&page_size=${page_size}`,
+        null,
+        false
+      );
+      console.log("search companies by search", response.data.results)
+      return response.data.results;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to search startups"
+      );
+    }
   }
-});
+);
 
-// Thunk to fetch a single company by ID
-export const fetchCompanyById = createAsyncThunk<
+export const fetchStartupById = createAsyncThunk<
   StartupType,
-  string,
+  number,
   { rejectValue: string }
->("companyProfile/fetchCompanyById", async (id, { rejectWithValue }) => {
+>("startup/fetchStartupById", async (id, { rejectWithValue }) => {
   try {
-    const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
+    const response = await apiRequest(
+      "get",
+      `/company/view/${id}/`,
+      null,
+      false
     );
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
-      error.response?.data || `Error in fetching company with ID: ${id}`
+      error.response?.data?.message || "Failed to fetch startup"
     );
   }
 });
 
-export const fetchCompanyByName = createAsyncThunk<
+export const fetchStartupSearchSuggestions = createAsyncThunk<
   StartupNameType[],
   string,
   { rejectValue: string }
->("companyProfile/fetchCompanyByName", async (query, { rejectWithValue }) => {
+>(
+  "startup/fetchStartupSearchSuggestions",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(
+        "get",
+        `/company/registration-search/?search=${encodeURIComponent(query)}`,
+        null,
+        false
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to search startups"
+      );
+    }
+  }
+);
+
+export const createStartup = createAsyncThunk<
+  StartupType,
+  Partial<StartupType>,
+  { rejectValue: string }
+>("startup/createStartup", async (payload, { rejectWithValue }) => {
   try {
-    const response = await getRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyregistrationsearch/?search=${encodeURIComponent(query)}`
+    const response = await apiRequest("post", "/company/view/", payload, false);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to create startup"
+    );
+  }
+});
+
+export const updateStartup = createAsyncThunk<
+  StartupType,
+  { id: number; payload: Partial<StartupType> },
+  { rejectValue: string }
+>("startup/updateStartup", async ({ id, payload }, { rejectWithValue }) => {
+  try {
+    const response = await apiRequest(
+      "put",
+      `/company/view/${id}/`,
+      payload,
+      false
     );
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
-      error.response?.data || "Failed to fetch company data"
+      error.response?.data?.message || "Failed to update startup"
     );
   }
 });
 
-// Thunk to create a new company
-export const postCompany = createAsyncThunk<any, any, { rejectValue: string }>(
-  "companyProfile/postCompany",
-  async (newCompanyData, { rejectWithValue }) => {
-    try {
-      const response = await postRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/`,
-        newCompanyData
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data || "Error in posting new company"
-      );
-    }
-  }
-);
-
-// Thunk to update a company by ID
-export const updateCompanyById = createAsyncThunk<
-  StartupType,
-  { id: string; data: Partial<StartupType> },
+export const deleteStartup = createAsyncThunk<
+  number,
+  number,
   { rejectValue: string }
->(
-  "companyProfile/updateCompanyById",
-  async ({ id, data }, { rejectWithValue }) => {
-    try {
-      const response = await putRequest(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`,
-        data
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data || `Error in updating company with ID: ${id}`
-      );
-    }
-  }
-);
-
-// Thunk to delete a company by ID
-export const deleteCompanyById = createAsyncThunk<
-  string,
-  string,
-  { rejectValue: string }
->("companyProfile/deleteCompanyById", async (id, { rejectWithValue }) => {
+>("startup/deleteStartup", async (id, { rejectWithValue }) => {
   try {
-    await deleteRequest(
-      `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
-    );
+    await apiRequest("delete", `/company/view/${id}/`, null, false);
     return id;
   } catch (error: any) {
     return rejectWithValue(
-      error.response?.data || `Error in deleting company with ID: ${id}`
+      error.response?.data?.message || "Failed to delete startup"
     );
   }
 });
 
-const companyProfileSlice = createSlice({
-  name: "companyProfile",
+const mergeUniqueStartups = (
+  oldList: StartupType[],
+  newList: StartupType[]
+): StartupType[] => {
+  const map = new Map<number, StartupType>();
+  oldList.forEach((item) => map.set(item.startup_id, item));
+  newList.forEach((item) => map.set(item.startup_id, item));
+  return Array.from(map.values());
+};
+
+const startupSlice = createSlice({
+  name: "startup",
   initialState,
-  reducers: {},
+  reducers: {
+    clearStartupState(state) {
+      state.loading = false;
+      state.error = undefined;
+      state.message = undefined;
+      state.selectedStartup = null;
+      state.isModalOpen = false;
+    },
+    setStartupModalOpen(state, action: PayloadAction<boolean>) {
+      state.isModalOpen = action.payload;
+    },
+    setSelectedStartup(
+      state,
+      action: PayloadAction<StartupEditContext | null>
+    ) {
+      state.selectedStartup = action.payload;
+    },
+    setStartupMode(state, action: PayloadAction<"edit" | "create">) {
+      state.mode = action.payload;
+    },
+    setSearchMode(state, action: PayloadAction<boolean>) {
+      state.isSearchMode = action.payload;
+      if (!action.payload) {
+        state.companies = [];
+        state.searchResults = [];
+        state.searchHasMore = true;
+      }
+    },
+    clearSearchResults(state) {
+      state.companies = [];
+      state.searchResults = [];
+      state.searchHasMore = true;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCompaniesByPagination.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = undefined;
       })
-      .addCase(
-        fetchCompaniesByPagination.fulfilled,
-        (state, action: PayloadAction<StartupType[]>) => {
-          state.companies = [...state.companies, ...action.payload];
-          state.loading = false;
-          state.hasMore = action.payload.length > 0;
-        }
-      )
-      .addCase(
-        fetchCompaniesByPagination.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error =
-            action.payload || "Failed to fetch companies with pagination";
-          state.loading = false;
-        }
-      );
-
-    // Fetch all companies
-    builder
-      .addCase(fetchAllCompanies.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        fetchAllCompanies.fulfilled,
-        (state, action: PayloadAction<StartupType[]>) => {
+      .addCase(fetchCompaniesByPagination.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.meta.arg.page === 1) {
+          // First page: replace list
           state.companies = action.payload;
-          state.loading = false;
-        }
-      )
-      .addCase(
-        fetchAllCompanies.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to fetch companies";
-          state.loading = false;
-        }
-      );
-
-    // Fetch a company by ID
-    builder
-      .addCase(fetchCompanyById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        fetchCompanyById.fulfilled,
-        (state, action: PayloadAction<StartupType>) => {
-          state.company = action.payload;
-          state.loading = false;
-        }
-      )
-      .addCase(
-        fetchCompanyById.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to fetch company by ID";
-          state.loading = false;
-        }
-      );
-
-    // Create a new company
-    builder
-      .addCase(postCompany.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        postCompany.fulfilled,
-        (state, action: PayloadAction<StartupType>) => {
-          state.companies = [...state.companies, action.payload];
-          state.loading = false;
-        }
-      )
-      .addCase(
-        postCompany.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to post new company";
-          state.loading = false;
-        }
-      );
-
-    // Update a company by ID
-    builder
-      .addCase(updateCompanyById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        updateCompanyById.fulfilled,
-        (state, action: PayloadAction<StartupType>) => {
-          state.company = action.payload;
-          state.companies = state.companies.map((company) =>
-            company.startup_id === action.payload.startup_id
-              ? action.payload
-              : company
+        } else {
+          // Subsequent pages: append uniquely
+          state.companies = mergeUniqueStartups(
+            state.companies,
+            action.payload
           );
-          state.loading = false;
         }
-      )
-      .addCase(
-        updateCompanyById.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to update company";
-          state.loading = false;
-        }
-      );
-
-    //Search by company name
-    builder
-      .addCase(fetchCompanyByName.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.companies = []; // Clear old search results to avoid confusion
+        state.hasMore = action.payload.length > 0;
       })
-      .addCase(
-        fetchCompanyByName.fulfilled,
-        (state, action: PayloadAction<StartupNameType[]>) => {
+      .addCase(fetchCompaniesByPagination.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchCompaniesBySearch.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(fetchCompaniesBySearch.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.meta.arg.page === 1) {
           state.companies = action.payload;
-          state.loading = false;
-          state.error = null;
-        }
-      )
-      .addCase(
-        fetchCompanyByName.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to fetch company data";
-          state.loading = false;
-        }
-      );
-
-    // Delete a company by ID
-    builder
-      .addCase(deleteCompanyById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        deleteCompanyById.fulfilled,
-        (state, action: PayloadAction<string>) => {
-          state.companies = state.companies.filter(
-            (company) => company.startup_id !== Number(action.payload)
+        } else {
+          state.companies = mergeUniqueStartups(
+            state.companies,
+            action.payload
           );
-          state.loading = false;
         }
-      )
-      .addCase(
-        deleteCompanyById.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Failed to delete company";
-          state.loading = false;
-        }
-      );
+        state.searchHasMore = action.payload.length > 0;
+      })
+      .addCase(fetchCompaniesBySearch.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchStartupById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchStartupById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.company = action.payload;
+      })
+      .addCase(fetchStartupById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchStartupSearchSuggestions.pending, (state) => {
+        // Don't set loading to true for suggestions as it interferes with main loading
+        state.error = undefined;
+      })
+      .addCase(fetchStartupSearchSuggestions.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
+      })
+      .addCase(fetchStartupSearchSuggestions.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      .addCase(createStartup.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(createStartup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = "Startup created successfully";
+        state.companies.push(action.payload);
+      })
+      .addCase(createStartup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateStartup.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(updateStartup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = "Startup updated successfully";
+        const index = state.companies.findIndex(
+          (s) => s.startup_id === action.payload.startup_id
+        );
+        if (index !== -1) state.companies[index] = action.payload;
+
+        const searchIndex = state.companies.findIndex(
+          (s) => s.startup_id === action.payload.startup_id
+        );
+        if (searchIndex !== -1)
+          state.companies[searchIndex] = action.payload;
+      })
+      .addCase(updateStartup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(deleteStartup.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(deleteStartup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = "Startup deleted";
+        state.companies = state.companies.filter(
+          (s) => s.startup_id !== action.payload
+        );
+        state.companies = state.companies.filter(
+          (s) => s.startup_id !== action.payload
+        );
+      })
+      .addCase(deleteStartup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export default companyProfileSlice.reducer;
+export const {
+  clearStartupState,
+  setStartupModalOpen,
+  setSelectedStartup,
+  setStartupMode,
+  setSearchMode,
+  clearSearchResults,
+} = startupSlice.actions;
+export default startupSlice.reducer;

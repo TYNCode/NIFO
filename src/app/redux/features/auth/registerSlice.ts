@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { User } from "../../../interfaces/index";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface RegisterState {
   loading: boolean;
@@ -27,9 +28,11 @@ export const registerUser = createAsyncThunk(
   "register/registerUser",
   async (data: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/user/register/",
-        data
+      const response = await apiRequest(
+        "post",
+        "/user/register/",
+        data,
+        false
       );
       return response.data;
     } catch (error: any) {

@@ -17,6 +17,7 @@ import roiEvaluationReducer from "./features/coinnovation/roiEvaluationSlice";
 import useCaseSlice from "./features/usecases/useCaseSlice"
 import changePasswordSlice from "./features/auth/forgotPasswordSlice";
 import resetPasswordSlice from "./features/auth/resetPasswordSlice";
+import agreementSlice from "./features/admin/agreements/agreementSlice"
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   solutionComparison: solutionComparison,
   roiEvaluation: roiEvaluationReducer,
   useCase:useCaseSlice,
+  agreement:agreementSlice,
 
 });
 

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { User } from "../../../interfaces";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface LoginState {
   loading: boolean;
@@ -21,23 +21,29 @@ interface FormData {
   password: string;
 }
 
-export const loginUser = createAsyncThunk(
-  "login/loginUser",
-  async (data: FormData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/user/login/",
-        data
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-          "Login failed. Please check your credentials."
-      );
-    }
+interface LoginResponse {
+  user: User;
+  tokens: {
+    access_token: string;
+    refresh_token: string;
+  };
+}
+
+export const loginUser = createAsyncThunk<
+  LoginResponse,
+  FormData,
+  { rejectValue: string }
+>("login/loginUser", async (data, { rejectWithValue }) => {
+  try {
+    const response = await apiRequest("post", "/user/login/", data, false);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message ||
+        "Login failed. Please check your credentials."
+    );
   }
-);
+});
 
 const loginSlice = createSlice({
   name: "login",

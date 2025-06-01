@@ -1,27 +1,4 @@
-export interface StartupType {
-  startup_id: number;
-  startup_name: string;
-  startup_url: string;
-  startup_gsi: string | null;
-  startup_analyst_rating: string | null;
-  startup_customers: string | null;
-  startup_usecases: string | null;
-  startup_solutions: string | null;
-  startup_industry: string | null;
-  startup_technology: string | null;
-  startup_overview: string | null;
-  startup_description: string | null;
-  startup_company_stage: string | null;
-  startup_country: string | null;
-  startup_founders_info: string | null;
-  startup_emails: string | null;
-  startup_partners: string | null;
-}
 
-export interface StartupNameType {
-  startup_id : number;
-  startup_name :  string;
-}
 
 export interface CompanyProfile {
   startup_id: number;
@@ -129,22 +106,6 @@ export interface SpotlightContent {
   heading: string;
   body: string;
 }
-
-export interface Spotlight {
-  id: number;
-  spotlight_startup_id: number | null; 
-  spotlight_title: string;
-  spotlight_category: string | null;
-  spotlight_week: string | null;
-  spotlight_subtitle: string | null;
-  logo_url: string | null;
-  problem_address: string | null;
-  technology_leveraged: string[] | null;
-  use_case: string | null;
-  impact: string | null;
-  created_at: string; 
-}
-
 
 
 

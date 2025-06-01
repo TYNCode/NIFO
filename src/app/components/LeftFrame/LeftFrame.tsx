@@ -1,32 +1,34 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
-import { FiLink } from "react-icons/fi";
-import { GrLogout } from "react-icons/gr";
-import { IoHome } from "react-icons/io5";
-import { RiHistoryLine } from "react-icons/ri";
-import { LuLampDesk } from "react-icons/lu";
-import { BsFillSearchHeartFill } from "react-icons/bs";
-import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
-import { BiTestTube } from "react-icons/bi";
-import ChatHistory from "./ChatHistory";
-import RecommendedQueries from "./RecommendedQueries";
-import useUserInfo from "../../redux/customHooks/userHook";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
+import useUserInfo from "../../redux/customHooks/userHook";
+import ChatHistory from "./ChatHistory";
+import RecommendedQueries from "./RecommendedQueries";
+import { IoHome } from "react-icons/io5";
+import { RiHistoryLine } from "react-icons/ri";
+import { BsFillSearchHeartFill } from "react-icons/bs";
+import { LuLampDesk } from "react-icons/lu";
+import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
+import { FiLink } from "react-icons/fi";
+import { BiTestTube } from "react-icons/bi";
+import { GrLogout } from "react-icons/gr";
 
-interface LeftFrameProps {
-  onNewChat?: () => void;
-  setSessionId?: React.Dispatch<React.SetStateAction<string>>;
-  setInputPrompt?: Dispatch<SetStateAction<string>>;
-  setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
-  mode?: "home" | "chat";
-}
+const navItems = [
+  { title: "Home", icon: IoHome, href: "/", subTab: "default" },
+  { title: "Chat History", icon: RiHistoryLine, href: "/", subTab: "chathistory" },
+  { title: "Recommended Queries", icon: BsFillSearchHeartFill, href: "/", subTab: "recommended" },
+  { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
+  { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
+  { title: "Connections", icon: FiLink, href: "/connections" },
+  { title: "Usecases", icon: BiTestTube, href: "/usecases" },
+  { title: "Projects", icon: FaFolder, href: "/coinnovation" },
+];
 
-const LeftFrame: React.FC<LeftFrameProps> = ({
+const LeftFrame = ({
   onNewChat,
   setSessionId,
   setInputPrompt,
@@ -37,17 +39,13 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const logoutRef = useRef<HTMLDivElement>(null);
+  const logoutRef = useRef(null);
   const userInfo = useUserInfo();
-
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [subTab, setSubTab] = useState("default");
 
-  // ✅ Locally manage subTab state
-  const [subTab, setSubTab] = useState<"default" | "recommended" | "chathistory">("default");
-
-  // ✅ Initialize subTab from URL ONCE on mount
   useEffect(() => {
-    const initialSubTab = searchParams.get("subTab") as "recommended" | "chathistory" | null;
+    const initialSubTab = searchParams.get("subTab");
     if (initialSubTab) setSubTab(initialSubTab);
   }, []);
 
@@ -56,8 +54,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (logoutRef.current && !logoutRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event) => {
+      if (logoutRef.current && !logoutRef.current.contains(event.target)) {
         setIsLogoutOpen(false);
       }
     };
@@ -65,33 +63,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleTabClick = (tab: string) => {
-    if (tab === "Home") {
-      router.push("/", { scroll: false });
-      setSubTab("default");
-    } else if (tab === "Chat History") {
-      router.push("/", { scroll: false });
-      setSubTab("chathistory");
-    } else if (tab === "Recommended Queries") {
-      router.push("/", { scroll: false });
-      setSubTab("recommended");
-    } else if (tab === "Startup Spotlight") {
-      router.push("/spotlights");
-    } else if (tab === "Trends") {
-      router.push("/trends");
-    } else if (tab === "Connections") {
-      router.push("/connections");
-    } else if (tab === "Usecases") {
-      router.push("/usecases");
-    } else if (tab === "Projects") {
-      router.push("/coinnovation");
-    }
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("jwtAccessToken");
-    localStorage.removeItem("jwtRefreshToken");
+    localStorage.clear();
     router.push("/login");
   };
 
@@ -99,65 +72,72 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
     router.push("/Dashboard");
   };
 
-  const navigationItems = [
-    { icon: IoHome, title: "Home" },
-    { icon: RiHistoryLine, title: "Chat History" },
-    { icon: BsFillSearchHeartFill, title: "Recommended Queries" },
-    { icon: LuLampDesk, title: "Startup Spotlight" },
-    { icon: FaArrowTrendUp, title: "Trends" },
-    { icon: FiLink, title: "Connections" },
-    { icon: BiTestTube, title: "Usecases" },
-    { icon: FaFolder, title: "Projects" },
-  ];
+  const activeIndex = useMemo(() => {
+    return navItems.findIndex((item) => {
+      if (item.href === "/" && pathname === "/") {
+        return item.subTab === subTab;
+      }
+      return pathname === item.href || pathname.startsWith(item.href + "/");
+    });
+  }, [pathname, subTab]);
 
-  const getActivePage = () => {
-    if (pathname === "/") return "Home";
-    if (pathname.startsWith("/spotlights")) return "Startup Spotlight";
-    if (pathname.startsWith("/trends")) return "Trends";
-    if (pathname.startsWith("/connections")) return "Connections";
-    if (pathname.startsWith("/usecases")) return "Usecases";
-    if (pathname.startsWith("/coinnovation")) return "Projects";
-    return "";
+  const handleNavigation = (item) => {
+    if (item.href === "/") {
+      setSubTab(item.subTab);
+    }
+    router.push(item.href);
   };
 
-  const activePage = getActivePage();
-
   return (
-    <div className="h-screen flex flex-col bg-white w-72">
-      <div className="flex justify-center items-center bg-[#EEF7FF]">
-        <Image src="/nifo.svg" alt="The Yellow Network" width={100} height={100} />
-      </div>
-
-      <div className="flex-grow overflow-y-auto scrollbar-thin">
-        <div className="flex flex-col gap-4 px-4 pt-6 pb-3 bg-[#EEF7FF]">
-          {navigationItems.map(({ icon: Icon, title }) => {
-            const isActive =
-              (title === "Home" && pathname === "/" && subTab === "default") ||
-              (title === "Recommended Queries" && pathname === "/" && subTab === "recommended") ||
-              (title === "Chat History" && pathname === "/" && subTab === "chathistory") ||
-              (title === activePage && title !== "Home");
-
-            return (
-              <div
-                key={title}
-                className={`cursor-pointer flex flex-row gap-4 items-center ${
-                  isActive ? "text-[#0070C0] font-semibold" : "text-gray-500"
-                }`}
-                onClick={() => handleTabClick(title)}
-                title={title}
-              >
-                <Icon size={16} />
-                <div className={`${isActive ? "text-base" : "text-[15px]"}`}>{title}</div>
-              </div>
-            );
-          })}
+    <aside className="w-[260px] h-screen bg-white border-r border-gray-100 shadow-md flex flex-col justify-between z-10">
+      <div>
+        <div className="px-14 pt-4">
+          <Image
+            src="/nifoimage.png"
+            alt="Nifo Logo"
+            width={100}
+            height={100}
+            className="w-36 cursor-pointer"
+            onClick={() => router.push("/")}
+          />
         </div>
 
-        {/* Only render subTabs if in "home" mode */}
+        <div className="relative mt-3">
+          <div
+            className="absolute w-[220px] h-12 bg-[#0070C0] left-5 rounded-lg transition-transform duration-[650ms] ease-in-out"
+            style={{
+              transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
+              opacity: activeIndex !== -1 ? 1 : 0,
+            }}
+          />
+
+          <nav className="flex flex-col relative z-10 gap-1 px-2">
+            {navItems.map((item, index) => {
+              const isActive = index === activeIndex;
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.title}
+                  onClick={() => handleNavigation(item)}
+                  className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                    isActive ? "text-white scale-105" : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                  }`}
+                >
+                  <Icon
+                    className={`text-base transition-colors duration-300 ${
+                      isActive ? "text-white" : "text-gray-500 group-hover:text-[#0070C0]"
+                    }`}
+                  />
+                  <span className="text-sm">{item.title}</span>
+                </div>
+              );
+            })}
+          </nav>
+        </div>
+
         {pathname === "/" && mode === "home" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
           <RecommendedQueries setInputPrompt={setInputPrompt} setIsInputEmpty={setIsInputEmpty} />
         )}
-
         {pathname === "/" && mode === "home" && subTab === "chathistory" && <ChatHistory />}
       </div>
 
@@ -170,18 +150,26 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
             {userInfo?.is_primary_user && (
-              <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleDashboardRoute}>
+              <div
+                className="flex justify-between px-8 py-3 hover:text-yellow-500"
+                onClick={handleDashboardRoute}
+              >
                 View Dashboard
               </div>
             )}
-            <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleLogout}>
+            <div
+              className="flex justify-between px-8 py-3 hover:text-yellow-500"
+              onClick={handleLogout}
+            >
               <div>Logout</div>
-              <div><GrLogout size={23} /></div>
+              <div>
+                <GrLogout size={23} />
+              </div>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </aside>
   );
 };
 
