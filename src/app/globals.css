@@ -2,6 +2,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .transition-all {
   transition: all 0.3s ease-in;
 }
@@ -92,7 +98,6 @@ h4 {
   font-weight: bold;
 }
 
-
 @keyframes diagonalMove {
   0% {
     transform: translate(0, 0) scale(1);
@@ -113,3 +118,6 @@ h4 {
   animation-timing-function: ease-in-out;
 }
 
+.scrollbar-no-buttons::-webkit-scrollbar-button {
+  display: none !important;
+}

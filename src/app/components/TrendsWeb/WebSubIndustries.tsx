@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import sectorData from "../../data/data_sector.json";
 
 const WebSubIndustries = ({
   selectedSector,
   selectedIndustry,
   onDotClick,
   handleGoSector,
+  onActiveSubSectorChange,
 }) => {
+  const [activeCenterIndex, setActiveCenterIndex] = useState(null);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
  
   useLayoutEffect(() => {
     const calculateBoundingRect = () => {
@@ -17,30 +19,47 @@ const WebSubIndustries = ({
     calculateBoundingRect();
   }, []);
 
-    const handleImageLoad = () => {
+  const handleImageLoad = () => {
       if (innerArcRef.current) {
         setInnerArcRect(innerArcRef.current.getBoundingClientRect());
       }
-    };
-
-
-  const sectors = sectorData.sectors;
-
-  const getInitialSubSectorData = () => {
-    const selectedSectorData = sectors.find(
-      (sector) => sector.sector === selectedSector
-    );
-    return selectedSectorData
-      ? Object.keys(selectedSectorData.subSectors).slice(0,8).map((subSectorName) => ({
-          subSectorName,
-          technologies: selectedSectorData.subSectors[subSectorName] || [],
-        }))
-      : [];
   };
 
-  const [outerCircleData, setOuterCircleData] = useState(
-    getInitialSubSectorData()
-  );
+
+  const [outerCircleData, setOuterCircleData] = useState([]);
+
+  useEffect(() => {
+    const fetchIndustriesWithUsecases = async () => {
+      try {
+        const usecaseResponse = await fetch("http://127.0.0.1:8000/trends/");
+        const usecaseData = await usecaseResponse.json();
+        const validIndustriesSet = new Set(
+          usecaseData
+            .filter((item) => item.sector === selectedSector)
+            .map((item) => item.industry)
+        );
+
+        const optionsResponse = await fetch("http://127.0.0.1:8000/trends/options/");
+        const optionsData = await optionsResponse.json();
+        const industryList = optionsData.sector_industry_map[selectedSector] || [];
+        const filteredIndustries = industryList
+          .filter((industry) => validIndustriesSet.has(industry))
+          .slice(0, 8)
+          .map((industry) => ({
+            subSectorName: industry,
+            technologies: [],
+          }));
+
+        setOuterCircleData(filteredIndustries);
+      } catch (error) {
+        console.error("Failed to fetch industries:", error);
+      }
+    };
+
+    if (selectedSector) fetchIndustriesWithUsecases();
+  }, [selectedSector]);
+  
+    
   const selectedIndustryIndex = outerCircleData.findIndex(
     (subSector) => subSector.subSectorName === selectedIndustry
   );
@@ -70,13 +89,10 @@ const WebSubIndustries = ({
     useEffect(() => {
       if (typeof window !== "undefined") {
         setScreenWidth(window.innerWidth);
-
         const handleResize = () => {
           setScreenWidth(window.innerWidth);
         };
-
         window.addEventListener("resize", handleResize);
-
         return () => {
           window.removeEventListener("resize", handleResize);
         };
@@ -115,35 +131,6 @@ const WebSubIndustries = ({
     setLastMouseY(clientY);
   };
 
-
-      const handleMouseDown = (event) => {
-        setIsDragging(true);
-        setLastMouseY(event.clientY);
-      };
-
-      
-    const handleDotClick = (dotIndex) => {
-      const normalizedAngleOffset =
-        ((angleOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-
-      const currentCenterIndex = Math.round(
-        ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) %
-          totalDots
-      );
-
-  
-      const distance = (dotIndex - currentCenterIndex + totalDots) % totalDots;
-      const shortestDistance =
-        distance <= totalDots / 2 ? distance : distance - totalDots;
-      const angleDifference = shortestDistance * anglePerDot;
-
-      setAngleOffset((prevOffset) => prevOffset - angleDifference);
-
-      if (onDotClick) {
-        onDotClick(outerCircleData[dotIndex].subSectorName);
-      }
-    };
-
   const dots = Array.from({ length: totalDots }).map((_, index) => {
     const angle = (index / totalDots) * Math.PI * 2 + angleOffset;
     const x = radiusX * Math.sin(angle);
@@ -151,14 +138,33 @@ const WebSubIndustries = ({
     return { x, y, index };
   });
 
-  const centerIndex = Math.round(
-    ((Math.PI / 2 - angleOffset) / anglePerDot + totalDots) % totalDots
-  );
+  const handleWheel = (event) => {
+    const delta = event.deltaY;
+    const scrollSpeed = 0.005;
+    const newOffset = angleOffset - delta * scrollSpeed;
+    setAngleOffset(newOffset);
+    setHasUserScrolled(true);
+
+    const normalizedAngleOffset =
+      ((newOffset % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    const currentCenterIndex = Math.round(
+      ((Math.PI / 2 - normalizedAngleOffset) / anglePerDot + totalDots) % totalDots
+    );
+    setActiveCenterIndex(currentCenterIndex);
+  };
+
+  useEffect(() => {
+    if (activeCenterIndex !== null && outerCircleData[activeCenterIndex]) {
+      onActiveSubSectorChange?.(outerCircleData[activeCenterIndex].subSectorName);
+    }
+  }, [activeCenterIndex, outerCircleData, onActiveSubSectorChange]);
+  
 
   return (
     <div
       className="flex items-center justify-start h-[calc(100vh-64px)] w-1/2 relative"
-      onMouseDown={handleMouseDown}
+      onWheel={handleWheel}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="relative inline-block">
@@ -188,7 +194,7 @@ const WebSubIndustries = ({
       </div>
 
       {innerArcRect && dots.map((dot) => {
-        const isMiddleDot = dot.index === centerIndex;
+        const isMiddleDot = dot.index === activeCenterIndex; 
         const innerArcRect = innerArcRef.current?.getBoundingClientRect();
         const innerArcCenterX = innerArcRect
           ? innerArcRect.left + innerArcRect.width / 2
@@ -222,11 +228,6 @@ const WebSubIndustries = ({
               top: `${innerArcCenterY + dot.y + verticalOffset}px`,
               transform: "translate(-50%, -50%)",
             }}
-            onMouseDown={() => {
-              setIsDragging(true);
-              setLastMouseY(null);
-            }}
-            onClick={() => handleDotClick(dot.index)}
           >
             <div
               className={`flex flex-row items-center justify-center ${

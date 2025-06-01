@@ -12,15 +12,16 @@ const TrendsWeb = () => {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
   const [currentCircleView, setCurrentCircleView] = useState("sector");
-
+  const [highlightedSectorForGrid, setHighlightedSectorForGrid] = useState(null);
+  const [highlightedIndustry, setHighlighedIndustry] = useState(null);
   const handleSectorClick = (sector) => {
     setSelectedSector(sector);
     setShowIndustryCircle(true);
+    setShowInCombined(true);
   };
 
   const handleWebCircleTwoClick = (industry) => {
     setSelectedIndustry(industry);
-    setShowInCombined(true);
   };
 
   const handleWebTechnologyClick = (technology) => {
@@ -33,26 +34,43 @@ const TrendsWeb = () => {
     setShowInCombined(false);
     setShowCircleThree(false);
     setShowIndustryCircle(false);
+    setHighlighedIndustry(null);
   };
+
+    const [selectedSolutionProviderId, setSelectedSolutionProviderId] = useState(null);
+  
+    const handleExploreClick = (solutionProviderId) => {
+      setSelectedSolutionProviderId(solutionProviderId);
+    };
+  
+    const handleBack = () => {
+      setSelectedSolutionProviderId(null);
+    };
 
   return (
     <div>
       {showInCombined ? (
-        showCircleThree ? (
-          <WebUsecases
-            selectedIndustry={selectedIndustry}
-            selectedSector={selectedSector}
-            selectedTechnology={selectedTechnology}
-            handleGoSector={handleGoSector}
-            setSelectedTechnology={setSelectedTechnology}
-          />
-        ) : (
-          <WebInCombined
+        // showCircleThree ? (
+        //   <WebUsecases
+        //     selectedIndustry={selectedIndustry}
+        //     selectedSector={selectedSector}
+        //     selectedTechnology={selectedTechnology}
+        //     handleGoSector={handleGoSector}
+        //     setSelectedTechnology={setSelectedTechnology}
+        //   />
+        // ) : (
+         ( <WebInCombined
             onWebTechnologyClick={handleWebTechnologyClick}
             selectedIndustry={selectedIndustry}
             selectedSector={selectedSector}
             handleGoSector={handleGoSector}
             setSelectedIndustry={setSelectedIndustry}
+            handleBack={handleBack}
+            handleExploreClick={handleExploreClick}
+            selectedSolutionProviderId={selectedSolutionProviderId}
+            setSelectedSectorProviderId={setSelectedSolutionProviderId}
+            highlightedIndustry={highlightedIndustry}
+            setHighlighedIndustry={setHighlighedIndustry}
           />
         )
       ) : (
@@ -63,6 +81,13 @@ const TrendsWeb = () => {
             selectedSector={selectedSector}
             showIndustryCircle={showIndustryCircle}
             currentCircleView={currentCircleView}
+            handleBack={handleBack}
+            handleExploreClick={handleExploreClick}
+            selectedSolutionProviderId={selectedSolutionProviderId}
+            setSelectedSectorProviderId={setSelectedSolutionProviderId}
+            highlightedSectorForGrid={highlightedSectorForGrid}
+            setHighlightedSectorForGrid={setHighlightedSectorForGrid}
+            highlightedIndustry={highlightedIndustry}
           />
         )
       )}
