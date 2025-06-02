@@ -28,23 +28,19 @@ const FirstLeftCircle = ({ onDotClick, onSectorHighlight }) => {
       try {
         const usecaseResponse = await fetch("http://127.0.0.1:8000/trends/");
         const usecaseData = await usecaseResponse.json();
-        const validSectorsSet = new Set(usecaseData.map((item) => item.sector));
-        const optionsResponse = await fetch("http://127.0.0.1:8000/trends/options/");
-        const optionsData = await optionsResponse.json();
-        const allSectors = optionsData.sectors || [];
 
-        const filteredSectors = allSectors
-          .filter((item) => validSectorsSet.has(item.value))
-          .slice(0, 8) 
-          .map((item) => ({
-            sectorName: item.value,
-          }));
+        const validSectorsSet = new Set(usecaseData.map((item) => item.sector));
+        const filteredSectors = Array.from(validSectorsSet).slice(0, 8).map(sector => ({
+          sectorName: sector
+        }));
 
         setOuterCircleData(filteredSectors);
       } catch (error) {
         console.error("Error fetching filtered sectors:", error);
       }
     };
+    
+    
 
     fetchFilteredSectors();
   }, []);
@@ -84,6 +80,11 @@ const FirstLeftCircle = ({ onDotClick, onSectorHighlight }) => {
   useEffect(() => {
     setAngleOffset((prevOffset) => prevOffset);
   }, []);
+
+  useEffect(() => {
+    console.log("Filtered sectors loaded:", outerCircleData);
+  }, [outerCircleData]);
+  
 
   const handleDotClick = (dotIndex) => {
     const normalizedAngleOffset =

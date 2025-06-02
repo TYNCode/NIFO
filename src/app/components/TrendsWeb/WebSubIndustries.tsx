@@ -33,21 +33,18 @@ const WebSubIndustries = ({
       try {
         const usecaseResponse = await fetch("http://127.0.0.1:8000/trends/");
         const usecaseData = await usecaseResponse.json();
+
         const validIndustriesSet = new Set(
           usecaseData
             .filter((item) => item.sector === selectedSector)
             .map((item) => item.industry)
         );
 
-        const optionsResponse = await fetch("http://127.0.0.1:8000/trends/options/");
-        const optionsData = await optionsResponse.json();
-        const industryList = optionsData.sector_industry_map[selectedSector] || [];
-        const filteredIndustries = industryList
-          .filter((industry) => validIndustriesSet.has(industry))
+        const filteredIndustries = Array.from(validIndustriesSet)
           .slice(0, 8)
           .map((industry) => ({
             subSectorName: industry,
-            technologies: [],
+            technologies: [], 
           }));
 
         setOuterCircleData(filteredIndustries);
@@ -55,6 +52,7 @@ const WebSubIndustries = ({
         console.error("Failed to fetch industries:", error);
       }
     };
+    
 
     if (selectedSector) fetchIndustriesWithUsecases();
   }, [selectedSector]);
