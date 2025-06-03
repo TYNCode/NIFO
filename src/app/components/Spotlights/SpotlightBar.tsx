@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Spotlight } from "../../interfaces";
+import { Spotlight } from "@/app/admin/spotlights/types/spotlights";
 
 interface SpotlightBarProps {
   lastSpotlight: Spotlight;

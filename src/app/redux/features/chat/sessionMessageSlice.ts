@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StartupType } from "../../../interfaces";
 import {
   getRequestWithAccessToken,
   deleteRequestWithAccessToken,
 } from "../../hooks";
+import { StartupType } from "@/app/admin/startups/types/company";
 
 // --- Types ---
 interface ChatResponseType {

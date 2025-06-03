@@ -28,7 +28,15 @@ const navItems = [
   { title: "Projects", icon: FaFolder, href: "/coinnovation" },
 ];
 
-const LeftFrame = ({
+interface LeftFrameProps {
+  onNewChat?: () => void;
+  setSessionId?: (id: string) => void;
+  setInputPrompt?: (prompt: string) => void;
+  setIsInputEmpty?: (value: boolean) => void;
+  mode?: string;
+}
+
+const LeftFrame: React.FC<LeftFrameProps> = ({
   onNewChat,
   setSessionId,
   setInputPrompt,
@@ -54,8 +62,8 @@ const LeftFrame = ({
   }, [dispatch]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (logoutRef.current && !logoutRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (logoutRef.current && !(logoutRef.current as any).contains(event.target)) {
         setIsLogoutOpen(false);
       }
     };
@@ -81,7 +89,7 @@ const LeftFrame = ({
     });
   }, [pathname, subTab]);
 
-  const handleNavigation = (item) => {
+  const handleNavigation = (item: (typeof navItems)[0]) => {
     if (item.href === "/") {
       setSubTab(item.subTab);
     }
@@ -120,7 +128,9 @@ const LeftFrame = ({
                   key={item.title}
                   onClick={() => handleNavigation(item)}
                   className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
-                    isActive ? "text-white scale-105" : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                    isActive
+                      ? "text-white scale-105"
+                      : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
                   }`}
                 >
                   <Icon
@@ -150,21 +160,13 @@ const LeftFrame = ({
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
             {userInfo?.is_primary_user && (
-              <div
-                className="flex justify-between px-8 py-3 hover:text-yellow-500"
-                onClick={handleDashboardRoute}
-              >
+              <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleDashboardRoute}>
                 View Dashboard
               </div>
             )}
-            <div
-              className="flex justify-between px-8 py-3 hover:text-yellow-500"
-              onClick={handleLogout}
-            >
+            <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleLogout}>
               <div>Logout</div>
-              <div>
-                <GrLogout size={23} />
-              </div>
+              <GrLogout size={23} />
             </div>
           </div>
         )}

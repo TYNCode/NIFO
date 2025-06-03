@@ -1,3 +1,4 @@
+import { StartupType } from "../admin/startups/types/company";
 
 
 export interface CompanyProfile {
@@ -7,6 +8,30 @@ export interface CompanyProfile {
   startup_url: string;
   startup_country: string;
 }
+
+export interface ConversationType {
+  question: string;
+  response: {
+    success: boolean;
+    category: string;
+    response: string;
+    startups: Array<{
+      name: string;
+      description: string;
+      database_info: StartupType;
+    }>;
+    steps?: Array<{
+      step_number: number;
+      step_description: string;
+      startups: Array<{
+        name: string;
+        description: string;
+        database_info: StartupType;
+      }>;
+    }>;
+  };
+}
+
 
 
 export interface User {

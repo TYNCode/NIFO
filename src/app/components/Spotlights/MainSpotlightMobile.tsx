@@ -1,6 +1,6 @@
 import React from "react";
-import { Spotlight } from "../../interfaces";
 import Image from "next/image";
+import { Spotlight } from "@/app/admin/spotlights/types/spotlights";
 
 interface MainSpotlightMobileProps {
   spotlights: Spotlight[];

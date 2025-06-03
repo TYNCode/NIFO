@@ -7,12 +7,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
+  fetchCompaniesByPagination,
+} from "../redux/features/companyprofile/companyProfileSlice";
+import {
   clearRegisterState,
   registerUser,
 } from "../redux/features/auth/registerSlice";
-import { fetchAllCompanies } from "../redux/features/companyprofile/companyProfileSlice";
 import RegistrationModel from "../components/RegisterModel/RegisterModel";
-import { FormData, StartupNameType } from "../interfaces";
+import { FormData } from "../interfaces";
+import { StartupNameType } from "../admin/startups/types/company";
 
 const RegisterPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +37,7 @@ const RegisterPage: React.FC = () => {
   } = useForm<FormData>({ mode: "onChange" });
 
   useEffect(() => {
-    dispatch(fetchAllCompanies());
+    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 100 }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const RegisterPage: React.FC = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    dispatch(fetchAllCompanies());
+    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 100 }));
   };
 
   const showAddOrganizationButton =
@@ -98,6 +101,7 @@ const RegisterPage: React.FC = () => {
       dispatch(clearRegisterState());
     }
   }, [message, error, loading, router, dispatch]);
+
 
   // Shared components for form fields to reduce duplication
   const renderNameField = (isMobile: boolean) => (

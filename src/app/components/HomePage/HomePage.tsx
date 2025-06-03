@@ -14,11 +14,12 @@ import SearchMobile from "../../mobileComponents/FooterComponents/SearchMobile";
 import TrendsMobile from "../../mobileComponents/FooterComponents/TrendsMobile";
 import MoreMobile from "../../mobileComponents/FooterComponents/MoreMobile";
 import TrendsMobileHeader from "../../mobileComponents/TrendsMobileHeader";
-import { ChatHistoryResponse, StartupType } from "../../interfaces";
+import { ChatHistoryResponse} from "../../interfaces";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter, useSearchParams } from "next/navigation";
+import { StartupType } from "@/app/admin/startups/types/company";
 
 export default function HomePage() {
   const [messages, setMessages] = useState([]);

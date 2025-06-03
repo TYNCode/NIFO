@@ -7,13 +7,14 @@ import { GrFormClose } from "react-icons/gr";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import ConnectModal from "./CompanyProfile/ConnectModal";
-import { ChatHistoryResponse, StartupType } from "../interfaces";
+import { ChatHistoryResponse } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   createPartnerConnect,
   setConnectionStatus,
   fetchPartnerConnectsByOrg,
 } from "../redux/features/connection/connectionSlice";
+import { StartupType } from "../admin/startups/types/company";
 
 interface UserInfo {
   email: string;
