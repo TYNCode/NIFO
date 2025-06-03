@@ -108,7 +108,7 @@ export default function HomePage() {
   const handleIndustryClick = (industryName) => {
     setSelectedIndustry(industryName);
     setSelectedTechnology(null);
-    setCurrentStep("industries");
+    setCurrentStep("usecasesCombined");
   };
 
   const handleTechnologyClick = (technologyName) => {

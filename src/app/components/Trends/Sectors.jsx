@@ -1,23 +1,14 @@
-import React, { useState } from "react";
-import sectorData from "../../data/sector_data.json";
-import sectorsData from "../../data/data_sector.json";
+import React, { useEffect, useState } from "react";
+import Usecases from "./Usecases";
 
 const Sectors = ({ onSectorClick }) => {
   const radius = 180;
   const centerX = 170;
   const centerY = 170;
 
-  const sectors = sectorsData.sectors;
 
-  const getInitialSectorData = ()=>{
-     return sectors.slice(0, 8).map((sector) => ({
-      sectorName: sector.sector,
-     }));
-  }
-
-  const [outerCircleData, setOuterCircleData] = useState(getInitialSectorData());
-
-  const sectorNames = outerCircleData.map((item)=>item.sectorName)
+  const [outerCircleData, setOuterCircleData] = useState([]);
+  const sectorNames = outerCircleData.map((item) => item.sectorName)
   const totalPositions = sectorNames.length;
   const highlightedPosition = Math.floor(totalPositions / 2);
 
@@ -26,6 +17,31 @@ const Sectors = ({ onSectorClick }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [startX, setStartX] = useState(null);
 
+  const fetchValidSectors = async () => {
+    try {
+      const usecaseRes = await fetch("http://127.0.0.1:8000/trends/");
+      const usecaseData = await usecaseRes.json();
+
+      const sectorSet = new Set(
+        usecaseData
+          .map((item) => item.sector?.trim())
+          .filter(Boolean) 
+      );
+
+      const filteredSectors = [...sectorSet].map((sector) => ({
+        sectorName: sector,
+      }));
+
+      setOuterCircleData(filteredSectors);
+    } catch (err) {
+      console.error("Error fetching sectors:", err);
+    }
+  };
+  
+  useEffect(() => {
+    fetchValidSectors();
+  }, []);
+  
   const handleTouchStart = (e) => {
     if (isAnimating) return;
     setStartX(e.touches[0].clientX);

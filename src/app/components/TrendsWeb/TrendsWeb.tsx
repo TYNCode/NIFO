@@ -59,6 +59,7 @@ const TrendsWeb = () => {
         //     setSelectedTechnology={setSelectedTechnology}
         //   />
         // ) : (
+
          ( <WebInCombined
             onWebTechnologyClick={handleWebTechnologyClick}
             selectedIndustry={selectedIndustry}

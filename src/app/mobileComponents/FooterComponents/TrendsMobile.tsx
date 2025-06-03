@@ -67,16 +67,6 @@ const TrendsMobile = ({
           selectedUsecase={selectedUseCase}
           setSelectedUseCase={setSelectedUseCase}  
         />
-      ) : currentStep === "industries" ? (
-        <Industries
-          selectedSector={selectedSector}
-          selectedIndustry={selectedIndustry}
-          onTechnologyClick={(technology) => {
-            handleTechnologyClick(technology);
-            setCurrentStep("usecasesCombined");
-          }}
-          setTechnologyNames={setTechnologyNames}
-        />
       ) : currentStep === "subSectors" ? (
         <SubSectors
           selectedSector={selectedSector}
