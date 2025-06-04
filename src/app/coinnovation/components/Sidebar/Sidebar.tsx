@@ -2,9 +2,11 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import React, { useState } from "react";
+import Image from "next/image";
 import { FaSuitcase } from "react-icons/fa6";
 import { PiCirclesFour } from "react-icons/pi";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { IoChevronForward } from "react-icons/io5";
+import { FiChevronsLeft } from "react-icons/fi";
 
 interface SidebarOption {
   id: number;
@@ -14,9 +16,10 @@ interface SidebarOption {
 }
 
 const Sidebar: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
+  
   const sidebarOptions: SidebarOption[] = [
     {
       id: 1,
@@ -40,32 +43,47 @@ const Sidebar: React.FC = () => {
     router.push(route);
   };
 
+  const highlightClass = `absolute ${
+    isCollapsed ? "w-12 left-2" : "w-[220px] left-5"
+  } h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out`;
+
   return (
     <aside
       className={`${
-        isExpanded ? "w-[260px]" : "w-16"
+        isCollapsed ? "w-16" : "w-[260px]"
       } fixed z-50 bg-white h-screen border-r border-gray-100 shadow-md flex flex-col justify-between transition-all duration-300`}
     >
       <div>
+        {/* Logo + Collapse Toggle */}
         <div className="flex items-center pt-4 px-4">
-          <button
-            className={`${isExpanded ? "w-1/3 justify-end" : "w-full justify-center"} flex text-[#0070C0]`}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <>
-                <IoChevronBack />
-                <IoChevronBack className="-ml-1" />
-              </>
-            ) : (
-              <IoChevronForward />
-            )}
-          </button>
+          <div className="flex items-center justify-between w-full">
+            <Image
+              src="/nifoimage.png"
+              alt="Nifo Logo"
+              width={isCollapsed ? 50 : 100}
+              height={isCollapsed ? 50 : 100}
+              className={`cursor-pointer ${isCollapsed ? "w-8 h-8" : "w-36"}`}
+              onClick={() => router.push("/")}
+            />
+            <button
+              className="text-primary font-bold ml-auto text-[#0070C0]"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? (
+                <IoChevronForward size={20} />
+              ) : (
+                <div className="text-[#0070C0]">
+                  <FiChevronsLeft size={22} />
+                </div>
+              )}
+            </button>
+          </div>
         </div>
 
+        {/* Navigation Items */}
         <div className="relative mt-3">
           <div
-            className={`absolute ${isExpanded ? "w-[220px] left-5" : "w-12 left-2"} h-12 bg-[#0070C0] rounded-lg transition-transform duration-[650ms] ease-in-out`}
+            className={highlightClass}
             style={{
               transform:
                 activeIndex !== -1
@@ -81,7 +99,10 @@ const Sidebar: React.FC = () => {
               return (
                 <div
                   key={option.id}
-                  className={`group flex items-center ${isExpanded ? "gap-3 pl-10" : "justify-center"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                  title={isCollapsed ? option.title : ""}
+                  className={`group flex items-center ${
+                    isCollapsed ? "justify-center px-2" : "gap-3 pl-10 px-6"
+                  } h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
                       : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
@@ -89,10 +110,12 @@ const Sidebar: React.FC = () => {
                   onClick={() => handleSidebarClick(option.route)}
                 >
                   {React.cloneElement(option.icon, {
-                    className: isActive ? "text-white" : "text-[#0070C0]",
+                    className: `${isCollapsed ? "text-xl" : "text-base"} ${
+                      isActive ? "text-white" : "text-[#0070C0]"
+                    } flex-shrink-0`,
                   })}
-                  {isExpanded && (
-                    <span className="text-sm">{option.title}</span>
+                  {!isCollapsed && (
+                    <span className="text-sm whitespace-nowrap">{option.title}</span>
                   )}
                 </div>
               );

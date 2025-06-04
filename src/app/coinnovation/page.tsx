@@ -44,8 +44,8 @@ const Page: React.FC = () => {
         <Sidebar />
       </div>
       <div className="flex flex-col relative">
-        <NavBarCoin />
-        <div className="bg-[#F4FCFF] mt-16 px-4">
+        {/* <NavBarCoin /> */}
+        <div className="bg-[#F4FCFF] px-4">
           <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold">
             
           </div> 

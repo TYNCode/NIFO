@@ -15,7 +15,6 @@ import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
 import { FiLink } from "react-icons/fi";
 import { BiTestTube } from "react-icons/bi";
 import { GrLogout } from "react-icons/gr";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const navItems = [
   { title: "Home", icon: IoHome, href: "/", subTab: "default" },
@@ -96,7 +95,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   const highlightClass = `absolute ${
     isCollapsed ? "w-12 left-2" : "w-[220px] left-5"
-  } h-12 bg-[#0070C0] rounded-lg transition-transform duration-500 ease-in-out`;
+  } h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out`;
 
   return (
     <aside
@@ -113,7 +112,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
               alt="Nifo Logo"
               width={isCollapsed ? 50 : 100}
               height={isCollapsed ? 50 : 100}
-              className={`cursor-pointer ${isCollapsed ? "w-8" : "w-36"}`}
+              className={`cursor-pointer ${isCollapsed ? "w-8 h-8" : "w-36"}`}
               onClick={() => router.push("/")}
             />
             <button
@@ -121,10 +120,10 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
               {isCollapsed ? (
-                <IoChevronForward />
+                <IoChevronForward size={20} />
               ) : (
                 <div className="text-primary">
-                  <FiChevronsLeft size={22}  />
+                  <FiChevronsLeft size={22} />
                 </div>
               )}
             </button>
@@ -153,24 +152,22 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                   title={isCollapsed ? item.title : ""}
                   onClick={() => handleNavigation(item)}
                   className={`group flex items-center ${
-                    isCollapsed ? "justify-center" : "gap-3 pl-10"
-                  } px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                    isCollapsed ? "justify-center px-2" : "gap-3 pl-10 px-6"
+                  } h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
                       : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                   }`}
                 >
                   <Icon
-                    className={`text-base ${
+                    className={`${isCollapsed ? "text-xl" : "text-base"} ${
                       isActive
-                        ? isCollapsed
-                          ? "text-[#0070C0]"
-                          : "text-white"
-                        : "text-[#0070C0]"
-                    }`}
+                        ? "text-white"
+                        : "text-primary"
+                    } flex-shrink-0`}
                   />
                   {!isCollapsed && (
-                    <span className="text-sm">{item.title}</span>
+                    <span className="text-sm whitespace-nowrap">{item.title}</span>
                   )}
                 </div>
               );
@@ -187,20 +184,20 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
             <div className="flex flex-col gap-2">
               <div
                 onClick={() => setSubTab("chathistory")}
-                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${
+                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   subTab === "chathistory"
                     ? "bg-[#0070C0] text-white"
-                    : "hover:bg-gray-100"
+                    : "hover:bg-gray-100 text-gray-700"
                 }`}
               >
                 Chat History
               </div>
               <div
                 onClick={() => setSubTab("recommended")}
-                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${
+                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   subTab === "recommended"
                     ? "bg-[#0070C0] text-white"
-                    : "hover:bg-gray-100"
+                    : "hover:bg-gray-100 text-gray-700"
                 }`}
               >
                 Recommended Queries
@@ -221,30 +218,41 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       </div>
 
       {/* Logout + Dashboard */}
-      <div
-        className={`px-8 py-3 shadow-md flex items-center ${
-          isCollapsed ? "justify-center" : "justify-between"
-        } cursor-pointer border`}
-        onClick={() => setIsLogoutOpen(!isLogoutOpen)}
-        ref={logoutRef}
-      >
-        {!isCollapsed && <div>{userInfo?.first_name}</div>}
+      <div className="relative">
+        <div
+          className={`px-4 py-3 shadow-md flex items-center ${
+            isCollapsed ? "justify-center" : "justify-between"
+          } cursor-pointer border-t hover:bg-gray-50 transition-colors`}
+          onClick={() => setIsLogoutOpen(!isLogoutOpen)}
+          ref={logoutRef}
+        >
+          {!isCollapsed && (
+            <div className="text-sm font-medium text-gray-700 truncate">
+              {userInfo?.first_name || "User"}
+            </div>
+          )}
+          <GrLogout 
+            size={isCollapsed ? 18 : 16} 
+            className="text-gray-600 flex-shrink-0" 
+          />
+        </div>
+        
         {isLogoutOpen && (
-          <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
+          <div className={`absolute bottom-full ${isCollapsed ? "left-0 w-48" : "left-0 w-full"} mb-1 bg-white border border-gray-200 rounded-md shadow-lg z-20`}>
             {userInfo?.is_primary_user && (
               <div
-                className="px-8 py-3 hover:text-yellow-500"
+                className="px-4 py-3 hover:bg-yellow-50 hover:text-yellow-600 cursor-pointer text-sm border-b border-gray-100 transition-colors"
                 onClick={handleDashboardRoute}
               >
                 View Dashboard
               </div>
             )}
             <div
-              className="px-8 py-3 hover:text-yellow-500 flex justify-between"
+              className="px-4 py-3 hover:bg-red-50 hover:text-red-600 flex items-center justify-between cursor-pointer text-sm transition-colors"
               onClick={handleLogout}
             >
               <span>Logout</span>
-              <GrLogout size={23} />
+              <GrLogout size={16} />
             </div>
           </div>
         )}
