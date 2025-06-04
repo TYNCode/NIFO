@@ -18,11 +18,23 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const sidebarOptions: SidebarOption[] = [
-    { id: 1, title: "Summary", icon: <PiCirclesFour size={20} />, route: "/summary" },
-    { id: 2, title: "Co-Innovation", icon: <FaSuitcase size={20} />, route: "/coinnovation" },
+    {
+      id: 1,
+      title: "Summary",
+      icon: <PiCirclesFour size={20} />,
+      route: "/summary",
+    },
+    {
+      id: 2,
+      title: "Co-Innovation",
+      icon: <FaSuitcase size={20} />,
+      route: "/coinnovation",
+    },
   ];
 
-  const activeIndex = sidebarOptions.findIndex((item) => pathname.startsWith(item.route));
+  const activeIndex = sidebarOptions.findIndex((item) =>
+    pathname.startsWith(item.route),
+  );
 
   const handleSidebarClick = (route: string) => {
     router.push(route);
@@ -35,20 +47,30 @@ const Sidebar: React.FC = () => {
       } fixed z-50 bg-white h-screen border-r border-gray-100 shadow-md flex flex-col justify-between transition-all duration-300`}
     >
       <div>
-        <div className={`flex items-center ${isExpanded ? "px-14" : "justify-center"} pt-4`}>
+        <div className="flex items-center pt-4 px-4">
           <button
-            className="text-gray-600"
+            className={`${isExpanded ? "w-1/3 justify-end" : "w-full justify-center"} flex text-[#0070C0]`}
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            {isExpanded ? <IoChevronBack /> : <IoChevronForward />}
+            {isExpanded ? (
+              <>
+                <IoChevronBack />
+                <IoChevronBack className="-ml-1" />
+              </>
+            ) : (
+              <IoChevronForward />
+            )}
           </button>
         </div>
 
         <div className="relative mt-3">
           <div
-            className={`absolute ${isExpanded ? "w-[220px] left-5" : "w-12 left-2"} h-12 bg-primary rounded-lg transition-transform duration-[650ms] ease-in-out`}
+            className={`absolute ${isExpanded ? "w-[220px] left-5" : "w-12 left-2"} h-12 bg-[#0070C0] rounded-lg transition-transform duration-[650ms] ease-in-out`}
             style={{
-              transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
+              transform:
+                activeIndex !== -1
+                  ? `translateY(${activeIndex * 52}px)`
+                  : "none",
               opacity: activeIndex !== -1 ? 1 : 0,
             }}
           />
@@ -62,12 +84,16 @@ const Sidebar: React.FC = () => {
                   className={`group flex items-center ${isExpanded ? "gap-3 pl-10" : "justify-center"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
-                      : "text-gray-700 hover:scale-[1.02] hover:text-primary"
+                      : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
                   }`}
                   onClick={() => handleSidebarClick(option.route)}
                 >
-                  {option.icon}
-                  {isExpanded && <span className="text-sm">{option.title}</span>}
+                  {React.cloneElement(option.icon, {
+                    className: isActive ? "text-white" : "text-[#0070C0]",
+                  })}
+                  {isExpanded && (
+                    <span className="text-sm">{option.title}</span>
+                  )}
                 </div>
               );
             })}

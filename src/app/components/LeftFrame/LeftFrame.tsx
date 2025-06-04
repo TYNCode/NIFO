@@ -8,9 +8,8 @@ import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import ChatHistory from "./ChatHistory";
 import RecommendedQueries from "./RecommendedQueries";
-import { IoHome } from "react-icons/io5";
-import { RiHistoryLine } from "react-icons/ri";
-import { BsFillSearchHeartFill } from "react-icons/bs";
+import { IoHome, IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { FiChevronsLeft } from "react-icons/fi";
 import { LuLampDesk } from "react-icons/lu";
 import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
 import { FiLink } from "react-icons/fi";
@@ -20,8 +19,6 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const navItems = [
   { title: "Home", icon: IoHome, href: "/", subTab: "default" },
-  { title: "Chat History", icon: RiHistoryLine, href: "/", subTab: "chathistory" },
-  { title: "Recommended Queries", icon: BsFillSearchHeartFill, href: "/", subTab: "recommended" },
   { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
   { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
   { title: "Connections", icon: FiLink, href: "/connections" },
@@ -44,7 +41,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const logoutRef = useRef(null);
+  const logoutRef = useRef<HTMLDivElement | null>(null);
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [subTab, setSubTab] = useState("default");
@@ -53,7 +50,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   useEffect(() => {
     const initialSubTab = searchParams.get("subTab");
     if (initialSubTab) setSubTab(initialSubTab);
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     dispatch(fetchChatHistory());
@@ -61,7 +58,10 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (logoutRef.current && !(logoutRef.current as any).contains(event.target)) {
+      if (
+        logoutRef.current &&
+        !logoutRef.current.contains(event.target as Node)
+      ) {
         setIsLogoutOpen(false);
       }
     };
@@ -89,10 +89,14 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   const handleNavigation = (item: (typeof navItems)[0]) => {
     if (item.href === "/") {
-      setSubTab(item.subTab);
+      setSubTab(item.subTab || "default");
     }
     router.push(item.href);
   };
+
+  const highlightClass = `absolute ${
+    isCollapsed ? "w-12 left-2" : "w-[220px] left-5"
+  } h-12 bg-[#0070C0] rounded-lg transition-transform duration-500 ease-in-out`;
 
   return (
     <aside
@@ -101,32 +105,44 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       } h-screen bg-white border-r border-gray-100 shadow-md flex flex-col justify-between z-10 transition-all duration-300`}
     >
       <div>
-        <div className={`flex items-center ${isCollapsed ? "justify-center" : "px-14"} pt-4`}>
-          <Image
-            src="/nifoimage.png"
-            alt="Nifo Logo"
-            width={100}
-            height={100}
-            className={`${isCollapsed ? "w-8" : "w-36"} cursor-pointer`}
-            onClick={() => router.push("/")}
-          />
-          <button
-            className="ml-auto text-gray-600"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
-            {isCollapsed ? <IoChevronForward /> : <IoChevronBack />}
-          </button>
+        {/* Logo + Collapse Toggle */}
+        <div className="flex items-center pt-4 px-4">
+          <div className="flex items-center justify-between w-full">
+            <Image
+              src="/nifoimage.png"
+              alt="Nifo Logo"
+              width={isCollapsed ? 50 : 100}
+              height={isCollapsed ? 50 : 100}
+              className={`cursor-pointer ${isCollapsed ? "w-8" : "w-36"}`}
+              onClick={() => router.push("/")}
+            />
+            <button
+              className="text-primary font-bold ml-auto"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? (
+                <IoChevronForward />
+              ) : (
+                <div className="text-primary">
+                  <FiChevronsLeft size={22}  />
+                </div>
+              )}
+            </button>
+          </div>
         </div>
 
+        {/* Nav Items */}
         <div className="relative mt-3">
           <div
-            className={`absolute ${isCollapsed ? "w-12 left-2" : "w-[220px] left-5"} h-12 bg-primary rounded-lg transition-transform duration-[650ms] ease-in-out`}
+            className={highlightClass}
             style={{
-              transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
+              transform:
+                activeIndex !== -1
+                  ? `translateY(${activeIndex * 52}px)`
+                  : "none",
               opacity: activeIndex !== -1 ? 1 : 0,
             }}
           />
-
           <nav className="flex flex-col relative z-10 gap-1 px-2">
             {navItems.map((item, index) => {
               const isActive = index === activeIndex;
@@ -134,33 +150,81 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
               return (
                 <div
                   key={item.title}
+                  title={isCollapsed ? item.title : ""}
                   onClick={() => handleNavigation(item)}
-                  className={`group flex items-center ${isCollapsed ? "justify-center" : "gap-3 pl-10"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                  className={`group flex items-center ${
+                    isCollapsed ? "justify-center" : "gap-3 pl-10"
+                  } px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
                       : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                   }`}
                 >
                   <Icon
-                    className={`text-base transition-colors duration-300 ${
-                      isActive ? "text-white" : "text-gray-500 group-hover:text-primary"
+                    className={`text-base ${
+                      isActive
+                        ? isCollapsed
+                          ? "text-[#0070C0]"
+                          : "text-white"
+                        : "text-[#0070C0]"
                     }`}
                   />
-                  {!isCollapsed && <span className="text-sm">{item.title}</span>}
+                  {!isCollapsed && (
+                    <span className="text-sm">{item.title}</span>
+                  )}
                 </div>
               );
             })}
           </nav>
         </div>
 
-        {pathname === "/" && mode === "home" && subTab === "recommended" && (
-          <RecommendedQueries />
+        {/* Subtabs under Home only when expanded */}
+        {pathname === "/" && mode === "home" && !isCollapsed && (
+          <div className="mt-4 px-4">
+            <div className="text-xs font-semibold text-gray-500 mb-2">
+              Quick Access
+            </div>
+            <div className="flex flex-col gap-2">
+              <div
+                onClick={() => setSubTab("chathistory")}
+                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${
+                  subTab === "chathistory"
+                    ? "bg-[#0070C0] text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Chat History
+              </div>
+              <div
+                onClick={() => setSubTab("recommended")}
+                className={`cursor-pointer px-4 py-2 rounded-md text-sm font-medium ${
+                  subTab === "recommended"
+                    ? "bg-[#0070C0] text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Recommended Queries
+              </div>
+            </div>
+          </div>
         )}
-        {pathname === "/" && mode === "home" && subTab === "chathistory" && <ChatHistory />}
+
+        {/* Subtab content (only if not collapsed) */}
+        {pathname === "/" &&
+          mode === "home" &&
+          subTab === "recommended" &&
+          !isCollapsed && <RecommendedQueries />}
+        {pathname === "/" &&
+          mode === "home" &&
+          subTab === "chathistory" &&
+          !isCollapsed && <ChatHistory />}
       </div>
 
+      {/* Logout + Dashboard */}
       <div
-        className={`px-8 py-3 shadow-md flex items-center ${isCollapsed ? "justify-center" : "justify-between"} cursor-pointer border`}
+        className={`px-8 py-3 shadow-md flex items-center ${
+          isCollapsed ? "justify-center" : "justify-between"
+        } cursor-pointer border`}
         onClick={() => setIsLogoutOpen(!isLogoutOpen)}
         ref={logoutRef}
       >
@@ -168,12 +232,18 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
             {userInfo?.is_primary_user && (
-              <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleDashboardRoute}>
+              <div
+                className="px-8 py-3 hover:text-yellow-500"
+                onClick={handleDashboardRoute}
+              >
                 View Dashboard
               </div>
             )}
-            <div className="flex justify-between px-8 py-3 hover:text-yellow-500" onClick={handleLogout}>
-              <div>Logout</div>
+            <div
+              className="px-8 py-3 hover:text-yellow-500 flex justify-between"
+              onClick={handleLogout}
+            >
+              <span>Logout</span>
               <GrLogout size={23} />
             </div>
           </div>
