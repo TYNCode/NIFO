@@ -16,6 +16,7 @@ import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
 import { FiLink } from "react-icons/fi";
 import { BiTestTube } from "react-icons/bi";
 import { GrLogout } from "react-icons/gr";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const navItems = [
   { title: "Home", icon: IoHome, href: "/", subTab: "default" },
@@ -47,6 +48,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [subTab, setSubTab] = useState("default");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const initialSubTab = searchParams.get("subTab");
@@ -93,22 +95,32 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   };
 
   return (
-    <aside className="w-[260px] h-screen bg-white border-r border-gray-100 shadow-md flex flex-col justify-between z-10">
+    <aside
+      className={`${
+        isCollapsed ? "w-16" : "w-[260px]"
+      } h-screen bg-white border-r border-gray-100 shadow-md flex flex-col justify-between z-10 transition-all duration-300`}
+    >
       <div>
-        <div className="px-14 pt-4">
+        <div className={`flex items-center ${isCollapsed ? "justify-center" : "px-14"} pt-4`}>
           <Image
             src="/nifoimage.png"
             alt="Nifo Logo"
             width={100}
             height={100}
-            className="w-36 cursor-pointer"
+            className={`${isCollapsed ? "w-8" : "w-36"} cursor-pointer`}
             onClick={() => router.push("/")}
           />
+          <button
+            className="ml-auto text-gray-600"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? <IoChevronForward /> : <IoChevronBack />}
+          </button>
         </div>
 
         <div className="relative mt-3">
           <div
-            className="absolute w-[220px] h-12 bg-[#0070C0] left-5 rounded-lg transition-transform duration-[650ms] ease-in-out"
+            className={`absolute ${isCollapsed ? "w-12 left-2" : "w-[220px] left-5"} h-12 bg-[#0070C0] rounded-lg transition-transform duration-[650ms] ease-in-out`}
             style={{
               transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
               opacity: activeIndex !== -1 ? 1 : 0,
@@ -123,7 +135,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                 <div
                   key={item.title}
                   onClick={() => handleNavigation(item)}
-                  className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                  className={`group flex items-center ${isCollapsed ? "justify-center" : "gap-3 pl-10"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
                       : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
@@ -134,7 +146,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                       isActive ? "text-white" : "text-gray-500 group-hover:text-[#0070C0]"
                     }`}
                   />
-                  <span className="text-sm">{item.title}</span>
+                  {!isCollapsed && <span className="text-sm">{item.title}</span>}
                 </div>
               );
             })}
@@ -148,11 +160,11 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       </div>
 
       <div
-        className="px-8 py-3 shadow-md flex items-center justify-between cursor-pointer border"
+        className={`px-8 py-3 shadow-md flex items-center ${isCollapsed ? "justify-center" : "justify-between"} cursor-pointer border`}
         onClick={() => setIsLogoutOpen(!isLogoutOpen)}
         ref={logoutRef}
       >
-        <div>{userInfo?.first_name}</div>
+        {!isCollapsed && <div>{userInfo?.first_name}</div>}
         {isLogoutOpen && (
           <div className="absolute bottom-0 left-0 mb-12 bg-white border w-full z-10">
             {userInfo?.is_primary_user && (
