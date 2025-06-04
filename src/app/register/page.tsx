@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
-  fetchCompaniesByPagination,
+  fetchStartupSearchSuggestions,
+  clearSearchResults,
 } from "../redux/features/companyprofile/companyProfileSlice";
 import {
   clearRegisterState,
@@ -21,9 +22,7 @@ const RegisterPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loading, error, message } = useAppSelector((state) => state.register);
-  const { companies } = useAppSelector((state) => state.companyProfile);
-
-  const [filteredCompanies, setFilteredCompanies] = useState<StartupNameType[]>([]);
+  const { searchResults } = useAppSelector((state) => state.companyProfile);
   const [query, setQuery] = useState("");
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -37,27 +36,15 @@ const RegisterPage: React.FC = () => {
   } = useForm<FormData>({ mode: "onChange" });
 
   useEffect(() => {
-    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 100 }));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const selectedCompanyName = companies.find(
-      (c) => c.startup_id === selectedCompanyId
-    )?.startup_name;
-
-    const isExactMatch = selectedCompanyName?.toLowerCase() === query.toLowerCase();
-
-    if (query && companies.length > 0 && !isExactMatch) {
-      const filtered = companies
-        .filter((company) =>
-          company.startup_name?.toLowerCase().includes(query.toLowerCase())
-        )
-        .slice(0, 4);
-      setFilteredCompanies(filtered);
+    if (query.trim().length > 1) {
+      const debounce = setTimeout(() => {
+        dispatch(fetchStartupSearchSuggestions(query));
+      }, 300);
+      return () => clearTimeout(debounce);
     } else {
-      setFilteredCompanies([]);
+      dispatch(clearSearchResults());
     }
-  }, [query, companies, selectedCompanyId]);
+  }, [query, dispatch]);
 
   const handleCompanySelect = (company: StartupNameType) => {
     setQuery(company.startup_name);
@@ -65,7 +52,7 @@ const RegisterPage: React.FC = () => {
     setValue("organization_id", company.startup_id);
     setValue("organization_name", company.startup_name);
     clearErrors("organization_name");
-    setTimeout(() => setFilteredCompanies([]), 0);
+    dispatch(clearSearchResults());
   };
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
@@ -83,12 +70,14 @@ const RegisterPage: React.FC = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 100 }));
+    if (query.trim()) {
+      dispatch(fetchStartupSearchSuggestions(query));
+    }
   };
 
   const showAddOrganizationButton =
     query &&
-    !filteredCompanies.some(
+    !searchResults.some(
       (company) => company.startup_name.toLowerCase() === query.toLowerCase()
     ) &&
     selectedCompanyId === null;
@@ -189,9 +178,9 @@ const RegisterPage: React.FC = () => {
           isMobile ? "outline-none shadow border-none w-full" : "h-10 shadow-[0_3px_10px_rgb(0,0,0,0.2)] placeholder:text-gray-300 border-none w-80"
         } rounded-lg`}
       />
-      {filteredCompanies.length > 0 && (
+      {searchResults.length > 0 && (
         <ul className={`border border-gray-300 ${isMobile ? "mt-1" : "mt-2"} w-full max-h-48 overflow-y-auto bg-white z-10 ${isMobile && "absolute rounded"}`}>
-          {filteredCompanies.map((company) => (
+          {searchResults.map((company) => (
             <li
               key={company.startup_id}
               onClick={() => handleCompanySelect(company)}
