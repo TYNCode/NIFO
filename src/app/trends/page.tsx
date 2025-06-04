@@ -10,10 +10,10 @@ const PageContent: React.FC = () => {
 
   return (
     <main className="flex w-full min-h-screen bg-gray-50">
-      <div className="hidden lg:block lg:fixed lg:w-1/5 h-full">
+      {/* <div className="hidden lg:block lg:fixed lg:w-1/5 h-full">
         <LeftFrame />
-      </div>
-      <div className="flex flex-col flex-1 lg:ml-[20%]">
+      </div> */}
+      <div className="flex flex-col flex-1">
         <NavbarTrend />
         <TrendsWeb />
       </div>
