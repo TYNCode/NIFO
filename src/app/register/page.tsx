@@ -204,7 +204,7 @@ const RegisterPage: React.FC = () => {
       )}
       {showAddOrganizationButton && (
         <button
-          className={`${isMobile ? "mt-0" : "mt-2"} bg-[#0070C0] text-white px-5 ${isMobile ? "h-10 w-80 py-2" : "h-10 w-80 py-2"} rounded-lg`}
+          className={`${isMobile ? "mt-0" : "mt-2"} bg-primary text-white px-5 ${isMobile ? "h-10 w-80 py-2" : "h-10 w-80 py-2"} rounded-lg`}
           onClick={handleOpenModal}
         >
           Company not found? Add it here!
@@ -223,7 +223,7 @@ const RegisterPage: React.FC = () => {
       type="submit"
       disabled={!isValid || loading}
       className={`rounded-md ${
-        isValid && !loading ? "bg-[#0070C0]" : "bg-gray-300 cursor-not-allowed"
+        isValid && !loading ? "bg-primary" : "bg-gray-300 cursor-not-allowed"
       } text-sm px-4 ${isMobile ? "py-3 uppercase w-full mt-2" : "py-2"} text-white flex items-center justify-center font-semibold`}
     >
       {loading ? "Registering..." : "Register"}
@@ -234,7 +234,7 @@ const RegisterPage: React.FC = () => {
     !loading && (message || error) && (
       <p className={isMobile ? 
         `text-${error ? "red" : "blue"}-500 text-sm` : 
-        `text-base capitalize ${error ? "text-red-500" : "text-[#0070C0]"}`}
+        `text-base capitalize ${error ? "text-red-500" : "text-primary"}`}
       >
         {message || error}
       </p>
@@ -251,7 +251,7 @@ const RegisterPage: React.FC = () => {
         
         <div className="w-full h-4/5 flex flex-col gap-5 mt-8 bg-white py-8 rounded-t-3xl shadow-lg">
           <div className="text-4xl text-black font-semibold px-14 py-0">Get Started</div>
-          <p className="font-light text-base px-14 text-[#0070C0]">
+          <p className="font-light text-base px-14 text-primary">
             Start your journey by creating an account
           </p>
           
@@ -268,7 +268,7 @@ const RegisterPage: React.FC = () => {
             <div className="text-center font-medium tracking-wide mt-2">
               Already have an account?{" "}
               <Link href="/login">
-                <span className="text-[#0070C0] font-semibold">Sign in</span>
+                <span className="text-primary font-semibold">Sign in</span>
               </Link>
             </div>
           </div>
@@ -284,7 +284,7 @@ const RegisterPage: React.FC = () => {
         <div className="w-5/12 bg-white h-screen overflow-y-auto flex flex-col gap-2">
           <div className="flex items-start flex-col gap-y-2 xl:gap-4 px-8 pt-8">
             <h2 className="font-bold text-3xl xl:text-5xl">Get Started</h2>
-            <p className="font-light text-base xl:text-xl text-[#0070C0]">
+            <p className="font-light text-base xl:text-xl text-primary">
               Start your journey by creating an account
             </p>
           </div>
@@ -319,7 +319,7 @@ const RegisterPage: React.FC = () => {
           <div className="flex justify-center items-center mt-4 my-10">
             <span className="text-sm xl:text-base text-black font-semibold">
               Already have an account?{" "}
-              <Link href="/login" className="font-semibold text-[#0070C0]">
+              <Link href="/login" className="font-semibold text-primary">
                 Sign in
               </Link>
             </span>

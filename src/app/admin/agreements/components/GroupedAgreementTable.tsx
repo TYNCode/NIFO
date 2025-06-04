@@ -18,7 +18,7 @@ const GroupedAgreementTable: React.FC<Props> = ({ agreements, onEdit }) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full border border-gray-300 rounded-lg">
-        <thead className="bg-[#0070C0] text-white">
+        <thead className="bg-primary text-white">
           <tr>
             <th className="p-3 text-left">Startup</th>
             <th className="p-3 text-left">NDA Status</th>
@@ -104,13 +104,13 @@ const GroupedAgreementTable: React.FC<Props> = ({ agreements, onEdit }) => {
               <td className="p-3 space-x-2">
                 <button
                   onClick={() => onEdit("NDA", item.nda?.id || null, item.startup_id)}
-                  className="text-[#0070C0] hover:underline text-sm font-medium"
+                  className="text-primary hover:underline text-sm font-medium"
                 >
                   ✏️ NDA
                 </button>
                 <button
                   onClick={() => onEdit("RA", item.ra?.id || null, item.startup_id)}
-                  className="text-[#0070C0] hover:underline text-sm font-medium"
+                  className="text-primary hover:underline text-sm font-medium"
                 >
                   ✏️ RA
                 </button>

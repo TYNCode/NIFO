@@ -22,7 +22,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         className={`bg-white rounded-lg shadow-lg ${type == "edit" ? "w-[80%]" : "w-[40%]"} relative`}
       >
-        <div className="bg-[#0070C0] p-3">
+        <div className="bg-primary p-3">
           <button
             className="absolute top-3 right-4 text-white "
             onClick={onClose}

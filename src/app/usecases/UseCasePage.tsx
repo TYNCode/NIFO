@@ -40,13 +40,13 @@ const UseCasePage: React.FC = () => {
                     <input
                         type="text"
                         placeholder="Search Usecases"
-                        className="px-4 py-1.5 bg-white border rounded-full text-gray-600 text-sm w-full md:w-1/3 focus:ring-[#0070C0] focus:ring-[0.5px] placeholder:text-gray-400"
+                        className="px-4 py-1.5 bg-white border rounded-full text-gray-600 text-sm w-full md:w-1/3 focus:ring-primary focus:ring-[0.5px] placeholder:text-gray-400"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
 
                     <select
-                        className="px-4 py-1.5 bg-white border rounded-full text-sm w-full md:w-1/3 focus:ring-[#0070C0] focus:ring-[0.5px] text-gray-600"
+                        className="px-4 py-1.5 bg-white border rounded-full text-sm w-full md:w-1/3 focus:ring-primary focus:ring-[0.5px] text-gray-600"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >

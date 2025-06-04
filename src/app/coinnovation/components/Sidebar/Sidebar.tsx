@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
 
         <div className="relative mt-3">
           <div
-            className={`absolute ${isExpanded ? "w-[220px] left-5" : "w-12 left-2"} h-12 bg-[#0070C0] rounded-lg transition-transform duration-[650ms] ease-in-out`}
+            className={`absolute ${isExpanded ? "w-[220px] left-5" : "w-12 left-2"} h-12 bg-primary rounded-lg transition-transform duration-[650ms] ease-in-out`}
             style={{
               transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
               opacity: activeIndex !== -1 ? 1 : 0,
@@ -62,7 +62,7 @@ const Sidebar: React.FC = () => {
                   className={`group flex items-center ${isExpanded ? "gap-3 pl-10" : "justify-center"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
-                      : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                      : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                   }`}
                   onClick={() => handleSidebarClick(option.route)}
                 >

@@ -17,7 +17,7 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
           onClick={() => onViewModeChange("table")}
           className={`p-2 shadow-md rounded text-sm transition-all duration-200 ${
             viewMode === "table" 
-              ? "bg-[#0070C0] text-white" 
+              ? "bg-primary text-white" 
               : "text-black hover:bg-gray-100"
           }`}
           title="Table View"
@@ -28,7 +28,7 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
           onClick={() => onViewModeChange("grid")}
           className={`p-2 shadow-md rounded text-sm transition-all duration-200 ${
             viewMode === "grid" 
-              ? "bg-[#0070C0] text-white" 
+              ? "bg-primary text-white" 
               : "text-black hover:bg-gray-100"
           }`}
           title="Grid View"

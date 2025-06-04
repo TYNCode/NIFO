@@ -120,7 +120,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
         <div className="relative mt-3">
           <div
-            className={`absolute ${isCollapsed ? "w-12 left-2" : "w-[220px] left-5"} h-12 bg-[#0070C0] rounded-lg transition-transform duration-[650ms] ease-in-out`}
+            className={`absolute ${isCollapsed ? "w-12 left-2" : "w-[220px] left-5"} h-12 bg-primary rounded-lg transition-transform duration-[650ms] ease-in-out`}
             style={{
               transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
               opacity: activeIndex !== -1 ? 1 : 0,
@@ -138,12 +138,12 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                   className={`group flex items-center ${isCollapsed ? "justify-center" : "gap-3 pl-10"} px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
-                      : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                      : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                   }`}
                 >
                   <Icon
                     className={`text-base transition-colors duration-300 ${
-                      isActive ? "text-white" : "text-gray-500 group-hover:text-[#0070C0]"
+                      isActive ? "text-white" : "text-gray-500 group-hover:text-primary"
                     }`}
                   />
                   {!isCollapsed && <span className="text-sm">{item.title}</span>}

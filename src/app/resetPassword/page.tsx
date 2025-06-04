@@ -67,7 +67,7 @@
 //           <div className="text-4xl text-black font-semibold px-14">
 //             Reset Password
 //           </div>
-//           <p className="text-base font-light text-[#0070C0] px-14">
+//           <p className="text-base font-light text-primary px-14">
 //             Enter your new password
 //           </p>
 //           <form
@@ -112,7 +112,7 @@
 //               disabled={!isValid || loading}
 //               className={`rounded-md ${
 //                 isValid && !loading
-//                   ? "bg-[#0070C0]"
+//                   ? "bg-primary"
 //                   : "bg-gray-300 cursor-not-allowed"
 //               } text-sm px-4 py-3 text-white flex items-center justify-center uppercase font-semibold w-full`}
 //             >
@@ -121,7 +121,7 @@
 //           </form>
 //           <div className="text-center mt-6 text-sm">
 //             Not a member?{" "}
-//             <Link href="/register" className="text-[#0070C0] font-semibold">
+//             <Link href="/register" className="text-primary font-semibold">
 //               Sign-up
 //             </Link>
 //           </div>
@@ -136,7 +136,7 @@
 //         <div className="w-5/12 h-full bg-white">
 //           <div className="flex flex-col gap-4 px-10 pt-20">
 //             <h2 className="font-bold text-3xl xl:text-5xl">Reset Password</h2>
-//             <p className="font-light text-base xl:text-xl text-[#0070C0]">
+//             <p className="font-light text-base xl:text-xl text-primary">
 //               Enter your new password to reset your account
 //             </p>
 //           </div>
@@ -188,7 +188,7 @@
 //               disabled={!isValid || loading}
 //               className={`rounded-md ${
 //                 isValid && !loading
-//                   ? "bg-[#0070C0]"
+//                   ? "bg-primary"
 //                   : "bg-gray-300 cursor-not-allowed"
 //               } text-sm px-4 py-2 text-white font-semibold w-80`}
 //             >
@@ -196,7 +196,7 @@
 //             </button>
 //             <div className="flex justify-center items-center gap-2 mt-8 xl:mt-24">
 //               <div className="font-semibold">Not a member?</div>
-//               <Link href="/register" className="text-[#0070C0] font-semibold">
+//               <Link href="/register" className="text-primary font-semibold">
 //                 Sign-up
 //               </Link>
 //             </div>

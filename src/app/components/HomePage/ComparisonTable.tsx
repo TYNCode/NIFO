@@ -92,7 +92,7 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
                   {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps()}
-                      className="px-4 py-3 border border-gray-300 text-[#0070C0] text-left text-sm font-semibold"
+                      className="px-4 py-3 border border-gray-300 text-primary text-left text-sm font-semibold"
                     >
                       {column.render("Header")}
                     </th>
@@ -129,18 +129,18 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
       {/* Recommendation Summary */}
       {recommendation_summary && (
         <div className="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-[#0070C0] mb-2">
+          <h3 className="text-lg font-semibold text-primary mb-2">
             Recommendation Summary
           </h3>
           <p className="text-sm text-gray-700 mb-4">
             <strong>Best Fit:</strong>{" "}
-            <span className="text-[#0070C0] font-semibold">
+            <span className="text-primary font-semibold">
               {recommendation_summary.best_fit}
             </span>{" "}
             — {recommendation_summary.reason}
           </p>
           <div>
-            <h4 className="font-semibold text-[#0070C0] mb-1">
+            <h4 className="font-semibold text-primary mb-1">
               Situational Recommendations:
             </h4>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">

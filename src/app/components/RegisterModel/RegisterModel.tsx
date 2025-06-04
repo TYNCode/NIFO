@@ -143,7 +143,7 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`flex justify-center items-center bg-[#0070C0] text-white py-3 rounded-lg font-semibold transition w-full mt-2 ${
+            className={`flex justify-center items-center bg-primary text-white py-3 rounded-lg font-semibold transition w-full mt-2 ${
               isSubmitting ? "cursor-not-allowed opacity-70" : "hover:bg-[#005fa3]"
             }`}
           >

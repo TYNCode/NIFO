@@ -45,7 +45,7 @@ const Sidebar = () => {
         <div className="relative mt-3">
           {/* Animated Highlight */}
           <div
-            className="absolute w-[220px] h-12 bg-[#0070C0] left-5 rounded-lg transition-transform duration-[650ms] ease-in-out"
+            className="absolute w-[220px] h-12 bg-primary left-5 rounded-lg transition-transform duration-[650ms] ease-in-out"
             style={{
               transform: `translateY(${activeIndex * 52}px)`,
             }}
@@ -60,14 +60,14 @@ const Sidebar = () => {
                   key={href}
                   href={href}
                   className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full transition-all duration-300 ease-in-out
-                    ${isActive ? "text-white scale-105 " : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0] "}
+                    ${isActive ? "text-white scale-105 " : "text-gray-700 hover:scale-[1.02] hover:text-primary "}
                   `}
                 >
                   <Icon
                     className={`text-base transition-colors  duration-300 ${
                       isActive
                         ? "text-white"
-                        : "text-gray-500 group-hover:text-[#0070C0]"
+                        : "text-gray-500 group-hover:text-primary"
                     }`}
                   />
                   <span className="text-sm">{label}</span>

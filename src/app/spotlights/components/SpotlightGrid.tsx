@@ -152,7 +152,7 @@ const SpotlightGrid: React.FC<SpotlightGridProps> = ({
               onClick={() => setIsAutoPlay((prev) => !prev)}
               className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
                 isAutoPlay
-                  ? "bg-blue-100 text-[#0070c0]"
+                  ? "bg-blue-100 text-primary"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -251,7 +251,7 @@ const SpotlightGrid: React.FC<SpotlightGridProps> = ({
         <div className="flex items-center justify-center gap-6">
           <button
             onClick={goToPrevious}
-            className="group w-12 h-12 bg-[#0070C0]  text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="group w-12 h-12 bg-primary  text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
             aria-label="Previous spotlight"
           >
             <FaChevronLeft className="text-lg transition-transform duration-300 group-hover:-translate-x-0.5" />
@@ -264,7 +264,7 @@ const SpotlightGrid: React.FC<SpotlightGridProps> = ({
                 onClick={() => setCurrentIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? "bg-[#0070C0] w-8"
+                    ? "bg-primary w-8"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
                 aria-label={`Go to spotlight ${index + 1}`}
@@ -274,7 +274,7 @@ const SpotlightGrid: React.FC<SpotlightGridProps> = ({
 
           <button
             onClick={goToNext}
-            className="group w-12 h-12 bg-[#0070C0] text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="group w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
             aria-label="Next spotlight"
           >
             <FaChevronRight className="text-lg transition-transform duration-300 group-hover:translate-x-0.5" />

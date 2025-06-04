@@ -11,7 +11,7 @@ const StartupTable: React.FC<Props> = ({ startups, onEdit, onDelete }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 bg-[#0070C0]">
+        <table className="min-w-full divide-y divide-gray-200 bg-primary">
           <thead className="">
             <tr className="text-white">
               <th className="px-6 py-4 text-left text-xs font-medium text-customBlack uppercase tracking-wider">

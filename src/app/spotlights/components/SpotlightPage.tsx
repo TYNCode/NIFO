@@ -147,7 +147,7 @@ const handleSpotlightClick = useCallback((spotlight: any) => {
         <div className="w-full lg:pl-[20%] px-4 lg:px-8 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#0070C0]"></div>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               <p className="text-gray-600 mt-4 text-lg">
                 Loading spotlights...
               </p>
@@ -175,7 +175,7 @@ const handleSpotlightClick = useCallback((spotlight: any) => {
               <p className="text-red-600 mb-4">{error}</p>
               <button
                 onClick={() => dispatch(fetchSpotlights())}
-                className="px-6 py-2 bg-[#0070C0] text-white rounded-lg hover:bg-[#005a9a] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0070C0] focus:ring-offset-2"
+                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 Try Again
               </button>
@@ -225,7 +225,7 @@ const handleSpotlightClick = useCallback((spotlight: any) => {
           >
             <FaBars className="text-xl" />
           </button>
-          <h1 className="text-lg sm:text-xl font-semibold text-[#0070C0]">
+          <h1 className="text-lg sm:text-xl font-semibold text-primary">
             Startup Spotlight
           </h1>
           <button
@@ -242,7 +242,7 @@ const handleSpotlightClick = useCallback((spotlight: any) => {
 
         {/* Desktop Header */}
         <div className="hidden lg:flex items-center justify-between mb-8">
-          <h1 className="text-2xl xl:text-3xl font-bold text-[#0070C0]">
+          <h1 className="text-2xl xl:text-3xl font-bold text-primary">
             Startup Spotlight
           </h1>
 
@@ -291,7 +291,7 @@ const handleSpotlightClick = useCallback((spotlight: any) => {
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="px-6 py-2 bg-[#0070C0] text-white rounded-lg hover:bg-[#005a9a] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0070C0] focus:ring-offset-2"
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                   Clear Filters
                 </button>

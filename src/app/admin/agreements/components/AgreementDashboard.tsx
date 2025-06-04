@@ -94,12 +94,12 @@ const AgreementDashboard: React.FC = () => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-[#0070C0]">
+        <h2 className="text-2xl font-bold text-primary">
           Agreements Dashboard
         </h2>
         <button
           onClick={handleAdd}
-          className="bg-[#0070C0] text-white px-4 py-2 rounded-lg hover:bg-[#005a9c] transition"
+          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#005a9c] transition"
         >
           + Add Agreement
         </button>

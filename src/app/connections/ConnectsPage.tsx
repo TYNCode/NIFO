@@ -36,7 +36,7 @@ const ConnectsPage = () => {
 
       {/* Main Content */}
       <div className="flex-grow p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-[#0070C0] mb-2">Connections</h1>
+        <h1 className="text-3xl font-bold text-primary mb-2">Connections</h1>
         <p className="text-gray-600 mb-8">Manage your engagement connections and requests</p>
 
         {/* Active Conversations */}

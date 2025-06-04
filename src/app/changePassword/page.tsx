@@ -56,7 +56,7 @@ const ChangePassword: React.FC = () => {
               type="submit"
               disabled={!isValid || loading}
               className={`rounded-md ${
-                isValid && !loading ? "bg-[#0070C0]" : "bg-gray-300 cursor-not-allowed"
+                isValid && !loading ? "bg-primary" : "bg-gray-300 cursor-not-allowed"
               } text-sm px-4 py-3 text-white font-semibold uppercase`}
             >
               {loading ? "Submitting..." : "Submit"}
@@ -64,7 +64,7 @@ const ChangePassword: React.FC = () => {
           </form>
           <div className="text-center mt-6 text-sm">
             Not a member?{' '}
-            <Link href="/register" className="text-[#0070C0] font-semibold">
+            <Link href="/register" className="text-primary font-semibold">
               Sign-up
             </Link>
           </div>
@@ -79,7 +79,7 @@ const ChangePassword: React.FC = () => {
         <div className="w-5/12 h-full bg-white">
           <div className="flex flex-col gap-4 px-10 pt-20">
             <h2 className="font-bold text-3xl xl:text-5xl">Reset Password</h2>
-            <p className="font-light text-base xl:text-xl text-[#0070C0]">
+            <p className="font-light text-base xl:text-xl text-primary">
               Enter your registered email to reset your password
             </p>
           </div>
@@ -102,14 +102,14 @@ const ChangePassword: React.FC = () => {
               type="submit"
               disabled={!isValid || loading}
               className={`rounded-md w-80 ${
-                isValid && !loading ? "bg-[#0070C0]" : "bg-gray-300 cursor-not-allowed"
+                isValid && !loading ? "bg-primary" : "bg-gray-300 cursor-not-allowed"
               } text-sm px-4 py-2 text-white font-semibold`}
             >
               {loading ? "Submitting..." : "Submit"}
             </button>
             <div className="flex justify-center items-center gap-2 mt-8 xl:mt-24">
               <div className="font-semibold">Not a member?</div>
-              <Link href="/register" className="text-[#0070C0] font-semibold">
+              <Link href="/register" className="text-primary font-semibold">
                 Sign-up
               </Link>
             </div>
