@@ -56,7 +56,7 @@ const UsecaseDescriptionPage: React.FC = () => {
       </div>
 
       {/* Banner */}
-      <div className="relative flex flex-col justify-center items-center text-center py-8 mt-16 bg-[#005585]">
+      <div className="relative flex flex-col justify-center items-center text-center py-8 mt-16 bg-secondary">
         <div className="absolute inset-0 z-0 opacity-15">
           <Image src="/bg-usecase.png" alt="Background" className="object-cover w-full h-full" fill />
         </div>

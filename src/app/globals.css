@@ -29,6 +29,9 @@ body {
 }
 
 :root {
+  --color-primary: #0070C0;
+  --color-secondary: #005585;
+  --color-tertiary: #3AB8FF;
   --cyan-500: #339af0;
 }
 

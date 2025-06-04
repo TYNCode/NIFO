@@ -112,7 +112,7 @@ const UsecasesArc = ({
                   <div
                     className={`relative rounded-full shadow-lg ${
                       isMiddleDot
-                        ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
+                        ? "bg-tertiary border-2 border-[#FFEFA7] w-7 h-7"
                         : "bg-[#D8D8D8] w-5 h-5"
                     }`}
                   >
@@ -151,7 +151,7 @@ const UsecasesArc = ({
                   <div
                     className={`relative rounded-full shadow-lg ${
                       isMiddleDot
-                        ? "bg-[#3AB8FF] border-2 border-[#FFEFA7] w-7 h-7"
+                        ? "bg-tertiary border-2 border-[#FFEFA7] w-7 h-7"
                         : "bg-[#D8D8D8] w-5 h-5"
                     }`}
                   >
