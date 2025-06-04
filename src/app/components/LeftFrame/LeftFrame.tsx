@@ -31,16 +31,12 @@ const navItems = [
 interface LeftFrameProps {
   onNewChat?: () => void;
   setSessionId?: (id: string) => void;
-  setInputPrompt?: (prompt: string) => void;
-  setIsInputEmpty?: (value: boolean) => void;
   mode?: string;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
   onNewChat,
   setSessionId,
-  setInputPrompt,
-  setIsInputEmpty,
   mode = "home",
 }) => {
   const router = useRouter();
@@ -145,8 +141,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           </nav>
         </div>
 
-        {pathname === "/" && mode === "home" && subTab === "recommended" && setInputPrompt && setIsInputEmpty && (
-          <RecommendedQueries setInputPrompt={setInputPrompt} setIsInputEmpty={setIsInputEmpty} />
+        {pathname === "/" && mode === "home" && subTab === "recommended" && (
+          <RecommendedQueries />
         )}
         {pathname === "/" && mode === "home" && subTab === "chathistory" && <ChatHistory />}
       </div>

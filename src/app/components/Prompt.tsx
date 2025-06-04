@@ -2,43 +2,34 @@ import React, { useRef, useEffect } from "react";
 import { IoMdSend } from "react-icons/io";
 import DefaultCard from "./DefaultCard";
 import RenderMessagesInChat from "./HomePage/RenderMessagesInChat";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { setInputPrompt, clearInputPrompt } from "../redux/features/prompt/promptSlice";
 
 interface PromptProps {
-  open: boolean;
   onSaveInput: (input: string) => void;
-  defaultPrompt: string;
   messages: any;
-  inputPrompt: string;
-  setInputPrompt: React.Dispatch<React.SetStateAction<string>>;
   handleToggleLeftFrame: () => void;
-  openRightFrame: boolean;
   handleToggleRightFrame: () => void;
-  isInputEmpty: boolean;
-  setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Prompt: React.FC<PromptProps> = ({
-  open,
   onSaveInput,
-  defaultPrompt,
   messages,
-  inputPrompt,
-  setInputPrompt,
   handleToggleLeftFrame,
   handleToggleRightFrame,
-  isInputEmpty,
-  setIsInputEmpty,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dispatch = useAppDispatch();
+  const inputPrompt = useAppSelector((state) => state.prompt.inputPrompt);
+  const isInputEmpty = useAppSelector((state) => state.prompt.isInputEmpty);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputPrompt(event.target.value);
-    setIsInputEmpty(event.target.value.trim() === "");
+    dispatch(setInputPrompt(event.target.value));
     autoResizeTextarea();
   };
 
@@ -53,8 +44,7 @@ const Prompt: React.FC<PromptProps> = ({
   const handleSendClick = async () => {
     if (!isInputEmpty) {
       onSaveInput(inputPrompt);
-      setInputPrompt("");
-      setIsInputEmpty(true);
+      dispatch(clearInputPrompt());
     }
   };
 
@@ -65,7 +55,7 @@ const Prompt: React.FC<PromptProps> = ({
   };
 
   const handleCardSelect = (value: string) => {
-    setInputPrompt(value);
+    dispatch(setInputPrompt(value));
     autoResizeTextarea();
   };
 
@@ -83,11 +73,7 @@ const Prompt: React.FC<PromptProps> = ({
               What problem are you trying to solve?
             </div>
             <div className="xl:mt-28 lg:mt-16">
-              <DefaultCard
-                onSelectCard={handleCardSelect}
-                isInputEmpty={isInputEmpty}
-                setIsInputEmpty={setIsInputEmpty}
-              />
+              <DefaultCard onSelectCard={handleCardSelect} />
             </div>
           </>
         ) : (

@@ -5,12 +5,9 @@ import Image from "next/image";
 import StartupProfile from "../StartupProfile";
 import HistoryMobile from "../HistoryMobile";
 import StartupList from "../../components/SearchMobile/StartupList";
+import { useAppSelector } from "../../redux/hooks";
 
 interface SearchMobileProps {
-  isInputEmpty: boolean;
-  inputPrompt: string;
-  setIsInputEmpty: (isEmpty: boolean) => void;
-  setInputPrompt: (prompt: string) => void;
   handleToggleRightFrame: () => void;
   handleToggleLeftFrame: () => void;
   onSaveInput: (input: string) => void;
@@ -20,10 +17,6 @@ interface SearchMobileProps {
 }
 
 const SearchMobile: React.FC<SearchMobileProps> = ({
-  isInputEmpty,
-  inputPrompt,
-  setIsInputEmpty,
-  setInputPrompt,
   handleToggleRightFrame,
   handleToggleLeftFrame,
   onSaveInput,
@@ -31,6 +24,8 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
   setSessionId,
   handleNewChat,
 }) => {
+  const inputPrompt = useAppSelector((state) => state.prompt.inputPrompt);
+  const isInputEmpty = useAppSelector((state) => state.prompt.isInputEmpty);
   const [selectedStartup, setSelectedStartup] = useState<any>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [queryForConnect, setQueryForConnect] = useState<string>("");
@@ -202,10 +197,6 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
 
       <div className="fixed bottom-24 left-7 right-5 shadow-lg z-50">
         <PromptTabMobile
-          isInputEmpty={isInputEmpty}
-          inputPrompt={inputPrompt}
-          setInputPrompt={setInputPrompt}
-          setIsInputEmpty={setIsInputEmpty}
           handleToggleRightFrame={handleToggleRightFrame}
           handleToggleLeftFrame={handleToggleLeftFrame}
           onSaveInput={onSaveInput}
@@ -252,10 +243,6 @@ const SearchMobile: React.FC<SearchMobileProps> = ({
           </div>
           <div className="mx-10">
             <PromptTabMobile
-              isInputEmpty={isInputEmpty}
-              inputPrompt={inputPrompt}
-              setInputPrompt={setInputPrompt}
-              setIsInputEmpty={setIsInputEmpty}
               handleToggleRightFrame={handleToggleRightFrame}
               handleToggleLeftFrame={handleToggleLeftFrame}
               onSaveInput={onSaveInput}
