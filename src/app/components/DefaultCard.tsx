@@ -1,12 +1,13 @@
 import React from 'react';
+import { useAppDispatch } from "../redux/hooks";
+import { setIsInputEmpty } from "../redux/features/prompt/promptSlice";
 
 interface DefaultCardProps {
     onSelectCard: (value: string) => void;
-    isInputEmpty: boolean;
-    setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DefaultCard: React.FC<DefaultCardProps> = ({ onSelectCard, isInputEmpty, setIsInputEmpty }) => {
+const DefaultCard: React.FC<DefaultCardProps> = ({ onSelectCard }) => {
+    const dispatch = useAppDispatch();
 
     const cardData = [
         "Give me list of startups leveraging AI in Quantumcomputing",
@@ -17,7 +18,7 @@ const DefaultCard: React.FC<DefaultCardProps> = ({ onSelectCard, isInputEmpty, s
 
     const handleCardClick = (value: string) => {
         onSelectCard(value);
-        setIsInputEmpty(false);
+        dispatch(setIsInputEmpty(false));
     };
 
     return (

@@ -18,6 +18,7 @@ import useCaseSlice from "./features/usecases/useCaseSlice"
 import changePasswordSlice from "./features/auth/forgotPasswordSlice";
 import resetPasswordSlice from "./features/auth/resetPasswordSlice";
 import agreementSlice from "./features/admin/agreements/agreementSlice"
+import promptSlice from "./features/prompt/promptSlice";
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   roiEvaluation: roiEvaluationReducer,
   useCase:useCaseSlice,
   agreement:agreementSlice,
+  prompt: promptSlice,
 
 });
 

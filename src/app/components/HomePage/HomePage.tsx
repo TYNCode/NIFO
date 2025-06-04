@@ -30,11 +30,9 @@ export default function HomePage() {
   const [selectedStartup, setSelectedStartup] = useState<StartupType | null>(
     null
   );
-  const [inputPrompt, setInputPrompt] = useState(defaultPrompt);
   const [openRightFrame, setOpenRightFrame] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<any>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true);
   const [mailMessage, setMailMessage] = useState<any>(null);
   const [queryData, setQueryData] = useState<ChatHistoryResponse | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
@@ -55,9 +53,6 @@ export default function HomePage() {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("promptStorage", inputPrompt);
-  }, [inputPrompt]);
 
   const { singleSession } = useAppSelector((state) => state.sessionMessage);
 
@@ -196,7 +191,6 @@ export default function HomePage() {
     const newSessionId = uuidv4();
     setSessionId(newSessionId);
     setMessages([]);
-    setInputPrompt("");
   };
 
   const [activeTabs, setActiveTabs] = useState<{ [key: number]: string }>({});
@@ -209,10 +203,6 @@ export default function HomePage() {
       case "Search":
         return (
           <SearchMobile
-            isInputEmpty={isInputEmpty}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
             handleToggleRightFrame={handleToggleRightFrame}
             handleToggleLeftFrame={handleToggleLeftFrame}
             onSaveInput={handleSaveInput}
@@ -249,24 +239,15 @@ export default function HomePage() {
             <LeftFrame
               onNewChat={handleNewChat}
               setSessionId={setSessionId}
-              setInputPrompt={setInputPrompt}
-              setIsInputEmpty={setIsInputEmpty}
             />
           </div>
         )}
         <div className="relative flex-grow pt-12">
           <Prompt
-            isInputEmpty={isInputEmpty}
-            inputPrompt={inputPrompt}
-            setInputPrompt={setInputPrompt}
-            setIsInputEmpty={setIsInputEmpty}
             handleToggleLeftFrame={handleToggleLeftFrame}
             handleToggleRightFrame={handleToggleRightFrame}
             onSaveInput={handleSaveInput}
-            defaultPrompt={defaultPrompt}
             messages={messages}
-            open={open}
-            openRightFrame={openRightFrame}
           />
           <div className="absolute left-2 top-2 flex items-center">
             <NavBar
