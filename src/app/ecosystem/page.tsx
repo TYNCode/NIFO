@@ -93,7 +93,7 @@ const EcosystemContent: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex flex-col gap-4">
-        <div className="bg-[#005585] p-4 w-full z-50 mt-16">
+        <div className="bg-secondary p-4 w-full z-50 mt-16">
           <div className="text-lg font-semibold text-white">
             {useCaseTitle || "Ecosystem Overview"}
           </div>

@@ -75,7 +75,7 @@ const Sectors = ({ onSectorClick }) => {
         <div className="">
           <img src="/sector_default.png" alt="" className="" />
         </div>
-        <div className="bg-[#005585] flex flex-col px-4 py-4 gap-2">
+        <div className="bg-secondary flex flex-col px-4 py-4 gap-2">
           <div className="flex text-lg text-white font-medium">
             TYN Industry trends outlook
           </div>

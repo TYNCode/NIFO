@@ -6,7 +6,7 @@ import { MdPhone } from 'react-icons/md';
 const StartupInfo = () => {
   return (
     <div className='flex flex-col gap-4'>
-      <div className="flex flex-row bg-[#005585] gap-4 p-4 items-center justify-center ">
+      <div className="flex flex-row bg-secondary gap-4 p-4 items-center justify-center ">
         <div className="">
           <img src="/kissflow.png" alt="Kissflow" />
         </div>
