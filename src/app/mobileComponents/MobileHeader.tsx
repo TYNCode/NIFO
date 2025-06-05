@@ -1,49 +1,64 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React from "react";
 import Image from "next/image";
-import { FaAngleLeft } from "react-icons/fa6";
+import { FaBars } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
-const MobileHeader = () => {
+interface MobileHeaderProps {
+  onMenuToggle?: () => void;
+  showMenuButton?: boolean;
+}
+
+const MobileHeader: React.FC<MobileHeaderProps> = ({
+  onMenuToggle,
+  showMenuButton = true,
+}) => {
   const router = useRouter();
-  const [activeSpotlight, setActiveSpotlight] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (window.location.pathname.includes("/spotlights/")) {
-      setActiveSpotlight(true);
-    }
-  }, []);
-
-  const handleSpotlight = () => {
-    setActiveSpotlight(false);
+  const handleLogoClick = () => {
     router.push("/");
   };
 
   return (
-    <div className="relative">
-      <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-50 flex items-center justify-between px-4">
-        {/* Left Arrow */}
-        {activeSpotlight ? (
-          <div
-            className="text-gray-700 cursor-pointer"
-            onClick={handleSpotlight}
-            role="button"
-            aria-label="Go back"
-          >
-            <FaAngleLeft size={24} />
-          </div>
-        ) : (
-          <div className="w-8"></div>
-        )}
-
-        {/* Centered Logo */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Image src="/nifoimage.png" width={100} height={100} alt="Tyn Logo" />
+    <header className="relative sm:hidden block">
+      <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-10 flex items-center justify-between px-4">
+        {/* Left: Hamburger Menu */}
+        <div className="flex items-center">
+          {showMenuButton && onMenuToggle ? (
+            <button
+              onClick={onMenuToggle}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Open menu"
+            >
+              <FaBars className="text-xl" />
+            </button>
+          ) : (
+            <div className="w-8"></div>
+          )}
         </div>
 
-        {/* Right Placeholder for balance */}
+        {/* Center: Logo */}
+        <div
+          className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
+          onClick={handleLogoClick}
+        >
+          <Image
+            src="/nifoimage.png"
+            width={100}
+            height={100}
+            alt="Tyn Logo"
+            className="h-10 w-auto"
+          />
+        </div>
+
+        {/* Right: Spacer */}
         <div className="w-8"></div>
       </div>
-    </div>
+
+      {/* Spacer to push page content below fixed header */}
+      <div className="h-16"></div>
+    </header>
   );
 };
 

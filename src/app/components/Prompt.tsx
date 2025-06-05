@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from "react";
+"use client";
+
+import React, { useRef, useEffect, useState } from "react";
 import { IoMdSend } from "react-icons/io";
-import DefaultCard from "./DefaultCard";
 import RenderMessagesInChat from "./HomePage/RenderMessagesInChat";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { setInputPrompt, clearInputPrompt } from "../redux/features/prompt/promptSlice";
+import {
+  setInputPrompt,
+  clearInputPrompt,
+} from "../redux/features/prompt/promptSlice";
+import HomeComponents from "./HomePage/HomeComponents/HomeComponents";
 
 interface PromptProps {
   onSaveInput: (input: string) => void;
@@ -23,30 +28,11 @@ const Prompt: React.FC<PromptProps> = ({
   const dispatch = useAppDispatch();
   const inputPrompt = useAppSelector((state) => state.prompt.inputPrompt);
   const isInputEmpty = useAppSelector((state) => state.prompt.isInputEmpty);
+  const [rows, setRows] = useState(1);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(setInputPrompt(event.target.value));
-    autoResizeTextarea();
-  };
-
-  const autoResizeTextarea = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  };
-
-  const handleSendClick = async () => {
-    if (!isInputEmpty) {
-      onSaveInput(inputPrompt);
-      dispatch(clearInputPrompt());
-    }
-  };
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -54,9 +40,33 @@ const Prompt: React.FC<PromptProps> = ({
     }
   };
 
-  const handleCardSelect = (value: string) => {
-    dispatch(setInputPrompt(value));
-    autoResizeTextarea();
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch(setInputPrompt(event.target.value));
+    autoResizeTextarea(event);
+  };
+
+  const autoResizeTextarea = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const textareaLineHeight = 24;
+    const previousRows = event.target.rows;
+    event.target.rows = 1;
+
+    const currentRows = Math.min(
+      Math.floor(event.target.scrollHeight / textareaLineHeight),
+      7
+    );
+
+    setRows(currentRows);
+    event.target.rows = currentRows;
+  };
+
+  const handleSendClick = async () => {
+    if (!isInputEmpty) {
+      onSaveInput(inputPrompt);
+      dispatch(clearInputPrompt());
+      setRows(1);
+    }
   };
 
   const handleTextareaClick = () => {
@@ -64,47 +74,51 @@ const Prompt: React.FC<PromptProps> = ({
     handleToggleRightFrame();
   };
 
+  const handleCardSelect = (value: string) => {
+    dispatch(setInputPrompt(value));
+  };
+
   return (
-    <div className="flex flex-col h-full w-full items-center justify-center relative">
-      <div className="prompt-container overflow-y-auto">
+    <div className="flex flex-col h-screen w-full ">
+      {/* Message Section */}
+      <div className="flex-1 my-5 overflow-y-scroll px-2 sm:px-4 lg:px-0">
         {messages.length === 0 ? (
-          <>
-            <div className="flex justify-center items-center font-semibold text-2xl mt-12">
-              What problem are you trying to solve?
-            </div>
-            <div className="xl:mt-28 lg:mt-16">
-              <DefaultCard onSelectCard={handleCardSelect} />
-            </div>
-          </>
+          <div className="my-4">
+            <HomeComponents />
+          </div>
         ) : (
-          <div className="mx-2 mb-8 md:mb-16"><RenderMessagesInChat messages={messages}/></div>
+          <div className="mx-2 mb-8 md:mb-16">
+            <RenderMessagesInChat messages={messages} />
+          </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex items-start w-4/6 bg-white p-4 relative">
-        <textarea
-          ref={textareaRef}
-          className="flex-1 rounded-3xl px-10 py-4 bg-transparent text-[16px] focus:ring-0 focus:outline-none placeholder-gray-500 resize-none overflow-y-flow shadow-lg max-h-[150px]"
-          placeholder="Provide your problem statement to be solved..."
-          value={inputPrompt}
-          rows={3}
-          maxLength={3000}
-          onChange={handleInputChange}
-          onClick={handleTextareaClick}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSendClick();
-            }
-          }}
-        />
-
-        {/* Send icon inside the box */}
-        <div
-          className="absolute right-10 bottom-10 cursor-pointer text-gray-500 hover:text-blue-500 transition-colors duration-200"
-          onClick={handleSendClick}
-        >
-          <IoMdSend size={24} />
+      {/* Input Box */}
+      <div className="w-full max-w-5xl px-4 sm:px-6 lg:px-0 mx-auto mt-4 pb-6">
+        <div className="relative bg-white border border-gray-200 rounded-3xl shadow-sm px-4 py-2">
+          <textarea
+            ref={textareaRef}
+            className="w-full resize-none border-none focus:ring-0 focus:outline-none text-gray-800 placeholder-gray-400 bg-transparent text-[15px] leading-6"
+            placeholder="Say your Problem..."
+            value={inputPrompt}
+            rows={rows}
+            maxLength={3000}
+            onChange={handleInputChange}
+            onClick={handleTextareaClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendClick();
+              }
+            }}
+          />
+          <button
+            onClick={handleSendClick}
+            className="absolute right-4 bottom-3 text-gray-500 hover:text-primary transition-colors"
+          >
+            <IoMdSend size={22} />
+          </button>
         </div>
       </div>
     </div>
