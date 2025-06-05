@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoMdSend } from "react-icons/io";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setInputPrompt, clearInputPrompt } from "../../redux/features/prompt/promptSlice";
 
 const PromptTabMobile = ({
-  isInputEmpty,
-  inputPrompt,
-  setInputPrompt,
-  setIsInputEmpty,
   handleToggleRightFrame,
   handleToggleLeftFrame,
   onSaveInput,
   setAnswerTab,
 }) => {
+  const dispatch = useAppDispatch();
+  const inputPrompt = useAppSelector((state) => state.prompt.inputPrompt);
+  const isInputEmpty = useAppSelector((state) => state.prompt.isInputEmpty);
   const renderQuestionTab = () => {
     return (
       <div className="">
@@ -51,15 +52,13 @@ const PromptTabMobile = ({
   const handleSendClick = async () => {
     if (!isInputEmpty) {
       onSaveInput(inputPrompt);
-      setInputPrompt("");
-      setIsInputEmpty(true);
+      dispatch(clearInputPrompt());
       setAnswerTab(true);
     }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputPrompt(event.target.value);
-    setIsInputEmpty(event.target.value.trim() === "");
+    dispatch(setInputPrompt(event.target.value));
   };
 
   const handleTextareaClick = () => {

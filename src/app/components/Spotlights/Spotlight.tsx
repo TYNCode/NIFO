@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchSpotlights } from "../../redux/features/spotlight/spotlightSlice";
 import { encryptURL } from "../../utils/shareUtils";
 import SpotlightBar from "../Spotlights/SpotlightBar";
-import type { Spotlight as SpotlightType } from "../../interfaces"; // Type-only import
 import Image from "next/image";
 
 const Spotlight: React.FC = () => {

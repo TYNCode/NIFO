@@ -77,7 +77,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
           <div className="absolute inset-0 bg-black bg-opacity-10"></div>
 
           {spotlight.spotlight_category && (
-            <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-[#0070C0] text-white text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 rounded-full font-medium shadow-sm z-10">
+            <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-primary text-white text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 rounded-full font-medium shadow-sm z-10">
               {spotlight.spotlight_category}
             </div>
           )}
@@ -97,7 +97,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
         <div className="pt-2">
           <button
             onClick={() => onExploreClick?.(spotlight.spotlight_startup)}
-            className="group ml-auto w-7 h-7 sm:w-8 sm:h-8 xl:w-10 xl:h-10 rounded-full border-2 border-[#0070C0] text-[#0070C0] flex items-center justify-center hover:bg-[#0070C0] hover:text-white transition-all duration-300"
+            className="group ml-auto w-7 h-7 sm:w-8 sm:h-8 xl:w-10 xl:h-10 rounded-full border-2 border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
             aria-label={`Explore ${spotlight.spotlight_title}`}
           >
             <svg

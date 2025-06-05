@@ -13,8 +13,7 @@ const SummaryCoinnovation = () => {
           <Sidebar />
         </div>
         <div className="flex flex-col relative">
-          <NavBarCoin />
-          <div className="container mx-auto p-4 mt-16 bg-[#F5FCFF]">
+          <div className="container mx-auto p-4 bg-[#F5FCFF]">
             <ProjectLists />
           </div>
         </div>

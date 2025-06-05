@@ -1,10 +1,5 @@
 import CryptoJS from "crypto-js";
-
-const secretKey = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET || "secret-key";
-if (secretKey === "secret-key") {
-  console.warn("[SHARE_UTIL] ⚠️ Using fallback secret key. Set NEXT_PUBLIC_ENCRYPTION_SECRET in .env.local");
-}
-console.log("[SHARE_UTIL] Loaded secretKey:", secretKey);
+const secretKey = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET
 
 /**
  * AES encrypts a string and URL-encodes it.

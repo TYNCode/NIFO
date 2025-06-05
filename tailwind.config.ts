@@ -10,15 +10,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        tertiary: 'var(--color-tertiary)',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       boxShadow: {
-        'customShadow': '0px 0px 3px 0px rgba(14, 14, 14, 0.25)',
+        customShadow: '0px 0px 3px 0px rgba(14, 14, 14, 0.25)',
       },
-      
+
     },
   },
   plugins: [

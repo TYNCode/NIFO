@@ -37,7 +37,7 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
         <div className="relative dropdown-container">
           <button
             onClick={() => setShowAnalystDropdown(!showAnalystDropdown)}
-            className="flex items-center gap-2 px-3 w-36 xl:px-4 py-2 bg-blue-100 rounded-lg text-sm text-[#0070C0] font-medium transition-colors justify-between"
+            className="flex items-center gap-2 px-3 w-36 xl:px-4 py-2 bg-blue-100 rounded-lg text-sm text-primary font-medium transition-colors justify-between"
           >
             {selectedAnalyst
               ? ANALYST_OPTIONS.find((opt) => opt.value === selectedAnalyst)?.label || selectedAnalyst
@@ -71,7 +71,7 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
           <button
             onClick={onFilterToggle}
             className={`w-12 h-6 rounded-full transition-all duration-200 ${
-              filters.TYNVerified ? "bg-[#0070C0]" : "bg-gray-300"
+              filters.TYNVerified ? "bg-primary" : "bg-gray-300"
             }`}
           >
             <div
@@ -83,7 +83,7 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
         </div>
 
         {hasActiveFilters && (
-          <button onClick={onClearAll} className="text-sm text-[#0070C0] font-medium">
+          <button onClick={onClearAll} className="text-sm text-primary font-medium">
             Clear All
           </button>
         )}
@@ -129,7 +129,7 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
             <button
               onClick={onFilterToggle}
               className={`w-12 h-6 rounded-full transition-all duration-200 ${
-                filters.TYNVerified ? "bg-[#0070C0]" : "bg-gray-300"
+                filters.TYNVerified ? "bg-primary" : "bg-gray-300"
               }`}
             >
               <div

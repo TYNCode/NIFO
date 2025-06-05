@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <div className="w-full flex justify-end">
-              <Link href="/changePassword" className="text-[#0070C0] text-sm font-semibold">
+              <Link href="/changePassword" className="text-primary text-sm font-semibold">
                 Forgot Password?
               </Link>
             </div>
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               disabled={!isValid || loading}
               className={`rounded-md ${
-                isValid && !loading ? "bg-[#0070C0]" : "bg-gray-300 cursor-not-allowed"
+                isValid && !loading ? "bg-primary" : "bg-gray-300 cursor-not-allowed"
               } text-sm px-4 py-3 text-white flex items-center justify-center uppercase font-semibold w-full`}
             >
               {loading ? "Signing in..." : "Sign in"}
@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
             <div className="text-center font-medium tracking-wide mt-2">
               Not a member?{" "}
               <Link href="/register">
-                <span className="text-[#0070C0] font-semibold">Sign-up</span>
+                <span className="text-primary font-semibold">Sign-up</span>
               </Link>
             </div>
           </div>
@@ -101,7 +101,7 @@ const LoginPage: React.FC = () => {
         <div className="w-5/12 h-full bg-white">
           <div className="flex items-start justify-start flex-col gap-4 px-10 pt-20">
             <h2 className="font-bold text-3xl xl:text-5xl">Sign in</h2>
-            <p className="font-light text-base xl:text-xl text-[#0070C0]">Sign in if you have an account here</p>
+            <p className="font-light text-base xl:text-xl text-primary">Sign in if you have an account here</p>
           </div>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -138,7 +138,7 @@ const LoginPage: React.FC = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="w-full flex justify-center">
-              <Link href="/changePassword" className="text-[#0070C0] font-semibold text-sm">
+              <Link href="/changePassword" className="text-primary font-semibold text-sm">
                 Forgot Password?
               </Link>
             </div>
@@ -147,7 +147,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               disabled={!isValid || loading}
               className={`rounded-md ${
-                isValid && !loading ? "bg-[#0070C0]" : "bg-gray-300 cursor-not-allowed"
+                isValid && !loading ? "bg-primary" : "bg-gray-300 cursor-not-allowed"
               } text-sm px-4 py-2 text-white flex items-center justify-center font-semibold`}
             >
               {loading ? "Signing in..." : "Sign in"}
@@ -156,7 +156,7 @@ const LoginPage: React.FC = () => {
 
           <div className="flex justify-center items-center gap-2 mt-8 xl:mt-40">
             <div className="font-semibold">Not a member?</div>
-            <Link href="/register" className="text-[#0070C0] font-semibold">
+            <Link href="/register" className="text-primary font-semibold">
               Sign-up
             </Link>
           </div>

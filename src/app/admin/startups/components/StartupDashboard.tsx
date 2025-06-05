@@ -136,14 +136,14 @@ const StartupDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#0070C0]">Startup Directory</h1>
-              <p className="text-sm text-[#0070C0]/80 mt-1">
+              <h1 className="text-2xl font-bold text-primary">Startup Directory</h1>
+              <p className="text-sm text-primary/80 mt-1">
                 Manage and organize your startup portfolio
               </p>
             </div>
             <button
               onClick={handleAddStartup}
-              className="bg-customBlue text-white bg-[#0070C0] px-6 py-3 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm"
+              className="bg-customBlue text-white bg-primary px-6 py-3 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

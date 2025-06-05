@@ -12,7 +12,7 @@ const SpotlightTable: React.FC<Props> = ({ spotlights, onEdit, onDelete }) => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full border border-gray-300 rounded-lg">
-        <thead className="bg-[#0070C0] text-white">
+        <thead className="bg-primary text-white">
           <tr>
             <th className="p-3 text-left">Logo</th>
             <th className="p-3 text-left">Title</th>
@@ -51,7 +51,7 @@ const SpotlightTable: React.FC<Props> = ({ spotlights, onEdit, onDelete }) => {
               <td className="p-3 space-x-2">
                 <button
                   onClick={() => onEdit(item)}
-                  className="text-[#0070C0] hover:text-blue-800"
+                  className="text-primary hover:text-blue-800"
                   title="Edit"
                 >
                   <FaEdit className="inline" />

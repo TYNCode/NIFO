@@ -1,18 +1,12 @@
-import { Dispatch, SetStateAction } from "react";
+import { useAppDispatch } from "../../redux/hooks";
+import { setInputPrompt, setIsInputEmpty } from "../../redux/features/prompt/promptSlice";
 import data from "../../data/recommendedQueries";
 
-interface RecommendedQueriesProps {
-  setInputPrompt: Dispatch<SetStateAction<string>>;
-  setIsInputEmpty: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const RecommendedQueries: React.FC<RecommendedQueriesProps> = ({
-  setInputPrompt,
-  setIsInputEmpty,
-}) => {
+const RecommendedQueries: React.FC = () => {
+  const dispatch = useAppDispatch();
   const sendRecommendationQuery = (item: any) => {
-    setInputPrompt(item.prompt);
-    setIsInputEmpty(false);
+    dispatch(setInputPrompt(item.prompt));
+    dispatch(setIsInputEmpty(false));
   };
 
   return (

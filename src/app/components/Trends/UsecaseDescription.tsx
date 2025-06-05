@@ -10,7 +10,8 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase }) => {
 
   return (
     <div>
-      <div className="relative flex flex-col justify-center items-center text-center py-8 mt-16 gap-6 bg-[#005585]">
+      <div className="relative flex flex-col justify-center items-center text-center py-8 mt-16 gap-6 bg-secondary">
+       
         <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
           <Image
             src="/bg-usecase.png"

@@ -70,7 +70,7 @@ const SpotlightDetail: React.FC = () => {
         <div className="w-full lg:ml-[20%] xl:ml-[21%] px-4 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#0070C0]"></div>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               <p className="text-gray-600 mt-4 text-lg">Loading startup details...</p>
             </div>
           </div>
@@ -94,7 +94,7 @@ const SpotlightDetail: React.FC = () => {
               <p className="text-red-600 mb-4">{error}</p>
               <button
                 onClick={handleBackClick}
-                className="px-6 py-2 bg-[#0070C0] text-white rounded-lg hover:bg-[#005a9a] transition-colors"
+                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors"
               >
                 Go Back
               </button>
@@ -120,7 +120,7 @@ const SpotlightDetail: React.FC = () => {
               <p className="text-gray-600 mb-4">The startup you're looking for doesn't exist.</p>
               <button
                 onClick={handleBackClick}
-                className="px-6 py-2 bg-[#0070C0] text-white rounded-lg hover:bg-[#005a9a] transition-colors"
+                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors"
               >
                 Go Back
               </button>
@@ -143,7 +143,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Back Button */}
         <button
           onClick={handleBackClick}
-          className="flex items-center gap-2 text-[#0070C0] hover:text-[#005a9a] font-medium mb-4 sm:mb-6 transition-colors"
+          className="flex items-center gap-2 text-primary hover:text-[#005a9a] font-medium mb-4 sm:mb-6 transition-colors"
         >
           <FaArrowLeft className="text-sm" />
           <span className="text-sm sm:text-base">Back to Spotlights</span>
@@ -179,7 +179,7 @@ const SpotlightDetail: React.FC = () => {
               
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
                 {company.startup_analyst_rating && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#0070C0] text-white text-xs sm:text-sm rounded-full">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary text-white text-xs sm:text-sm rounded-full">
                     <FaStar className="text-xs" />
                     {company.startup_analyst_rating}
                   </span>
@@ -205,7 +205,7 @@ const SpotlightDetail: React.FC = () => {
                 {company.startup_url && (
                   <button
                     onClick={() => handleVisitWebsite(company.startup_url)}
-                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[#0070C0] text-white rounded-lg hover:bg-[#005a9a] transition-colors text-xs sm:text-sm"
+                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors text-xs sm:text-sm"
                   >
                     <FaExternalLinkAlt className="text-xs" />
                     Visit Website
@@ -235,7 +235,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Company Overview */}
         {(company.startup_overview || company.startup_description) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaRocket className="text-base sm:text-lg" />
               Overview
             </h2>
@@ -257,7 +257,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Solutions & Use Cases */}
         {(company.startup_solutions || company.startup_usecases) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaBuilding className="text-base sm:text-lg" />
               Solutions & Use Cases
             </h2>
@@ -279,7 +279,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Strategic Positioning */}
         {(company.startup_gsi || company.startup_partners || company.startup_customers) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaUsers className="text-base sm:text-lg" />
               Strategic Positioning
             </h2>
@@ -310,7 +310,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Technology & Industry */}
         {(company.startup_technology || company.startup_industry) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaChartLine className="text-base sm:text-lg" />
               Technology & Industry
             </h2>
@@ -340,7 +340,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Founders */}
         {company.startup_founders_info && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaUsers className="text-base sm:text-lg" />
               Founders
             </h2>
@@ -351,7 +351,7 @@ const SpotlightDetail: React.FC = () => {
         {/* Contact */}
         {company.startup_emails && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#0070C0] mb-3 sm:mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaEnvelope className="text-base sm:text-lg" />
               Contact
             </h2>
@@ -368,7 +368,7 @@ const SpotlightDetail: React.FC = () => {
                     onClick={() => handleEmailContact(actualEmail)}
                     className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left w-full text-sm sm:text-base"
                   >
-                    <FaEnvelope className="text-[#0070C0] text-sm" />
+                    <FaEnvelope className="text-primary text-sm" />
                     <span className="text-gray-700">{displayName}</span>
                   </button>
                 );

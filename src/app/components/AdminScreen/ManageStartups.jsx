@@ -141,7 +141,9 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   };
 
   const confirmDelete = () => {
-    const updatedData = data.filter((entity) => entity.id !== entityToDelete);
+    const updatedData = data.filter(
+      (entity) => entity.startup_id !== entityToDelete
+    );
     setData(updatedData);
     setShowConfirmation(false);
     setEntityToDelete(null);
@@ -157,8 +159,10 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   };
 
   const confirmBulkDelete = () => {
-    const selectedIds = selectedFlatRows.map((d) => d.original.id);
-    const updatedData = data.filter((item) => !selectedIds.includes(item.id));
+    const selectedIds = selectedFlatRows.map((d) => d.original.startup_id);
+    const updatedData = data.filter(
+      (item) => !selectedIds.includes(item.startup_id)
+    );
     setData(updatedData);
     setShowBulkConfirmation(false);
   };

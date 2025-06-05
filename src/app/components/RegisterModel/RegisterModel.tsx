@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch } from "../../redux/hooks";
 import {
-  postCompany,
-  fetchAllCompanies,
+  createStartup,
+  fetchCompaniesByPagination,
 } from "../../redux/features/companyprofile/companyProfileSlice";
 
 interface RegistrationModelProps {
@@ -11,9 +11,9 @@ interface RegistrationModelProps {
 }
 
 interface FormData {
-  organization_name: string;
-  website: string;
-  description: string;
+  startup_name: string;
+  startup_url: string;
+  startup_description: string;
 }
 
 const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
@@ -33,25 +33,21 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
     setIsSubmitting(true);
     setServerError(null);
     try {
-      await dispatch(postCompany(data)).unwrap();
-      dispatch(fetchAllCompanies());
+      await dispatch(createStartup(data)).unwrap();
+      dispatch(fetchCompaniesByPagination({ page: 1, page_size: 10 }));
       reset();
       onClose();
     } catch (error: any) {
       console.error("Error submitting organization:", error);
-      if (error?.message) {
-        setServerError(error.message);
-      } else {
-        setServerError("Something went wrong. Please try again.");
-      }
+      setServerError(error?.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const orgName = watch("organization_name") || "";
-  const website = watch("website") || "";
-  const description = watch("description") || "";
+  const startupName = watch("startup_name") || "";
+  const startupUrl = watch("startup_url") || "";
+  const startupDescription = watch("startup_description") || "";
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
@@ -66,17 +62,15 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
 
         <h2 className="text-2xl font-bold mb-4 text-black">Add Organization</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* Organization Name */}
+          {/* Startup Name */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
-              Organization Name
-            </label>
+            <label className="text-sm font-medium text-gray-700">Startup Name</label>
             <input
               type="text"
               maxLength={30}
-              placeholder="Enter organization name"
-              {...register("organization_name", {
-                required: "Organization name is required",
+              placeholder="Enter startup name"
+              {...register("startup_name", {
+                required: "Startup name is required",
                 maxLength: {
                   value: 30,
                   message: "Max 30 characters allowed",
@@ -84,9 +78,9 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
               })}
               className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full"
             />
-            <div className="text-right text-xs text-gray-400">{orgName.length}/30</div>
-            {errors.organization_name && (
-              <p className="text-red-500 text-sm">{errors.organization_name.message}</p>
+            <div className="text-right text-xs text-gray-400">{startupName.length}/30</div>
+            {errors.startup_name && (
+              <p className="text-red-500 text-sm">{errors.startup_name.message}</p>
             )}
           </div>
 
@@ -96,8 +90,8 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
             <input
               type="url"
               maxLength={50}
-              placeholder="Ex: https://nifo.theyellow.network/"
-              {...register("website", {
+              placeholder="Ex: https://yourstartup.com/"
+              {...register("startup_url", {
                 required: "Website is required",
                 pattern: {
                   value: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
@@ -110,9 +104,9 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
               })}
               className="text-base placeholder:text-base px-5 py-3 h-10 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full"
             />
-            <div className="text-right text-xs text-gray-400">{website.length}/50</div>
-            {errors.website && (
-              <p className="text-red-500 text-sm">{errors.website.message}</p>
+            <div className="text-right text-xs text-gray-400">{startupUrl.length}/50</div>
+            {errors.startup_url && (
+              <p className="text-red-500 text-sm">{errors.startup_url.message}</p>
             )}
           </div>
 
@@ -122,7 +116,7 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
             <textarea
               placeholder="Describe the organization"
               maxLength={200}
-              {...register("description", {
+              {...register("startup_description", {
                 required: "Description is required",
                 maxLength: {
                   value: 200,
@@ -132,9 +126,11 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
               rows={3}
               className="text-base placeholder:text-base px-5 py-3 outline-none rounded-lg shadow-[0_3px_10px_rgba(0,0,0,0.2)] border border-gray-300 w-full resize-none"
             />
-            <div className="text-right text-xs text-gray-400">{description.length}/200</div>
-            {errors.description && (
-              <p className="text-red-500 text-sm">{errors.description.message}</p>
+            <div className="text-right text-xs text-gray-400">
+              {startupDescription.length}/200
+            </div>
+            {errors.startup_description && (
+              <p className="text-red-500 text-sm">{errors.startup_description.message}</p>
             )}
           </div>
 
@@ -147,11 +143,11 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`flex justify-center items-center bg-[#0070C0] text-white py-3 rounded-lg font-semibold transition w-full mt-2 ${
+            className={`flex justify-center items-center bg-primary text-white py-3 rounded-lg font-semibold transition w-full mt-2 ${
               isSubmitting ? "cursor-not-allowed opacity-70" : "hover:bg-[#005fa3]"
             }`}
           >
-            {isSubmitting ? (
+            {isSubmitting && (
               <svg
                 className="animate-spin h-5 w-5 mr-2 text-white"
                 xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +168,7 @@ const RegistrationModel: React.FC<RegistrationModelProps> = ({ onClose }) => {
                   d="M4 12a8 8 0 018-8v8H4z"
                 ></path>
               </svg>
-            ) : null}
+            )}
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>

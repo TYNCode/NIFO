@@ -2,10 +2,10 @@
 import React, { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { fetchCompanyById } from "../../redux/features/companyprofile/companyProfile";
 import { decryptURL } from "../../utils/shareUtils";
 import { useParams, useRouter } from "next/navigation";
 import withAuth from "../../utils/withAuth";
+import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
 
 interface CompanyProfileProps {
   company: {
@@ -37,8 +37,8 @@ const CompanyProfile: React.FC<any> = () => {
       encodedOrganizationId = encodedOrganizationId[0];
     }
 
-    const decodedOrganizationId: string = decryptURL(encodedOrganizationId);
-    dispatch(fetchCompanyById(decodedOrganizationId));
+    const decodedOrganizationId: any = decryptURL(encodedOrganizationId);
+    dispatch(fetchStartupById(decodedOrganizationId));
   }, [dispatch]);
 
   if (!company) {

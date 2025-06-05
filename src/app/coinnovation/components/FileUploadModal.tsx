@@ -69,9 +69,9 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
                     ✕
                 </button>
 
-                <div className="relative flex items-center justify-center text-base text-[#0070C0] font-semibold">
+                <div className="relative flex items-center justify-center text-base text-primary font-semibold">
                     File Upload
-                    <div className="absolute -bottom-[2px] w-[120px] h-[2px] bg-[#0070C0]"></div>
+                    <div className="absolute -bottom-[2px] w-[120px] h-[2px] bg-primary"></div>
                 </div>
                 <hr className={`border-[#E3F2FE] w-full mt-2 ${uploadComplete ? 'border-green-500' : ''}`} />
 
