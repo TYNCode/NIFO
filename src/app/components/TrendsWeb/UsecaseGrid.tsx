@@ -15,7 +15,7 @@ const UsecaseGrid = ({
         const fetchUsecases = async () => {
             try {
                 setLoading(true);
-                const response = await fetch("http://127.0.0.1:8000/trends/");
+                const response = await fetch("https://tyn-server.azurewebsites.net/trends/");
                 const data = await response.json();
 
                 const filtered = data.filter((item) => {

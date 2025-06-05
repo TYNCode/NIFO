@@ -18,7 +18,7 @@ const Usecases = ({
   useEffect(() => {
     const fetchUsecases = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/trends/");
+        const res = await fetch("https://tyn-server.azurewebsites.net/trends/");
         const data = await res.json();
 
         // Filter use cases based on selected sector and industry

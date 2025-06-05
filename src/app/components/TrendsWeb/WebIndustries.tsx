@@ -32,7 +32,7 @@ const WebIndustries = ({
   useEffect(() => {
     const fetchIndustriesWithUsecases = async () => {
       try {
-        const usecaseResponse = await fetch("http://127.0.0.1:8000/trends/");
+        const usecaseResponse = await fetch("https://tyn-server.azurewebsites.net/trends/");
         const usecaseData = await usecaseResponse.json();
 
         console.log("usecasedata", usecaseData)

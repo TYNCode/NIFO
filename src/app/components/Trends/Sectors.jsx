@@ -19,7 +19,7 @@ const Sectors = ({ onSectorClick }) => {
 
   const fetchValidSectors = async () => {
     try {
-      const usecaseRes = await fetch("http://127.0.0.1:8000/trends/");
+      const usecaseRes = await fetch("https://tyn-server.azurewebsites.net/trends/");
       const usecaseData = await usecaseRes.json();
 
       const sectorSet = new Set(

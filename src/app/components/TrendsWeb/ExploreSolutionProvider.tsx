@@ -9,7 +9,7 @@ const ExploreSolutionProvider = ({ solutionProviderId, onBack }) => {
 
         const fetchProvider = async () => {
             try {
-                const res = await fetch(`http://127.0.0.1:8000/trends/solution-providers/${solutionProviderId}/`);
+                const res = await fetch(`https://tyn-server.azurewebsites.net/trends/solution-providers/${solutionProviderId}/`);
                 const data = await res.json();
                 setProviderData(data);
             } catch (error) {
