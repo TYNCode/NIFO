@@ -23,7 +23,7 @@ const WebInCombined = ({
   };
 
   return (
-    <div className="flex h-screen relative overflow-hidden select-none">
+    <div className="flex relative overflow-hidden select-none">
       <WebIndustries
         onDotClick={handleDotClick}
         selectedIndustry={selectedIndustry}

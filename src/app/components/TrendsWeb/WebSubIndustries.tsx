@@ -26,7 +26,7 @@ const WebSubIndustries = ({
     };
 
     return (
-        <div className="flex h-screen relative overflow-hidden select-none">
+        <div className="flex relative overflow-hidden select-none">
             <ThirdLeftCircle
                 onDotClick={handleDotClick}
                 selectedIndustry={selectedIndustry}

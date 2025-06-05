@@ -25,7 +25,7 @@ const ExploreUseCase = ({ useCaseId, onBack }) => {
     }
 
     return (
-        <div className="bg-white shadow flex flex-col mt-4 gap-4 w-[40vw] h-[85vh] overflow-y-scroll">
+        <div className="bg-white shadow flex flex-col mt-4 gap-4 w-[40vw] h-[85vh] overflow-y-auto overflow-x-clip">
             <div
                 className="relative flex flex-col justify-start gap-4 p-4 h-[25vh] text-black cursor-pointer"
                 style={{
