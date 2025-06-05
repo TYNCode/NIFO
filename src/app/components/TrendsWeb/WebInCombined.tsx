@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import WebSubIndustries from "./WebSubIndustries";
-import WebTechnology from "./WebTechnology";
+import React from "react";
+import WebIndustries from "./WebIndustries";
 import UsecaseGrid from "./UsecaseGrid";
 import ExploreSolutionProvider from "./ExploreSolutionProvider";
 
 const WebInCombined = ({
-  onWebTechnologyClick,
+  onWebCircleTwoClick,
   selectedSector,
   handleGoSector,
   selectedIndustry,
@@ -15,39 +14,38 @@ const WebInCombined = ({
   handleExploreClick,
   handleBack,
   highlightedIndustry,
-  setHighlighedIndustry
+  setHighlighedIndustry,
+  selectedSubIndustry,              
+  setSelectedSubIndustry            
 }) => {
- 
-  const handleDotClick = (subSectorName) => {
-    setSelectedIndustry(subSectorName);
+  const handleDotClick = (industryName) => {
+    setSelectedIndustry(industryName);
   };
 
   return (
     <div className="flex h-screen relative overflow-hidden select-none">
-      <WebSubIndustries
-        onDotClick={handleDotClick} 
-        selectedIndustry={selectedIndustry} 
+      <WebIndustries
+        onDotClick={handleDotClick}
+        selectedIndustry={selectedIndustry}
         selectedSector={selectedSector}
         handleGoSector={handleGoSector}
-        onActiveSubSectorChange = {setHighlighedIndustry}
+        onActiveSubSectorChange={setHighlighedIndustry}
+        onWebCircleTwoClick={onWebCircleTwoClick}
       />
-      {/* {selectedIndustry && (
-        <WebTechnology
-          onDotClick={onWebTechnologyClick}
-          selectedSector={selectedSector}
-          selectedIndustry={selectedIndustry} 
-        />
-      )} */}
 
       {!selectedSolutionProviderId ? (
-              <UsecaseGrid selectedSector={ selectedSector}
-              selectedIndustry = {highlightedIndustry} onExploreClick={handleExploreClick} />
-            ) : (
-              <ExploreSolutionProvider
-                solutionProviderId={selectedSolutionProviderId}
-                onBack={handleBack}
-              />
-            )}
+        <UsecaseGrid
+          selectedSector={selectedSector}
+          selectedIndustry={highlightedIndustry}
+          selectedSubIndustry={selectedSubIndustry} 
+          onExploreClick={handleExploreClick}
+        />
+      ) : (
+        <ExploreSolutionProvider
+          solutionProviderId={selectedSolutionProviderId}
+          onBack={handleBack}
+        />
+      )}
     </div>
   );
 };

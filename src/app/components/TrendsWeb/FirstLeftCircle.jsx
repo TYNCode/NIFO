@@ -40,8 +40,6 @@ const FirstLeftCircle = ({ onDotClick, onSectorHighlight }) => {
       }
     };
     
-    
-
     fetchFilteredSectors();
   }, []);
   
