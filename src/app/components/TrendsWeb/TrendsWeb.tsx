@@ -45,7 +45,7 @@ const TrendsWeb = () => {
   };
 
   return (
-    <div>
+    <div className="h-screen w-full">
       {showInCombined ? (
         showCircleThree ? (
           <WebSubIndustries
