@@ -6,7 +6,7 @@ const UsecaseGrid = ({
     selectedSector,
     selectedIndustry,
     selectedSubIndustry,
-    onExploreClick
+    onExploreClick  
 }) => {
     const [usecases, setUsecases] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -58,14 +58,11 @@ const UsecaseGrid = ({
             </div>
 
             <div
-                className={`
-          grid gap-4 px-3 py-3 pb-10
-          scrollbar-thin scrollbar-thumb-gray-400 scrollbar-no-arrows
-          ${usecases.length <= 2
+                className={`grid gap-4 px-3 py-3 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-no-arrows
+                ${usecases.length <= 2
                         ? "grid-cols-2 justify-items-start overflow-visible h-auto"
                         : "grid-cols-2 justify-items-start overflow-y-scroll h-[80vh]"
-                    }
-        `}
+                    }`}
             >
                 {usecases.map((item, index) => {
                     const imageUrl = item.images && item.images.length > 0 ? item.images[0] : "/fallback.jpg";
@@ -95,7 +92,7 @@ const UsecaseGrid = ({
                                 <div className="flex flex-row justify-end items-center gap-2 mt-auto">
                                     <div
                                         className="text-[14px] text-[#2286C0] cursor-pointer"
-                                        onClick={() => onExploreClick(item.solution_provider)}
+                                        onClick={() => onExploreClick(item.id)}  // Pass the item id here
                                     >
                                         Explore
                                     </div>

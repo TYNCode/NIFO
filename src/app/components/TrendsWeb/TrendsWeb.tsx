@@ -54,9 +54,6 @@ const TrendsWeb = () => {
             selectedSubIndustry={selectedSubIndustry}
             setSelectedSubIndustry={setSelectedSubIndustry}
             setHighlightedSubIndustry={setHighlightedSubIndustry}
-            selectedSolutionProviderId={selectedSolutionProviderId}
-            handleExploreClick={handleExploreClick}
-            handleBack={handleBack}
             handleGoSector={handleGoSector}
           />
         ) : (
