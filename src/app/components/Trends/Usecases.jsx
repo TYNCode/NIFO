@@ -1,37 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
-import sectorsData from "../../data/data_sector.json";
+import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 
 const Usecases = ({
-  selectedIndustry,
-  selectedTechnology,
-  onUsecaseClick,
   selectedSector,
+  selectedIndustry,
+  onUsecaseClick,
 }) => {
+  const [useCases, setUseCases] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState(0);
   const [slide, setSlide] = useState("enter");
   const [touchStartX, setTouchStartX] = useState(0);
 
-  const selectedSectorData = sectorsData.sectors.find(
-    (sector) => sector.sector === selectedSector
-  );
+  useEffect(() => {
+    const fetchUsecases = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/trends/");
+        const data = await res.json();
 
-  const selectedIndustryData = selectedSectorData
-    ? selectedSectorData.subSectors[selectedIndustry]
-    : null;
+        // Filter use cases based on selected sector and industry
+        const filtered = data.filter(
+          (item) =>
+            item.sector === selectedSector &&
+            item.industry === selectedIndustry
+        );
 
-  const technologyTrendsData = selectedIndustryData
-    ? selectedIndustryData.find(
-        (technologyTrend) =>
-          technologyTrend.technologyTrend === selectedTechnology
-      )
-    : null;
+        // Map to required format (you can modify this structure as needed)
+        const formatted = filtered.map((item) => ({
+          useCase: item.challenge_title,
+          fullData: item,
+        }));
 
-  const useCases = technologyTrendsData ? technologyTrendsData.useCases : [];
+        setUseCases(formatted);
+        setCurrentIndex(0);
+      } catch (err) {
+        console.error("Error fetching use cases:", err);
+      }
+    };
+
+    if (selectedSector && selectedIndustry) {
+      fetchUsecases();
+    }
+  }, [selectedSector, selectedIndustry]);
+
   const handleNextUsecase = () => {
     if (isAnimating || useCases.length <= 1) return;
     setDirection(-1);
@@ -77,11 +91,11 @@ const Usecases = ({
     setIsAnimating(false);
   };
 
-  const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null
+  const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null;
 
   const handleUsecaseClick = () => {
     if (currentUseCase) {
-      onUsecaseClick(currentUseCase); 
+      onUsecaseClick(currentUseCase.fullData); // Pass full usecase info
     }
   };
 

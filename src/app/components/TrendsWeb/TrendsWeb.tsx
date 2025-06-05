@@ -1,31 +1,27 @@
 import React, { useState } from "react";
-import WebIndustries from "./WebIndustries";
+import WebSectors from "./WebSectors";
 import WebInCombined from "./WebInCombined";
-import WebTechUsecase from "./WebTechUsecase";
-import WebUsecases from "./WebUsecases";
+import WebSubIndustries from "./WebSubIndustries";
 
 const TrendsWeb = () => {
   const [showInCombined, setShowInCombined] = useState(false);
   const [showCircleThree, setShowCircleThree] = useState(false);
   const [selectedSector, setSelectedSector] = useState(null);
-  const [showIndustryCircle, setShowIndustryCircle] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
-  const [selectedTechnology, setSelectedTechnology] = useState(null);
-  const [currentCircleView, setCurrentCircleView] = useState("sector");
+  const [selectedSubIndustry, setSelectedSubIndustry] = useState(null);
   const [highlightedSectorForGrid, setHighlightedSectorForGrid] = useState(null);
   const [highlightedIndustry, setHighlighedIndustry] = useState(null);
+  const [highlightedSubIndustry, setHighlightedSubIndustry] = useState(null);
+  const [selectedSolutionProviderId, setSelectedSolutionProviderId] = useState(null);
+  const [currentCircleView, setCurrentCircleView] = useState("sector");
+
   const handleSectorClick = (sector) => {
     setSelectedSector(sector);
-    setShowIndustryCircle(true);
     setShowInCombined(true);
   };
 
   const handleWebCircleTwoClick = (industry) => {
     setSelectedIndustry(industry);
-  };
-
-  const handleWebTechnologyClick = (technology) => {
-    setSelectedTechnology(technology);
     setShowCircleThree(true);
   };
 
@@ -33,63 +29,68 @@ const TrendsWeb = () => {
     setCurrentCircleView("sector");
     setShowInCombined(false);
     setShowCircleThree(false);
-    setShowIndustryCircle(false);
+    setSelectedSector(null);
+    setSelectedIndustry(null);
+    setSelectedSubIndustry(null);
     setHighlighedIndustry(null);
+    setHighlightedSubIndustry(null);
   };
 
-    const [selectedSolutionProviderId, setSelectedSolutionProviderId] = useState(null);
-  
-    const handleExploreClick = (solutionProviderId) => {
-      setSelectedSolutionProviderId(solutionProviderId);
-    };
-  
-    const handleBack = () => {
-      setSelectedSolutionProviderId(null);
-    };
+  const handleExploreClick = (solutionProviderId) => {
+    setSelectedSolutionProviderId(solutionProviderId);
+  };
+
+  const handleBack = () => {
+    setSelectedSolutionProviderId(null);
+  };
 
   return (
     <div>
       {showInCombined ? (
-        // showCircleThree ? (
-        //   <WebUsecases
-        //     selectedIndustry={selectedIndustry}
-        //     selectedSector={selectedSector}
-        //     selectedTechnology={selectedTechnology}
-        //     handleGoSector={handleGoSector}
-        //     setSelectedTechnology={setSelectedTechnology}
-        //   />
-        // ) : (
-         ( <WebInCombined
-            onWebTechnologyClick={handleWebTechnologyClick}
-            selectedIndustry={selectedIndustry}
+        showCircleThree ? (
+          <WebSubIndustries
             selectedSector={selectedSector}
-            handleGoSector={handleGoSector}
-            setSelectedIndustry={setSelectedIndustry}
-            handleBack={handleBack}
-            handleExploreClick={handleExploreClick}
+            selectedIndustry={selectedIndustry}
+            selectedSubIndustry={selectedSubIndustry}
+            setSelectedSubIndustry={setSelectedSubIndustry}
+            setHighlightedSubIndustry={setHighlightedSubIndustry}
             selectedSolutionProviderId={selectedSolutionProviderId}
-            setSelectedSectorProviderId={setSelectedSolutionProviderId}
+            handleExploreClick={handleExploreClick}
+            handleBack={handleBack}
+            handleGoSector={handleGoSector}
+          />
+        ) : (
+          <WebInCombined
+            selectedSector={selectedSector}
+            selectedIndustry={selectedIndustry}
+            setSelectedIndustry={setSelectedIndustry}
             highlightedIndustry={highlightedIndustry}
             setHighlighedIndustry={setHighlighedIndustry}
+            selectedSolutionProviderId={selectedSolutionProviderId}
+            setSelectedSectorProviderId={setSelectedSolutionProviderId}
+            handleExploreClick={handleExploreClick}
+            handleBack={handleBack}
+            handleGoSector={handleGoSector}
+            onWebCircleTwoClick={handleWebCircleTwoClick}
+            selectedSubIndustry={selectedSubIndustry}
+            setSelectedSubIndustry={setSelectedSubIndustry}
           />
         )
       ) : (
-        currentCircleView === "sector" && (
-          <WebIndustries
-            onWebCircleTwoClick={handleWebCircleTwoClick}
-            handleSectorClick={handleSectorClick}
-            selectedSector={selectedSector}
-            showIndustryCircle={showIndustryCircle}
-            currentCircleView={currentCircleView}
-            handleBack={handleBack}
-            handleExploreClick={handleExploreClick}
-            selectedSolutionProviderId={selectedSolutionProviderId}
-            setSelectedSectorProviderId={setSelectedSolutionProviderId}
-            highlightedSectorForGrid={highlightedSectorForGrid}
-            setHighlightedSectorForGrid={setHighlightedSectorForGrid}
-            highlightedIndustry={highlightedIndustry}
-          />
-        )
+        <WebSectors
+          handleSectorClick={handleSectorClick}
+          selectedSector={selectedSector}
+          showIndustryCircle={showInCombined}
+          currentCircleView={currentCircleView}
+          selectedSolutionProviderId={selectedSolutionProviderId}
+          setSelectedSectorProviderId={setSelectedSolutionProviderId}
+          highlightedSectorForGrid={highlightedSectorForGrid}
+          setHighlightedSectorForGrid={setHighlightedSectorForGrid}
+          highlightedIndustry={highlightedIndustry}
+          selectedSubIndustry={selectedSubIndustry}
+          handleExploreClick={handleExploreClick}
+          handleBack={handleBack}
+        />
       )}
     </div>
   );
