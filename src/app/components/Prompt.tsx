@@ -79,7 +79,7 @@ const Prompt: React.FC<PromptProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen w-full ">
+    <div className="flex flex-col flex-grow min-h-0 w-full">
       {/* Message Section */}
       <div className="flex-1 my-5 overflow-y-scroll px-2 sm:px-4 lg:px-0">
         {messages.length === 0 ? (
@@ -95,7 +95,7 @@ const Prompt: React.FC<PromptProps> = ({
       </div>
 
       {/* Input Box */}
-      <div className="w-4/5  sm:max-w-lg mx-auto mt-4 pb-6">
+      <div className="w-4/5  sm:max-w-xl lg:max-w-5xl mx-auto mt-4 pb-6">
         <div className="relative bg-white border border-gray-200 rounded-3xl shadow-sm px-4 py-2">
           <textarea
             ref={textareaRef}
