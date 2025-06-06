@@ -52,8 +52,7 @@ const UsecasesArc = ({ selectedSector, selectedIndustry }) => {
   const fixedAnglesArc2 = [-Math.PI / 2, -Math.PI / 4, 0];
 
   return (
-    <div className="relative flex justify-end items-start select-none mt-16">
-      {/* Inner Circle – Sector */}
+    <div className="relative flex justify-end items-start select-none ">
       <div className="absolute">
         <img src="/circleup1.svg" alt="Arc 1" className="w-32" />
       </div>

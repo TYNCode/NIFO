@@ -83,7 +83,7 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
 
   return (
     <div
-      className="relative flex justify-end items-end select-none mb-20"
+      className="relative flex justify-end items-end select-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

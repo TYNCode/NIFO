@@ -1,23 +1,78 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import LeftFrame from "../components/LeftFrame/LeftFrame";
 import TrendsWeb from "../components/TrendsWeb/TrendsWeb";
 import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
 import WithAuth from "../utils/withAuth";
+import TrendsMobile from "../mobileComponents/FooterComponents/TrendsMobile";
+import MobileHeader from "../mobileComponents/MobileHeader";
 
 const PageContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Spotlight");
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  const [selectedSector, setSelectedSector] = useState<string | null>(null);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<string>("trends");
+
+  const handleSectorClick = (sectorName: string) => {
+    setSelectedSector(sectorName);
+    setSelectedIndustry(null);
+    setSelectedTechnology(null);
+    setCurrentStep("subSectors");
+  };
+
+  const handleIndustryClick = (industryName: string) => {
+    setSelectedIndustry(industryName);
+    setSelectedTechnology(null);
+    setCurrentStep("usecasesCombined");
+  };
+
+  const handleTechnologyClick = (technologyName: string) => {
+    setSelectedTechnology(technologyName);
+    setCurrentStep("usecasesCombined");
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <main className="flex w-full min-h-screen bg-gray-50">
-      {/* <div className="hidden lg:block lg:fixed lg:w-1/5 h-full">
-        <LeftFrame />
-      </div> */}
-      <div className="flex flex-col flex-1">
-        <NavbarTrend />
-        <TrendsWeb />
-      </div>
-    </main>
+    <>
+
+      {isMobile ? (
+        <div className="flex flex-col">
+            {/* <MobileHeader/> */}
+            <TrendsMobile
+              selectedSector={selectedSector}
+              selectedIndustry={selectedIndustry}
+              selectedTechnology={selectedTechnology}
+              handleSectorClick={handleSectorClick}
+              handleIndustryClick={handleIndustryClick}
+              handleTechnologyClick={handleTechnologyClick}
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+            />
+        </div>
+      ) : (
+        <main className="flex w-full min-h-screen bg-gray-50">
+          <div className="flex flex-col flex-1">
+            <NavbarTrend />
+            <TrendsWeb />
+          </div>
+        </main>
+      )}
+    </>
   );
 };
 
