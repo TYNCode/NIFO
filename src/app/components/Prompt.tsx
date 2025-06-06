@@ -95,7 +95,7 @@ const Prompt: React.FC<PromptProps> = ({
       </div>
 
       {/* Input Box */}
-      <div className="w-full max-w-5xl px-4 sm:px-6 lg:px-0 mx-auto mt-4 pb-6">
+      <div className="w-4/5  sm:max-w-lg mx-auto mt-4 pb-6">
         <div className="relative bg-white border border-gray-200 rounded-3xl shadow-sm px-4 py-2">
           <textarea
             ref={textareaRef}

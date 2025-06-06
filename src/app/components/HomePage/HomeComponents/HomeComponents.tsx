@@ -13,13 +13,13 @@ const HomeComponents = () => {
   };
 
   return (
-    <div className="space-y-3 px-10">
+    <div className="space-y-3 sm:px-10">
       {/* Top Bar */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Home</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Home</h1>
         <button
           onClick={handleCreateProject}
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+          className="flex items-center text-sm sm:text-base gap-2 bg-primary text-white px-3 sm:px-4 py-2 sm:py-2 rounded-md hover:bg-blue-700 transition"
         >
           <FaPlus className="text-sm" />
           Create Project
