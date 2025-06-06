@@ -22,7 +22,7 @@ const UsecasesCombined = ({
         />
       </div>
 
-      <div className="flex-grow-0 pb-16">
+      <div className="flex-grow-0 pb-4">
         <Usecases
           selectedIndustry={selectedIndustry}
           selectedTechnology={selectedTechnology}

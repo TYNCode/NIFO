@@ -2,34 +2,27 @@
 
 import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
+import { motion, AnimatePresence } from "framer-motion";
 
-const Usecases = ({
-  selectedSector,
-  selectedIndustry,
-  onUsecaseClick,
-}) => {
+const swipeConfidenceThreshold = 10000;
+
+const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
   const [useCases, setUseCases] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState(0);
-  const [slide, setSlide] = useState("enter");
-  const [touchStartX, setTouchStartX] = useState(0);
 
   useEffect(() => {
     const fetchUsecases = async () => {
       try {
         const res = await fetch("https://tyn-server.azurewebsites.net/trends/");
         const data = await res.json();
-
-        // Filter use cases based on selected sector and industry
         const filtered = data.filter(
           (item) =>
             item.sector === selectedSector &&
             item.industry === selectedIndustry
         );
 
-        // Map to required format (you can modify this structure as needed)
         const formatted = filtered.map((item) => ({
+          id: item.id,
           useCase: item.challenge_title,
           fullData: item,
         }));
@@ -46,93 +39,82 @@ const Usecases = ({
     }
   }, [selectedSector, selectedIndustry]);
 
-  const handleNextUsecase = () => {
-    if (isAnimating || useCases.length <= 1) return;
-    setDirection(-1);
-    setSlide("exit-left");
-    setIsAnimating(true);
+  const paginate = (direction) => {
+    setCurrentIndex((prevIndex) =>
+      direction === 1
+        ? (prevIndex + 1) % useCases.length
+        : (prevIndex - 1 + useCases.length) % useCases.length
+    );
   };
 
-  const handlePreviousUsecase = () => {
-    if (isAnimating || useCases.length <= 1) return;
-    setDirection(1);
-    setSlide("exit-right");
-    setIsAnimating(true);
-  };
+  const currentUseCase = useCases[currentIndex];
+  if (!currentUseCase) {
+    return (
+      <div className="h-40 flex items-center justify-center text-gray-500 text-sm">
+        No use cases found.
+      </div>
+    );
+  }
 
-  const handleTouchStart = (e) => {
-    if (isAnimating) return;
-    setTouchStartX(e.changedTouches[0].screenX);
-  };
-
-  const handleTouchEnd = (e) => {
-    if (isAnimating) return;
-    const touchEndX = e.changedTouches[0].screenX;
-    const swipeDistance = touchStartX - touchEndX;
-
-    if (swipeDistance > 50) {
-      handleNextUsecase();
-    } else if (swipeDistance < -50) {
-      handlePreviousUsecase();
-    }
-  };
-
-  const handleTransitionEnd = () => {
-    if (direction === -1) {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === useCases.length - 1 ? 0 : prevIndex + 1
-      );
-    } else if (direction === 1) {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === 0 ? useCases.length - 1 : prevIndex - 1
-      );
-    }
-    setSlide("enter");
-    setIsAnimating(false);
-  };
-
-  const currentUseCase = useCases.length > 0 ? useCases[currentIndex] : null;
-
-  const handleUsecaseClick = () => {
-    if (currentUseCase) {
-      onUsecaseClick(currentUseCase.fullData); // Pass full usecase info
-    }
-  };
+  const imageUrl = currentUseCase.fullData?.images?.[0] || "/fallback.jpg";
 
   return (
-    <div
-      className="flex justify-between items-center gap-4 mb-8 mx-1 overflow-hidden relative h-40"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div className="flex items-center justify-center w-10 z-10">
-        <div className="inline-block px-6 py-1 border border-[#0081CA] bg-[#F0FAFF] uppercase font-medium transform -rotate-90 text-nowrap text-sm">
-          Use Cases
-        </div>
+    <div className="flex flex-col items-center justify-center w-full mt-10">
+      {/* ✨ Title with creative styling */}
+      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-[#2287C0] to-[#56ccf2] text-transparent bg-clip-text animate-pulse">
+        Explore the Usecase
+      </h2>
+
+      <div className="relative h-[250px] w-[90%] max-w-[600px] justify-center items-center">
+        <AnimatePresence initial={false} custom={currentIndex}>
+          <motion.div
+            key={currentUseCase.id}
+            className="absolute w-full h-full rounded-xl overflow-hidden shadow-xl cursor-pointer"
+            onClick={() => onUsecaseClick(currentUseCase.fullData)}
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) * velocity.x;
+              if (swipe < -swipeConfidenceThreshold) paginate(1);
+              else if (swipe > swipeConfidenceThreshold) paginate(-1);
+            }}
+          >
+            <div className="absolute inset-0 z-0">
+              <img
+                src={imageUrl}
+                alt="usecase"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "/fallback.jpg";
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+            </div>
+
+            <div className="relative z-10 flex flex-col justify-between h-full px-5 py-3 text-white">
+              <div>
+                <div className="text-xl font-semibold">
+                  {currentUseCase.useCase}
+                </div>
+                <div className="text-xs mt-2 opacity-70 line-clamp-3">
+                  {currentUseCase.fullData?.challenge}
+                </div>
+              </div>
+
+              <div className="flex justify-end items-center">
+                <div className="p-2 bg-white/20 rounded-full">
+                  <BsArrowRight size={20} />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-
-      {currentUseCase && (
-        <div
-          key={currentUseCase.useCase}
-          className={`flex flex-col justify-between border shadow-xl px-7 py-4 rounded-md text-center w-full h-24 cursor-pointer ${slide}`}
-          onClick={handleUsecaseClick}
-          onTransitionEnd={handleTransitionEnd}
-        >
-          <div>{currentUseCase.useCase}</div>
-          <div className="flex text-[#0081CA] justify-end">
-            <BsArrowRight size={24} />
-          </div>
-        </div>
-      )}
-
-      {useCases.length > 1 && (
-        <div
-          className="border-2 rounded-full p-2 text-[#0081CA] border-[#0081CA] cursor-pointer z-10 flex items-center justify-center h-10 w-10"
-          onClick={handleNextUsecase}
-        >
-          <BsArrowRight size={24} />
-        </div>
-      )}
     </div>
   );
 };

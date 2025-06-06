@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaGlobe } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import sectorData from "../../data/data_sector.json";
-import { ThreeDots } from "react-loader-spinner"; // Use a specific loader
+import { ThreeDots } from "react-loader-spinner";
 
 const StartupsWeb = ({
   handleEcosystem,
