@@ -37,7 +37,9 @@ interface PartnerConnectResponse {
     startup_id: number;
     startup_name: string;
   };
+  use_case?: string;
 }
+
 
 interface PartnerConnectState {
   connectionsMade: PartnerConnectResponse[];
