@@ -5,17 +5,30 @@ import { FiMessageSquare } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchPartnerConnectsMade, fetchPartnerConnectsReceived } from "../redux/features/connection/connectionSlice";
 import LeftFrame from "../components/LeftFrame/LeftFrame";
+import MobileHeader from "../mobileComponents/MobileHeader";
 
 const ConnectsPage = () => {
   const dispatch = useAppDispatch();
   const { connectionsMade, connectionsReceived, loading, error } = useAppSelector((state) => state.partnerConnect);
   const [openModal, setOpenModal] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchPartnerConnectsMade());
     dispatch(fetchPartnerConnectsReceived());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   const handleOpenModal = (companyName: string) => {
     setSelectedCompany(companyName);
@@ -28,14 +41,27 @@ const ConnectsPage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#F8FBFF]">
-      {/* Left Frame */}
-      <div className="w-[21%]">
-        <LeftFrame />
+    <main className="flex flex-col w-full h-screen bg-[#F8FBFF]">
+      {/* Mobile Header */}
+      <div className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
+        <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
       </div>
 
-      {/* Main Content */}
-      <div className="flex-grow p-8 overflow-y-auto">
+      <div className="flex flex-row w-full flex-1">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block lg:w-[21%]">
+          <LeftFrame />
+        </div>
+
+        {/* Mobile Sidebar */}
+        <LeftFrame
+          isMobile
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+        />
+
+        {/* Main Content */}
+        <div className="flex-grow p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold text-primary mb-2">Connections</h1>
         <p className="text-gray-600 mb-8">Manage your engagement connections and requests</p>
 
@@ -146,7 +172,7 @@ const ConnectsPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 
