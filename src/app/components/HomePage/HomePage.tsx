@@ -103,7 +103,7 @@ export default function HomePage() {
         />
 
         {/* Center Prompt Area */}
-        <div className="relative flex-grow">
+       <div className="relative flex-grow flex flex-col min-h-screen overflow-hidden">
           <Prompt
             handleToggleLeftFrame={() => setOpenLeftFrame(!openLeftFrame)}
             handleToggleRightFrame={() => setOpenRightFrame(!openRightFrame)}
