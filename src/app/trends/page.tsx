@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import LeftFrame from "../components/LeftFrame/LeftFrame";
 import TrendsWeb from "../components/TrendsWeb/TrendsWeb";
 import NavbarTrend from "../components/TrendsWeb/NavbarTrend";
@@ -15,6 +15,7 @@ const PageContent: React.FC = () => {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<string>("trends");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSectorClick = (sectorName: string) => {
     setSelectedSector(sectorName);
@@ -47,12 +48,21 @@ const PageContent: React.FC = () => {
     };
   }, []);
 
+    const handleCloseMobileMenu = useCallback(() => {
+      setIsMobileMenuOpen(false);
+    }, []);
+
   return (
     <>
 
       {isMobile ? (
-        <div className="flex flex-col">
-            {/* <MobileHeader/> */}
+        <div className="flex flex-col h-[100dvh]">
+          <LeftFrame
+            isMobile={true}
+            isMobileOpen={isMobileMenuOpen}
+            onCloseMobile={handleCloseMobileMenu}
+          />
+          <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
             <TrendsMobile
               selectedSector={selectedSector}
               selectedIndustry={selectedIndustry}

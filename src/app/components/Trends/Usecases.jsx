@@ -59,13 +59,12 @@ const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
   const imageUrl = currentUseCase.fullData?.images?.[0] || "/fallback.jpg";
 
   return (
-    <div className="flex flex-col items-center justify-center w-full mt-10">
-      {/* ✨ Title with creative styling */}
+    <div className="flex flex-col items-center justify-center w-full ">
       <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-[#2287C0] to-[#56ccf2] text-transparent bg-clip-text animate-pulse">
         Explore the Usecase
       </h2>
 
-      <div className="relative h-[250px] w-[90%] max-w-[600px] justify-center items-center">
+      <div className="relative h-[220px] w-[90%] max-w-[600px] justify-center items-center">
         <AnimatePresence initial={false} custom={currentIndex}>
           <motion.div
             key={currentUseCase.id}

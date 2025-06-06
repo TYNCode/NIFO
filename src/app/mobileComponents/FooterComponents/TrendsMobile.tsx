@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Sectors from "../../components/Trends/Sectors";
 import SubSectors from "../../components/Trends/SubSectors";
 import Industries from "../../components/Trends/Industries";
 import CombinedComponent from "../../components/Trends/UsecasesCombined";
 import Ecosystem from "../../components/Trends/Ecosystem";
 import UsecaseDescription from "../../components/Trends/UsecaseDescription";
+import LeftFrame from "@/app/components/LeftFrame/LeftFrame";
+import MobileHeader from "../MobileHeader";
 
 const TrendsMobile = ({
   selectedSector,
@@ -27,6 +29,8 @@ const TrendsMobile = ({
     return savedUseCase ? JSON.parse(savedUseCase) : null;
   });
 
+
+
   const handleUsecaseClick = (usecase) => {
     setSelectedUseCase(usecase);
     setCurrentStep("usecaseDescription");
@@ -42,40 +46,46 @@ const TrendsMobile = ({
     setCurrentStep("usecasesCombined");
   };
 
+
+
   return (
-    <div>
-      {currentStep === "ecosystem" ? (
-        <Ecosystem
-          ecosystemData={ecosystemData}
-        />
-      ) : currentStep === "usecaseDescription" ? (
-        selectedUseCase ? ( 
-          <UsecaseDescription
-            selectedUseCase={selectedUseCase}
-            handleEcosystem={handleEcosystem}
+    <div className="">
+
+      <div>
+        {currentStep === "ecosystem" ? (
+          <Ecosystem
+            ecosystemData={ecosystemData}
+          />
+        ) : currentStep === "usecaseDescription" ? (
+          selectedUseCase ? (
+            <UsecaseDescription
+              selectedUseCase={selectedUseCase}
+              handleEcosystem={handleEcosystem}
+            />
+          ) : (
+            <div>No use case selected. Please select a use case.</div>
+          )
+        ) : currentStep === "usecasesCombined" ? (
+          <CombinedComponent
+            selectedIndustry={selectedIndustry}
+            selectedTechnology={selectedTechnology}
+            technologyNames={technologyNames}
+            onUsecaseClick={handleUsecaseClick}
+            selectedSector={selectedSector}
+            selectedUsecase={selectedUseCase}
+            setSelectedUseCase={setSelectedUseCase}
+          />
+        ) : currentStep === "subSectors" ? (
+          <SubSectors
+            selectedSector={selectedSector}
+            onIndustryClick={handleIndustryClick}
           />
         ) : (
-          <div>No use case selected. Please select a use case.</div>
-        )
-      ) : currentStep === "usecasesCombined" ? (
-        <CombinedComponent
-          selectedIndustry={selectedIndustry}
-          selectedTechnology={selectedTechnology}
-          technologyNames={technologyNames}
-          onUsecaseClick={handleUsecaseClick}
-          selectedSector={selectedSector}
-          selectedUsecase={selectedUseCase}
-          setSelectedUseCase={setSelectedUseCase}  
-        />
-      ) : currentStep === "subSectors" ? (
-        <SubSectors
-          selectedSector={selectedSector}
-          onIndustryClick={handleIndustryClick}
-        />
-      ) : (
-        <Sectors onSectorClick={handleSectorClick} />
-      )}
+          <Sectors onSectorClick={handleSectorClick} />
+        )}
+      </div>
     </div>
+  
   );
 };
 

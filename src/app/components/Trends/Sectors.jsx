@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Usecases from "./Usecases";
+import LeftFrame from "../LeftFrame/LeftFrame";
+import MobileHeader from "@/app/mobileComponents/MobileHeader";
 
 const Sectors = ({ onSectorClick }) => {
   const radius = 180;
@@ -85,8 +87,16 @@ const Sectors = ({ onSectorClick }) => {
     }, 500);
   };
 
+  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState (false);
+
+  // const handleCloseMobileMenu = useCallback(() => {
+  //   setIsMobileMenuOpen(false);
+  // }, []);
+
+
   return (
-    <div className="relative flex flex-col justify-between h-[100dvh] overflow-hidden bg-gray-100">
+
+    <div className="relative flex flex-col justify-between h-[90vh] overflow-hidden bg-gray-100">
       <div>
         <div className="">
           <img src="/sector_default.png" alt="" className="" />
