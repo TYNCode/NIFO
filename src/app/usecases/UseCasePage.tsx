@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchUseCases } from "../redux/features/usecases/useCaseSlice";
 import LeftFrame from "../components/LeftFrame/LeftFrame";
+import MobileHeader from "../mobileComponents/MobileHeader";
 
 const UseCasePage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -11,10 +12,22 @@ const UseCasePage: React.FC = () => {
 
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<string>("All");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
     useEffect(() => {
         dispatch(fetchUseCases());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isMobileMenuOpen]);
 
     const statusOptions = ["All", "Open", "Under Review", "Closed", "Awarded"];
 
@@ -25,12 +38,26 @@ const UseCasePage: React.FC = () => {
     });
 
     return (
-        <main className="flex flex-row w-full h-screen">
-            <div className="w-[21%]">
-                <LeftFrame />
+        <main className="flex flex-col w-full h-screen bg-[#F8FBFF]">
+            {/* Mobile Header */}
+            <div className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
+                <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
             </div>
 
-            <div className="flex-1 flex flex-col w-full h-full p-6 bg-[#F8FBFF] overflow-y-auto">
+            <div className="flex flex-row w-full flex-1">
+                {/* Desktop Sidebar */}
+                <div className="hidden lg:block lg:w-[21%]">
+                    <LeftFrame />
+                </div>
+
+                {/* Mobile Sidebar */}
+                <LeftFrame
+                    isMobile
+                    isMobileOpen={isMobileMenuOpen}
+                    onCloseMobile={() => setIsMobileMenuOpen(false)}
+                />
+
+                <div className="flex-1 flex flex-col w-full h-full p-6 overflow-y-auto">
                 <h1 className="text-2xl font-semibold text-gray-700 mb-6">
                     Innovation Use Cases
                 </h1>
@@ -102,6 +129,7 @@ const UseCasePage: React.FC = () => {
                         )}
                     </div>
                 )}
+            </div>
             </div>
         </main>
     );

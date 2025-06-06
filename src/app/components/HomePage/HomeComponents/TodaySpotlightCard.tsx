@@ -25,15 +25,15 @@ const TodaysSpotlightCard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <FaStar className="text-gray-500 w-4 h-4" />
-          <h2 className="text-lg font-semibold text-gray-900">Today's spotlight</h2>
+          <FaStar className="text-primary w-4 h-4" />
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">Today's spotlight</h2>
         </div>
         {spotlightData.is_tyn_verified && (
-          <span className="px-3 py-1 bg-yellow-400 text-white text-xs font-medium rounded-md">
+          <span className="px-3 py-1 bg-[#FFD815] text-white hidden sm:block text-xs font-medium rounded-lg">
             TYN Verified
           </span>
         )}
@@ -45,7 +45,7 @@ const TodaysSpotlightCard: React.FC = () => {
           <img
             src={spotlightData.logo_url}
             alt="Startup Logo"
-            className="w-12 h-12 object-contain rounded-lg bg-gray-50 p-2"
+            className="w-8 sm:w-12 h-8 sm:h-12 object-contain rounded-lg bg-gray-50 p-2"
           />
         ) : (
           <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
@@ -53,14 +53,11 @@ const TodaysSpotlightCard: React.FC = () => {
           </div>
         )}
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 mb-1">
+          <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">
             {spotlightData.spotlight_title}
           </h3>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 bg-blue-50 text-primary text-xs font-medium rounded">
-              AI
-            </span>
-            <span className="px-2 py-0.5 bg-blue-50 text-primary text-xs font-medium rounded">
+            <span className="px-2 py-0.5 bg-blue-50 text-primary hidden sm:block text-xs font-medium rounded">
               {spotlightData.spotlight_category}
             </span>
           </div>
@@ -68,7 +65,7 @@ const TodaysSpotlightCard: React.FC = () => {
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+      <p className="text-sm text-gray-600 mb-4 hidden sm:block line-clamp-3">
         {spotlightData.problem_address}
       </p>
 
