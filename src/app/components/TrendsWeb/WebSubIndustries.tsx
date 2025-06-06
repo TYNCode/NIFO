@@ -1,7 +1,7 @@
-import React from 'react';
-import ThirdLeftCircle from './ThirdLeftCircle';
-import UsecaseGrid from './UsecaseGrid';
-import ExploreSolutionProvider from './ExploreSolutionProvider';
+import React, { useState } from "react";
+import ThirdLeftCircle from "./ThirdLeftCircle";
+import UsecaseGrid from "./UsecaseGrid";
+import ExploreUseCase from "./ExploreUsecase";
 
 const WebSubIndustries = ({
     selectedIndustry,
@@ -9,17 +9,24 @@ const WebSubIndustries = ({
     selectedSubIndustry,
     setSelectedSubIndustry,
     setHighlightedSubIndustry,
-    selectedSolutionProviderId,
-    handleExploreClick,
-    handleBack,
     handleGoSector,
 }) => {
+    const [selectedSolutionProviderId, setSelectedSolutionProviderId] = useState(null);
+
+    const handleExploreClick = (useCaseId) => {
+        setSelectedSolutionProviderId(useCaseId); // Set the selected use case ID
+    };
+
+    const handleBack = () => {
+        setSelectedSolutionProviderId(null); // Return to the list view
+    };
+
     const handleDotClick = (subIndustry) => {
         setSelectedSubIndustry(subIndustry);
     };
 
     return (
-        <div className="flex h-screen relative overflow-hidden select-none">
+        <div className="flex relative overflow-hidden select-none">
             <ThirdLeftCircle
                 onDotClick={handleDotClick}
                 selectedIndustry={selectedIndustry}
@@ -36,8 +43,8 @@ const WebSubIndustries = ({
                     onExploreClick={handleExploreClick}
                 />
             ) : (
-                <ExploreSolutionProvider
-                    solutionProviderId={selectedSolutionProviderId}
+                <ExploreUseCase
+                    useCaseId={selectedSolutionProviderId}
                     onBack={handleBack}
                 />
             )}

@@ -1,7 +1,7 @@
 import React from "react";
 import WebIndustries from "./WebIndustries";
 import UsecaseGrid from "./UsecaseGrid";
-import ExploreSolutionProvider from "./ExploreSolutionProvider";
+import ExploreUsecase from "./ExploreUsecase";
 
 const WebInCombined = ({
   onWebCircleTwoClick,
@@ -15,15 +15,15 @@ const WebInCombined = ({
   handleBack,
   highlightedIndustry,
   setHighlighedIndustry,
-  selectedSubIndustry,              
-  setSelectedSubIndustry            
+  selectedSubIndustry,
+  setSelectedSubIndustry
 }) => {
   const handleDotClick = (industryName) => {
     setSelectedIndustry(industryName);
   };
 
   return (
-    <div className="flex h-screen relative overflow-hidden select-none">
+    <div className="flex relative overflow-hidden select-none">
       <WebIndustries
         onDotClick={handleDotClick}
         selectedIndustry={selectedIndustry}
@@ -37,14 +37,14 @@ const WebInCombined = ({
         <UsecaseGrid
           selectedSector={selectedSector}
           selectedIndustry={highlightedIndustry}
-          selectedSubIndustry={selectedSubIndustry} 
+          selectedSubIndustry={selectedSubIndustry}
           onExploreClick={handleExploreClick}
         />
       ) : (
-        <ExploreSolutionProvider
-          solutionProviderId={selectedSolutionProviderId}
-          onBack={handleBack}
-        />
+          <ExploreUsecase
+            useCaseId={selectedSolutionProviderId}
+            onBack={handleBack}
+          />
       )}
     </div>
   );

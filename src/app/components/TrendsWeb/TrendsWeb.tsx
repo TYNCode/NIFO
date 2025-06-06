@@ -45,7 +45,7 @@ const TrendsWeb = () => {
   };
 
   return (
-    <div className="h-screen w-full">
+    <div className="">
       {showInCombined ? (
         showCircleThree ? (
           <WebSubIndustries
@@ -54,9 +54,6 @@ const TrendsWeb = () => {
             selectedSubIndustry={selectedSubIndustry}
             setSelectedSubIndustry={setSelectedSubIndustry}
             setHighlightedSubIndustry={setHighlightedSubIndustry}
-            selectedSolutionProviderId={selectedSolutionProviderId}
-            handleExploreClick={handleExploreClick}
-            handleBack={handleBack}
             handleGoSector={handleGoSector}
           />
         ) : (

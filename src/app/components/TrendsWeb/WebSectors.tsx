@@ -1,7 +1,7 @@
 import React from "react";
 import FirstLeftCircle from "./FirstLeftCircle";
 import UsecaseGrid from "./UsecaseGrid";
-import ExploreSolutionProvider from "./ExploreSolutionProvider";
+import ExploreUsecase from "./ExploreUsecase";
 
 const WebSectors = ({
   handleSectorClick,
@@ -18,7 +18,7 @@ const WebSectors = ({
   selectedSubIndustry
 }) => {
   return (
-    <div className="flex h-screen relative overflow-hidden select-none">
+    <div className="flex relative overflow-hidden select-none">
       {currentCircleView === "sector" && (
         <FirstLeftCircle
           onDotClick={handleSectorClick}
@@ -34,9 +34,9 @@ const WebSectors = ({
           onExploreClick={handleExploreClick}
         />
       ) : (
-        <ExploreSolutionProvider
-          solutionProviderId={selectedSolutionProviderId}
+          <ExploreUsecase
           onBack={handleBack}
+          useCaseId={selectedSolutionProviderId}
         />
       )}
     </div>
