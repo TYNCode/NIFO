@@ -8,55 +8,71 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase }) => {
     handleEcosystem({ selectedUseCase });
   };
 
+  const bgImage =
+    selectedUseCase?.images?.[0] || "/fallback.jpg";
+
   return (
     <div>
-      <div className="relative flex flex-col justify-center items-center text-center py-8 mt-16 gap-6 bg-secondary">
-       
-        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+      {/* Header with Background Image */}
+      <div className="relative flex flex-col justify-center items-center text-center py-8 gap-6 bg-white">
+        <div className="absolute inset-0 z-0 opacity-70 pointer-events-none">
           <Image
-            src="/bg-usecase.png"
-            alt="Background Image"
-            layout="fill"
-            objectFit="cover"
-            quality={100}
+            src={bgImage}
+            alt="Usecase Background"
+            fill
+            className="object-cover"
+            onError={(e) => {
+              e.currentTarget.src = "/fallback.jpg";
+            }}
           />
         </div>
 
-        <div className="relative z-10 text-white font-semibold text-2xl px-4">
+        <div className="relative z-10 text-white font-bold text-2xl px-4 max-w-[90%]">
           {selectedUseCase?.challenge_title || "No Use Case Title Available"}
         </div>
 
         <div
-          className="relative z-50 text-sm font-medium bg-white mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
+          className="relative z-10 text-sm font-medium bg-white text-black px-4 py-2 rounded-md shadow-md cursor-pointer"
           onClick={handleExploreClick}
         >
           Explore Ecosystem
         </div>
       </div>
 
-      <div className="mx-4 py-4 leading-9 text-lg">
+      {/* Usecase Content */}
+      <div className="mx-4 py-6 leading-7 text-base">
         {selectedUseCase?.challenge && (
-          <div>
-            <div className="font-semibold text-lg mb-2">Description</div>
-            <div className="text-base">{selectedUseCase.challenge}</div>
+          <div className="mb-6">
+            <div className="font-semibold text-lg mb-2 text-customBlack">
+              Description
+            </div>
+            <p>{selectedUseCase.challenge}</p>
           </div>
         )}
 
-        {selectedUseCase?.solution && selectedUseCase.solution.length > 0 && (
-          <div className="mt-4">
-            <div className="font-semibold text-lg mb-2">Enhancement</div>
-            <div className="text-base">
-              {selectedUseCase.solution.join(" ")}
+        {selectedUseCase?.solution?.length > 0 && (
+          <div className="mb-6">
+            <div className="font-semibold text-lg mb-2 text-customBlack">
+              Enhancement
             </div>
+            <ul className="list-disc list-inside space-y-2">
+              {selectedUseCase.solution.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
           </div>
         )}
 
-        {selectedUseCase?.impact && selectedUseCase.impact.length > 0 && (
-          <div className="mt-4 mb-24">
-            <div className="font-semibold text-lg mb-2">Measure of Impact</div>
-            <div className="text-base">
-              {selectedUseCase.impact.join(" ")}
+        {selectedUseCase?.impact?.length > 0 && (
+          <div className="mb-24">
+            <div className="font-semibold text-lg mb-2 text-customBlack">
+              Measure of Impact
             </div>
+            <ul className="list-disc list-inside space-y-2">
+              {selectedUseCase.impact.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
