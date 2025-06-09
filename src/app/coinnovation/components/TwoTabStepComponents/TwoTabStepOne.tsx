@@ -118,10 +118,10 @@ const handleShortlist = async () => {
         <>
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <div className="flex mb-4 font-semibold text-lg">
-            <p className="w-[16%] ml-4">Company Name</p>
-            <p className="w-[51%]">Relevant Usecase</p>
-            <p className="">Key Customers</p>
+          <div className="flex flex-col md:flex-row mb-4 font-semibold text-lg">
+            <p className="md:w-[16%] w-full md:ml-4">Company Name</p>
+            <p className="md:w-[51%] w-full">Relevant Usecase</p>
+            <p className="w-full md:w-auto">Key Customers</p>
           </div>
 
           {solutionProviders.length === 0 ? (
