@@ -21,7 +21,7 @@ const TrendsMobileHeader = ({ handleBack }) => {
 
         {/* Centered Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Image src="/nifoimage.png" width={100} height={100} alt="Tyn Logo" />
+          <Image src="/nifo.svg" width={100} height={100} alt="Tyn Logo" />
         </div>
 
         {/* Right Placeholder for balance */}

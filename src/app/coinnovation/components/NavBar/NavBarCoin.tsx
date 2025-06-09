@@ -13,7 +13,7 @@ const NavBarCoin: React.FC = () => {
     <div className="fixed top-0 left-14 right-0 bg-white z-10 shadow-md">
       <div className="p-4">
         <Image
-          src="/nifoimage.png"
+          src="/nifo.svg"
           alt="Nifo Logo"
           width={100}
           height={100}

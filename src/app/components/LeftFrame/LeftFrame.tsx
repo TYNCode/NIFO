@@ -158,7 +158,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           <div className="flex items-center pt-4 px-4 border-b border-gray-100 pb-4">
             <div className="sm:flex items-center hidden justify-between w-full">
               <Image
-                src="/nifoimage.png"
+                src="/nifo.svg"
                 alt="Nifo Logo"
                 width={shouldBeCollapsed ? 50 : 100}
                 height={shouldBeCollapsed ? 50 : 100}

@@ -151,7 +151,7 @@
 //           {/* Centered Logo */}
 //           <div className="absolute left-1/2 transform -translate-x-1/2">
 //             <Image
-//               src="/nifoimage.png"
+//               src="/nifo.svg"
 //               width={100}
 //               height={100}
 //               alt="Tyn Logo"

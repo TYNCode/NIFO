@@ -51,7 +51,7 @@ const UsecaseDescriptionPage: React.FC = () => {
           <FaAngleLeft size={24} />
         </div>
         <div className="mx-auto">
-          <Image src="/nifoimage.png" width={100} height={100} alt="Tyn Logo" />
+          <Image src="/nifo.svg" width={100} height={100} alt="Tyn Logo" />
         </div>
       </div>
 

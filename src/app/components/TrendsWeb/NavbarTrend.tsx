@@ -14,7 +14,7 @@ const NavbarTrend: React.FC = () => {
     <div className="w-full relative z-50">
       <div className="shadow-md">
         <Image
-          src="/nifoimage.png"
+          src="/nifo.svg"
           alt="Nifo Logo"
           width={100}
           height={100}
