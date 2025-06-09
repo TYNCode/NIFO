@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ProgressOne from "./components/ProgressOne";
 import NavBarCoin from "./components/NavBar/NavBarCoin";
 import Sidebar from "./components/Sidebar/Sidebar";
+import { FiMenu } from "react-icons/fi";
 import WithAuth from "../utils/withAuth";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setSelectedTab } from "../redux/features/coinnovation/projectSlice";
@@ -25,6 +26,7 @@ const coInnovationProcessSteps: ProcessStep[] = [
 
 const Page: React.FC = () => {
   const dispatch = useAppDispatch();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const selectedTab = useAppSelector((state) => state.projects.selectedTab);
   const enabledSteps = useAppSelector((state) => state.projects.enabledSteps);
 
@@ -39,11 +41,17 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-[3.7rem_1fr] h-screen">
-      <div>
+    <div className="flex flex-col md:grid md:grid-cols-[3.7rem_1fr] h-screen">
+      <div className="hidden md:block">
         <Sidebar />
       </div>
-      <div className="flex flex-col relative">
+      <div className="flex flex-col relative flex-1">
+        <div className="md:hidden flex items-center p-2 bg-white shadow">
+          <button onClick={() => setIsMobileSidebarOpen(true)} className="text-2xl text-[#0070C0]">
+            <FiMenu />
+          </button>
+          <span className="ml-3 font-semibold text-[#0071C1]">Co-Innovation</span>
+        </div>
         {/* <NavBarCoin /> */}
         <div className="bg-[#F4FCFF] px-4">
           <div className="text-[#0071C1] mt-10 mb-5 text-xl uppercase font-bold">
@@ -94,6 +102,17 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
+      {isMobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 bg-white md:hidden">
+          <Sidebar />
+          <button
+            className="absolute top-4 right-4 text-2xl text-[#0070C0]"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          >
+            &times;
+          </button>
+        </div>
+      )}
     </div>
   );
 };

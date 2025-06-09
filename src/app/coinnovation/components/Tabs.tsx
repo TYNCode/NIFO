@@ -15,7 +15,7 @@ interface TabsProps {
 
 const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab }) => {
   return (
-    <div className="flex flex-row gap-1 justify-center items-center w-full shadow-sm">
+    <div className="flex flex-col sm:flex-row gap-1 justify-center items-center w-full shadow-sm">
       {tabs.map((tab) => (
         <div
           key={tab.id}

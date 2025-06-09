@@ -59,15 +59,15 @@ const ProgressOne: React.FC = () => {
   }, [activeTab]);
 
   const tabs = [
-    { id: "01.a", label: "Identification of the use case", enabled: true },
+    { id: "01.a", label: "Identify", enabled: true },
     {
       id: "01.b",
-      label: "Gather and Analyze Problem Details",
+      label: "Gather",
       enabled: !!questionnaireData,
     },
     {
       id: "01.c",
-      label: "Create a Problem Definition Document",
+      label: "Create",
       enabled: !!jsonForDocument,
     },
   ];
@@ -91,7 +91,7 @@ const ProgressOne: React.FC = () => {
   return (
     <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
       {/* Tabs Navigation */}
-      <div className="flex flex-row gap-1 justify-center items-center w-full shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-1 justify-center items-center w-full shadow-sm">
         {tabs.map((tab) => (
           <div
             key={tab.id}
