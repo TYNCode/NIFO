@@ -144,7 +144,7 @@ const QuestionnaireUploadModal: React.FC<QuestionnaireUploadModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-lg w-[50vw] flex flex-col px-8 py-6">
+      <div className="bg-white rounded-lg shadow-lg w-[90vw] sm:w-[50vw] flex flex-col px-8 py-6">
         <button
           onClick={() => setIsQuestionnaireModalOpen(false)}
           className="text-[#2286C0] transition duration-200 flex justify-end"
