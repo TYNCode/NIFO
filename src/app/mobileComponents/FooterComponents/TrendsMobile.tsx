@@ -29,16 +29,18 @@ const TrendsMobile = ({
     return savedUseCase ? JSON.parse(savedUseCase) : null;
   });
 
-
+  console.log("selectedUseCase", ecosystemData);
 
   const handleUsecaseClick = (usecase) => {
     setSelectedUseCase(usecase);
+    localStorage.setItem("selectedUseCase", JSON.stringify(usecase));
     setCurrentStep("usecaseDescription");
   };
 
   const handleEcosystem = ({ selectedUseCase }) => {
-    const ecosystemDataToSave = {selectedUseCase};
+    const ecosystemDataToSave = { selectedUseCase };
     setEcosystemData(selectedUseCase);
+    localStorage.setItem("ecosystemData", JSON.stringify(selectedUseCase));
     setCurrentStep("ecosystem");
   };
 
@@ -46,24 +48,43 @@ const TrendsMobile = ({
     setCurrentStep("usecasesCombined");
   };
 
+  const handleBackToUsecaseDescription = () => {
+    setCurrentStep("usecaseDescription");
+  };
 
+  const handleBackToSubSectors = () => {
+    setCurrentStep("subSectors");
+  };
+
+  const handleBackToSectors = () => {
+    setCurrentStep("sectors");
+  };
 
   return (
-    <div className="">
-
-      <div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="w-full max-w-screen-sm mx-auto bg-white min-h-screen">
         {currentStep === "ecosystem" ? (
           <Ecosystem
             ecosystemData={ecosystemData}
+            handleBack={handleBackToUsecaseDescription}
           />
         ) : currentStep === "usecaseDescription" ? (
           selectedUseCase ? (
             <UsecaseDescription
               selectedUseCase={selectedUseCase}
               handleEcosystem={handleEcosystem}
+              handleBack={handleBackToUsecases}
             />
           ) : (
-            <div>No use case selected. Please select a use case.</div>
+            <div className="p-4 text-center">
+              <p className="text-gray-600 mb-4">No use case selected. Please select a use case.</p>
+              <button
+                onClick={handleBackToUsecases}
+                className="text-primary underline"
+              >
+                Back to Use Cases
+              </button>
+            </div>
           )
         ) : currentStep === "usecasesCombined" ? (
           <CombinedComponent
@@ -74,18 +95,19 @@ const TrendsMobile = ({
             selectedSector={selectedSector}
             selectedUsecase={selectedUseCase}
             setSelectedUseCase={setSelectedUseCase}
+            // handleBack={handleBackToSubSectors}
           />
         ) : currentStep === "subSectors" ? (
           <SubSectors
             selectedSector={selectedSector}
             onIndustryClick={handleIndustryClick}
+            // handleBack={handleBackToSectors}
           />
         ) : (
           <Sectors onSectorClick={handleSectorClick} />
         )}
       </div>
     </div>
-  
   );
 };
 
