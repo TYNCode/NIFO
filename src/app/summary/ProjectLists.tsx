@@ -69,6 +69,21 @@ const ProjectLists: React.FC = () => {
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
   const currentItems = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const getVisiblePages = () => {
+    if (totalPages <= 4) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    let start = Math.max(1, currentPage - 1);
+    if (start + 3 > totalPages) {
+      start = totalPages - 3;
+    }
+    return [start, start + 1, start + 2, start + 3];
+  };
+
+  const visiblePages = getVisiblePages();
+  const showStartEllipsis = totalPages > 4 && visiblePages[0] > 1;
+  const showEndEllipsis = totalPages > 4 && visiblePages[3] < totalPages;
+
   const paginate = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -228,7 +243,7 @@ const ProjectLists: React.FC = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8 gap-2 flex-wrap">
+        <div className="flex justify-center mt-8 gap-2 flex-wrap items-center">
           <button
             disabled={currentPage === 1}
             onClick={() => paginate(currentPage - 1)}
@@ -236,16 +251,17 @@ const ProjectLists: React.FC = () => {
           >
             Prev
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {showStartEllipsis && <span className="px-2">...</span>}
+          {visiblePages.map((page) => (
             <button
               key={page}
               onClick={() => paginate(page)}
-              className={`px-3 py-1 text-sm rounded border ${currentPage === page ? "bg-[#0071C1] text-white" : "bg-white hover:bg-blue-100"
-                }`}
+              className={`px-3 py-1 text-sm rounded border ${currentPage === page ? 'bg-[#0071C1] text-white' : 'bg-white hover:bg-blue-100'}`}
             >
               {page}
             </button>
           ))}
+          {showEndEllipsis && <span className="px-2">...</span>}
           <button
             disabled={currentPage === totalPages}
             onClick={() => paginate(currentPage + 1)}
