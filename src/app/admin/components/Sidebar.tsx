@@ -32,7 +32,7 @@ const Sidebar = () => {
         {/* Logo */}
         <div className="px-14 pt-4 ">
           <Image
-            src="/nifoimage.png"
+            src="/nifo.svg"
             alt="Nifo Logo"
             width={100}
             height={100}

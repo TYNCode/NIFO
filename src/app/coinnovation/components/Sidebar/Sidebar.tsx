@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
         <div className="flex items-center pt-4 px-4">
           <div className="flex items-center justify-between w-full">
             <Image
-              src="/nifoimage.png"
+              src="/nifo.svg"
               alt="Nifo Logo"
               width={isCollapsed ? 50 : 100}
               height={isCollapsed ? 50 : 100}

@@ -82,7 +82,7 @@ const EcosystemContent: React.FC = () => {
           {/* Centered Logo */}
           <div className="mx-auto">
             <Image
-              src="/nifoimage.png"
+              src="/nifo.svg"
               width={100}
               height={100}
               alt="Tyn Logo"

@@ -44,7 +44,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
           onClick={handleLogoClick}
         >
           <Image
-            src="/nifoimage.png"
+            src="/nifo.svg"
             width={100}
             height={100}
             alt="Tyn Logo"
