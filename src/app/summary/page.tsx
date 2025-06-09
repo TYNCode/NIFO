@@ -7,18 +7,18 @@ import ProjectLists from "./ProjectLists";
 
 const SummaryCoinnovation = () => {
   return (
-    <>
-      <div className="grid grid-cols-[3.7rem_1fr] h-screen">
-        <div>
-          <Sidebar />
-        </div>
-        <div className="flex flex-col relative">
-          <div className="container mx-auto p-4 bg-[#F5FCFF]">
-            <ProjectLists />
-          </div>
+    <div className="grid grid-cols-1 sm:grid-cols-[3.7rem_1fr] h-screen">
+      {/* Sidebar only visible on sm+ screens */}
+      <div className="hidden sm:block">
+        <Sidebar />
+      </div>
+
+      <div className="flex flex-col relative">
+        <div className="container mx-auto p-4 bg-[#F5FCFF]">
+          <ProjectLists />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
