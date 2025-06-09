@@ -58,7 +58,7 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
         {selectedUseCase?.challenge && (
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
             <div className="font-semibold text-lg mb-3 text-gray-900 border-b border-gray-200 pb-2">
-              Description
+              Challenge
             </div>
             <p className="text-gray-700 leading-relaxed text-base">
               {selectedUseCase.challenge}
@@ -69,7 +69,7 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
         {selectedUseCase?.solution?.length > 0 && (
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
             <div className="font-semibold text-lg mb-3 text-gray-900 border-b border-gray-200 pb-2">
-              Enhancement
+             Solution
             </div>
             <ul className="space-y-3">
               {selectedUseCase.solution.map((point, index) => (
@@ -85,7 +85,7 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
         {selectedUseCase?.impact?.length > 0 && (
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
             <div className="font-semibold text-lg mb-3 text-gray-900 border-b border-gray-200 pb-2">
-              Measure of Impact
+              Impact
             </div>
             <ul className="space-y-3">
               {selectedUseCase.impact.map((point, index) => (

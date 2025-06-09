@@ -61,8 +61,7 @@ const TrendsMobile = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="w-full max-w-screen-sm mx-auto bg-white min-h-screen">
+      <div className="w-full max-w-screen-sm mx-auto bg-white">
         {currentStep === "ecosystem" ? (
           <Ecosystem
             ecosystemData={ecosystemData}
@@ -107,7 +106,6 @@ const TrendsMobile = ({
           <Sectors onSectorClick={handleSectorClick} />
         )}
       </div>
-    </div>
   );
 };
 
