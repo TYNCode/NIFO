@@ -146,7 +146,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   return (
     <div className="border rounded-lg shadow-sm bg-white p-4 mb-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-6 w-[15%]">
+      <div className="flex items-center gap-6 md:w-[15%] w-full">
           <input
             type="checkbox"
             className="w-4 h-4 rounded-sm border-2 border-blue-400 cursor-pointer"
@@ -161,17 +161,17 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
           </div>
         </div>
 
-        <p className="text-sm text-gray-700 mt-2 w-[50%]">
+        <p className="text-sm text-gray-700 mt-2 md:w-[50%] w-full">
           {company.relevant_usecase}
         </p>
 
-        <div className="flex flex-wrap gap-2 mt-2 w-[20%]">
+        <div className="flex flex-wrap gap-2 mt-2 md:w-[20%] w-full">
           {company.key_customers?.map((customer, index) => (
             <Badge key={index} text={customer} />
           ))}
         </div>
 
-        <div className="flex gap-x-6 w-[10%]">
+        <div className="flex gap-x-6 md:w-[10%] w-full justify-end md:justify-start">
           <IconButton
             icon={<RiDeleteBin6Line />}
             color="text-[#2286C0]"
@@ -226,8 +226,8 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             <p style={{ color: "red" }}>{error}</p>
           ) : (
             details && (
-              <div className="flex gap-6">
-                <div className="w-[70%]">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="md:w-[70%] w-full">
                   <div className="mb-4">
                     <div className="font-bold mb-1">
                       Product/Services Offered
@@ -257,7 +257,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                   </ul>
                 </div>
 
-                <div className="w-[30%] flex flex-col gap-2 mt-1">
+                <div className="md:w-[30%] w-full flex flex-col gap-2 mt-1">
                   <div className="font-bold mb-1">Contact Details:</div>
                   {details.email && (
                     <ContactBadge

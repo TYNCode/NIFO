@@ -63,8 +63,8 @@ const ProblemInput: React.FC<Props> = ({ handleSubmit, files, setFiles }) => {
 
   return (
     <div className="flex justify-center items-center w-full">
-      <div className="flex flex-col w-full max-w-[80vw]">
-        <div className="flex flex-row gap-4 justify-center items-center w-full">
+      <div className="flex flex-col w-full md:max-w-[80vw]">
+        <div className="flex flex-col md:flex-row gap-4 justify-center items-center w-full">
           <div className="w-full flex items-center relative">
             <textarea
               ref={textareaRef}

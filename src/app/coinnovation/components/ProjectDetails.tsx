@@ -125,14 +125,14 @@ const ProjectDetails: React.FC = () => {
   if (!projectDetails) return null;
 
   return (
-    <div className="bg-[#F4FCFF] max-w-[80vw] w-full">
+    <div className="bg-[#F4FCFF] w-full lg:max-w-[80vw]">
       {fetching ? (
         <div className="flex justify-center items-center py-8 text-[#4A4D4E]">
           Loading project details...
         </div>
       ) : (
         <>
-          <div className="flex gap-6 justify-center">
+          <div className="flex flex-col lg:flex-row gap-6 justify-center">
             <ProjectEntryTabOne
               projectData={projectDetails}
               handleInputChange={handleInputChange}
