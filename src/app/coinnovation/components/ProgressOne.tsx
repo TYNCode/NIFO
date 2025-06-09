@@ -59,15 +59,15 @@ const ProgressOne: React.FC = () => {
   }, [activeTab]);
 
   const tabs = [
-    { id: "01.a", label: "Identification of the use case", enabled: true },
+    { id: "01.a", label: "Identify", enabled: true },
     {
       id: "01.b",
-      label: "Gather and Analyze Problem Details",
+      label: "Gather",
       enabled: !!questionnaireData,
     },
     {
       id: "01.c",
-      label: "Create a Problem Definition Document",
+      label: "Create",
       enabled: !!jsonForDocument,
     },
   ];
