@@ -3,13 +3,24 @@
 import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSwipeable } from "react-swipeable";
 
-const swipeConfidenceThreshold = 10000;
+const swipeVariants = {
+  enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (direction) => ({ x: direction < 0 ? 300 : -300, opacity: 0 }),
+};
 
-const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
+const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUsecaseClick }) => {
   const [useCases, setUseCases] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.body.classList.add("lock-scroll");
+    return () => document.body.classList.remove("lock-scroll");
+  }, []);
 
   useEffect(() => {
     const fetchUsecases = async () => {
@@ -17,13 +28,19 @@ const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
         setLoading(true);
         const res = await fetch("https://tyn-server.azurewebsites.net/trends/");
         const data = await res.json();
-        const filtered = data.filter(
-          (item) =>
-            item.sector === selectedSector &&
-            item.industry === selectedIndustry
-        );
 
-        const formatted = filtered.map((item) => ({
+        const normalize = (str) => str?.trim().toLowerCase();
+
+        const filtered = data.filter((item) => {
+          const sectorMatch = !selectedSector || normalize(item.sector) === normalize(selectedSector);
+          const industryMatch = !selectedIndustry || normalize(item.industry) === normalize(selectedIndustry);
+          const subindustryMatch = !selectedSubindustry || normalize(item.sub_industry) === normalize(selectedSubindustry);
+          return sectorMatch && industryMatch && subindustryMatch;
+        });
+
+        const finalUsecases = filtered.length > 0 ? filtered : data;
+
+        const formatted = finalUsecases.map((item) => ({
           id: item.id,
           useCase: item.challenge_title,
           fullData: item,
@@ -38,18 +55,23 @@ const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
       }
     };
 
-    if (selectedSector && selectedIndustry) {
-      fetchUsecases();
-    }
-  }, [selectedSector, selectedIndustry]);
+    fetchUsecases();
+  }, [selectedSector, selectedIndustry, selectedSubindustry]);
 
-  const paginate = (direction) => {
-    setCurrentIndex((prevIndex) =>
-      direction === 1
-        ? (prevIndex + 1) % useCases.length
-        : (prevIndex - 1 + useCases.length) % useCases.length
-    );
+  const paginate = (newDirection) => {
+    setDirection(newDirection);
+    setCurrentIndex((prev) => {
+      const next = prev + newDirection;
+      return (next + useCases.length) % useCases.length;
+    });
   };
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => paginate(1),
+    onSwipedRight: () => paginate(-1),
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  });
 
   const currentUseCase = useCases[currentIndex];
 
@@ -73,28 +95,41 @@ const Usecases = ({ selectedSector, selectedIndustry, onUsecaseClick }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-[#2287C0] to-[#56ccf2] text-transparent bg-clip-text animate-pulse">
+      <div className="text-2xl font-bold text-center mt-4 mb-6 bg-gradient-to-r from-[#2287C0] to-[#56ccf2] text-transparent bg-clip-text animate-pulse">
         Explore the Usecase
-      </h2>
+      </div>
 
-      <div className="relative h-[220px] w-[90%] max-w-[600px] justify-center items-center">
-        <AnimatePresence initial={false} custom={currentIndex}>
+      <div
+        className="relative h-[220px] w-[90%] max-w-[600px] justify-center items-center"
+        {...swipeHandlers}
+      >
+        {/* Left Arrow */}
+        <div
+          className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer bg-black/40 p-1 rounded-full"
+          onClick={() => paginate(-1)}
+        >
+          <BsArrowRight className="rotate-180 text-white" size={20} />
+        </div>
+
+        {/* Right Arrow */}
+        <div
+          className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer bg-black/40 p-1 rounded-full"
+          onClick={() => paginate(1)}
+        >
+          <BsArrowRight className="text-white" size={20} />
+        </div>
+
+        <AnimatePresence custom={direction} initial={false}>
           <motion.div
             key={currentUseCase.id}
             className="absolute w-full h-full rounded-xl overflow-hidden shadow-xl cursor-pointer"
             onClick={() => onUsecaseClick(currentUseCase.fullData)}
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -300, opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={1}
-            onDragEnd={(e, { offset, velocity }) => {
-              const swipe = Math.abs(offset.x) * velocity.x;
-              if (swipe < -swipeConfidenceThreshold) paginate(1);
-              else if (swipe > swipeConfidenceThreshold) paginate(-1);
-            }}
+            custom={direction}
+            variants={swipeVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.4 }}
           >
             <div className="absolute inset-0 z-0">
               <img

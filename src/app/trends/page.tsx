@@ -1,4 +1,5 @@
 "use client";
+
 import React, { Suspense, useCallback, useEffect, useState } from "react";
 import LeftFrame from "../components/LeftFrame/LeftFrame";
 import TrendsWeb from "../components/TrendsWeb/TrendsWeb";
@@ -8,14 +9,16 @@ import TrendsMobile from "../mobileComponents/FooterComponents/TrendsMobile";
 import MobileHeader from "../mobileComponents/MobileHeader";
 
 const PageContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("Spotlight");
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  const [activeTab, setActiveTab] = useState<string>("Spotlight");
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [selectedSubIndustry, setSelectedSubIndustry] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<string>("trends");
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSectorClick = (sectorName: string) => {
     setSelectedSector(sectorName);
@@ -35,6 +38,11 @@ const PageContent: React.FC = () => {
     setCurrentStep("usecasesCombined");
   };
 
+  const handleCloseMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  // ✅ Handle hydration safely
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -42,19 +50,18 @@ const PageContent: React.FC = () => {
 
     window.addEventListener("resize", handleResize);
     handleResize();
+    setHasMounted(true);
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-    const handleCloseMobileMenu = useCallback(() => {
-      setIsMobileMenuOpen(false);
-    }, []);
+  // Prevent hydration mismatch flicker
+  if (!hasMounted) return null;
 
   return (
     <>
-
       {isMobile ? (
         <div className="flex flex-col h-[100dvh]">
           <LeftFrame
@@ -63,16 +70,17 @@ const PageContent: React.FC = () => {
             onCloseMobile={handleCloseMobileMenu}
           />
           <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
-            <TrendsMobile
-              selectedSector={selectedSector}
-              selectedIndustry={selectedIndustry}
-              selectedTechnology={selectedTechnology}
-              handleSectorClick={handleSectorClick}
-              handleIndustryClick={handleIndustryClick}
-              handleTechnologyClick={handleTechnologyClick}
-              currentStep={currentStep}
-              setCurrentStep={setCurrentStep}
-            />
+          <TrendsMobile
+            selectedSector={selectedSector}
+            selectedIndustry={selectedIndustry}
+            selectedTechnology={selectedTechnology}
+            selectedSubIndustry={selectedSubIndustry}
+            handleSectorClick={handleSectorClick}
+            handleIndustryClick={handleIndustryClick}
+            handleTechnologyClick={handleTechnologyClick}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+          />
         </div>
       ) : (
         <main className="flex w-full min-h-screen bg-gray-50">
