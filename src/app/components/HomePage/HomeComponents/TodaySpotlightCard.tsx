@@ -3,6 +3,7 @@ import { FaStar } from "react-icons/fa";
 import { useAppSelector } from "@/app/redux/hooks";
 import { Spotlight } from "@/app/admin/spotlights/types/spotlights";
 import { selectSpotlights } from "@/app/redux/features/spotlight/spotlightSlice";
+import Image from "next/image";
 
 const TodaysSpotlightCard: React.FC = () => {
   const spotlights = useAppSelector(selectSpotlights);
@@ -48,8 +49,12 @@ const TodaysSpotlightCard: React.FC = () => {
             className="w-8 sm:w-12 h-8 sm:h-12 object-contain rounded-lg bg-gray-50 p-2"
           />
         ) : (
-          <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
-            <div className="w-8 h-6 bg-white rounded-sm"></div>
+          <div className="bg-gray-900 rounded-lg flex items-center justify-center">
+            <Image 
+            src="/sparkbeyond.jpeg"
+            alt= "Sparkbeyond" 
+            height={100}
+            width={100}/>
           </div>
         )}
         <div className="flex-1">

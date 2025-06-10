@@ -22,7 +22,7 @@ const navItems = [
   { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
   { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
   { title: "Connections", icon: FiLink, href: "/connections" },
-  { title: "Usecases", icon: BiTestTube, href: "/usecases" },
+  // { title: "Open Challenges", icon: BiTestTube, href: "/usecases" },
   { title: "Projects", icon: FaFolder, href: "/coinnovation" },
 ];
 
@@ -146,7 +146,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       <aside
         className={`
           ${sidebarWidth}
-          h-screen bg-white border-r border-gray-100 shadow-lg flex flex-col justify-between z-50 transition-all duration-300
+          h-screen bg-white border-r border-gray-100 shadow-lg flex flex-col justify-between z-[150] transition-all duration-300
           ${isMobile 
             ? `fixed top-0 left-0 transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:hidden`
             : 'relative'
