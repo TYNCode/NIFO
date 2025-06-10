@@ -186,7 +186,7 @@ const Ecosystem: React.FC<{
                 >
                   <IoShareSocialOutline size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
-                <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
+                {/* <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
                   <MdOutlineLanguage size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
                 <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
@@ -194,7 +194,7 @@ const Ecosystem: React.FC<{
                 </button>
                 <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
                   <FaLinkedinIn size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

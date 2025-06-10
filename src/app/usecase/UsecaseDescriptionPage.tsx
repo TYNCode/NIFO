@@ -67,7 +67,7 @@ const UsecaseDescriptionPage: React.FC = () => {
           className="relative z-10 text-sm font-medium bg-white mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
           onClick={handleExploreEcosystem}
         >
-          Explore Ecosystem
+          Explore Solution Provider
         </div>
       </div>
 

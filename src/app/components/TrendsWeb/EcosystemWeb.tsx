@@ -51,7 +51,7 @@ const EcosystemWeb = ({ handleExploreClick, selectedEcosystem, handleClose }) =>
           className="relative z-50 text-sm font-medium bg-blue-200 text-black mx-auto px-4 py-2 cursor-pointer rounded-md shadow-md"
           onClick={handleExploreClick}
         >
-          Explore Ecosystem
+          Explore Solution Provider
         </div>
       </div>
 

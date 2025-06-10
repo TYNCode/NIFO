@@ -140,20 +140,20 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
                   e.currentTarget.src = "/fallback.jpg";
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-transparent opacity-100" />
             </div>
 
-            <div className="relative z-10 flex flex-col justify-between h-full px-5 py-3 text-white">
+            <div className="relative z-10 flex flex-col justify-between h-full mt-4 px-5 py-3 text-white">
               <div>
                 <div className="text-xl font-semibold">
                   {currentUseCase.useCase}
                 </div>
-                <div className="text-xs mt-2 opacity-70 line-clamp-3">
+                <div className="text-sm mt-4 opacity-70 line-clamp-3">
                   {currentUseCase.fullData?.challenge}
                 </div>
               </div>
-              <div className="flex justify-end items-center">
-                <div className="p-2 bg-white/20 rounded-full">
+              <div className="flex justify-end items-center pb-4">
+                <div className="p-2 bg-white/50 rounded-full">
                   <BsArrowRight size={20} />
                 </div>
               </div>

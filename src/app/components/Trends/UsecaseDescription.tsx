@@ -49,7 +49,7 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
           className="relative z-10 text-sm font-medium bg-white text-black px-6 py-3 rounded-lg shadow-lg cursor-pointer hover:bg-gray-100 transition-colors min-w-[160px]"
           onClick={handleExploreClick}
         >
-          Explore Ecosystem
+          Explore Solution Provider
         </button>
       </div>
 
