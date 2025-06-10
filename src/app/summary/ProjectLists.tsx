@@ -92,7 +92,7 @@ const ProjectLists: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#F5FCFF] min-h-screen p-4 sm:p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <h2 className="text-lg sm:text-2xl font-bold text-[#0071C1]">Project Dashboard</h2>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">

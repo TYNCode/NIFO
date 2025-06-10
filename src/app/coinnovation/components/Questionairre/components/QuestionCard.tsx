@@ -43,7 +43,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             onChange={onToggleSelect}
             className="h-[12px] w-[12px] border-[#2286C0] rounded-[3px]"
           />
-          <p className="flex gap-2 text-[14px] text-[#4A4D4E]">
+          <p className="flex gap-2 text-xs sm:text-sm text-[#4A4D4E]">
             <span className="font-semibold">Q{index + 1}</span>
             <span>{question}</span>
           </p>
@@ -60,14 +60,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               type="text"
               value={editedValue}
               onChange={onEditChange}
-              className="w-full p-2 border-[2px] border-[#9ED0EE] rounded-lg text-sm text-[#979797]"
+              className="w-full p-2 border-[2px] border-[#9ED0EE] rounded-lg text-xs sm:text-sm text-[#979797]"
             />
           ) : (
             <input
               type="text"
               value={assumedAnswer}
               readOnly
-              className="w-full p-2 border-[2px] border-[#9ED0EE] rounded-lg text-sm text-[#979797]"
+              className="w-full p-2 border-[2px] border-[#9ED0EE] rounded-lg text-xs sm:text-sm text-[#979797]"
             />
           )}
 

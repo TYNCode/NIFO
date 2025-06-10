@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { ProjectData } from "../../../interfaces/coinnovation";
 
-
 interface EnterpriseEntryTabOneProps {
     projectData: ProjectData;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -71,7 +70,7 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
     };
 
     return (
-        <div className="flex flex-col gap-4 w-2/6">
+        <div className="flex flex-col gap-4 w-full sm:w-2/6">
             <div className="text-[14px] font-semibold text-[#4A4D4E]">Enterprise Details</div>
 
             {/* Group Company Dropdown */}
@@ -109,28 +108,25 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                 <label className="text-[#4A4D4E] text-[13px]">Enterprise</label>
                 <div className="relative w-full">
                     <div
-                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 text-[#4A4D4E] text-[13px]  ${
+                        className={`flex items-center justify-between rounded-md border-[#56A8F0] border-[1px] h-[32px] px-3 text-[#4A4D4E] text-[13px] ${
                             projectData.group_company ? "cursor-pointer" : "cursor-not-allowed"
                         } bg-white w-full`}
                         onClick={() => projectData.group_company && setIsOpenEnterprise(!isOpenEnterprise)}
                     >
-                        <span className="text-[#4A4D4E] text-[13px]">
+                        <span className="text-[#4A4D4E] text-[13px] truncate">
                             {projectData.enterprise || (projectData.group_company ? "Select Enterprise" : "Select Group Company first")}
                         </span>
-                        <IoChevronDownOutline className={`transition-transform ${isOpenEnterprise ? "rotate-180" : ""}`} />
+                        <IoChevronDownOutline className={`transition-transform ${isOpenEnterprise ? "rotate-180" : ""} flex-shrink-0 ml-2`} />
                     </div>
 
                     {isOpenEnterprise && projectData.group_company && (
-                        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-20">
+                        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-20 max-h-60 overflow-y-auto">
                             {getEnterpriseList().map((enterprise, index) => (
                                 <div
                                     key={index}
                                     className="px-3 py-2 hover:bg-[#2286C0] hover:text-white cursor-pointer flex items-center gap-2 text-[13px] text-[#4A4D4E]"
                                     onClick={() => handleSelectEnterprise(enterprise)}
                                 >
-                                    {/* {enterprise.imageurl && (
-                                        <Image src={enterprise.imageurl} alt={enterprise.title} className="w-5 h-5 rounded-full" />
-                                    )} */}
                                     {enterprise.title}
                                 </div>
                             ))}
@@ -139,19 +135,27 @@ const EnterpriseEntryTabOne: React.FC<EnterpriseEntryTabOneProps> = ({
                 </div>
             </div>
 
-            {/* Other Fields */}
-            <div className="grid grid-cols-2 gap-4">
-                {["owner", "approver", "category", "department", "business_unit", "location"].map((field, index) => (
+            {/* Other Fields - Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                    { field: "owner", label: "Owner" },
+                    { field: "approver", label: "Approver" },
+                    { field: "category", label: "Category" },
+                    { field: "department", label: "Department" },
+                    { field: "business_unit", label: "Business Unit" },
+                    { field: "location", label: "Location" }
+                ].map(({ field, label }, index) => (
                     <div key={index} className="flex flex-col gap-1">
                         <label className="text-[#4A4D4E] text-[13px]">
-                            {field.replace("_", " ").charAt(0).toUpperCase() + field.replace("_", " ").slice(1)}
+                            {label}
                         </label>
                         <input
                             type="text"
                             name={field}
-                            value={projectData[field as keyof typeof projectData]?.toString()}
+                            value={projectData[field as keyof typeof projectData]?.toString() || ""}
                             onChange={handleInputChange}
-                            className="rounded-md border-[#56A8F0] h-[32px] px-2 w-full text-sm focus:ring-0 focus:border-[#56A8F0] text-[#4A4D4E] text-[13px]"
+                            className="rounded-md border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-sm focus:ring-0 focus:border-[#56A8F0] text-[#4A4D4E] text-[13px]"
+                            placeholder={`Enter ${label}`}
                         />
                     </div>
                 ))}

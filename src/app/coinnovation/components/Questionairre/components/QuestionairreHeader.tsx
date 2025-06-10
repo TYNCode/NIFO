@@ -7,7 +7,7 @@ interface QuestionnaireHeaderProps {
 
 const QuestionnaireHeader: React.FC<QuestionnaireHeaderProps> = ({ onDownload }) => {
   return (
-    <div className="flex justify-between items-center text-black py-2 rounded-md">
+    <div className="flex justify-between items-center text-black py-2 px-4 rounded-md">
       <h1 className="text-[14px] font-semibold text-[#4A4D4E]">
         Questionnaire
       </h1>

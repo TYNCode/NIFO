@@ -132,8 +132,8 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
                     <FaSpinner className="animate-spin text-[#0071C1] text-2xl" />
                 </div>
             ) : (
-                <div className="flex flex-col text-sm w-full">
-                    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 font-semibold text-xs text-[#0071C1] p-2 rounded-lg border border-[rgba(0,113,193,0.19)] bg-[#DBF0FF]">
+                <div className="flex flex-col text-sm w-full overflow-x-auto">
+                    <div className="grid min-w-[800px] grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 font-semibold text-xs text-[#0071C1] p-2 rounded-lg border border-[rgba(0,113,193,0.19)] bg-[#DBF0FF]">
                         <div>Parameter Name</div>
                         <div className="text-center">UOM</div>
                         <div className="text-center">Per Unit Cost</div>
@@ -142,7 +142,7 @@ const ParameterAccordion: React.FC<ParameterAccordionProps> = ({ sectionKey, isE
                     </div>
 
                     {data.map((item: any) => (
-                        <div key={item.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 my-1 bg-white py-3 px-3 shadow-sm rounded-md items-center">
+                        <div key={item.id} className="grid min-w-[800px] grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-2 my-1 bg-white py-3 px-3 shadow-sm rounded-md items-center">
                             <div className="truncate text-[#0071C1] font-semibold text-xs">
                                 {item.parameter_name ?? '—'}
                             </div>

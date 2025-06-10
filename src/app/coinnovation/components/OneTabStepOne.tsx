@@ -74,14 +74,14 @@ const OneTabStepOne: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#F4FCFF] w-full shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
+    <div className="bg-[#F4FCFF] shadow-md rounded-lg flex flex-col justify-center items-center px-5 min-h-[70vh]">
       {!projectID ? (
-        <div className="flex flex-col justify-center items-center gap-10 w-full">
-          <div className="text-center">
+        <div className="flex flex-col justify-center items-center gap-10">
+          <div className="sm:text-center">
             <p className="text-base font-semibold">Let us define the</p>
             <p className="text-2xl font-semibold">Problem Statement</p>
           </div>
-          <div className="w-full">
+          <div className="">
             <ProblemInput
               handleSubmit={handleSubmit}
               files={files}

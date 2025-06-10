@@ -121,7 +121,7 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
   return (
     <div className="mb-4">
       <div className="flex justify-between items-center bg-white p-3 rounded-lg">
-        <h2 className="text-sm font-semibold text-[#4A4D4E]">
+        <h2 className="text-xs sm:text-sm font-semibold text-[#4A4D4E]">
           {index + 1}. {category}
         </h2>
         <div className="flex gap-6">
