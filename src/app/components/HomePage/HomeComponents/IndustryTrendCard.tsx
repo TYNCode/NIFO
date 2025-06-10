@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 
@@ -17,8 +18,8 @@ const IndustryTrendsCard = () => {
 
       {/* Logo + Title + Tags */}
       <div className="flex items-start space-x-4 mb-1">
-        <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-          <span className="text-orange-600 font-bold text-xs">symbio</span>
+        <div className="rounded-lg flex items-center justify-center">
+            <Image src="/ripik.svg" alt="Ripik AI" width={100} height={100}/>
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900 text-sm sm:text-base mb-1">

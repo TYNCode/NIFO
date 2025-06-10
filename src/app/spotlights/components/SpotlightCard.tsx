@@ -20,7 +20,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       return "w-full max-w-sm mx-auto bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden";
     }
 
-    return "w-48 sm:w-72 lg:w-80 xl:w-96 h-60 sm:h-80 lg:h-[400px] xl:h-[420px] bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden";
+    return "w-64 sm:w-72 lg:w-80 xl:w-96 h-96 sm:h-80 lg:h-[400px] xl:h-[420px] bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden";
   };
 
   const getImageClasses = () => {
@@ -28,7 +28,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       return "relative w-full h-32 sm:h-40 bg-gradient-to-br from-gray-200 to-gray-300";
     }
 
-    return "relative w-full h-20 sm:h-40 lg:h-48 xl:h-56 bg-gradient-to-br from-gray-200 to-gray-300";
+    return "relative w-full h-40 sm:h-40 lg:h-48 xl:h-56 bg-gradient-to-br from-gray-200 to-gray-300";
   };
 
   const getBodyClasses = () => {
@@ -36,11 +36,11 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   };
 
   const getTitleClasses = () => {
-    return "font-semibold text-gray-900 leading-tight line-clamp-2 text-xs sm:text-sm lg:text-lg xl:text-xl mb-1 sm:mb-2";
+    return "font-semibold text-gray-900 leading-tight line-clamp-2 text-sm sm:text-sm lg:text-lg xl:text-xl mb-1 sm:mb-2";
   };
 
   const getSubtitleClasses = () => {
-    return "text-gray-600 leading-relaxed line-clamp-2 sm:line-clamp-3 text-xs sm:text-sm lg:text-base xl:text-lg mb-1 sm:mb-2 xl:mb-3";
+    return "text-gray-600 leading-relaxed line-clamp-2 sm:line-clamp-3 text-sm sm:text-sm lg:text-base xl:text-lg mb-1 sm:mb-2 xl:mb-3";
   };
 
   return (
