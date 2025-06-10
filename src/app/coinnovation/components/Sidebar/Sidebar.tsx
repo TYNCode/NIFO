@@ -16,7 +16,7 @@ interface SidebarOption {
 }
 
 const Sidebar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const router = useRouter();
   const pathname = usePathname();
   

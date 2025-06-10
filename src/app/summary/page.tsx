@@ -14,7 +14,7 @@ const SummaryCoinnovation = () => {
       </div>
 
       <div className="flex flex-col relative">
-        <div className="container mx-auto p-4 bg-[#F5FCFF]">
+        <div className="container mx-auto px-4 bg-[#F5FCFF]">
           <ProjectLists />
         </div>
       </div>
