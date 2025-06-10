@@ -2,7 +2,6 @@ import { IoChevronDownOutline } from "react-icons/io5";
 import { useState } from "react";
 import { ProjectData } from "../../../interfaces/coinnovation";
 
-
 interface ProjectEntryTabOneProps {
   projectData: ProjectData;
   handleInputChange: (
@@ -44,7 +43,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
     : undefined;
 
   return (
-    <div className="flex flex-col gap-4 w-2/6">
+    <div className="flex flex-col gap-4 w-full sm:w-2/6">
       <div className="text-[#4A4D4E] text-[14px] font-semibold">
         Project Entry Details
       </div>
@@ -56,7 +55,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         </label>
         <input
           type="text"
-          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px]  cursor-default"
+          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-default"
           name="project_id"
           value={projectData.project_id}
           readOnly
@@ -78,7 +77,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="relative flex flex-col gap-1">
           <label className="text-[#4A4D4E] text-[13px]">
             Priority
@@ -97,7 +96,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
           </div>
 
           {isOpenPriority && (
-            <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
               {optionsPriority.map((option, index) => (
                 <div
                   key={index}
@@ -111,7 +110,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative flex flex-col gap-1">
           <label className="text-[#4A4D4E] text-[13px]">
             Status
             <span className="text-red-500">*</span>
@@ -129,7 +128,7 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
           </div>
 
           {isOpenStatus && (
-            <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md z-10">
               {optionsStatus.map((option, index) => (
                 <div
                   key={index}
@@ -144,38 +143,38 @@ const ProjectEntryTabOne: React.FC<ProjectEntryTabOneProps> = ({
         </div>
       </div>
 
-     <div className="grid grid-cols-2 gap-4">
-      <div className="flex flex-col gap-1">
-        <label className="text-[13px] text-[#4A4D4E]">
-          Start Date
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] text-[#4A4D4E]">
+            Start Date
             <span className="text-red-500">*</span>
           </label>
-        <input
-          type="date"
-          name="start_date"
-          placeholder="MM/DD/YYYY"
-          value={projectData.start_date}
-          onChange={handleInputChange}
-          className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
-        />
+          <input
+            type="date"
+            name="start_date"
+            placeholder="MM/DD/YYYY"
+            value={projectData.start_date}
+            onChange={handleInputChange}
+            className="rounded-md focus:ring-0 focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] text-[#4A4D4E]">
+            Target Closure
+            <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            name="end_date"
+            placeholder="MM/DD/YYYY"
+            value={projectData.end_date}
+            onChange={handleInputChange}
+            className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
+            disabled={!projectData.start_date} 
+            min={minEndDate}
+          />
+        </div>
       </div>
-      <div className="flex flex-col gap-1">
-        <label className="text-[13px] text-[#4A4D4E]">
-          Target Closure
-          <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          name="end_date"
-          placeholder="MM/DD/YYYY"
-          value={projectData.end_date}
-          onChange={handleInputChange}
-          className="rounded-md focus:ring-0 placeholder:text-xs focus:border-[#56A8F0] border-[#56A8F0] border-[1px] h-[32px] px-2 w-full text-[#4A4D4E] text-[13px] cursor-pointer"
-          disabled={!projectData.start_date} 
-          min={minEndDate}
-        />
-      </div>
-    </div>
     </div>
   );
 };

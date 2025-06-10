@@ -14,22 +14,18 @@ const ProgressOne: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const projectID = useAppSelector((state) => state.projects.projectID);
-  const questionnaireData = useAppSelector(
-    (state) => state.challenge.questionnaireData
+  const questionnaireData = useAppSelector((state) => state.challenge.questionnaireData);
+  const jsonForDocument = useAppSelector((state) => state.challenge.jsonForDocument);
+  const activeTab = useAppSelector((state) =>
+    (state.challenge.activeDefineStepTab || "01.a") as DefineStepTab
   );
-  const jsonForDocument = useAppSelector(
-    (state) => state.challenge.jsonForDocument
-  );
-  const activeTab = useAppSelector(
-    (state) => (state.challenge.activeDefineStepTab || "01.a") as DefineStepTab
-  );
-
-  console.log("activeTab in activeDefineStepTasb", activeTab)
 
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Restore from localStorage on mount
   useEffect(() => {
+    // Check if we're in a browser environment
+    if (typeof window === "undefined") return;
+    
     const storedTab = localStorage.getItem("activeTab") as DefineStepTab | null;
     const storedProjectID = localStorage.getItem("projectID");
 
@@ -59,15 +55,22 @@ const ProgressOne: React.FC = () => {
   }, [activeTab]);
 
   const tabs = [
-    { id: "01.a", label: "Identify", enabled: true },
+    {
+      id: "01.a",
+      label: "Identification of the use case",
+      shortLabel: "Identify",
+      enabled: true,
+    },
     {
       id: "01.b",
-      label: "Gather",
+      label: "Gather and Analyze Problem Details",
+      shortLabel: "Gather",
       enabled: !!questionnaireData,
     },
     {
       id: "01.c",
-      label: "Create",
+      label: "Create a Problem Definition Document",
+      shortLabel: "Create",
       enabled: !!jsonForDocument,
     },
   ];
@@ -77,52 +80,97 @@ const ProgressOne: React.FC = () => {
     (activeTab === "01.b" && !questionnaireData) ||
     (activeTab === "01.c" && !jsonForDocument);
 
-  console.log("shouldWaitForData",shouldWaitForData)
-  console.log("initalLoading", initialLoading)
-  
   if (shouldWaitForData) {
     return (
-      <div className="flex justify-center items-center py-12 text-gray-500">
+      <div className="flex justify-center items-center py-12 text-gray-500 h-full">
         Loading step data...
       </div>
     );
   }
 
   return (
-    <div className="bg-white h-full px-4 py-4 shadow-md rounded-[16px]">
-      {/* Tabs Navigation */}
-      <div className="flex flex-col sm:flex-row gap-1 justify-center items-center w-full shadow-sm">
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            onClick={() =>
-              tab.enabled &&
-              dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
-            }
-            className={`flex-1 text-center flex flex-row items-center justify-center gap-2 text-sm font-medium px-4 rounded-t-lg cursor-pointer transition-all duration-200
-              ${
-                activeTab === tab.id
-                  ? "bg-[#F5FCFF] text-[#0071C1] font-semibold border-t-2 border-t-[#56A8F0] py-3"
-                  : "bg-[#B5BBC20D] text-[#848484] border-t-2 border-t-[#B5BBC2] py-2"
+    <div className="h-full flex flex-col shadow-md rounded-[16px] mx-auto w-11/12 lg:w-11/12  overflow-hidden">
+      {/* Tabs Navigation - Responsive Design */}
+      <div className="flex-shrink-0 border-b border-gray-100">
+        {/* Desktop Tabs */}
+        <div className="hidden sm:flex flex-row gap-1 justify-center items-center shadow-sm">
+          {tabs.map((tab) => (
+            <div
+              key={tab.id}
+              onClick={() =>
+                tab.enabled && dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
               }
-              ${
-                !tab.enabled
-                  ? "opacity-50 cursor-not-allowed bg-gray-200 text-gray-500 border-t-2 border-gray-300"
-                  : ""
-              }`}
-          >
-            <div>{tab.id}</div>
-            <div>{tab.label}</div>
+              className={`flex-1 text-center flex flex-row items-center justify-center gap-2 text-sm font-medium px-4 rounded-t-lg cursor-pointer transition-all duration-200
+                ${
+                  activeTab === tab.id
+                    ? "bg-[#F5FCFF] text-[#0071C1] font-semibold border-t-2 border-t-[#56A8F0] py-3"
+                    : "bg-[#B5BBC20D] text-[#848484] border-t-2 border-t-[#B5BBC2] py-2"
+                }
+                ${
+                  !tab.enabled
+                    ? "opacity-50 cursor-not-allowed bg-gray-200 text-gray-500 border-t-2 border-gray-300"
+                    : ""
+                }`}
+            >
+              <div>{tab.id}</div>
+              <div className="truncate">{tab.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile Tabs - Horizontal Scroll */}
+        <div className="sm:hidden overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 px-4 py-2 min-w-max">
+            {tabs.map((tab, index) => (
+              <div
+                key={tab.id}
+                onClick={() =>
+                  tab.enabled && dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
+                }
+                className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer transition-all duration-200 whitespace-nowrap
+                  ${
+                    activeTab === tab.id
+                      ? "bg-[#0071C1] text-white"
+                      : "bg-gray-100 text-[#848484]"
+                  }
+                  ${
+                    !tab.enabled
+                      ? "opacity-50 cursor-not-allowed bg-gray-200 text-gray-500"
+                      : ""
+                  }`}
+                style={{
+                  minWidth: 'fit-content'
+                }}
+              >
+                <span className="font-semibold">{tab.id}</span>
+                <span>{tab.shortLabel}</span>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* Tab Content */}
-      <div>
-        {activeTab === "01.a" && <OneTabStepOne />}
-        {activeTab === "01.b" && <OneTabStepTwo />}
-        {activeTab === "01.c" && <OneTabStepThree />}
+      {/* Tab Content - Flexible Height */}
+      <div className="flex-1">
+        <div className="h-full overflow-y-auto w-full scrollbar-hide">
+          <div className="">
+            {activeTab === "01.a" && <OneTabStepOne />}
+            {activeTab === "01.b" && <OneTabStepTwo />}
+            {activeTab === "01.c" && <OneTabStepThree />}
+          </div>
+        </div>
       </div>
+
+      {/* Custom Scrollbar Styles */}
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };

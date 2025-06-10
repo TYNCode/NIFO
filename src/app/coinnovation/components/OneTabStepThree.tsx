@@ -56,32 +56,24 @@ const OneTabStepThree: React.FC = () => {
   const getTabData = (section: string, tab: string) => {
     if (!jsonForDocument) return [];
 
-    // For 'challenge' section
     if (section === "challenge") {
       const sectionData = jsonForDocument["Challenge Scenario"];
-
-      // Check if the 'Challenge Scenario' is an object, not an array
       if (typeof sectionData !== "object" || Array.isArray(sectionData)) {
         console.error("Challenge Scenario is not an object:", sectionData);
         return [];
       }
-
       const sectionItem = sectionData[tab];
       if (!sectionItem) return [];
-
       return typeof sectionItem === "string" ? [sectionItem] : sectionItem;
     }
 
-    // For 'endUser' section
     if (section === "endUser") {
       const jsonKey = endUserTabMapping[tab];
-
       const profileOfEndUsers = jsonForDocument["Profile of the End-Users"];
       if (profileOfEndUsers && typeof profileOfEndUsers === "object") {
         const data = profileOfEndUsers[jsonKey];
         return data ? (Array.isArray(data) ? data : [data]) : [];
       }
-
       console.error(
         "'Profile of the End-Users' is not an object:",
         profileOfEndUsers
@@ -89,7 +81,6 @@ const OneTabStepThree: React.FC = () => {
       return [];
     }
 
-    // For 'outcome' section
     if (section === "outcome") {
       const jsonKey = outcomeTabMapping[tab];
       const data = jsonForDocument["Outcomes (Requirements & KPIs)"]?.[jsonKey];
@@ -122,7 +113,6 @@ const OneTabStepThree: React.FC = () => {
 
     let valueArray: any = lines;
 
-    // For object-type key-value editing like Focus Areas
     const isKeyValueObject =
       section === "challenge" &&
       ["Focus Areas", "Technical Requirements", "Expected Benefits"].includes(
@@ -196,15 +186,13 @@ const OneTabStepThree: React.FC = () => {
           if (item.Title && item.Description) {
             return `${item.Title}: ${item.Description}`;
           }
-
           const entries = Object.entries(item);
           if (entries.length === 1) {
             const [key, value] = entries[0];
             return `${key}: ${value}`;
           }
         }
-
-        return ""; // fallback
+        return "";
       })
       .filter(Boolean)
       .join("\n");
@@ -248,9 +236,8 @@ const OneTabStepThree: React.FC = () => {
     }
   };
 
-
   return (
-    <div className="bg-[#F4FCFF] px-4 py-4 flex flex-col gap-4">
+    <div className="bg-[#F4FCFF] px-2 sm:px-4 py-4 flex flex-col gap-4 min-h-screen">
       <Accordion
         title="1. Challenge Scenario"
         subtitle="Use cases, requirements, constraints, benefits"
@@ -378,12 +365,17 @@ const OneTabStepThree: React.FC = () => {
         onCellChange={handleKpiCellChange}
       />
 
-      <div className="flex justify-end gap-4">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-4">
         <Button
           label="Source solution providers"
           onClick={() => handleSourceSolution()}
+          className="w-full sm:w-auto"
         />
-        <DownloadButton onClick={handleDownloadDoc} isLoading={false} />
+        <DownloadButton 
+          onClick={handleDownloadDoc} 
+          isLoading={isDownloading}
+          className="w-full sm:w-auto"
+        />
       </div>
     </div>
   );

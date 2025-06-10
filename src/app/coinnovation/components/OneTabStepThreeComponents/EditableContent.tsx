@@ -14,37 +14,34 @@ const EditableContent: React.FC<EditableContentProps> = ({
   displayItems,
 }) => {
   const renderItem = (item: any, index: number): JSX.Element => {
-    // Handle strings
     if (typeof item === "string" || typeof item === "number") {
-      return <li key={index}>{item}</li>;
+      return <li key={index} className="break-words">{item}</li>;
     }
 
-    // Handle { Title: ..., Description: ... }
     if (item.Title && item.Description) {
       return (
-        <li key={index}>
+        <li key={index} className="break-words">
           <span className="font-semibold">{item.Title}:</span>{" "}
           {item.Description}
         </li>
       );
     }
 
-    // Handle { key: value } style (e.g., {"Energy Optimization": "Focus on ..."})
     if (typeof item === "object" && item !== null) {
       const [key, rawValue] = Object.entries(item)[0];
       const value =
         typeof rawValue === "string" || typeof rawValue === "number"
           ? rawValue
-          : JSON.stringify(rawValue); // fallback to string format
+          : JSON.stringify(rawValue);
 
       return (
-        <li key={index}>
+        <li key={index} className="break-words">
           <span className="font-semibold">{key}:</span> {value}
         </li>
       );
     }
 
-    return <li key={index}>{JSON.stringify(item)}</li>;
+    return <li key={index} className="break-words">{JSON.stringify(item)}</li>;
   };
 
   return (
@@ -53,10 +50,10 @@ const EditableContent: React.FC<EditableContentProps> = ({
         <textarea
           value={editableText}
           onChange={(e) => setEditableText(e.target.value)}
-          className="w-full h-[150px] text-[14px] border border-gray-300 rounded px-2 py-1"
+          className="w-full h-[120px] sm:h-[150px] text-[14px] border border-gray-300 rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#2286C0] focus:border-transparent"
         />
       ) : (
-        <ul className="list-disc list-inside space-y-2">
+        <ul className="list-disc list-inside space-y-2 text-sm">
           {Array.isArray(displayItems) && displayItems.length > 0 ? (
             displayItems.map((item, index) => renderItem(item, index))
           ) : (

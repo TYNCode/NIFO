@@ -118,7 +118,7 @@ const handleShortlist = async () => {
         <>
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <div className="flex flex-col md:flex-row mb-4 font-semibold text-lg">
+          <div className="hidden sm:flex flex-col md:flex-row mb-4 font-semibold text-lg">
             <p className="md:w-[16%] w-full md:ml-4">Company Name</p>
             <p className="md:w-[51%] w-full">Relevant Usecase</p>
             <p className="w-full md:w-auto">Key Customers</p>
@@ -141,7 +141,7 @@ const handleShortlist = async () => {
             ))
           )}
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-center gap-3">
             <Button
               label="Add"
               icon={<RiAddCircleLine />}

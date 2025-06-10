@@ -24,26 +24,41 @@ const Accordion: React.FC<AccordionProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row items-center justify-between px-6 py-4 bg-white rounded-[8px]">
-        <div className="flex flex-col">
-          <div className="text-[15px] font-semibold text-[#4A4D4E]">{title}</div>
-          <div className="text-[#4A4D4E] text-[12px] italic">{subtitle}</div>
-        </div>
-        <div className="flex flex-row gap-8">
-          <div className="text-[#2286C0] cursor-pointer" onClick={onEditClick}>
-            {isEditing ? <LuSave /> : <FiEdit2 />}
+      <div className="flex flex-row items-center justify-between px-3 sm:px-6 py-4 bg-white rounded-[8px]">
+        <div className="flex flex-col flex-1 pr-2">
+          <div className="text-[13px] sm:text-[15px] font-semibold text-[#4A4D4E] leading-tight">
+            {title}
           </div>
-          <div className="cursor-pointer" onClick={onToggle}>
+          <div className="text-[#4A4D4E] text-[10px] sm:text-[12px] italic mt-1">
+            {subtitle}
+          </div>
+        </div>
+        <div className="flex flex-row gap-4 sm:gap-8 items-center">
+          <button
+            className="text-[#2286C0] cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+            onClick={onEditClick}
+          >
+            {isEditing ? <LuSave size={16} /> : <FiEdit2 size={16} />}
+          </button>
+          <button
+            className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+            onClick={onToggle}
+          >
             <FaChevronDown
+              size={14}
               className={`text-[#2286C0] transition-transform duration-300 ${
                 isOpen ? "rotate-180" : ""
               }`}
             />
-          </div>
+          </button>
         </div>
       </div>
 
-      {isOpen && <div className="flex flex-col gap-4 py-4 px-4 rounded-[8px] bg-white">{children}</div>}
+      {isOpen && (
+        <div className="flex flex-col gap-4 py-4 px-2 sm:px-4 rounded-[8px] bg-white">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

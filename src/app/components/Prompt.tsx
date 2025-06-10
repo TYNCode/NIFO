@@ -100,7 +100,7 @@ const Prompt: React.FC<PromptProps> = ({
           <textarea
             ref={textareaRef}
             className="w-full resize-none border-none focus:ring-0 focus:outline-none text-gray-800 placeholder-gray-400 bg-transparent text-[15px] leading-6"
-            placeholder="Say your Problem..."
+            placeholder="What are you trying to solve today?"
             value={inputPrompt}
             rows={rows}
             maxLength={3000}

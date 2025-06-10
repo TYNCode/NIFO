@@ -8,7 +8,7 @@ const OneTabStepTwo: React.FC = () => {
   const projectID = useAppSelector((state) => state.projects.projectID);
 
   return (
-    <div className="p-4 w-full flex flex-col md:flex-row min-h-screen bg-[#F4FCFF]">
+    <div className="w-full flex flex-col md:flex-row min-h-screen bg-[#F4FCFF]">
       <div className="md:w-[30%] w-full">
         {projectID ? (
           <ProjectDetailsInQuestionairre />
@@ -19,7 +19,7 @@ const OneTabStepTwo: React.FC = () => {
 
       <div className="hidden md:block border-l-[1px] border-[#42affc] h-auto"></div>
 
-      <div className="md:w-[70%] w-full md:mx-3 mt-4 md:mt-0">
+      <div className="md:w-[70%] w-full md:mx-3 mt-4 md:mt-0 p-2">
         <Questionairre />
       </div>
     </div>

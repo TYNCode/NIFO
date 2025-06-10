@@ -45,7 +45,7 @@ const ContactBadge: React.FC<{
     href={href || "#"}
     target={href ? "_blank" : "_self"}
     rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 px-3 py-1 text-sm text-[#0071C1] rounded-xl mb-2 bg-[#E3F2FE]"
+    className="inline-flex items-center gap-2 px-3 py-1 text-sm text-[#0071C1] rounded-xl mb-2 bg-[#E3F2FE] break-all"
   >
     {icon}
     {text}
@@ -64,8 +64,6 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-
-  console.log(selectedCompanies >=1, "selectedCompanies")
   const dispatch = useAppDispatch();
   const projectID = useAppSelector((state) => state.projects.projectID);
   const solutionProviders = useAppSelector(
@@ -76,13 +74,14 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
     data: details,
     loading,
     error,
-  } = useAppSelector(
-    (state) => state.solutionProviderDetails[company.solution_provider_id]
-  ) || {
-    loading: false,
-    error: null,
-    data: null,
-  };
+  } =
+    useAppSelector(
+      (state) => state.solutionProviderDetails[company.solution_provider_id]
+    ) || {
+      loading: false,
+      error: null,
+      data: null,
+    };
 
   useEffect(() => {
     if (isOpen && !details) {
@@ -111,8 +110,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
         const parsed = JSON.parse(uc.replace(/'/g, '"'));
         return (
           <li key={idx} className="mb-1">
-            <span className="font-semibold">{parsed.industry}:</span>{" "}
-            {parsed.impact}
+            <span className="font-semibold">{parsed.industry}:</span> {parsed.impact}
           </li>
         );
       } catch {
@@ -144,34 +142,30 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   };
 
   return (
-    <div className="border rounded-lg shadow-sm bg-white p-4 mb-4">
-      <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-6 md:w-[15%] w-full">
+    <div className="border rounded-lg shadow-sm bg-white p-4 mb-4 w-full">
+      <div className="flex flex-wrap md:flex-nowrap gap-4 w-full items-start md:items-center">
+        <div className="flex items-start gap-2 w-full md:w-[15%]">
           <input
             type="checkbox"
-            className="w-4 h-4 rounded-sm border-2 border-blue-400 cursor-pointer"
-            onChange={(e) =>
-              onSelect(e.target.checked, company.solution_provider_id)
-            }
+            className="mt-1 h-4 w-4 text-primary border-gray-300 rounded"
+            onChange={(e) => onSelect(e.target.checked, company.solution_provider_id)}
           />
-          <div className="flex flex-col gap-2 justify-center">
-            <h3 className="text-base font-semibold text-[#0071C1]">
-              {company.solution_provider_name}
-            </h3>
-          </div>
+          <h3 className="text-sm sm:text-base font-semibold text-primary break-words">
+            {company.solution_provider_name}
+          </h3>
         </div>
 
-        <p className="text-sm text-gray-700 mt-2 md:w-[50%] w-full">
+        <div className="text-xs sm:text-sm text-gray-700 w-full md:w-[50%]">
           {company.relevant_usecase}
-        </p>
+        </div>
 
-        <div className="flex flex-wrap gap-2 mt-2 md:w-[20%] w-full">
+        <div className="flex flex-wrap gap-2 w-full md:w-[20%]">
           {company.key_customers?.map((customer, index) => (
             <Badge key={index} text={customer} />
           ))}
         </div>
 
-        <div className="flex gap-x-6 md:w-[10%] w-full justify-end md:justify-start">
+        <div className="flex gap-3 w-full md:w-[10%] justify-end md:justify-start">
           <IconButton
             icon={<RiDeleteBin6Line />}
             color="text-[#2286C0]"
@@ -179,7 +173,6 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             onClick={() => setShowDeleteModal(true)}
             disabled={solutionProviders.length < 2 || selectedCompanies >= 1}
           />
-
           <IconButton
             icon={<FiEdit2 />}
             color="text-[#2286C0]"
@@ -187,7 +180,6 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             onClick={handleEditClick}
             disabled={selectedCompanies >= 1}
           />
-
           <IconButton
             icon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
             color="text-[#2286C0]"
@@ -223,41 +215,37 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <ClipLoader color="#3B82F6" size={40} />
             </div>
           ) : error ? (
-            <p style={{ color: "red" }}>{error}</p>
+            <p className="text-red-500">{error}</p>
           ) : (
             details && (
               <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-[70%] w-full">
-                  <div className="mb-4">
-                    <div className="font-bold mb-1">
-                      Product/Services Offered
-                    </div>
-                    <div className="text-sm">{details.offerings}</div>
+                <div className="md:w-[70%] w-full space-y-4">
+                  <div>
+                    <div className="font-bold mb-1">Product/Services Offered</div>
+                    <div className="text-sm text-gray-700">{details.offerings}</div>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="font-bold mb-1">
-                      Partnerships and Alliances
-                    </div>
-                    <div className="text-sm">
+                  <div>
+                    <div className="font-bold mb-1">Partnerships and Alliances</div>
+                    <div className="text-sm text-gray-700">
                       {details.partnerships_and_alliances?.join(", ")}
                     </div>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="font-bold mb-1">
-                      Unique Selling Proposition (USP)
-                    </div>
-                    <div className="text-sm">{details.usp}</div>
+                  <div>
+                    <div className="font-bold mb-1">Unique Selling Proposition (USP)</div>
+                    <div className="text-sm text-gray-700">{details.usp}</div>
                   </div>
 
-                  <div className="mb-2 font-bold">Other Use Cases</div>
-                  <ul className="list-disc list-inside text-sm">
-                    {formatUseCases(details.other_usecases)}
-                  </ul>
+                  <div>
+                    <div className="font-bold mb-1">Other Use Cases</div>
+                    <ul className="list-disc list-inside text-sm text-gray-700">
+                      {formatUseCases(details.other_usecases)}
+                    </ul>
+                  </div>
                 </div>
 
-                <div className="md:w-[30%] w-full flex flex-col gap-2 mt-1">
+                <div className="md:w-[30%] w-full flex flex-col gap-2 mt-2">
                   <div className="font-bold mb-1">Contact Details:</div>
                   {details.email && (
                     <ContactBadge
@@ -273,16 +261,20 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                       href={`tel:${details.phone_number}`}
                     />
                   )}
-                  <ContactBadge
-                    icon={<FaGlobe />}
-                    text="Website"
-                    href={details.solution_provider_url}
-                  />
-                  <ContactBadge
-                    icon={<FaLinkedin />}
-                    text="LinkedIn"
-                    href={details.linkedin_url}
-                  />
+                  {details.solution_provider_url && (
+                    <ContactBadge
+                      icon={<FaGlobe />}
+                      text="Website"
+                      href={details.solution_provider_url}
+                    />
+                  )}
+                  {details.linkedin_url && (
+                    <ContactBadge
+                      icon={<FaLinkedin />}
+                      text="LinkedIn"
+                      href={details.linkedin_url}
+                    />
+                  )}
                 </div>
               </div>
             )

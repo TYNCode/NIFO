@@ -20,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div
-        className={`bg-white rounded-lg shadow-lg ${type == "edit" ? "w-[80%]" : "w-[40%]"} relative`}
+        className={`bg-white rounded-lg shadow-lg ${type == "edit" ? "w-[80%]" : "w-[95%]"} relative`}
       >
         <div className="bg-primary p-3">
           <button

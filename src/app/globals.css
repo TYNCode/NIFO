@@ -2,12 +2,15 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Base Reset */
 html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: auto;
 }
 
+/* Transitions */
 .transition-all {
   transition: all 0.3s ease-in;
 }
@@ -18,29 +21,42 @@ body {
   transition-timing-function: ease;
 }
 
+/* Scroll Container (for vertical prompts only) */
 .prompt-container {
   height: calc(100vh - 200px);
   overflow-y: auto;
-  scrollbar-width: none;
+  scrollbar-width: auto;
 }
 
 .prompt-container::-webkit-scrollbar {
-  display: none;
+  width: 8px;
 }
 
+.prompt-container::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 6px;
+}
+
+.prompt-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Custom Theme Variables */
 :root {
-  --color-primary: #0070C0;
+  --color-primary: #0070c0;
   --color-secondary: #005585;
-  --color-tertiary: #3AB8FF;
+  --color-tertiary: #3ab8ff;
   --cyan-500: #339af0;
 }
 
+/* Custom Input Focus */
 .outlineChange input:focus {
   border-color: var(--cyan-500);
   outline: none;
   box-shadow: 0 0 0 1px var(--cyan-500);
 }
 
+/* Swiper Custom Animations */
 .swiper-slide {
   transform: scale(0.9);
   transition: transform 0.4s ease-in-out;
@@ -53,7 +69,7 @@ body {
   z-index: 10;
 }
 
-
+/* Slide Animations */
 .enter {
   transform: translateX(0);
   transition: transform 0.5s ease-in-out;
@@ -69,18 +85,7 @@ body {
   transition: transform 0.5s ease-in-out;
 }
 
-@layer utilities {
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hidden {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-}
-
-
+/* Text Styles */
 h1 {
   font-size: 1.75em;
   font-weight: bold;
@@ -101,6 +106,7 @@ h4 {
   font-weight: bold;
 }
 
+/* Custom Animation */
 @keyframes diagonalMove {
   0% {
     transform: translate(0, 0) scale(1);
@@ -121,12 +127,20 @@ h4 {
   animation-timing-function: ease-in-out;
 }
 
-.scrollbar-no-buttons::-webkit-scrollbar-button {
-  display: none !important;
-}
+/* Tailwind Utility Extensions */
+@layer utilities {
+  /* No longer hiding scrollbars */
+  .scrollbar-hide {
+    overflow: auto; /* fallback if used */
+  }
+
+  .scrollbar-no-buttons::-webkit-scrollbar-button {
+    display: none !important;
+  }
 
 body.lock-scroll {
   overflow: hidden;
   position: fixed;
   width: 100%;
+}
 }

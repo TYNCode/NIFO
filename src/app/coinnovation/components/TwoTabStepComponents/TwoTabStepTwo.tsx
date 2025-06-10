@@ -1,12 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaArrowLeft } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
 import { useAppDispatch } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
 import { setActiveTabSource } from "../../../redux/features/source/solutionProviderSlice";
 import Button from "./Button";
-import { FaArrowLeft } from "react-icons/fa";
 
 interface StarRatingProps {
   rating: number;
@@ -25,7 +24,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, reason }) => (
       </span>
     ))}
     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10 w-64 text-center">
-      <div className="relative bg-blue-600 text-white text-xs rounded-md shadow-lg px-3 py-2">
+      <div className="relative bg-primary text-white text-xs rounded-md shadow-lg px-3 py-2">
         {reason}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-blue-600"></div>
       </div>
@@ -48,19 +47,17 @@ const PARAMETER_LABELS: { [key: string]: string } = {
 };
 
 const TwoTabStepTwo: React.FC = () => {
-  const {
-    result: comparisonResult,
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.solutionComparison);
+  const { result: comparisonResult, loading, error } = useSelector(
+    (state: RootState) => state.solutionComparison
+  );
   const dispatch = useAppDispatch();
+
   const handleBackButton = () => {
     dispatch(setActiveTabSource("02.a"));
   };
 
-  console.log("compare result =>", comparisonResult);
   return (
-    <div className="p-6 rounded-lg shadow-md bg-white">
+    <div className="p-4 sm:p-6 rounded-lg shadow-md bg-white">
       {loading ? (
         <div className="flex justify-center items-center h-40">
           <ClipLoader color="#3B82F6" size={40} />
@@ -72,8 +69,8 @@ const TwoTabStepTwo: React.FC = () => {
           No companies selected for comparison.
         </div>
       ) : (
-        comparisonResult.length > 0 && (
-          <table className="w-full border-collapse border border-gray-200 text-sm">
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-[640px] w-full border-collapse border border-gray-200 text-xs sm:text-sm">
             <thead>
               <tr className="bg-gray-100 text-left">
                 <th className="p-3 border border-gray-300">Parameters</th>
@@ -90,13 +87,13 @@ const TwoTabStepTwo: React.FC = () => {
             <tbody>
               {Object.entries(PARAMETER_LABELS).map(([key, label]) => (
                 <tr key={key} className="border border-gray-300">
-                  <td className="p-3 border border-gray-300">{label}</td>
+                  <td className="p-3 border border-gray-300 font-medium">
+                    {label}
+                  </td>
                   {comparisonResult.map((company) => {
                     const ratingObj = company.criteria?.[key];
                     const rating = ratingObj?.score ?? 0;
-                    const reason =
-                      ratingObj?.reason ??
-                      "No data available for this parameter";
+                    const reason = ratingObj?.reason ?? "No data available for this parameter";
                     return (
                       <td
                         key={`${company.company}-${key}`}
@@ -110,15 +107,15 @@ const TwoTabStepTwo: React.FC = () => {
               ))}
             </tbody>
           </table>
-        )
+        </div>
       )}
 
-      <div className="mt-3 flex justify-end mr-3">
+      <div className="mt-4 flex justify-end">
         <Button
-          label={"Back"}
+          label="Back"
           icon={<FaArrowLeft />}
           onClick={handleBackButton}
-        ></Button>
+        />
       </div>
     </div>
   );

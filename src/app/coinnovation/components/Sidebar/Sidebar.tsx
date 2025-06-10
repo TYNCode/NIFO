@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaSuitcase } from "react-icons/fa6";
 import { PiCirclesFour } from "react-icons/pi";
@@ -15,8 +15,18 @@ interface SidebarOption {
   route: string;
 }
 
-const Sidebar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+interface SidebarProps {
+  isOpen?: boolean;
+  onToggle?: () => void;
+  isMobile?: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ 
+  isOpen = false, 
+  onToggle, 
+  isMobile = false 
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(!isMobile);
   const router = useRouter();
   const pathname = usePathname();
   
@@ -35,18 +45,130 @@ const Sidebar: React.FC = () => {
     },
   ];
 
+  // Reset to collapsed state when route changes (desktop only)
+  useEffect(() => {
+    if (!isMobile) {
+      setIsCollapsed(true);
+    }
+  }, [pathname, isMobile]);
+
+  // Handle mobile open/close state
+  useEffect(() => {
+    if (isMobile) {
+      setIsCollapsed(!isOpen);
+    }
+  }, [isOpen, isMobile]);
+
   const activeIndex = sidebarOptions.findIndex((item) =>
     pathname.startsWith(item.route),
   );
 
   const handleSidebarClick = (route: string) => {
     router.push(route);
+    // Close mobile sidebar after navigation
+    if (isMobile && onToggle) {
+      onToggle();
+    }
+  };
+
+  const handleToggleCollapse = () => {
+    if (isMobile && onToggle) {
+      onToggle();
+    } else {
+      setIsCollapsed(!isCollapsed);
+    }
   };
 
   const highlightClass = `absolute ${
     isCollapsed ? "w-12 left-2" : "w-[220px] left-5"
   } h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out`;
 
+  // Mobile overlay sidebar
+  if (isMobile) {
+    return (
+      <>
+        {/* Backdrop */}
+        {isOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={onToggle}
+          />
+        )}
+        
+        {/* Mobile Sidebar */}
+        <aside
+          className={`fixed top-0 left-0 h-full w-[260px] bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+            isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div>
+            {/* Logo + Close Toggle */}
+            <div className="flex items-center pt-4 px-4">
+              <div className="flex items-center justify-between w-full">
+                <Image
+                  src="/nifo.svg"
+                  alt="Nifo Logo"
+                  width={100}
+                  height={100}
+                  className="w-36 cursor-pointer"
+                  onClick={() => {
+                    router.push("/");
+                    if (onToggle) onToggle();
+                  }}
+                />
+                <button
+                  className="text-primary font-bold ml-auto text-[#0070C0]"
+                  onClick={handleToggleCollapse}
+                >
+                  <FiChevronsLeft size={22} />
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Items */}
+            <div className="relative mt-3">
+              <div
+                className="absolute w-[220px] left-5 h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out"
+                style={{
+                  transform:
+                    activeIndex !== -1
+                      ? `translateY(${activeIndex * 52}px)`
+                      : "none",
+                  opacity: activeIndex !== -1 ? 1 : 0,
+                }}
+              />
+
+              <nav className="flex flex-col relative z-10 gap-1 px-2">
+                {sidebarOptions.map((option, index) => {
+                  const isActive = index === activeIndex;
+                  return (
+                    <div
+                      key={option.id}
+                      className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                        isActive
+                          ? "text-white scale-105"
+                          : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                      }`}
+                      onClick={() => handleSidebarClick(option.route)}
+                    >
+                      {React.cloneElement(option.icon, {
+                        className: `text-base ${
+                          isActive ? "text-white" : "text-[#0070C0]"
+                        } flex-shrink-0`,
+                      })}
+                      <span className="text-sm whitespace-nowrap">{option.title}</span>
+                    </div>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+        </aside>
+      </>
+    );
+  }
+
+  // Desktop sidebar
   return (
     <aside
       className={`${
@@ -67,7 +189,7 @@ const Sidebar: React.FC = () => {
             />
             <button
               className="text-primary font-bold ml-auto text-[#0070C0]"
-              onClick={() => setIsCollapsed(!isCollapsed)}
+              onClick={handleToggleCollapse}
             >
               {isCollapsed ? (
                 <IoChevronForward size={20} />
