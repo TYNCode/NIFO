@@ -22,7 +22,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
 
   return (
     <header className="relative sm:hidden block">
-      <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-[100] flex items-center justify-between px-4">
+      <div className="fixed top-0 left-0 w-full h-16 border-b shadow-md bg-white z-1 flex items-center justify-between px-4">
         {/* Left: Hamburger Menu */}
         <div className="flex items-center">
           {showMenuButton && onMenuToggle ? (
