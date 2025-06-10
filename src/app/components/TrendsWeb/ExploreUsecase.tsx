@@ -11,7 +11,7 @@ const ExploreUseCase = ({ useCaseId, onBack }) => {
     useEffect(() => {
         const fetchUseCaseDetails = async () => {
             try {
-                const res = await fetch(`http://127.0.0.1:8000/trends/${useCaseId}/`);
+                const res = await fetch(`https://tyn-server.azurewebsites.net/trends/${useCaseId}/`);
                 const data = await res.json();
                 setUseCaseData(data);
             } catch (error) {
@@ -27,7 +27,7 @@ const ExploreUseCase = ({ useCaseId, onBack }) => {
         const fetchStartupName = async () => {
             if (useCaseData?.solution_provider) {
                 try {
-                    const res = await fetch(`http://127.0.0.1:8000/company/view/${useCaseData.solution_provider}/`);
+                    const res = await fetch(`https://tyn-server.azurewebsites.net/company/view/${useCaseData.solution_provider}/`);
                     const data = await res.json();
                     setProviderName(data.startup_name || "Unknown Provider");
                 } catch (error) {
