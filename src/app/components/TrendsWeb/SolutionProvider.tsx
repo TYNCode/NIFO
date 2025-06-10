@@ -74,7 +74,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
     return (
         <div className="bg-white w-[40vw] h-[85vh] overflow-y-auto p-4 rounded-xl shadow space-y-6">
             {/* Back Button */}
-            <div className="flex items-center gap-2 text-blue-600 cursor-pointer mb-2" onClick={handleBack}>
+            <div className="flex items-center gap-2 text-primary cursor-pointer mb-2" onClick={handleBack}>
                 <FaArrowLeft />
                 <span className="text-sm font-medium">Back to Use Case</span>
             </div>
@@ -124,24 +124,24 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
                 {company.startup_url && (
                     <button
                         onClick={() => handleVisitWebsite(company.startup_url)}
-                        className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-1"
+                        className="text-xs px-3 py-1 bg-primary text-white rounded hover:bg-primary flex items-center gap-1"
                     >
                         <FaExternalLinkAlt /> Website
                     </button>
                 )}
                 <button
                     onClick={handleShare}
-                    className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 flex items-center"
+                    className="text-xs px-2 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200 flex items-center"
                 >
                     <IoShareSocialOutline size={14} />
                 </button>
-                <button className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                <button className="text-xs px-2 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200">
                     <MdOutlineLanguage size={14} />
                 </button>
-                <button className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                <button className="text-xs px-2 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200">
                     <MdOutlinePhoneInTalk size={14} />
                 </button>
-                <button className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                <button className="text-xs px-2 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200">
                     <FaLinkedinIn size={14} />
                 </button>
             </div>
@@ -149,7 +149,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Use Case Reference */}
             {useCaseTitle && (
                 <div className="bg-blue-50 p-3 rounded">
-                    <h3 className="font-semibold text-sm text-blue-800">Use Case</h3>
+                    <h3 className="font-semibold text-sm text-primary">Use Case</h3>
                     <p className="text-sm">{useCaseTitle}</p>
                     {useCaseDescription && <p className="text-xs text-gray-600">{useCaseDescription}</p>}
                 </div>
@@ -158,7 +158,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Overview */}
             {(company.startup_overview || company.startup_description) && (
                 <div>
-                    <h3 className="font-semibold text-blue-700 mb-1 flex items-center gap-1">
+                    <h3 className="font-semibold text-primary mb-1 flex items-center gap-1">
                         <FaRocket /> Overview
                     </h3>
                     {company.startup_overview && (
@@ -171,7 +171,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Solutions & Use Cases */}
             {(company.startup_solutions || company.startup_usecases) && (
                 <div>
-                    <h3 className="font-semibold text-blue-700 mb-1">Solutions & Use Cases</h3>
+                    <h3 className="font-semibold text-primary mb-1">Solutions & Use Cases</h3>
                     {company.startup_solutions && (
                         <p className="text-sm text-gray-800 mb-2">{company.startup_solutions}</p>
                     )}
@@ -182,7 +182,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Strategic Positioning */}
             {(company.startup_gsi || company.startup_partners || company.startup_customers) && (
                 <div>
-                    <h3 className="font-semibold text-blue-700 mb-1">Strategic Positioning</h3>
+                    <h3 className="font-semibold text-primary mb-1">Strategic Positioning</h3>
                     {company.startup_gsi && <p className="text-sm mb-2">GSI: {company.startup_gsi}</p>}
                     {company.startup_partners && <p className="text-sm mb-2">Partners: {company.startup_partners}</p>}
                     {company.startup_customers && <p className="text-sm">Customers: {company.startup_customers}</p>}
@@ -193,12 +193,12 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {(company.startup_technology || company.startup_industry) && (
                 <div className="flex gap-2 flex-wrap">
                     {company.startup_technology && (
-                        <span className="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        <span className="px-3 py-1 text-xs bg-blue-100 text-primary rounded-full">
                             Tech: {company.startup_technology}
                         </span>
                     )}
                     {company.startup_industry && (
-                        <span className="px-3 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
+                        <span className="px-3 py-1 text-xs bg-blue-100 text-primary rounded-full">
                             Industry: {company.startup_industry}
                         </span>
                     )}
@@ -208,7 +208,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Founders */}
             {company.startup_founders_info && (
                 <div>
-                    <h3 className="font-semibold text-blue-700 mb-1">Founders</h3>
+                    <h3 className="font-semibold text-primary mb-1">Founders</h3>
                     <p className="text-sm text-gray-800">{company.startup_founders_info}</p>
                 </div>
             )}
@@ -216,7 +216,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             {/* Contact */}
             {company.startup_emails && (
                 <div>
-                    <h3 className="font-semibold text-blue-700 mb-1">Contact</h3>
+                    <h3 className="font-semibold text-primary mb-1">Contact</h3>
                     {company.startup_emails.split(",").map((email, idx) => {
                         const clean = email.trim();
                         const match = clean.match(/<(.+)>/);
@@ -226,7 +226,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
                             <button
                                 key={idx}
                                 onClick={() => handleEmailContact(actual)}
-                                className="text-sm text-left text-blue-700 hover:underline block"
+                                className="text-sm text-left text-primary hover:underline block"
                             >
                                 {label}
                             </button>
