@@ -35,13 +35,12 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
   );
 
   useEffect(() => {
-    const storedProjectID = localStorage.getItem("projectID");
     if (params.id) {
       dispatch(setProjectID(params.id));
-    } else if (storedProjectID) {
-      dispatch(setProjectID(storedProjectID));
+      localStorage.setItem("projectID", params.id); 
     }
   }, [params.id, dispatch]);
+  
 
   useEffect(() => {
     if (projectID) {
