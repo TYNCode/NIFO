@@ -17,7 +17,6 @@ const UsecasesCombined = ({
   const [industryOptions, setIndustryOptions] = useState([]);
   const [subindustryOptions, setSubindustryOptions] = useState([]);
 
-  console.log("subIndustryoptiobns", subindustryOptions)
 
   useEffect(() => {
     fetch("https://tyn-server.azurewebsites.net/trends/")

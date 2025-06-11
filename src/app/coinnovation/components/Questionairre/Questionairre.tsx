@@ -30,8 +30,6 @@ const Questionnaire: React.FC = () => {
   const [questionnaireFile, setQuestionnaireFile] = useState<File>();
   const [isPDDJsonGenerating, setIsPDDJsonGenerating] = useState(false);
 
-
-  console.log("selectedQuestions", selectedQuestions)
   const handleDeleteSelected = (category: string) => {
     if (!questionnaireData || !projectID) return;
 

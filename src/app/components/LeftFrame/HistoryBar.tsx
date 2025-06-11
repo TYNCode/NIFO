@@ -12,13 +12,11 @@ const HistoryBar: React.FC<HistoryBarProps> = ({ onSelectHistory }) => {
   const dispatch = useAppDispatch();
   const { history, loading, error } = useAppSelector((state) => state.chatHistory);
 
-  console.log("history inside history bar", history , loading , error)
   useEffect(() => {
     dispatch(fetchChatHistory());
   }, [dispatch]);
 
   const handleSessionClick = (sessionId: string) => {
-    console.log("Selected Session ID:", sessionId);
     onSelectHistory(sessionId);
   };
 

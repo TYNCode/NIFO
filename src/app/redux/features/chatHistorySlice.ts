@@ -21,9 +21,8 @@ export const fetchChatHistory = createAsyncThunk(
       const response = await getRequestWithAccessToken(
         "https://tyn-server.azurewebsites.net/prompt/sessions/"
       );
-      
+
       const data = response.data;
-      console.log("dataaaaa", data); // Debugging
 
       const formattedData: Session[] = data.map(
         (session: ChatHistoryResponse) => ({

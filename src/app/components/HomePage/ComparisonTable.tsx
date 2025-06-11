@@ -26,10 +26,6 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
   recommendation_summary,
   intentType,
 }) => {
-  console.log("datainsidecomparisontable", recommendation_summary);
-  console.log("datainsidedata", data);
-  console.log("datainsideintenttype", intentType);
-
   const attributeKeys = React.useMemo(() => {
     if (!data || data.length === 0) return [];
     return Object.keys(data[0]).filter((key) => key !== "name");

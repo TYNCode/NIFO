@@ -126,7 +126,6 @@ const StartupDashboard: React.FC = () => {
 
   // Computed Values
   const displayStartups = companies;
-  console.log("displayStartups------", companies)
   const showNoResults = !loading && displayStartups.length === 0;
   const showLoadMore = hasMore && !loading;
 

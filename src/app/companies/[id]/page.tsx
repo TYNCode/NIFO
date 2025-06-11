@@ -32,7 +32,6 @@ const CompanyProfile: React.FC<any> = () => {
 
   useEffect(() => {
     let encodedOrganizationId = params.id;
-    console.log(encodedOrganizationId);
     if (Array.isArray(encodedOrganizationId)) {
       encodedOrganizationId = encodedOrganizationId[0];
     }

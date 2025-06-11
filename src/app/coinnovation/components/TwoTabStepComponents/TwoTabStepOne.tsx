@@ -38,7 +38,6 @@ const TwoTabStepOne: React.FC = () => {
   const [selectedCompanies, setSelectedCompanies] = useState<number>(0);
   const [selectedCompanyIDs, setSelectedCompanyIDs] = useState<string[]>([]);
 
-  console.log("selectedCompanyIDs",selectedCompanyIDs)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const project_id = localStorage.getItem("projectID");
 

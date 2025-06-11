@@ -31,7 +31,6 @@ const ManageStartups = ({ data, entityName, setData, isLoading = false }) => {
   const [showBulkConfirmation, setShowBulkConfirmation] = useState(false);
 
   const filteredData = useMemo(() => {
-    console.log(data[0]);
     return data.filter(
       (item) => item.startup_name.toLowerCase().includes(filter.toLowerCase())
       // item.startup_emails.toLowerCase().includes(filter.toLowerCase()) ||

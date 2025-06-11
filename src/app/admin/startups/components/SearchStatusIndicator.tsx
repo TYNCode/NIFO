@@ -14,8 +14,6 @@ const SearchStatusIndicator: React.FC<SearchStatusIndicatorProps> = ({
   onClearSearch,
 }) => {
   if (!isSearchMode || !searchText.trim()) return null;
-
-  console.log("resultccount in searchStatuSIndicator", resultCount)
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between">

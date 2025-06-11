@@ -115,8 +115,6 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
         .map((o: string) => o.trim())
         .filter(Boolean),
     };
-
-    console.log(updatedData);
     onUpdate(updatedData);
     onClose();
   };
@@ -135,7 +133,6 @@ const EditSolutionProviderForm: React.FC<EditFormProps> = ({
   };
 
   const handleCancel = () => {
-    console.log("Cancel update.........");
     if (isDirty) {
       setShowConfirmCancel(true);
     } else {

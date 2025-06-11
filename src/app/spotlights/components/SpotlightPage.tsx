@@ -142,7 +142,6 @@ const SpotlightPage: React.FC = () => {
         <div className="w-full lg:pl-[20%] px-4 lg:px-8 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center max-w-md">
-              <div className="text-red-500 text-6xl mb-4">⚠️</div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
               <p className="text-red-600 mb-4">{error}</p>
               <button

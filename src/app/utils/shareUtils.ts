@@ -6,8 +6,6 @@ const secretKey = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET
  */
 export const encryptURL = (toEncrypt: string): string => {
   try {
-    console.log("[ENCRYPT_URL] Input:", toEncrypt);
-
     if (!toEncrypt || (typeof toEncrypt !== "string" && typeof toEncrypt !== "number")) {
       console.warn("[ENCRYPT_URL] Invalid input (not string/number):", toEncrypt);
       throw new Error("Input must be a valid string or number");
@@ -18,9 +16,6 @@ export const encryptURL = (toEncrypt: string): string => {
 
     const encryptedText = CryptoJS.AES.encrypt(cleanInput, secretKey).toString();
     const encodedText = encodeURIComponent(encryptedText);
-
-    console.log("[ENCRYPT_URL] AES Encrypted:", encryptedText);
-    console.log("[ENCRYPT_URL] URL Encoded:", encodedText);
 
     return encodedText;
   } catch (error) {
@@ -34,8 +29,6 @@ export const encryptURL = (toEncrypt: string): string => {
  */
 export const decryptURL = (toDecrypt: string): string | null => {
   try {
-    console.log("[DECRYPT_URL] Input:", toDecrypt);
-
     if (!toDecrypt || typeof toDecrypt !== "string") {
       console.error("[DECRYPT_URL] Invalid input type:", toDecrypt);
       return null;

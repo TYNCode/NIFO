@@ -14,7 +14,6 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   isFocused = false,
   isGridView = false,
 }) => {
-  console.log("spotlightInCard", spotlight)
   const getCardClasses = () => {
     if (isGridView) {
       return "w-full max-w-sm mx-auto bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden";

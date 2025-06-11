@@ -54,7 +54,6 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({
   const projectID = useAppSelector((state) => state.projects.projectID);
   const dispatch = useAppDispatch();
 
-  console.log("editedAnswerValues", openAnswers);
   const toggleSelect = (questionId: string) => {
     const updated = new Set(selectedQuestions);
     updated.has(questionId)

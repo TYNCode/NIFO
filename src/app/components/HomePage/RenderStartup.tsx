@@ -40,7 +40,6 @@ const RenderStartup = ({ message, handleSendStartupData }) => {
 
   const renderOtherCategories = () => {
     const startups = message?.response?.startups
-    console.log("startupsss--->",startups?.sort((a:any,b:any)=> b.relevancy_score - a.relevancy_score))
     if (!startups || startups?.length === 0) return null;
     return (
       <div className="flex flex-col gap-3">

@@ -1,160 +1,203 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import MobileHeader from "../../mobileComponents/MobileHeader";
+
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import CryptoJS from "crypto-js";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { decryptURL } from "@/app/utils/shareUtils";
+import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import {
+  FaArrowLeft,
+  FaEnvelope,
+  FaExternalLinkAlt,
+  FaBuilding,
+  FaGlobe,
+  FaUsers,
+  FaRocket,
+  FaChartLine,
+  FaStar,
+} from "react-icons/fa";
 import { IoShareSocialOutline } from "react-icons/io5";
+import LeftFrame from "@/app/components/LeftFrame/LeftFrame";
+import Image from "next/image";
 
-const StartupDetails = () => {
-  const [activeSpotlight, setActiveSpotlight] = useState(false);
-  const [activeTab, setActiveTab] = useState("Spotlight");
-  const [startupData, setStartupData] = useState(null);
-
+const StartupPage: React.FC = () => {
   const params = useParams();
-  let startupId = params.id;
-  if (Array.isArray(startupId)) {
-    startupId = startupId[0];
-  }
-
-  if (typeof startupId !== "string") {
-    console.error("Invalid ID in URL");
-    return null;
-  }
-
-  const secretKey = "secret-key";
-  const decodedEncryptedStartupId = decodeURIComponent(startupId);
-
-  const decryptStartupId = (encryptedId, key) => {
-    try {
-      const bytes = CryptoJS.AES.decrypt(encryptedId, key);
-      const decryptedId = bytes.toString(CryptoJS.enc.Utf8);
-      return decryptedId;
-    } catch (error) {
-      console.error("Error decrypting startup ID:", error);
-      return null;
-    }
-  };
-
-  const decryptedStartupId = decryptStartupId(
-    decodedEncryptedStartupId,
-    secretKey
-  );
-
-  const fetchStartupDetails = async (id) => {
-    try {
-      const res = await axios.get(
-        `https://tyn-server.azurewebsites.net/directorysearch/companyview/${id}/`
-      );
-      setStartupData(res.data);
-    } catch (error) {
-      console.error("Error fetching startup details:", error);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const { company, loading, error } = useAppSelector((state) => state.companyProfile);
+  const [decryptedId, setDecryptedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (decryptedStartupId) {
-      fetchStartupDetails(decryptedStartupId);
+    let encodedId = params?.id;
+    if (Array.isArray(encodedId)) encodedId = encodedId[0];
+    if (typeof encodedId === "string") {
+      const id = decryptURL(encodedId);
+      setDecryptedId(id ?? null);
     }
-  }, [decryptedStartupId]);
+  }, [params]);
 
-
-  const handleShareClick = async () => {
-    const encryptStartupId = (id, key) => {
-      try {
-        const encryptedId = CryptoJS.AES.encrypt(id.toString(), key).toString();
-        return encodeURIComponent(encryptedId);
-      } catch (error) {
-        console.error("Error encrypting startup ID:", error);
-        return null;
-      }
-    };
-
-    const encryptedStartupId = encryptStartupId(
-      startupData?.startup_id,
-      secretKey
-    );
-
-    if (navigator.share && encryptedStartupId) {
-      try {
-        await navigator.share({
-          title: startupData?.startup_name,
-          text: startupData?.startup_description,
-          url: `${window.location.origin}/startups/${encryptedStartupId}`,
-        });
-      } catch (error) {
-        console.error("Error sharing:", error);
-      }
-    } else {
-      alert("Web Share API not supported");
+  useEffect(() => {
+    if (decryptedId && !isNaN(Number(decryptedId))) {
+      dispatch(fetchStartupById(Number(decryptedId)));
     }
+  }, [decryptedId, dispatch]);
+
+  const handleBack = () => window.history.back();
+  const handleShare = () => {
+    const shareUrl = `${window.location.origin}/startups/${params.id}`;
+    navigator.share?.({
+      title: company?.startup_name,
+      text: company?.startup_description,
+      url: shareUrl,
+    });
+  };
+  const handleVisitWebsite = (url: string) => {
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+  };
+  const handleEmailContact = (email: string) => {
+    window.open(`mailto:${email}`, "_self");
   };
 
-  const renderIfAvailable = (label: string, value: any) => {
-    if (!value) return null;
+  if (loading) {
     return (
-      <div className="flex flex-col leading-7 tracking-wide">
-        <div className="font-semibold">{label}</div>
-        <div>{value}</div>
-      </div>
+      <main className="flex w-full min-h-screen bg-gray-50">
+        <div className="hidden lg:block lg:fixed lg:w-1/5">
+          <LeftFrame />
+        </div>
+        <div className="w-full lg:pl-[20%] px-4 lg:px-8 py-6">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p className="text-gray-600 mt-4 text-lg">Loading startup...</p>
+            </div>
+          </div>
+        </div>
+      </main>
     );
-  };
+  }
+
+  if (error || !company) return null;
 
   return (
-    <div>
-      <div>
-        <MobileHeader />
+    <main className="flex w-full min-h-screen bg-gray-50">
+      <div className="hidden lg:block lg:fixed lg:w-1/5 xl:w-[21%] h-full">
+        <LeftFrame />
       </div>
+      <div className="w-full lg:ml-[20%] xl:ml-[21%] px-4 py-6">
+        <button onClick={handleBack} className="flex items-center gap-2 text-primary mb-6">
+          <FaArrowLeft /> Back
+        </button>
 
-      {/* company profile component */}
-      <div className="mx-6 my-4 mt-20 flex flex-col gap-2 pb-32">
-        <>
-          <div className="flex justify-between items-center">
-            <div className="flex gap-2">
-              <div className="uppercase font-medium text-blue-500 text-lg">
-                {startupData?.startup_name}
-              </div>
+        <div className="bg-white rounded-xl shadow-md px-6 py-8 mb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div>
+              {company.startup_logo ? (
+                <Image
+                  src={company.startup_logo}
+                  alt="logo"
+                  width={20}
+                  height={20}
+                  className="w-20 h-20 object-contain rounded border"
+                />
+              ) : (
+                <div className="w-20 h-20 bg-gray-200 flex items-center justify-center rounded">
+                  <FaBuilding className="text-gray-500 text-2xl" />
+                </div>
+              )}
             </div>
 
-            <div className="flex gap-4 items-center justify-center">
-              {/* Share button */}
-              <div
-                className="text-gray-500 cursor-pointer"
-                onClick={handleShareClick}
-              >
-                <IoShareSocialOutline size={26} />
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold mb-2">{company.startup_name}</h1>
+              <div className="flex flex-wrap gap-3">
+                {company.startup_analyst_rating && (
+                  <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1">
+                    <FaStar /> {company.startup_analyst_rating}
+                  </span>
+                )}
+                {company.startup_country && (
+                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                    <FaGlobe /> {company.startup_country}
+                  </span>
+                )}
+                {company.startup_company_stage && (
+                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                    <FaChartLine /> {company.startup_company_stage}
+                  </span>
+                )}
+              </div>
+              <div className="mt-4 flex gap-3">
+                {company.startup_url && (
+                  <button
+                    onClick={() => handleVisitWebsite(company.startup_url)}
+                    className="px-4 py-2 text-sm bg-primary text-white rounded hover:bg-[#005a9a]"
+                  >
+                    <FaExternalLinkAlt className="inline-block mr-2" /> Visit Website
+                  </button>
+                )}
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded bg-blue-100 hover:bg-blue-200 text-blue-600"
+                >
+                  <IoShareSocialOutline size={18} />
+                </button>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-5 leading-7 tracking-wide my-6 mx-3">
-            {renderIfAvailable("Description", startupData?.startup_description)}
+        </div>
 
-            <div className="flex flex-col gap-4 shadow-inner text-sm bg-blue-100 p-4 rounded-lg">
-              <div className="flex justify-between gap-3 w-full">
-                {renderIfAvailable("Industry", startupData?.startup_industry)}
-                {renderIfAvailable(
-                  "Technology",
-                  startupData?.startup_technology
+        {["Overview", "Solutions & Use Cases", "Technology & Industry", "Contact"].map((section, idx) => (
+          <div key={idx} className="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 className="text-lg font-semibold text-primary mb-4">
+              {section === "Overview" && <FaRocket className="inline-block mr-2" />}
+              {section === "Solutions & Use Cases" && <FaBuilding className="inline-block mr-2" />}
+              {section === "Technology & Industry" && <FaChartLine className="inline-block mr-2" />}
+              {section === "Contact" && <FaEnvelope className="inline-block mr-2" />}
+              {section}
+            </h2>
+            {section === "Overview" && (
+              <>
+                {company.startup_overview && <p className="mb-4 text-gray-700">{company.startup_overview}</p>}
+                {company.startup_description && <p className="text-gray-700">{company.startup_description}</p>}
+              </>
+            )}
+            {section === "Solutions & Use Cases" && (
+              <>
+                {company.startup_solutions && <p className="mb-4 text-gray-700">{company.startup_solutions}</p>}
+                {company.startup_usecases && <p className="text-gray-700">{company.startup_usecases}</p>}
+              </>
+            )}
+            {section === "Technology & Industry" && (
+              <div className="flex gap-4">
+                {company.startup_technology && (
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    {company.startup_technology}
+                  </span>
+                )}
+                {company.startup_industry && (
+                  <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                    {company.startup_industry}
+                  </span>
                 )}
               </div>
-              <div className="flex justify-between gap-3 w-full">
-                {renderIfAvailable("Country", startupData?.startup_country)}
-                {renderIfAvailable(
-                  "Funding Stage",
-                  startupData?.startup_company_stage
-                )}
+            )}
+            {section === "Contact" && company.startup_emails && (
+              <div className="space-y-2">
+                {company.startup_emails.split(",").map((email: string, i: number) => (
+                  <button
+                    key={i}
+                    onClick={() => handleEmailContact(email.trim())}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
+                  >
+                    <FaEnvelope className="text-primary" />
+                    {email.trim()}
+                  </button>
+                ))}
               </div>
-            </div>
-
-            {renderIfAvailable("Solution", startupData?.startup_solutions)}
-            {renderIfAvailable("Usecases", startupData?.startup_usecases)}
+            )}
           </div>
-        </>
+        ))}
       </div>
-
-      {/* <BottomBar setActiveTab={setActiveTab} activeTab={activeTab} /> */}
-    </div>
+    </main>
   );
 };
 
-export default StartupDetails;
+export default StartupPage;
