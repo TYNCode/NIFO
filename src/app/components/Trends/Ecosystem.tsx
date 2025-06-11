@@ -16,6 +16,9 @@ import {
 import { IoShareSocialOutline } from "react-icons/io5";
 import { MdOutlineLanguage, MdOutlinePhoneInTalk } from "react-icons/md";
 import { FaLinkedinIn } from "react-icons/fa";
+import shareHook from "@/app/redux/customHooks/shareHook";
+import { useParams } from "next/navigation";
+import { encryptURL } from "@/app/utils/shareUtils";
 
 interface EcosystemDataType {
   id: number;
@@ -28,8 +31,11 @@ const Ecosystem: React.FC<{
   ecosystemData: EcosystemDataType; 
   handleBack: () => void; 
 }> = ({ ecosystemData, handleBack }) => {
+  const params = useParams();
   const dispatch = useAppDispatch();
   const { company, loading, error } = useAppSelector((state) => state.companyProfile);
+
+  console.log("company", company)
 
   useEffect(() => {
     if (ecosystemData?.solution_provider) {
@@ -48,14 +54,16 @@ const Ecosystem: React.FC<{
   };
 
   const handleShare = () => {
-    // Add share functionality here
-    if (navigator.share) {
-      navigator.share({
-        title: company?.startup_name,
-        text: `Check out ${company?.startup_name}`,
-        url: window.location.href,
-      });
+    const startupId = company?.startup_id;
+
+    if (!startupId) {
+      alert("Unable to generate share link. Missing startup ID.");
+      return;
     }
+
+    const encryptedId = encryptURL(startupId.toString());
+    const shareUrl = `${window.location.origin}/startups/${encryptedId}`;
+    shareHook(shareUrl);
   };
 
   if (loading) {
