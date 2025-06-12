@@ -94,7 +94,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
 
         {/* Content Area */}
         <div className="bg-white flex-1 overflow-y-auto w-full">
-          <div className="md:px-6 py-4 h-full">
+          <div className="md:px-6 py-4 h-full w-full">
             {/* Desktop Process Steps */}
             <div className="hidden sm:flex gap-8 justify-between mb-8 md:mx-20">
               {coInnovationProcessSteps.map((process) => {
@@ -131,7 +131,7 @@ const ProjectSummaryPage = ({ params }: { params: { id: string } }) => {
             </div>
 
             {/* Mobile Horizontal Step Cards - Fixed Scrollable Carousel */}
-            <div className="sm:hidden mb-6 px-4 w-full overflow-x-scroll ">
+            <div className="sm:hidden mb-6 pb-2 px-4 w-[47%] overflow-x-scroll ">
               <div className="flex gap-3 scrollbar-styled">
                 {coInnovationProcessSteps.map((process, index) => {
                   const isEnabled = enabledSteps.includes(process.id);
