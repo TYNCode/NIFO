@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
 import Usecases from "./Usecases";
 
 const UsecasesCombined = ({
@@ -17,88 +19,131 @@ const UsecasesCombined = ({
   const [industryOptions, setIndustryOptions] = useState([]);
   const [subindustryOptions, setSubindustryOptions] = useState([]);
 
+  const [showSectorDropdown, setShowSectorDropdown] = useState(false);
+  const [showIndustryDropdown, setShowIndustryDropdown] = useState(false);
+  const [showSubindustryDropdown, setShowSubindustryDropdown] = useState(false);
 
   useEffect(() => {
-    fetch("https://tyn-server.azurewebsites.net/trends/")
-      .then((res) => res.json())
-      .then((data) => {
-        // Unique sectors
-        const sectors = [...new Set(data.map((d) => d.sector))];
+    const fetchOptions = async () => {
+      try {
+        const res = await fetch("https://tyn-server.azurewebsites.net/trends/");
+        const data = await res.json();
 
-        // Industries for selected sector
-        const filteredIndustries = data
-          .filter((d) => d.sector === sector)
-          .map((d) => d.industry);
-        const industries = [...new Set(filteredIndustries)];
+        const normalize = (arr) => [...new Set(arr.filter(Boolean))];
 
-        // Subindustries for selected sector + industry
-        const filteredSubs = data
-          .filter((d) => d.sector === sector && d.industry === industry)
-          .map((d) => d.sub_industry);
-        const subs = [...new Set(filteredSubs)];
+        setSectorOptions(normalize(data.map((d) => d.sector)));
+        setIndustryOptions(
+          normalize(
+            data.filter((d) => d.sector === sector).map((d) => d.industry)
+          )
+        );
+        setSubindustryOptions(
+          normalize(
+            data
+              .filter((d) => d.sector === sector && d.industry === industry)
+              .map((d) => d.sub_industry)
+          )
+        );
+      } catch (err) {
+        console.error("Error fetching dropdown options:", err);
+      }
+    };
 
-        setSectorOptions(sectors);
-        setIndustryOptions(industries);
-        setSubindustryOptions(subs);
-      });
+    fetchOptions();
   }, [sector, industry]);
+
+  const Dropdown = ({
+    label,
+    selected,
+    options,
+    onSelect,
+    showDropdown,
+    setShowDropdown,
+    disabled,
+  }) => (
+    <div className="relative w-full">
+      <button
+        disabled={disabled}
+        onClick={() => setShowDropdown(!showDropdown)}
+        className={`w-full flex items-center justify-between px-4 py-2 rounded-md border border-gray-300 text-sm font-medium ${
+          disabled
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white text-primary hover:bg-primary/10"
+        }`}
+      >
+        {selected || label}
+        <FaChevronDown
+          className={`text-xs transition-transform ${showDropdown ? "rotate-180" : ""}`}
+        />
+      </button>
+      {showDropdown && (
+        <div className="absolute top-full left-0 z-10 w-full bg-white border border-gray-200 rounded-md shadow-md mt-1 max-h-60 overflow-auto">
+          <button
+            onClick={() => {
+              onSelect("");
+              setShowDropdown(false);
+            }}
+            className="w-full text-left text-sm px-4 py-2 hover:bg-blue-50 first:rounded-t-md"
+          >
+            {label}
+          </button>
+          {options.map((opt) => (
+            <button
+              key={opt}
+              onClick={() => {
+                onSelect(opt);
+                setShowDropdown(false);
+              }}
+              className="w-full text-left text-sm px-4 py-2 hover:bg-blue-50"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-4 p-4 h-[90dvh]">
+      <div className="text-xl font-semibold pt-2 text-primary">Trends</div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {/* Sector Dropdown */}
-        <select
-          className="px-4 py-2 border border-gray-300 rounded"
-          value={sector}
-          onChange={(e) => {
-            setSector(e.target.value);
+        <Dropdown
+          label="All Sectors"
+          selected={sector}
+          options={sectorOptions}
+          onSelect={(val) => {
+            setSector(val);
             setIndustry("");
             setSubindustry("");
           }}
-        >
-          <option value="">Select Sector</option>
-          {sectorOptions.map((sec) => (
-            <option key={sec} value={sec}>
-              {sec}
-            </option>
-          ))}
-        </select>
-
-        {/* Industry Dropdown */}
-        <select
-          className="px-4 py-2 border border-gray-300 rounded"
-          value={industry}
-          onChange={(e) => {
-            setIndustry(e.target.value);
+          showDropdown={showSectorDropdown}
+          setShowDropdown={setShowSectorDropdown}
+        />
+        <Dropdown
+          label="All Industries"
+          selected={industry}
+          options={industryOptions}
+          onSelect={(val) => {
+            setIndustry(val);
             setSubindustry("");
           }}
+          showDropdown={showIndustryDropdown}
+          setShowDropdown={setShowIndustryDropdown}
           disabled={!sector}
-        >
-          <option value="">Select Industry</option>
-          {industryOptions.map((ind) => (
-            <option key={ind} value={ind}>
-              {ind}
-            </option>
-          ))}
-        </select>
-
-        {/* Subindustry Dropdown */}
-        <select
-          className="px-4 py-2 border border-gray-300 rounded"
-          value={subindustry}
-          onChange={(e) => setSubindustry(e.target.value)}
+        />
+        <Dropdown
+          label="All Subindustries"
+          selected={subindustry}
+          options={subindustryOptions}
+          onSelect={setSubindustry}
+          showDropdown={showSubindustryDropdown}
+          setShowDropdown={setShowSubindustryDropdown}
           disabled={!industry}
-        >
-          <option value="">Select Subindustry</option>
-          {subindustryOptions.map((sub) => (
-            <option key={sub} value={sub}>
-              {sub}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
-      <div className="flex-grow">
+      <div className="flex-grow mt-4">
         <Usecases
           selectedSector={sector}
           selectedIndustry={industry}
