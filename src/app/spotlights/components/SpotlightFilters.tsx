@@ -1,7 +1,5 @@
-// app/admin/spotlights/components/SpotlightFilters.tsx
-
 import React from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const ANALYST_OPTIONS = [
   { value: "gartner", label: "Gartner" },
@@ -30,41 +28,55 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
   showAnalystDropdown,
   setShowAnalystDropdown,
 }) => {
+  const ChevronIcon = showAnalystDropdown ? FaChevronUp : FaChevronDown;
+
+  const renderDropdown = (isMobile = false) => (
+    <div className="relative dropdown-container">
+      <button
+        onClick={() => setShowAnalystDropdown(!showAnalystDropdown)}
+        className={`${
+          isMobile
+            ? "w-full justify-between px-4 py-3 bg-gray-50 border"
+            : "px-3 xl:px-4 py-2 w-36 bg-blue-100"
+        } flex items-center gap-2 text-sm text-primary font-medium rounded-lg transition-colors hover:bg-blue-50`}
+      >
+        {selectedAnalyst
+          ? ANALYST_OPTIONS.find((opt) => opt.value === selectedAnalyst)?.label || selectedAnalyst
+          : "All Analysts"}
+        <ChevronIcon className="text-xs transition-transform" />
+      </button>
+
+      {showAnalystDropdown && (
+        <div
+          className={`absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 ${
+            isMobile ? "w-full mt-1" : "w-36"
+          }`}
+        >
+          <button
+            onClick={() => onAnalystChange("")}
+            className="w-full px-4 py-2 text-left text-sm hover:bg-blue-50 first:rounded-t-lg"
+          >
+            All Analysts
+          </button>
+          {ANALYST_OPTIONS.map((analyst) => (
+            <button
+              key={analyst.value}
+              onClick={() => onAnalystChange(analyst.value)}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-blue-50 last:rounded-b-lg"
+            >
+              {analyst.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
       {/* Desktop */}
-      <div className="hidden lg:flex items-center gap-4 xl:gap-6 bg-white rounded-xl p-3 xl:p-4 mt-4 lg:mt-0">
-        <div className="relative dropdown-container">
-          <button
-            onClick={() => setShowAnalystDropdown(!showAnalystDropdown)}
-            className="flex items-center gap-2 px-3 w-36 xl:px-4 py-2 bg-blue-100 rounded-lg text-sm text-primary font-medium transition-colors justify-between"
-          >
-            {selectedAnalyst
-              ? ANALYST_OPTIONS.find((opt) => opt.value === selectedAnalyst)?.label || selectedAnalyst
-              : "All Analysts"}
-            <FaChevronDown className={`text-xs transition-transform ${showAnalystDropdown ? "rotate-180" : ""}`} />
-          </button>
-
-          {showAnalystDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-              <button
-                onClick={() => onAnalystChange("")}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-blue-100 first:rounded-t-lg"
-              >
-                All Analysts
-              </button>
-              {ANALYST_OPTIONS.map((analyst) => (
-                <button
-                  key={analyst.value}
-                  onClick={() => onAnalystChange(analyst.value)}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-blue-100 last:rounded-b-lg"
-                >
-                  {analyst.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="hidden lg:flex items-center gap-4 xl:gap-6 bg-white rounded-xl p-3 xl:p-4 mt-4">
+        {renderDropdown(false)}
 
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-700 font-medium">TYN Verified</span>
@@ -92,37 +104,7 @@ const SpotlightFilters: React.FC<SpotlightFiltersProps> = ({
       {/* Mobile */}
       <div className="lg:hidden mb-6 bg-white rounded-xl p-4 shadow-sm border">
         <div className="space-y-4">
-          <div className="relative dropdown-container">
-            <button
-              onClick={() => setShowAnalystDropdown(!showAnalystDropdown)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm hover:bg-gray-100 transition-colors"
-            >
-              {selectedAnalyst
-                ? ANALYST_OPTIONS.find((opt) => opt.value === selectedAnalyst)?.label || selectedAnalyst
-                : "All Analysts"}
-              <FaChevronDown className={`text-xs transition-transform ${showAnalystDropdown ? "rotate-180" : ""}`} />
-            </button>
-
-            {showAnalystDropdown && (
-              <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                <button
-                  onClick={() => onAnalystChange("")}
-                  className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 first:rounded-t-lg"
-                >
-                  All Analysts
-                </button>
-                {ANALYST_OPTIONS.map((analyst) => (
-                  <button
-                    key={analyst.value}
-                    onClick={() => onAnalystChange(analyst.value)}
-                    className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 last:rounded-b-lg"
-                  >
-                    {analyst.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {renderDropdown(true)}
 
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">TYN Verified</span>

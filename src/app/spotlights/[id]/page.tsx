@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { decryptURL } from "../../utils/shareUtils";
 import shareHook from "../../redux/customHooks/shareHook";
 import LeftFrame from "../../components/LeftFrame/LeftFrame";
+import MobileHeader from "@/app/mobileComponents/MobileHeader";
 import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
 
 
@@ -21,6 +22,7 @@ const SpotlightDetail: React.FC = () => {
   const { company, loading, error } = useAppSelector((state) => state.companyProfile);
 
   const [decryptedId, setDecryptedId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     let encodedId = params?.id;
@@ -38,6 +40,28 @@ const SpotlightDetail: React.FC = () => {
       dispatch(fetchStartupById(Number(decryptedId)));
     }
   }, [decryptedId, dispatch]);
+
+  // Handle mobile menu effects
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   const handleBackClick = () => {
     window.history.back();
@@ -58,6 +82,10 @@ const SpotlightDetail: React.FC = () => {
 
   const handleEmailContact = (email: string) => {
     window.open(`mailto:${email}`, '_self');
+  };
+
+  const handleCloseMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   // Loading state
@@ -133,17 +161,27 @@ const SpotlightDetail: React.FC = () => {
 
   return (
     <main className="flex w-full min-h-screen bg-gray-50">
-      {/* Left Sidebar - Hidden on mobile/tablet, fixed on desktop */}
-      <div className="hidden lg:block lg:fixed lg:w-1/5 xl:w-[21%] h-full">
+      {/* Desktop Sidebar - Hidden on mobile/tablet, fixed on desktop */}
+      <div className="hidden lg:block lg:fixed lg:w-1/5 lg:h-full xl:w-[21%]">
         <LeftFrame />
       </div>
 
+      {/* Mobile Sidebar */}
+      <LeftFrame
+        isMobile={true}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={handleCloseMobileMenu}
+      />
+
       {/* Main Content */}
-      <div className="w-full lg:ml-[20%] xl:ml-[21%] px-3 sm:px-4 md:px-6 py-4 sm:py-6">
+      <div className="w-full lg:ml-[30%] xl:ml-[22%] px-3 sm:px-4 lg:px-8 py-4 lg:py-6 xl:py-2">
+        {/* Mobile Header with Hamburger */}
+        <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
+
         {/* Back Button */}
         <button
           onClick={handleBackClick}
-          className="flex items-center gap-2 text-primary hover:text-[#005a9a] font-medium mb-4 sm:mb-6 transition-colors"
+          className="flex items-center gap-2 text-primary hover:text-[#005a9a] font-medium mb-4 sm:mb-6 transition-colors mt-4 lg:mt-0"
         >
           <FaArrowLeft className="text-sm" />
           <span className="text-sm sm:text-base">Back to Spotlights</span>
@@ -218,15 +256,6 @@ const SpotlightDetail: React.FC = () => {
                 >
                   <IoShareSocialOutline size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
-                {/* <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
-                  <MdOutlineLanguage size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
-                  <MdOutlinePhoneInTalk size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button className="flex items-center justify-center bg-blue-100 text-blue-600 p-2 rounded-lg sm:rounded-xl hover:bg-blue-200 transition-colors">
-                  <FaLinkedinIn size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button> */}
               </div>
             </div>
           </div>

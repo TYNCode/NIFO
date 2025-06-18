@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import { FiChevronRight } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
+import { FaChevronRight } from "react-icons/fa6";
+import { BsArrowRight } from "react-icons/bs";
 
 const swipeVariants = {
   enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
@@ -77,7 +79,7 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
 
   if (loading) {
     return (
-      <div className="h-40 flex items-center justify-center text-[#0071C1] font-medium animate-pulse">
+      <div className="h-40 flex items-center justify-center text-[#0071C1] font-medium">
         Loading usecases...
       </div>
     );
@@ -95,7 +97,7 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <div className="text-2xl font-bold text-center mt-4 mb-6 bg-gradient-to-r from-[#2287C0] to-[#56ccf2] text-transparent bg-clip-text animate-pulse">
+      <div className="text-2xl font-bold text-center mt-4 mb-6 text-primary">
         Explore the Usecase
       </div>
 
@@ -105,18 +107,18 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
       >
         {/* Left Arrow */}
         <div
-          className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer bg-black/40 p-1 rounded-full"
+          className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer p-1 rounded-full"
           onClick={() => paginate(-1)}
         >
-          <BsArrowRight className="rotate-180 text-white" size={20} />
+          <FaChevronRight className="rotate-180 text-primary" size={18} />
         </div>
 
         {/* Right Arrow */}
         <div
-          className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer bg-black/40 p-1 rounded-full"
+          className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-20 cursor-pointer p-1 rounded-full"
           onClick={() => paginate(1)}
         >
-          <BsArrowRight className="text-white" size={20} />
+          <FaChevronRight className="text-primary" size={18} />
         </div>
 
         <AnimatePresence custom={direction} initial={false}>
@@ -153,7 +155,7 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
                 </div>
               </div>
               <div className="flex justify-end items-center pb-4">
-                <div className="p-2 bg-white/50 rounded-full">
+                <div className="p-2 bg-primary rounded-full">
                   <BsArrowRight size={20} />
                 </div>
               </div>

@@ -4,7 +4,11 @@ import React from "react";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa";
 
-const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) => {
+const UsecaseDescription = ({
+  handleEcosystem,
+  selectedUseCase,
+  handleBack,
+}) => {
   const handleExploreClick = () => {
     handleEcosystem({ selectedUseCase });
   };
@@ -46,7 +50,7 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
         </div>
 
         <button
-          className="relative z-10 text-sm font-medium bg-white text-black px-6 py-3 rounded-lg shadow-lg cursor-pointer hover:bg-gray-100 transition-colors min-w-[160px]"
+          className="relative z-10 text-sm bg-white text-primary font-medium px-6 py-3 rounded-lg shadow-lg cursor-pointer hover:bg-gray-100 transition-colors min-w-[160px]"
           onClick={handleExploreClick}
         >
           Explore Solution Provider
@@ -69,13 +73,15 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
         {selectedUseCase?.solution?.length > 0 && (
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
             <div className="font-semibold text-lg mb-3 text-gray-900 border-b border-gray-200 pb-2">
-             Solution
+              Solution
             </div>
             <ul className="space-y-3">
               {selectedUseCase.solution.map((point, index) => (
                 <li key={index} className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-700 leading-relaxed text-base">{point}</span>
+                  <span className="text-gray-700 leading-relaxed text-base">
+                    {point}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -91,12 +97,20 @@ const UsecaseDescription = ({ handleEcosystem, selectedUseCase, handleBack }) =>
               {selectedUseCase.impact.map((point, index) => (
                 <li key={index} className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-700 leading-relaxed text-base">{point}</span>
+                  <span className="text-gray-700 leading-relaxed text-base">
+                    {point}
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
         )}
+
+        <div className="flex justify-center">
+          <div className="bg-white text-primary w-max px-6 rounded-lg py-3 font-medium text-sm shadow-md border border-gray-100 text-center mt-6" onClick={handleExploreClick}>
+            Explore Solution Provider
+          </div>
+        </div>
       </div>
     </div>
   );

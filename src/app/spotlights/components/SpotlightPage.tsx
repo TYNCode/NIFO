@@ -18,11 +18,14 @@ const SpotlightPage: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const { spotlights, loading, error } = useAppSelector((state) => state.spotlight);
+  const { spotlights, loading, error } = useAppSelector(
+    (state) => state.spotlight
+  );
 
   const [selectedTab, setSelectedTab] = useState<TabType>("All Spotlights");
   const [selectedAnalyst, setSelectedAnalyst] = useState<string>("");
-  const [showAnalystDropdown, setShowAnalystDropdown] = useState<boolean>(false);
+  const [showAnalystDropdown, setShowAnalystDropdown] =
+    useState<boolean>(false);
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
@@ -80,7 +83,9 @@ const SpotlightPage: React.FC = () => {
   const filteredSpotlights = useMemo(() => {
     if (!spotlights || !Array.isArray(spotlights)) return [];
     return spotlights.filter((spotlight: any) => {
-      const matchesVerified = filters.TYNVerified ? spotlight.is_tyn_verified : true;
+      const matchesVerified = filters.TYNVerified
+        ? spotlight.is_tyn_verified
+        : true;
       const matchesAnalyst = selectedAnalyst
         ? (selectedAnalyst === "gartner" && spotlight.gartner_tag) ||
           (selectedAnalyst === "mckinsey" &&
@@ -95,7 +100,8 @@ const SpotlightPage: React.FC = () => {
   const sortedSpotlights = useMemo(() => {
     return selectedTab === "Latest"
       ? [...filteredSpotlights].sort(
-          (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          (a, b) =>
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
         )
       : filteredSpotlights;
   }, [filteredSpotlights, selectedTab]);
@@ -125,7 +131,9 @@ const SpotlightPage: React.FC = () => {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              <p className="text-gray-600 mt-4 text-lg">Loading spotlights...</p>
+              <p className="text-gray-600 mt-4 text-lg">
+                Loading spotlights...
+              </p>
             </div>
           </div>
         </div>
@@ -142,7 +150,9 @@ const SpotlightPage: React.FC = () => {
         <div className="w-full lg:pl-[20%] px-4 lg:px-8 py-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center max-w-md">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                Something went wrong
+              </h2>
               <p className="text-red-600 mb-4">{error}</p>
               <button
                 onClick={() => dispatch(fetchSpotlights())}
@@ -177,16 +187,17 @@ const SpotlightPage: React.FC = () => {
         <MobileHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
 
         {/* Filter Toggle (Mobile only) */}
-        <div className="lg:hidden flex justify-between text-lg mt-2 mb-4">
-          <div className="text-primary font-semibold">
-            Startup Spotlight
-          </div>
+        <div className="lg:hidden flex items-center justify-between text-lg mt-2 mb-4 px-2">
+          <div className="text-primary font-semibold">Startup Spotlight</div>
+
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="p-2 hover:bg-gray-100 rounded-lg relative transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors text-sm text-primary font-medium focus:outline-none focus:ring-2 focus:ring-gray-300 relative"
             aria-label="Toggle filters"
           >
-            <FaFilter className="text-lg" />
+            <FaFilter className="text-base" />
+            <span>{showMobileFilters ? "Hide Filters" : "Show Filters"}</span>
+
             {hasActiveFilters && (
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
             )}
@@ -195,7 +206,9 @@ const SpotlightPage: React.FC = () => {
 
         {/* Desktop Header & Filters */}
         <div className="hidden lg:flex items-center justify-between mb-8">
-          <h1 className="text-2xl xl:text-3xl font-bold text-primary">Startup Spotlight</h1>
+          <h1 className="text-2xl xl:text-3xl font-bold text-primary">
+            Startup Spotlight
+          </h1>
           <SpotlightFilters
             selectedAnalyst={selectedAnalyst}
             onAnalystChange={setSelectedAnalyst}
@@ -229,7 +242,9 @@ const SpotlightPage: React.FC = () => {
           {sortedSpotlights.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-gray-400 text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No spotlights found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No spotlights found
+              </h3>
               <p className="text-gray-600 mb-4">
                 {hasActiveFilters
                   ? "Try adjusting your filters to see more results."
