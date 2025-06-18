@@ -66,8 +66,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
         setIsLogoutOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -83,9 +83,13 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   }, [isMobile, isMobileOpen, onCloseMobile]);
 
   const handleLogout = () => {
-    localStorage.clear();
-    router.push("/login");
+    console.log("Logging out...");
+    setTimeout(() => {
+      localStorage.clear();
+      router.push("/login");
+    }, 100);
   };
+  
 
   const handleDashboardRoute = () => {
     router.push("/Dashboard");
