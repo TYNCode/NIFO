@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaStar, FaHome, FaFileAlt, FaRocket } from "react-icons/fa";
+import { FaStar, FaHome, FaFileAlt, FaRocket, FaEnvelope, FaList, FaPalette } from "react-icons/fa";
 import { useMemo } from "react";
 import Image from "next/image";
 
@@ -11,14 +11,24 @@ const navItems = [
   { label: "Spotlights", href: "/admin/spotlights", icon: FaStar },
   { label: "Agreements", href: "/admin/agreements", icon: FaFileAlt },
   { label: "Startups", href: "/admin/startups", icon: FaRocket },
+  { label: "Email Compose", href: "/admin/emails/compose", icon: FaEnvelope },
+  { label: "Email Logs", href: "/admin/emails/logs", icon: FaList },
+  { label: "Email Templates", href: "/admin/emails/templates", icon: FaPalette },
 ];
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const activeIndex = useMemo(
-    () => navItems.findIndex((item) => item.href === pathname),
-    [pathname]
-  );
+  const activeIndex = useMemo(() => {
+    // Check for exact match first
+    const exactMatch = navItems.findIndex((item) => item.href === pathname);
+    if (exactMatch !== -1) return exactMatch;
+    
+    // If no exact match, check for partial match (for nested routes)
+    const partialMatch = navItems.findIndex((item) => 
+      pathname.startsWith(item.href) && item.href !== "/admin"
+    );
+    return partialMatch !== -1 ? partialMatch : 0;
+  }, [pathname]);
 
   const router = useRouter();
 
@@ -53,7 +63,7 @@ const Sidebar = () => {
 
           <nav className="flex flex-col relative z-10 gap-1 px-2">
             {navItems.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href;
+              const isActive = pathname === href || (pathname.startsWith(href) && href !== "/admin");
 
               return (
                 <Link
