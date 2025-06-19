@@ -42,7 +42,6 @@ const PageContent: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, []);
 
-  // ✅ Handle hydration safely
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -57,7 +56,6 @@ const PageContent: React.FC = () => {
     };
   }, []);
 
-  // Prevent hydration mismatch flicker
   if (!hasMounted) return null;
 
   return (

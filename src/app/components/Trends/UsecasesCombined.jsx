@@ -77,7 +77,7 @@ const UsecasesCombined = ({
         />
       </button>
       {showDropdown && (
-        <div className="absolute top-full left-0 z-10 w-full bg-white border border-gray-200 rounded-md shadow-md mt-1 max-h-60 overflow-auto">
+        <div className="absolute top-full left-0 z-50 w-full bg-white border border-gray-200 rounded-md shadow-md mt-1 max-h-56 overflow-auto">
           <button
             onClick={() => {
               onSelect("");
