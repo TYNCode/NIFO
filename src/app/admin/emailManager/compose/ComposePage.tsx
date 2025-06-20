@@ -3,10 +3,11 @@
 
 import React, { useState } from "react";
 import { FaUpload, FaPaperPlane, FaFlask } from "react-icons/fa";
-import ContactUploader from "./components/ContactUploader";
-import BulkEmailForm from "./components/BulkEmailForm";
-import TestEmailModal from "./components/TestEmailModal";
-import { Contact } from "./types/Contact";
+import { Contact } from "../types/Contact";
+import ContactUploader from "../components/ContactUploader";
+import BulkEmailForm from "../components/BulkEmailForm";
+import TestEmailModal from "../components/TestEmailModal";
+
 
 const EmailComposePage = () => {
   const [activeTab, setActiveTab] = useState<"upload" | "send">("upload");

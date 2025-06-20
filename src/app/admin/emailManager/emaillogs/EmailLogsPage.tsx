@@ -3,8 +3,9 @@
 
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaFilter, FaSync, FaCheckCircle, FaTimesCircle, FaPaperPlane } from "react-icons/fa";
-import LogsTable from "./components/LogsTable";
-import { EmailLog } from "./types/EmailLog";
+import { EmailLog } from "../types/EmailLog";
+import LogsTable from "../components/LogsTable";
+
 
 const EmailLogsPage = () => {
   const [logs, setLogs] = useState<EmailLog[]>([]);
