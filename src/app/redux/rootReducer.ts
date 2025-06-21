@@ -19,6 +19,7 @@ import changePasswordSlice from "./features/auth/forgotPasswordSlice";
 import resetPasswordSlice from "./features/auth/resetPasswordSlice";
 import agreementSlice from "./features/admin/agreements/agreementSlice"
 import promptSlice from "./features/prompt/promptSlice";
+import trendsReducer from "./features/trendsSlice";
 
 const rootReducer = combineReducers({
   chatHistory: chatHistorySlice,
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   useCase:useCaseSlice,
   agreement:agreementSlice,
   prompt: promptSlice,
+  trends: trendsReducer,
 
 });
 

@@ -5,6 +5,7 @@ import Industries from "../../components/Trends/Industries";
 import UsecasesCombined from "../../components/Trends/UsecasesCombined";
 import Ecosystem from "../../components/Trends/Ecosystem";
 import UsecaseDescription from "../../components/Trends/UsecaseDescription";
+import AddTrendsModal from "../../trends/components/AddTrendsModal";
 
 interface TrendsMobileProps {
   selectedSector?: string;
@@ -40,6 +41,8 @@ const TrendsMobile: React.FC<TrendsMobileProps> = ({
     return saved ? JSON.parse(saved) : null;
   });
 
+  const [isAddTrendModalOpen, setIsAddTrendModalOpen] = useState(false);
+
   const handleUsecaseClick = useCallback((usecase: any) => {
     setSelectedUseCase(usecase);
     localStorage.setItem("selectedUseCase", JSON.stringify(usecase));
@@ -57,6 +60,23 @@ const TrendsMobile: React.FC<TrendsMobileProps> = ({
 
   return (
     <div className="w-full max-w-screen-sm mx-auto bg-white min-h-screen pb-4">
+      {/* Add Trend Button */}
+      <div className="flex justify-end p-4">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow"
+          onClick={() => setIsAddTrendModalOpen(true)}
+        >
+          Add Trend
+        </button>
+      </div>
+      <AddTrendsModal
+        isOpen={isAddTrendModalOpen}
+        onClose={() => setIsAddTrendModalOpen(false)}
+        sectorOptions={[]}
+        industryOptions={[]}
+        subIndustryOptions={[]}
+        solutionProviderOptions={[]}
+      />
       {/* Trends Header */}
       
 
