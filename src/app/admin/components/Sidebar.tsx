@@ -11,9 +11,8 @@ const navItems = [
   { label: "Spotlights", href: "/admin/spotlights", icon: FaStar },
   { label: "Agreements", href: "/admin/agreements", icon: FaFileAlt },
   { label: "Startups", href: "/admin/startups", icon: FaRocket },
-  { label: "Email Compose", href: "/admin/emails/compose", icon: FaEnvelope },
-  { label: "Email Logs", href: "/admin/emails/logs", icon: FaList },
-  { label: "Email Templates", href: "/admin/emails/templates", icon: FaPalette },
+  { label: "Email Compose", href: "/admin/emailManager/compose", icon: FaEnvelope },
+  { label: "Email Logs", href: "/admin/emailManager/emaillogs", icon: FaList },
 ];
 
 const Sidebar = () => {

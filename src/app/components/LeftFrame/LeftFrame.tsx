@@ -261,6 +261,16 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                   View Dashboard
                 </div>
               )}
+
+              <div>
+                <div
+                  className="px-4 py-3 hover:bg-gray-50 hover:text-gray-700 flex items-center justify-between cursor-pointer text-sm transition-colors"
+                  onClick={() => router.push("/admin")}
+                >
+                  <span>Admin</span>
+                  <FaFolder size={16} />
+                </div>
+              </div>
               <div
                 className="px-4 py-3 hover:bg-red-50 hover:text-red-600 flex items-center justify-between cursor-pointer text-sm transition-colors"
                 onClick={handleLogout}
