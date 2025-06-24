@@ -1,9 +1,9 @@
 import React from "react";
-import { StartupType } from "../types/company";
+import { CompanyType } from "@/app/redux/features/companyprofile/companyProfileSlice";
 
 interface DeleteConfirmationModalProps {
   open: boolean;
-  startup: StartupType | null;
+  startup: CompanyType | null;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -39,7 +39,13 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
         <p className="text-sm text-customGreyishBlack mb-6">
           Are you sure you want to delete{" "}
-          <strong>{startup?.startup_name}</strong>? This action cannot be undone.
+          <strong>
+            {startup
+              ? "startup_name" in startup
+                ? startup.startup_name
+                : (startup as any).enterprise_name
+              : ""}
+          </strong>? This action cannot be undone.
         </p>
 
         <div className="flex justify-end gap-3">

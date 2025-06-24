@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import { CompanyType, fetchCompanyById } from "@/app/redux/features/companyprofile/companyProfileSlice";
 import {
     FaArrowLeft,
     FaGlobe,
@@ -35,7 +35,7 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
 
     useEffect(() => {
         if (solutionProviderId) {
-            dispatch(fetchStartupById(solutionProviderId));
+            dispatch(fetchCompanyById({ id: solutionProviderId, type: "startup" }));
         }
     }, [dispatch, solutionProviderId]);
 
@@ -50,17 +50,24 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
     };
 
     const handleShare = () => {
-        if (navigator.share && company?.startup_name) {
+        const companyTyped = company as any;
+        let name = '';
+        if (isStartup(companyTyped)) {
+            name = (companyTyped as any).startup_name;
+        } else if (isEnterprise(companyTyped)) {
+            name = (companyTyped as any).enterprise_name;
+        }
+        if (navigator.share && name) {
             navigator.share({
-                title: company.startup_name,
-                text: `Check out ${company.startup_name}`,
+                title: name,
+                text: `Check out ${name}`,
                 url: window.location.href,
             });
         }
     };
 
     if (loading) {
-        return <div className="text-center py-8">Loading startup details...</div>;
+        return <div className="text-center py-8">Loading provider details...</div>;
     }
 
     if (error || !company) {
@@ -70,6 +77,15 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             </div>
         );
     }
+
+    // Type guards for company
+    function isStartup(c: any): c is { startup_id: number } {
+        return c && typeof c === 'object' && 'startup_id' in c;
+    }
+    function isEnterprise(c: any): c is { enterprise_id: number } {
+        return c && typeof c === 'object' && 'enterprise_id' in c;
+    }
+    const companyTyped = company as any;
 
     return (
         <div className="bg-white w-[40vw] h-[85vh] overflow-y-auto p-4 rounded-xl shadow space-y-6">
@@ -83,10 +99,10 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             <div className="flex gap-4">
                 {/* Logo */}
                 <div className="flex-shrink-0">
-                    {company.startup_logo ? (
+                    {isStartup(companyTyped) && (companyTyped as any).startup_logo ? (
                         <img
-                            src={company.startup_logo}
-                            alt={`${company.startup_name} logo`}
+                            src={(companyTyped as any).startup_logo}
+                            alt={`${(companyTyped as any).startup_name} logo`}
                             className="w-16 h-16 object-contain border rounded"
                             onError={(e) => {
                                 const target = e.currentTarget as HTMLImageElement;
@@ -103,16 +119,23 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
 
                 {/* Info */}
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-lg font-bold text-gray-800">{company.startup_name}</h2>
+                    <h2 className="text-lg font-bold text-gray-800">
+                        {isStartup(companyTyped) ? (companyTyped as any).startup_name : isEnterprise(companyTyped) ? (companyTyped as any).enterprise_name : ''}
+                    </h2>
                     <div className="flex flex-wrap gap-2 text-xs">
-                        {company.startup_country && (
+                        {isStartup(companyTyped) && (companyTyped as any).startup_country && (
                             <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-gray-700">
-                                <FaGlobe /> {company.startup_country}
+                                <FaGlobe /> {(companyTyped as any).startup_country}
                             </span>
                         )}
-                        {company.startup_company_stage && (
+                        {isEnterprise(companyTyped) && (companyTyped as any).enterprise_description && (
+                            <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full text-gray-700">
+                                <FaGlobe /> {(companyTyped as any).enterprise_description}
+                            </span>
+                        )}
+                        {isStartup(companyTyped) && (companyTyped as any).startup_company_stage && (
                             <span className="flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full text-green-700">
-                                <FaChartLine /> {company.startup_company_stage}
+                                <FaChartLine /> {(companyTyped as any).startup_company_stage}
                             </span>
                         )}
                     </div>
@@ -121,14 +144,14 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2">
-                {company.startup_url && (
+                {(isStartup(companyTyped) && (companyTyped as any).startup_url) || (isEnterprise(companyTyped) && (companyTyped as any).enterprise_url) ? (
                     <button
-                        onClick={() => handleVisitWebsite(company.startup_url)}
+                        onClick={() => handleVisitWebsite(isStartup(companyTyped) ? (companyTyped as any).startup_url : isEnterprise(companyTyped) ? (companyTyped as any).enterprise_url : "")}
                         className="text-xs px-3 py-1 bg-primary text-white rounded hover:bg-primary flex items-center gap-1"
                     >
                         <FaExternalLinkAlt /> Website
                     </button>
-                )}
+                ) : null}
                 <button
                     onClick={handleShare}
                     className="text-xs px-2 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200 flex items-center"
@@ -156,82 +179,65 @@ const SolutionProvider: React.FC<SolutionProviderProps> = ({
             )}
 
             {/* Overview */}
-            {(company.startup_overview || company.startup_description) && (
+            {(isStartup(companyTyped) && ((companyTyped as any).startup_overview || (companyTyped as any).startup_description)) || (isEnterprise(companyTyped) && (companyTyped as any).enterprise_description) ? (
                 <div>
                     <h3 className="font-semibold text-primary mb-1 flex items-center gap-1">
                         <FaRocket /> Overview
                     </h3>
-                    {company.startup_overview && (
-                        <p className="text-sm text-gray-800 mb-2">{company.startup_overview}</p>
+                    {isStartup(companyTyped) && (companyTyped as any).startup_overview && (
+                        <p className="text-sm text-gray-800 mb-2">{(companyTyped as any).startup_overview}</p>
                     )}
-                    {company.startup_description && <p className="text-sm text-gray-800">{company.startup_description}</p>}
+                    {isStartup(companyTyped) && (companyTyped as any).startup_description && <p className="text-sm text-gray-800">{(companyTyped as any).startup_description}</p>}
+                    {isEnterprise(companyTyped) && (companyTyped as any).enterprise_description && <p className="text-sm text-gray-800">{(companyTyped as any).enterprise_description}</p>}
                 </div>
-            )}
+            ) : null}
 
             {/* Solutions & Use Cases */}
-            {(company.startup_solutions || company.startup_usecases) && (
+            {isStartup(companyTyped) && ((companyTyped as any).startup_solutions || (companyTyped as any).startup_usecases) ? (
                 <div>
                     <h3 className="font-semibold text-primary mb-1">Solutions & Use Cases</h3>
-                    {company.startup_solutions && (
-                        <p className="text-sm text-gray-800 mb-2">{company.startup_solutions}</p>
+                    {(companyTyped as any).startup_solutions && (
+                        <p className="text-sm text-gray-800 mb-2">{(companyTyped as any).startup_solutions}</p>
                     )}
-                    {company.startup_usecases && <p className="text-sm text-gray-800">{company.startup_usecases}</p>}
+                    {(companyTyped as any).startup_usecases && <p className="text-sm text-gray-800">{(companyTyped as any).startup_usecases}</p>}
                 </div>
-            )}
+            ) : null}
 
             {/* Strategic Positioning */}
-            {(company.startup_gsi || company.startup_partners || company.startup_customers) && (
+            {isStartup(companyTyped) && ((companyTyped as any).startup_gsi || (companyTyped as any).startup_partners || (companyTyped as any).startup_customers) ? (
                 <div>
                     <h3 className="font-semibold text-primary mb-1">Strategic Positioning</h3>
-                    {company.startup_gsi && <p className="text-sm mb-2">GSI: {company.startup_gsi}</p>}
-                    {company.startup_partners && <p className="text-sm mb-2">Partners: {company.startup_partners}</p>}
-                    {company.startup_customers && <p className="text-sm">Customers: {company.startup_customers}</p>}
+                    {(companyTyped as any).startup_gsi && <p className="text-sm mb-2">GSI: {(companyTyped as any).startup_gsi}</p>}
+                    {(companyTyped as any).startup_partners && <p className="text-sm mb-2">Partners: {(companyTyped as any).startup_partners}</p>}
+                    {(companyTyped as any).startup_customers && <p className="text-sm">Customers: {(companyTyped as any).startup_customers}</p>}
                 </div>
-            )}
+            ) : null}
 
             {/* Technology & Industry */}
-            {(company.startup_technology || company.startup_industry) && (
+            {isStartup(companyTyped) && ((companyTyped as any).startup_technology || (companyTyped as any).startup_industry) ? (
                 <div className="flex gap-2 flex-wrap">
-                    {company.startup_technology && (
+                    {(companyTyped as any).startup_technology && (
                         <span className="px-3 py-1 text-xs bg-blue-100 text-primary rounded-full">
-                            Tech: {company.startup_technology}
+                            Tech: {(companyTyped as any).startup_technology}
                         </span>
                     )}
-                    {company.startup_industry && (
-                        <span className="px-3 py-1 text-xs bg-blue-100 text-primary rounded-full">
-                            Industry: {company.startup_industry}
+                    {(companyTyped as any).startup_industry && (
+                        <span className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                            Industry: {(companyTyped as any).startup_industry}
                         </span>
                     )}
                 </div>
-            )}
+            ) : null}
 
-            {/* Founders */}
-            {company.startup_founders_info && (
-                <div>
-                    <h3 className="font-semibold text-primary mb-1">Founders</h3>
-                    <p className="text-sm text-gray-800">{company.startup_founders_info}</p>
-                </div>
-            )}
-
-            {/* Contact */}
-            {company.startup_emails && (
-                <div>
-                    <h3 className="font-semibold text-primary mb-1">Contact</h3>
-                    {company.startup_emails.split(",").map((email, idx) => {
-                        const clean = email.trim();
-                        const match = clean.match(/<(.+)>/);
-                        const actual = match ? match[1] : clean;
-                        const label = match ? clean.replace(/<.+>/, "").trim() : clean;
-                        return (
-                            <button
-                                key={idx}
-                                onClick={() => handleEmailContact(actual)}
-                                className="text-sm text-left text-primary hover:underline block"
-                            >
-                                {label}
-                            </button>
-                        );
-                    })}
+            {/* Contact & Email */}
+            {isStartup(companyTyped) && (companyTyped as any).startup_emails && (
+                <div className="flex items-center gap-2 mt-4">
+                    <button
+                        onClick={() => handleEmailContact((companyTyped as any).startup_emails)}
+                        className="text-xs px-3 py-1 bg-blue-100 text-primary rounded hover:bg-blue-200 flex items-center gap-1"
+                    >
+                        <FaEnvelope /> Email
+                    </button>
                 </div>
             )}
         </div>

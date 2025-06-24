@@ -3,7 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { FaPaperPlane, FaUsers, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { Contact } from "../../types/Contact";
+import { Contact } from "../types/Contact";
+
 
 
 interface BulkEmailFormProps {

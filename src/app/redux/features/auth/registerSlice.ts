@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { User } from "../../../interfaces/index";
+import { User } from "../../../interfaces";
 import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface RegisterState {
@@ -17,32 +16,51 @@ const initialState: RegisterState = {
   message: undefined,
 };
 
-interface FormData {
-  first_name: string;
-  email: string;
-  organization_name: string;
-  password: string;
+interface RegisterResponse {
+  user: User;
+  tokens: {
+    access_token: string;
+    refresh_token: string;
+  };
+  message?: string;
 }
 
-export const registerUser = createAsyncThunk(
-  "register/registerUser",
-  async (data: FormData, { rejectWithValue }) => {
-    try {
-      const response = await apiRequest(
-        "post",
-        "/user/register/",
-        data,
-        false
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.email[0] ||
-          "Unexpected error during registration. Please try again."
-      );
+export const registerUser = createAsyncThunk<
+  RegisterResponse,
+  any,
+  { rejectValue: string }
+>("register/registerUser", async (data, { rejectWithValue }) => {
+  try {
+    const response = await apiRequest("post", "/users/register/", data, false);
+
+    const { data: responseData, message } = response.data;
+
+    return {
+      user: responseData.user,
+      tokens: responseData.tokens,
+      message,
+    };
+  } catch (error: any) {
+    let errMsg = "An unexpected error occurred.";
+    const data = error.response?.data;
+
+    if (data) {
+      if (typeof data === "string") {
+        errMsg = data;
+      } else if (Array.isArray(data)) {
+        errMsg = data.join(" ");
+      } else if (typeof data === "object") {
+        if (data.message) {
+          errMsg = data.message;
+        } else {
+          errMsg = Object.values(data).flat().join(" ");
+        }
+      }
     }
+
+    return rejectWithValue(errMsg);
   }
-);
+});
 
 const registerSlice = createSlice({
   name: "register",
@@ -65,7 +83,8 @@ const registerSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.message = action.payload.message;
+        state.message = action.payload.message || "Registration successful";
+
         localStorage.setItem(
           "jwtAccessToken",
           action.payload.tokens.access_token
@@ -78,11 +97,10 @@ const registerSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || "Registration failed.";
       });
   },
 });
 
 export const { clearRegisterState } = registerSlice.actions;
-
 export default registerSlice.reducer;

@@ -16,32 +16,37 @@ const initialState: LoginState = {
   message: undefined,
 };
 
-interface FormData {
-  email: string;
-  password: string;
-}
-
 interface LoginResponse {
   user: User;
   tokens: {
     access_token: string;
     refresh_token: string;
   };
+  message?: string;
 }
 
 export const loginUser = createAsyncThunk<
   LoginResponse,
-  FormData,
+  { email: string; password: string },
   { rejectValue: string }
 >("login/loginUser", async (data, { rejectWithValue }) => {
   try {
-    const response = await apiRequest("post", "/user/login/", data, false);
-    return response.data;
+    const response = await apiRequest("post", "/users/login/", data, false);
+
+    const { data: responseData, message } = response.data;
+
+    return {
+      user: responseData.user,
+      tokens: responseData.tokens,
+      message,
+    };
   } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message ||
-        "Login failed. Please check your credentials."
-    );
+    const errData = error.response?.data;
+    const errMsg =
+      typeof errData?.message === "string"
+        ? errData.message
+        : "Login failed. Please try again.";
+    return rejectWithValue(errMsg);
   }
 });
 
@@ -65,9 +70,9 @@ const loginSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         state.user = action.payload.user;
-        state.message = "Login successful";
+        state.message = action.payload.message || "Login successful.";
+
         localStorage.setItem(
           "jwtAccessToken",
           action.payload.tokens.access_token
@@ -80,11 +85,10 @@ const loginSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || "Login failed.";
       });
   },
 });
 
 export const { clearLoginState } = loginSlice.actions;
-
 export default loginSlice.reducer;

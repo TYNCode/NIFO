@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { decryptURL } from "@/app/utils/shareUtils";
-import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import { fetchCompanyById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import type { StartupType } from "@/app/admin/startups/types/company.d.ts";
 import {
   FaArrowLeft,
   FaEnvelope,
@@ -37,7 +38,7 @@ const StartupPage: React.FC = () => {
 
   useEffect(() => {
     if (decryptedId && !isNaN(Number(decryptedId))) {
-      dispatch(fetchStartupById(Number(decryptedId)));
+      dispatch(fetchCompanyById({ id: Number(decryptedId), type: "startup" }));
     }
   }, [decryptedId, dispatch]);
 
@@ -45,8 +46,8 @@ const StartupPage: React.FC = () => {
   const handleShare = () => {
     const shareUrl = `${window.location.origin}/startups/${params.id}`;
     navigator.share?.({
-      title: company?.startup_name,
-      text: company?.startup_description,
+      title: (company as StartupType)?.startup_name,
+      text: (company as StartupType)?.startup_description,
       url: shareUrl,
     });
   };
@@ -56,6 +57,9 @@ const StartupPage: React.FC = () => {
   const handleEmailContact = (email: string) => {
     window.open(`mailto:${email}`, "_self");
   };
+
+  // Cast company to StartupType for startup-specific fields
+  const startup = company as StartupType;
 
   if (loading) {
     return (
@@ -90,9 +94,9 @@ const StartupPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-md px-6 py-8 mb-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div>
-              {company.startup_logo ? (
+              {startup.startup_logo ? (
                 <Image
-                  src={company.startup_logo}
+                  src={startup.startup_logo}
                   alt="logo"
                   width={20}
                   height={20}
@@ -106,28 +110,28 @@ const StartupPage: React.FC = () => {
             </div>
 
             <div className="flex-1">
-              <h1 className="text-2xl font-bold mb-2">{company.startup_name}</h1>
+              <h1 className="text-2xl font-bold mb-2">{startup.startup_name}</h1>
               <div className="flex flex-wrap gap-3">
-                {company.startup_analyst_rating && (
+                {startup.startup_analyst_rating && (
                   <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1">
-                    <FaStar /> {company.startup_analyst_rating}
+                    <FaStar /> {startup.startup_analyst_rating}
                   </span>
                 )}
-                {company.startup_country && (
+                {startup.startup_country && (
                   <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                    <FaGlobe /> {company.startup_country}
+                    <FaGlobe /> {startup.startup_country}
                   </span>
                 )}
-                {company.startup_company_stage && (
+                {startup.startup_company_stage && (
                   <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                    <FaChartLine /> {company.startup_company_stage}
+                    <FaChartLine /> {startup.startup_company_stage}
                   </span>
                 )}
               </div>
               <div className="mt-4 flex gap-3">
-                {company.startup_url && (
+                {startup.startup_url && (
                   <button
-                    onClick={() => handleVisitWebsite(company.startup_url)}
+                    onClick={() => handleVisitWebsite(startup.startup_url)}
                     className="px-4 py-2 text-sm bg-primary text-white rounded hover:bg-[#005a9a]"
                   >
                     <FaExternalLinkAlt className="inline-block mr-2" /> Visit Website
@@ -155,33 +159,33 @@ const StartupPage: React.FC = () => {
             </h2>
             {section === "Overview" && (
               <>
-                {company.startup_overview && <p className="mb-4 text-gray-700">{company.startup_overview}</p>}
-                {company.startup_description && <p className="text-gray-700">{company.startup_description}</p>}
+                {startup.startup_overview && <p className="mb-4 text-gray-700">{startup.startup_overview}</p>}
+                {startup.startup_description && <p className="text-gray-700">{startup.startup_description}</p>}
               </>
             )}
             {section === "Solutions & Use Cases" && (
               <>
-                {company.startup_solutions && <p className="mb-4 text-gray-700">{company.startup_solutions}</p>}
-                {company.startup_usecases && <p className="text-gray-700">{company.startup_usecases}</p>}
+                {startup.startup_solutions && <p className="mb-4 text-gray-700">{startup.startup_solutions}</p>}
+                {startup.startup_usecases && <p className="text-gray-700">{startup.startup_usecases}</p>}
               </>
             )}
             {section === "Technology & Industry" && (
               <div className="flex gap-4">
-                {company.startup_technology && (
+                {startup.startup_technology && (
                   <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    {company.startup_technology}
+                    {startup.startup_technology}
                   </span>
                 )}
-                {company.startup_industry && (
+                {startup.startup_industry && (
                   <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                    {company.startup_industry}
+                    {startup.startup_industry}
                   </span>
                 )}
               </div>
             )}
-            {section === "Contact" && company.startup_emails && (
+            {section === "Contact" && startup.startup_emails && (
               <div className="space-y-2">
-                {company.startup_emails.split(",").map((email: string, i: number) => (
+                {startup.startup_emails.split(",").map((email: string, i: number) => (
                   <button
                     key={i}
                     onClick={() => handleEmailContact(email.trim())}

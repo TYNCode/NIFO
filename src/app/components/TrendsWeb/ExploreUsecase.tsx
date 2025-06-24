@@ -27,7 +27,7 @@ const ExploreUseCase = ({ useCaseId, onBack }) => {
         const fetchStartupName = async () => {
             if (useCaseData?.solution_provider) {
                 try {
-                    const res = await fetch(`https://tyn-server.azurewebsites.net/company/view/${useCaseData.solution_provider}/`);
+                    const res = await fetch(`https://tyn-server.azurewebsites.net/companies/view/${useCaseData.solution_provider}/`);
                     const data = await res.json();
                     setProviderName(data.startup_name || "Unknown Provider");
                 } catch (error) {

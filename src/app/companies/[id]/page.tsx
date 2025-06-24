@@ -5,7 +5,8 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { decryptURL } from "../../utils/shareUtils";
 import { useParams, useRouter } from "next/navigation";
 import withAuth from "../../utils/withAuth";
-import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import { fetchCompanyById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import type { StartupType } from "@/app/admin/startups/types/company.d.ts";
 
 interface CompanyProfileProps {
   company: {
@@ -37,8 +38,11 @@ const CompanyProfile: React.FC<any> = () => {
     }
 
     const decodedOrganizationId: any = decryptURL(encodedOrganizationId);
-    dispatch(fetchStartupById(decodedOrganizationId));
+    dispatch(fetchCompanyById({ id: decodedOrganizationId, type: "startup" }));
   }, [dispatch]);
+
+  // Cast company to StartupType for startup-specific fields
+  const startup = company as StartupType;
 
   if (!company) {
     return (
@@ -59,7 +63,7 @@ const CompanyProfile: React.FC<any> = () => {
         </button>
 
         <h1 className="text-3xl font-bold mx-auto my-0 text-gray-900 ">
-          {company.startup_name}
+          {startup.startup_name}
         </h1>
       </div>
       <div className="flex flex-col items-center space-y-6 p-4  min-h-screen">
@@ -69,7 +73,7 @@ const CompanyProfile: React.FC<any> = () => {
               Analyst Rating
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_analyst_rating || "N/A"}
+              {startup.startup_analyst_rating || "N/A"}
             </div>
           </div>
 
@@ -78,7 +82,7 @@ const CompanyProfile: React.FC<any> = () => {
               Industry
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_industry || "N/A"}
+              {startup.startup_industry || "N/A"}
             </div>
           </div>
 
@@ -87,7 +91,7 @@ const CompanyProfile: React.FC<any> = () => {
               Technology
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_technology || "N/A"}
+              {startup.startup_technology || "N/A"}
             </div>
           </div>
 
@@ -96,7 +100,7 @@ const CompanyProfile: React.FC<any> = () => {
               Overview
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_overview || "N/A"}
+              {startup.startup_overview || "N/A"}
             </div>
           </div>
 
@@ -105,7 +109,7 @@ const CompanyProfile: React.FC<any> = () => {
               Description
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_description || "N/A"}
+              {startup.startup_description || "N/A"}
             </div>
           </div>
 
@@ -114,7 +118,7 @@ const CompanyProfile: React.FC<any> = () => {
               Stage
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_company_stage || "N/A"}
+              {startup.startup_company_stage || "N/A"}
             </div>
           </div>
 
@@ -123,7 +127,7 @@ const CompanyProfile: React.FC<any> = () => {
               Country
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_country || "N/A"}
+              {startup.startup_country || "N/A"}
             </div>
           </div>
 
@@ -132,7 +136,7 @@ const CompanyProfile: React.FC<any> = () => {
               Founders Info
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_founders_info || "N/A"}
+              {startup.startup_founders_info || "N/A"}
             </div>
           </div>
 
@@ -141,7 +145,7 @@ const CompanyProfile: React.FC<any> = () => {
               Emails
             </span>
             <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 text-gray-900">
-              {company.startup_emails || "N/A"}
+              {startup.startup_emails || "N/A"}
             </div>
           </div>
         </div>

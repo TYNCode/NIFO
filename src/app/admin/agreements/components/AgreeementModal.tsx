@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Agreement } from "../types/agreements";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { fetchStartupSearchSuggestions } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import { fetchCompanySearchSuggestions } from "@/app/redux/features/companyprofile/companyProfileSlice";
 
 interface AgreementModalProps {
   open: boolean;
@@ -33,12 +33,8 @@ const AgreementModal: React.FC<AgreementModalProps> = ({
   useEffect(() => {
     if (defaultValues) {
       reset(defaultValues);
-      
-      // If editing and startup is provided, fetch the startup name for display
       if (defaultValues.startup) {
         setValue("startup", defaultValues.startup);
-        // You might need to fetch the startup name from your API here
-        // For now, we'll use a placeholder or the startup ID
         setSelectedStartupName(defaultValues.startup?.toString() || "");
         setSearchQuery(defaultValues.startup?.toString() || "");
       }
@@ -51,7 +47,7 @@ const AgreementModal: React.FC<AgreementModalProps> = ({
 
   useEffect(() => {
     if (searchQuery.length > 1) {
-      dispatch(fetchStartupSearchSuggestions(searchQuery));
+      dispatch(fetchCompanySearchSuggestions({ query: searchQuery, type: "startup" }));
       setShowDropdown(true);
     } else {
       setShowDropdown(false);
