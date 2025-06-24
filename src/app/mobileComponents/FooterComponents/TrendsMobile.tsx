@@ -72,10 +72,6 @@ const TrendsMobile: React.FC<TrendsMobileProps> = ({
       <AddTrendsModal
         isOpen={isAddTrendModalOpen}
         onClose={() => setIsAddTrendModalOpen(false)}
-        sectorOptions={[]}
-        industryOptions={[]}
-        subIndustryOptions={[]}
-        solutionProviderOptions={[]}
       />
       {/* Trends Header */}
       
