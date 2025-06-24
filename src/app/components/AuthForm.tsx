@@ -14,6 +14,10 @@ interface AuthFormProps {
   footerText?: string;
   footerLinkText?: string;
   footerLinkHref?: string;
+  orgValue?: string;
+  onOrgChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  orgInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  renderOrgInput?: (props: any) => React.ReactNode;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -28,6 +32,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
   footerText,
   footerLinkText,
   footerLinkHref,
+  orgValue,
+  onOrgChange,
+  orgInputProps,
+  renderOrgInput,
 }) => {
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({ mode: "onChange" });
 
@@ -70,17 +78,30 @@ const AuthForm: React.FC<AuthFormProps> = ({
         {errors.password && <p className="text-red-500 text-xs md:text-sm">{errors.password.message}</p>}
       </div>
       {showOrg && (
-        <div className="flex flex-col items-start gap-2 w-full">
-          <label htmlFor="organization_name" className="text-sm md:text-base">Organization</label>
-          <input
-            type="text"
-            {...register("organization_name", { required: "Organization is required" })}
-            id="organization_name"
-            placeholder="Enter your organization"
-            className="h-10 md:h-12 px-3 py-2 text-base placeholder:text-base outline-none rounded-lg shadow placeholder:text-gray-300 border-none w-full"
-          />
-          {errors.organization_name && <p className="text-red-500 text-xs md:text-sm">{errors.organization_name.message}</p>}
-        </div>
+        renderOrgInput
+          ? renderOrgInput({
+              // Pass any extra props if needed
+            })
+          : (
+            <div className="flex flex-col items-start gap-2 w-full">
+              <label htmlFor="organization_name" className="text-sm md:text-base">Organization</label>
+              <input
+                type="text"
+                id="organization_name"
+                placeholder="Enter your organization"
+                className="h-10 md:h-12 px-3 py-2 text-base placeholder:text-base outline-none rounded-lg shadow placeholder:text-gray-300 border-none w-full"
+                {...(orgValue !== undefined && onOrgChange
+                  ? {
+                      value: orgValue,
+                      onChange: onOrgChange,
+                      ...orgInputProps,
+                    }
+                  : register("organization_name", { required: "Organization is required" })
+                )}
+              />
+              {errors.organization_name && <p className="text-red-500 text-xs md:text-sm">{errors.organization_name.message}</p>}
+            </div>
+          )
       )}
       {message && (
         <p className={`${error ? "text-red-500" : "text-blue-500"} text-xs md:text-base`}>{message}</p>

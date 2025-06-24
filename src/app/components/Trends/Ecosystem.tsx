@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { fetchStartupById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import { fetchCompanyById } from "@/app/redux/features/companyprofile/companyProfileSlice";
+import type { StartupType } from "@/app/admin/startups/types/company.d.ts";
 import {
   FaArrowLeft,
   FaGlobe,
@@ -39,9 +40,12 @@ const Ecosystem: React.FC<{
 
   useEffect(() => {
     if (ecosystemData?.solution_provider) {
-      dispatch(fetchStartupById(ecosystemData.solution_provider));
+      dispatch(fetchCompanyById({ id: ecosystemData.solution_provider, type: "startup" }));
     }
   }, [dispatch, ecosystemData]);
+
+  // Cast company to StartupType for startup-specific fields
+  const startup = company as StartupType;
 
   const handleEmailContact = (email: string) => {
     window.open(`mailto:${email}`, '_self');
@@ -54,7 +58,7 @@ const Ecosystem: React.FC<{
   };
 
   const handleShare = () => {
-    const startupId = company?.startup_id;
+    const startupId = startup?.startup_id;
 
     if (!startupId) {
       alert("Unable to generate share link. Missing startup ID.");
@@ -137,10 +141,10 @@ const Ecosystem: React.FC<{
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             {/* Logo */}
             <div className="flex-shrink-0">
-              {company.startup_logo ? (
+              {startup.startup_logo ? (
                 <img
-                  src={company.startup_logo}
-                  alt={`${company.startup_name} logo`}
+                  src={startup.startup_logo}
+                  alt={`${startup.startup_name} logo`}
                   className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain rounded-lg border border-gray-200"
                   onError={(e) => {
                     const target = e.currentTarget as HTMLImageElement;
@@ -157,30 +161,30 @@ const Ecosystem: React.FC<{
             {/* Company Info */}
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                {company.startup_name}
+                {startup.startup_name}
               </h1>
               
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
-                {company.startup_country && (
+                {startup.startup_country && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 text-xs sm:text-sm rounded-full">
                     <FaGlobe className="text-xs" />
-                    {company.startup_country}
+                    {startup.startup_country}
                   </span>
                 )}
                 
-                {company.startup_company_stage && (
+                {startup.startup_company_stage && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 text-xs sm:text-sm rounded-full">
                     <FaChartLine className="text-xs" />
-                    {company.startup_company_stage}
+                    {startup.startup_company_stage}
                   </span>
                 )}
               </div>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                {company.startup_url && (
+                {startup.startup_url && (
                   <button
-                    onClick={() => handleVisitWebsite(company.startup_url)}
+                    onClick={() => handleVisitWebsite(startup.startup_url)}
                     className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#005a9a] transition-colors text-xs sm:text-sm"
                   >
                     <FaExternalLinkAlt className="text-xs" />
@@ -209,82 +213,82 @@ const Ecosystem: React.FC<{
         </div>
 
         {/* Company Overview */}
-        {(company.startup_overview || company.startup_description) && (
+        {(startup.startup_overview || startup.startup_description) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaRocket className="text-base sm:text-lg" />
               Overview
             </h2>
-            {company.startup_overview && (
+            {startup.startup_overview && (
               <div className="mb-4">
                 <h3 className="font-medium text-gray-900 mb-2">Platform Overview</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_overview}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_overview}</p>
               </div>
             )}
-            {company.startup_description && (
+            {startup.startup_description && (
               <div>
                 <h3 className="font-medium text-gray-900 mb-2">Description</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_description}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_description}</p>
               </div>
             )}
           </div>
         )}
 
         {/* Solutions & Use Cases */}
-        {(company.startup_solutions || company.startup_usecases) && (
+        {(startup.startup_solutions || startup.startup_usecases) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaBuilding className="text-base sm:text-lg" />
               Solutions & Use Cases
             </h2>
-            {company.startup_solutions && (
+            {startup.startup_solutions && (
               <div className="mb-4">
                 <h3 className="font-medium text-gray-900 mb-2">Solutions</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_solutions}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_solutions}</p>
               </div>
             )}
-            {company.startup_usecases && (
+            {startup.startup_usecases && (
               <div>
                 <h3 className="font-medium text-gray-900 mb-2">Use Cases</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_usecases}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_usecases}</p>
               </div>
             )}
           </div>
         )}
 
         {/* Strategic Positioning */}
-        {(company.startup_gsi || company.startup_partners || company.startup_customers) && (
+        {(startup.startup_gsi || startup.startup_partners || startup.startup_customers) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaUsers className="text-base sm:text-lg" />
               Strategic Positioning
             </h2>
             
-            {company.startup_gsi && (
+            {startup.startup_gsi && (
               <div className="mb-4">
                 <h3 className="font-medium text-gray-900 mb-2">GSI Partners</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_gsi}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_gsi}</p>
               </div>
             )}
             
-            {company.startup_partners && (
+            {startup.startup_partners && (
               <div className="mb-4">
                 <h3 className="font-medium text-gray-900 mb-2">Partners</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_partners}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_partners}</p>
               </div>
             )}
             
-            {company.startup_customers && (
+            {startup.startup_customers && (
               <div>
                 <h3 className="font-medium text-gray-900 mb-2">Customers</h3>
-                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_customers}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_customers}</p>
               </div>
             )}
           </div>
         )}
 
         {/* Technology & Industry */}
-        {(company.startup_technology || company.startup_industry) && (
+        {(startup.startup_technology || startup.startup_industry) && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaChartLine className="text-base sm:text-lg" />
@@ -292,20 +296,20 @@ const Ecosystem: React.FC<{
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {company.startup_technology && (
+              {startup.startup_technology && (
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Technology</h3>
                   <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                    {company.startup_technology}
+                    {startup.startup_technology}
                   </span>
                 </div>
               )}
               
-              {company.startup_industry && (
+              {startup.startup_industry && (
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Industry</h3>
                   <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">
-                    {company.startup_industry}
+                    {startup.startup_industry}
                   </span>
                 </div>
               )}
@@ -314,25 +318,25 @@ const Ecosystem: React.FC<{
         )}
 
         {/* Founders */}
-        {company.startup_founders_info && (
+        {startup.startup_founders_info && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaUsers className="text-base sm:text-lg" />
               Founders
             </h2>
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{company.startup_founders_info}</p>
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{startup.startup_founders_info}</p>
           </div>
         )}
 
         {/* Contact */}
-        {company.startup_emails && (
+        {startup.startup_emails && (
           <div className="bg-white rounded-xl shadow-md px-4 sm:px-6 py-4 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold text-primary mb-3 sm:mb-4 flex items-center gap-2">
               <FaEnvelope className="text-base sm:text-lg" />
               Contact
             </h2>
             <div className="space-y-2">
-              {company.startup_emails.split(',').map((email, index) => {
+              {startup.startup_emails.split(',').map((email, index) => {
                 const cleanEmail = email.trim();
                 const emailMatch = cleanEmail.match(/<(.+)>/);
                 const actualEmail = emailMatch ? emailMatch[1] : cleanEmail;

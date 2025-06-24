@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StartupType } from "../types/company";
+import { CompanyType } from "@/app/redux/features/companyprofile/companyProfileSlice";
 import {
-  clearStartupState,
-  setStartupModalOpen,
-  setSelectedStartup,
-  setStartupMode,
-  deleteStartup,
+  clearCompanyState,
+  setCompanyModalOpen,
+  setSelectedCompany,
+  setCompanyMode,
+  deleteCompany,
   fetchCompaniesByPagination,
   fetchCompaniesBySearch,
 } from "@/app/redux/features/companyprofile/companyProfileSlice";
@@ -22,13 +22,22 @@ import ViewModeToggle from "./ViewModeToggle";
 import SearchBarWithRedux from "./SearchBarwithRedux";
 import SearchStatusIndicator from "./SearchStatusIndicator";
 
+const getCompanyId = (company: CompanyType) =>
+  'startup_id' in company ? company.startup_id : company.enterprise_id;
+const getCompanyName = (company: CompanyType) =>
+  'startup_name' in company ? company.startup_name : company.enterprise_name;
+const getCompanyUrl = (company: CompanyType) =>
+  'startup_url' in company ? company.startup_url : company.enterprise_url;
+const getCompanyDescription = (company: CompanyType) =>
+  'startup_description' in company
+    ? company.startup_description
+    : (company as any).enterprise_description;
+
 const StartupDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const { companies, loading, error, hasMore, message } = useAppSelector(
     (state) => state.companyProfile
   );
-
-
 
   // Local State
   const [page, setPage] = useState(1);
@@ -37,17 +46,17 @@ const StartupDashboard: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "table">("table");
   const [deleteModal, setDeleteModal] = useState<{
     open: boolean;
-    startup: StartupType | null;
-  }>({ open: false, startup: null });
+    company: CompanyType | null;
+  }>({ open: false, company: null });
 
   useEffect(() => {
-    dispatch(fetchCompaniesByPagination({ page: 10, page_size: 20}));
+    dispatch(fetchCompaniesByPagination({ page: 10, page_size: 20, type: "startup" }));
   }, [dispatch]);
 
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
-        dispatch(clearStartupState());
+        dispatch(clearCompanyState());
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -62,38 +71,45 @@ const StartupDashboard: React.FC = () => {
       dispatch(fetchCompaniesBySearch({ 
         query: search.trim(), 
         page: nextPage, 
-        page_size: 10 
+        page_size: 10, 
+        type: "startup" 
       }));
     } else {
-      dispatch(fetchCompaniesByPagination({ page: nextPage, page_size: 10 }));
+      dispatch(fetchCompaniesByPagination({ page: nextPage, page_size: 10, type: "startup" }));
     }
   };
 
-  const handleAddStartup = () => {
-    dispatch(clearStartupState());
-    dispatch(setStartupMode("create"));
-    dispatch(setStartupModalOpen(true));
+  const handleAddCompany = () => {
+    dispatch(clearCompanyState());
+    dispatch(setCompanyMode("create"));
+    dispatch(setCompanyModalOpen(true));
   };
 
-  const handleEditStartup = (startup: StartupType) => {
-    dispatch(setSelectedStartup({ startupId: startup.startup_id, mode: "edit" }));
-    dispatch(setStartupMode("edit"));
-    dispatch(setStartupModalOpen(true));
+  const handleEditCompany = (company: CompanyType) => {
+    dispatch(setSelectedCompany({
+      id: getCompanyId(company),
+      name: getCompanyName(company),
+      url: getCompanyUrl(company),
+      description: getCompanyDescription(company),
+      type: "startup"
+    }));
+    dispatch(setCompanyMode("edit"));
+    dispatch(setCompanyModalOpen(true));
   };
 
-  const handleDeleteClick = (startup: StartupType) => {
-    setDeleteModal({ open: true, startup });
+  const handleDeleteClick = (company: CompanyType) => {
+    setDeleteModal({ open: true, company });
   };
 
   const handleDeleteConfirm = () => {
-    if (deleteModal.startup) {
-      dispatch(deleteStartup(deleteModal.startup.startup_id));
-      setDeleteModal({ open: false, startup: null });
+    if (deleteModal.company) {
+      dispatch(deleteCompany({ id: getCompanyId(deleteModal.company), type: "startup" }));
+      setDeleteModal({ open: false, company: null });
     }
   };
 
   const handleDeleteCancel = () => {
-    setDeleteModal({ open: false, startup: null });
+    setDeleteModal({ open: false, company: null });
   };
 
   const handleSearchChange = (value: string) => {
@@ -110,7 +126,8 @@ const StartupDashboard: React.FC = () => {
       dispatch(fetchCompaniesBySearch({ 
         query: trimmedValue, 
         page: 1, 
-        page_size: 10 
+        page_size: 10, 
+        type: "startup" 
       }));
     } else {
       handleClearSearch();
@@ -121,12 +138,12 @@ const StartupDashboard: React.FC = () => {
     setIsSearchMode(false);
     setSearch("");
     setPage(1);
-    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 10 }));
+    dispatch(fetchCompaniesByPagination({ page: 1, page_size: 10, type: "startup" }));
   };
 
   // Computed Values
-  const displayStartups = companies;
-  const showNoResults = !loading && displayStartups.length === 0;
+  const displayCompanies = companies;
+  const showNoResults = !loading && displayCompanies.length === 0;
   const showLoadMore = hasMore && !loading;
 
   return (
@@ -141,7 +158,7 @@ const StartupDashboard: React.FC = () => {
               </p>
             </div>
             <button
-              onClick={handleAddStartup}
+              onClick={handleAddCompany}
               className="bg-customBlue text-white bg-primary px-6 py-3 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-sm"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,7 +202,7 @@ const StartupDashboard: React.FC = () => {
         <SearchStatusIndicator
           isSearchMode={isSearchMode}
           searchText={search}
-          resultCount={displayStartups.length}
+          resultCount={displayCompanies.length}
           onClearSearch={handleClearSearch}
         />
 
@@ -218,22 +235,22 @@ const StartupDashboard: React.FC = () => {
         {!loading || companies.length > 0 ? (
           <>
             {/* Table View */}
-            {viewMode === "table" && displayStartups.length > 0 && (
+            {viewMode === "table" && displayCompanies.length > 0 && (
               <StartupTable 
-                startups={displayStartups} 
-                onEdit={handleEditStartup}
+                startups={displayCompanies} 
+                onEdit={handleEditCompany}
                 onDelete={handleDeleteClick}
               />
             )}
 
             {/* Grid View */}
-            {viewMode === "grid" && displayStartups.length > 0 && (
+            {viewMode === "grid" && displayCompanies.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {displayStartups.map((startup) => (
+                {displayCompanies.map((company) => (
                   <StartupGridCard
-                    key={startup.startup_id}
-                    startup={startup}
-                    onEdit={handleEditStartup}
+                    key={getCompanyId(company)}
+                    startup={company}
+                    onEdit={handleEditCompany}
                     onDelete={handleDeleteClick}
                   />
                 ))}
@@ -245,9 +262,9 @@ const StartupDashboard: React.FC = () => {
               <div className="flex justify-center mt-8">
                 <button
                   onClick={handleLoadMore}
-                  className="bg-white text-customBlue border border-customBlue px-8 py-3 rounded-lg hover:bg-customBlue hover:text-white transition-all duration-200 shadow-sm"
+                  className="bg-customBlue text-white px-6 py-3 rounded-lg shadow-sm hover:bg-blue-700 transition-all duration-200"
                 >
-                  Load More Startups
+                  Load More
                 </button>
               </div>
             )}
@@ -258,7 +275,7 @@ const StartupDashboard: React.FC = () => {
         {showNoResults && (
           <NoResultMessage 
             searchText={search}
-            onAddStartup={!search.trim() ? handleAddStartup : undefined}
+            onAddStartup={!search.trim() ? handleAddCompany : undefined}
             loading={loading}
           />
         )}
@@ -269,7 +286,7 @@ const StartupDashboard: React.FC = () => {
       
       <DeleteConfirmationModal
         open={deleteModal.open}
-        startup={deleteModal.startup}
+        startup={deleteModal.company}
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
       />

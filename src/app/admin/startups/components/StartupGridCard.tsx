@@ -1,11 +1,11 @@
 import React from "react";
-import { StartupType } from "../types/company";
+import { CompanyType } from "@/app/redux/features/companyprofile/companyProfileSlice";
 import VerifiedBadge from "./VerifiedBadge";
 
 interface StartupGridCardProps {
-  startup: StartupType;
-  onEdit: (startup: StartupType) => void;
-  onDelete: (startup: StartupType) => void;
+  startup: CompanyType;
+  onEdit: (startup: CompanyType) => void;
+  onDelete: (startup: CompanyType) => void;
 }
 
 const StartupGridCard: React.FC<StartupGridCardProps> = ({
@@ -13,35 +13,56 @@ const StartupGridCard: React.FC<StartupGridCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  // Type guards
+  const isStartup = "startup_id" in startup;
+  const isEnterprise = "enterprise_id" in startup;
+
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-semibold text-customBlack line-clamp-1">
-          {startup.startup_name}
+          {isStartup
+            ? (startup as any).startup_name
+            : (startup as any).enterprise_name}
         </h3>
-        {startup.is_verified && <VerifiedBadge isVerified={startup.is_verified} />}
+        {"is_verified" in startup && (
+          <VerifiedBadge isVerified={(startup as any).is_verified} />
+        )}
       </div>
       
       <p className="text-sm text-customGreyishBlack line-clamp-3 mb-4">
-        {startup.startup_description}
+        {isStartup
+          ? (startup as any).startup_description
+          : (startup as any).enterprise_description}
       </p>
       
-      {startup.startup_industry && (
+      {(
+        (isStartup && (startup as any).startup_industry) ||
+        (isEnterprise && (startup as any).enterprise_description)
+      ) && (
         <div className="mb-4">
           <span className="bg-bgBlue text-customBlue text-xs px-2 py-1 rounded">
-            {startup.startup_industry}
+            {isStartup
+              ? (startup as any).startup_industry
+              : (startup as any).enterprise_description}
           </span>
         </div>
       )}
       
       <div className="flex items-center justify-between">
         <a
-          href={startup.startup_url}
+          href={
+            isStartup
+              ? (startup as any).startup_url
+              : (startup as any).enterprise_url
+          }
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-customBlue hover:underline truncate flex-1 mr-2"
         >
-          {startup.startup_url}
+          {isStartup
+            ? (startup as any).startup_url
+            : (startup as any).enterprise_url}
         </a>
         
         <div className="flex items-center space-x-2">

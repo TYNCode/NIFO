@@ -11,7 +11,7 @@ import { EditUserForm } from "./ManageTable/EditUserForm";
 import { UserDetails } from "./ManageTable/UserDetails";
 import { SearchFilter } from "./ManageTable/SearchFilter";
 import { DateFilter } from "./ManageTable/DateFilter";
-import { BulkDeleteBtn } from "./ManageTable/BulkDeleteButton";
+import BulkDeleteButton from './ManageTable/BulkDeleteButton';
 
 const TableMain = ({
   data,
@@ -247,7 +247,7 @@ const TableMain = ({
           </div>
         </div>
         {selectedFlatRows.length > 0 && (
-          <BulkDeleteBtn
+          <BulkDeleteButton
             handleBulkDelete={handleBulkDelete}
             selectedFlatRows={selectedFlatRows}
           />

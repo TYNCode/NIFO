@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,48 +14,13 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loading, error, message } = useAppSelector((state) => state.login);
+  const [form, setForm] = useState({ email: "", password: "" });
 
-  // Mobile form
-  const {
-    handleSubmit: handleSubmitMobile,
-    register: registerMobile,
-    formState: { errors: errorsMobile, isValid: isValidMobile },
-    trigger: triggerMobile,
-  } = useForm<FormData>({
-    mode: "onTouched",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  // Desktop form
-  const {
-    handleSubmit: handleSubmitDesktop,
-    register: registerDesktop,
-    formState: { errors: errorsDesktop, isValid: isValidDesktop },
-    trigger: triggerDesktop,
-  } = useForm<FormData>({
-    mode: "onTouched",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmitMobile: SubmitHandler<FormData> = async (data) => {
-    const isValid = await triggerMobile();
-    if (!isValid) return;
-    dispatch(loginUser(data));
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const onSubmitDesktop: SubmitHandler<FormData> = async (data) => {
-    const isValid = await triggerDesktop();
-    if (!isValid) return;
-    dispatch(loginUser(data));
-  };
-
-  const handleLogin = (data: FormData) => {
+  const handleSubmit = (data) => {
     dispatch(loginUser(data));
   };
 
@@ -78,7 +43,7 @@ const LoginPage: React.FC = () => {
           <p className="text-sm md:text-base xl:text-xl text-primary px-10">Sign in if you have an account here</p>
           <AuthForm
             mode="login"
-            onSubmit={handleLogin}
+            onSubmit={handleSubmit}
             loading={loading}
             error={error}
             message={message}
@@ -101,7 +66,7 @@ const LoginPage: React.FC = () => {
             </div>
             <AuthForm
               mode="login"
-              onSubmit={handleLogin}
+              onSubmit={handleSubmit}
               loading={loading}
               error={error}
               message={message}
@@ -136,7 +101,7 @@ const LoginPage: React.FC = () => {
               </div>
               <AuthForm
                 mode="login"
-                onSubmit={handleLogin}
+                onSubmit={handleSubmit}
                 loading={loading}
                 error={error}
                 message={message}

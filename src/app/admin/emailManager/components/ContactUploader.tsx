@@ -3,7 +3,8 @@
 
 import React, { useState, useRef } from "react";
 import { FaUpload, FaFileExcel, FaFileCsv, FaGoogle, FaTrash } from "react-icons/fa";
-import { Contact } from "../../types/Contact";
+import { Contact } from "../types/Contact";
+
 
 interface ContactUploaderProps {
   contacts: Contact[];

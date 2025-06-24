@@ -1,11 +1,42 @@
 import React from "react";
-import { StartupType } from "../types/company";
+import { CompanyType } from "@/app/redux/features/companyprofile/companyProfileSlice";
 
 interface Props {
-  startups: StartupType[];
-  onEdit: (startup: StartupType) => void;
-  onDelete: (startup: StartupType) => void;
+  startups: CompanyType[];
+  onEdit: (startup: CompanyType) => void;
+  onDelete: (startup: CompanyType) => void;
 }
+
+// Helper functions to safely access company properties
+const getCompanyId = (company: CompanyType): number => {
+  return 'startup_id' in company ? company.startup_id : company.enterprise_id;
+};
+
+const getCompanyName = (company: CompanyType): string => {
+  return 'startup_name' in company ? company.startup_name : company.enterprise_name;
+};
+
+const getCompanyUrl = (company: CompanyType): string => {
+  return 'startup_url' in company ? company.startup_url : company.enterprise_url;
+};
+
+const getCompanyLogo = (company: CompanyType): string | undefined => {
+  return 'startup_logo' in company ? (company as any).startup_logo : undefined;
+};
+
+const getCompanyIndustry = (company: CompanyType): string | undefined => {
+  if ('startup_industry' in company) {
+    return (company as any).startup_industry;
+  }
+  if ('enterprise_description' in company) {
+    return (company as any).enterprise_description;
+  }
+  return company.description;
+};
+
+const isStartup = (company: CompanyType): company is CompanyType & { startup_id: number } => {
+  return 'startup_id' in company;
+};
 
 const StartupTable: React.FC<Props> = ({ startups, onEdit, onDelete }) => {
   return (
@@ -30,36 +61,36 @@ const StartupTable: React.FC<Props> = ({ startups, onEdit, onDelete }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {startups.map((startup) => (
-              <tr key={startup.startup_id} className="hover:bg-gray-50 transition-colors duration-200">
+              <tr key={getCompanyId(startup)} className="hover:bg-gray-50 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      {startup.startup_logo ? (
+                      {getCompanyLogo(startup) ? (
                         <img
                           className="h-10 w-10 rounded-lg object-cover"
-                          src={startup.startup_logo}
-                          alt={`${startup.startup_name} logo`}
+                          src={getCompanyLogo(startup)}
+                          alt={`${getCompanyName(startup)} logo`}
                         />
                       ) : (
                         <div className="h-10 w-10 rounded-lg bg-customBlue flex items-center justify-center">
                           <span className="text-white font-medium text-sm">
-                            {startup.startup_name.charAt(0).toUpperCase()}
+                            {getCompanyName(startup)?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                       )}
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-customBlack">
-                        {startup.startup_name}
+                        {getCompanyName(startup)}
                       </div>
                       <div className="text-sm text-customGreyishBlack">
                         <a
-                          href={startup.startup_url}
+                          href={getCompanyUrl(startup)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-customBlue transition-colors duration-200"
                         >
-                          {startup.startup_url}
+                          {getCompanyUrl(startup)}
                         </a>
                       </div>
                     </div>
@@ -67,14 +98,14 @@ const StartupTable: React.FC<Props> = ({ startups, onEdit, onDelete }) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-customGreyishBlack">
-                    {startup.startup_industry || (
+                    {getCompanyIndustry(startup) || (
                       <span className="text-gray-400 italic">Not specified</span>
                     )}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center space-x-2">
-                    {startup.is_verified ? (
+                    {(startup as any).is_verified ? (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

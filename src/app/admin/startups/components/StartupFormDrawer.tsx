@@ -1,18 +1,38 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { StartupType } from "../types/company";
+import { CompanyType } from "@/app/redux/features/companyprofile/companyProfileSlice";
 import {
-  clearStartupState,
-  createStartup,
-  setStartupModalOpen,
-  updateStartup,
-  fetchStartupById,
+  clearCompanyState,
+  createCompany,
+  setCompanyModalOpen,
+  updateCompany,
+  fetchCompanyById,
 } from "@/app/redux/features/companyprofile/companyProfileSlice";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 
+interface StartupFormFields {
+  startup_id?: number;
+  startup_name?: string;
+  startup_url?: string;
+  startup_description?: string;
+  startup_industry?: string;
+  startup_technology?: string;
+  startup_country?: string;
+  startup_overview?: string;
+  startup_company_stage?: string;
+  startup_founders_info?: string;
+  startup_emails?: string;
+  startup_analyst_rating?: string;
+  startup_gsi?: string;
+  startup_partners?: string;
+  startup_customers?: string;
+  startup_usecases?: string;
+  startup_solutions?: string;
+}
+
 const StartupFormDrawer: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isModalOpen, mode, selectedStartup, company, loading } =
+  const { isModalOpen, mode, selectedCompany, company, loading } =
     useAppSelector((state) => state.companyProfile);
 
   const isEdit = mode === "edit";
@@ -22,34 +42,39 @@ const StartupFormDrawer: React.FC = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Partial<StartupType>>();
+  } = useForm<Partial<StartupFormFields>>();
 
   useEffect(() => {
-    if (isEdit && selectedStartup?.startupId) {
-      dispatch(fetchStartupById(selectedStartup.startupId));
+    if (isEdit && selectedCompany?.id) {
+      dispatch(fetchCompanyById({ id: selectedCompany.id, type: selectedCompany.type }));
     }
-  }, [isEdit, selectedStartup?.startupId, dispatch]);
+  }, [isEdit, selectedCompany?.id, selectedCompany?.type, dispatch]);
 
   useEffect(() => {
     if (isEdit && company) {
-      reset({
-        startup_name: company.startup_name,
-        startup_url: company.startup_url,
-        startup_description: company.startup_description,
-        startup_industry: company.startup_industry,
-        startup_technology: company.startup_technology,
-        startup_country: company.startup_country,
-        startup_overview: company.startup_overview,
-        startup_company_stage: company.startup_company_stage,
-        startup_founders_info: company.startup_founders_info,
-        startup_emails: company.startup_emails,
-        startup_analyst_rating: company.startup_analyst_rating,
-        startup_gsi: company.startup_gsi,
-        startup_partners: company.startup_partners,
-        startup_customers: company.startup_customers,
-        startup_usecases: company.startup_usecases,
-        startup_solutions: company.startup_solutions,
-      });
+      if ('startup_id' in company) {
+        const c = company as any;
+        reset({
+          startup_name: c.startup_name,
+          startup_url: c.startup_url,
+          startup_description: c.startup_description,
+          startup_industry: c.startup_industry,
+          startup_technology: c.startup_technology,
+          startup_country: c.startup_country,
+          startup_overview: c.startup_overview,
+          startup_company_stage: c.startup_company_stage,
+          startup_founders_info: c.startup_founders_info,
+          startup_emails: c.startup_emails,
+          startup_analyst_rating: c.startup_analyst_rating,
+          startup_gsi: c.startup_gsi,
+          startup_partners: c.startup_partners,
+          startup_customers: c.startup_customers,
+          startup_usecases: c.startup_usecases,
+          startup_solutions: c.startup_solutions,
+        } as any);
+      } else {
+        reset({});
+      }
     } else if (!isEdit) {
       reset({
         startup_name: "",
@@ -68,51 +93,52 @@ const StartupFormDrawer: React.FC = () => {
         startup_customers: "",
         startup_usecases: "",
         startup_solutions: "",
-      });
+      } as any);
     }
   }, [isEdit, company, reset]);
 
   const onClose = () => {
-    dispatch(setStartupModalOpen(false));
-    dispatch(clearStartupState());
+    dispatch(setCompanyModalOpen(false));
+    dispatch(clearCompanyState());
     reset();
   };
 
   // Transform form data to match API expectations
-  const transformFormData = (data: Partial<StartupType>) => {
+  const transformFormData = (data: Partial<CompanyType>) => {
     return {
-      organization_name: data.startup_name,
-      website: data.startup_url,
-      description: data.startup_description,
-      startup_industry: data.startup_industry,
-      startup_technology: data.startup_technology,
-      startup_country: data.startup_country,
-      startup_overview: data.startup_overview,
-      startup_company_stage: data.startup_company_stage,
-      startup_founders_info: data.startup_founders_info,
-      startup_emails: data.startup_emails,
-      startup_analyst_rating: data.startup_analyst_rating,
-      startup_gsi: data.startup_gsi,
-      startup_partners: data.startup_partners,
-      startup_customers: data.startup_customers,
-      startup_usecases: data.startup_usecases,
-      startup_solutions: data.startup_solutions,
+      organization_name: (data as any).startup_name,
+      website: (data as any).startup_url,
+      description: (data as any).startup_description,
+      startup_industry: (data as any).startup_industry,
+      startup_technology: (data as any).startup_technology,
+      startup_country: (data as any).startup_country,
+      startup_overview: (data as any).startup_overview,
+      startup_company_stage: (data as any).startup_company_stage,
+      startup_founders_info: (data as any).startup_founders_info,
+      startup_emails: (data as any).startup_emails,
+      startup_analyst_rating: (data as any).startup_analyst_rating,
+      startup_gsi: (data as any).startup_gsi,
+      startup_partners: (data as any).startup_partners,
+      startup_customers: (data as any).startup_customers,
+      startup_usecases: (data as any).startup_usecases,
+      startup_solutions: (data as any).startup_solutions,
+      type: "startup" as const
     };
   };
 
-  const onSubmit = (data: Partial<StartupType>) => {
+  const onSubmit = (data: Partial<CompanyType>) => {
     const transformedData = transformFormData(data);
     
-    if (isEdit && selectedStartup?.startupId) {
+    if (isEdit && selectedCompany?.id) {
       dispatch(
-        updateStartup({ id: selectedStartup.startupId, payload: transformedData })
+        updateCompany({ id: selectedCompany.id, payload: transformedData, type: "startup" })
       ).then((result) => {
         if (result.meta.requestStatus === "fulfilled") {
           onClose();
         }
       });
     } else {
-      dispatch(createStartup(transformedData)).then((result) => {
+      dispatch(createCompany(transformedData)).then((result) => {
         if (result.meta.requestStatus === "fulfilled") {
           onClose();
         }
@@ -137,15 +163,15 @@ const StartupFormDrawer: React.FC = () => {
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-bgBlue">
           {isEdit ? (
             <div className="flex items-center space-x-3">
-              {company?.startup_logo && (
+              {'startup_id' in (company || {}) && (company as any).startup_logo && (
                 <img
-                  src={company.startup_logo}
+                  src={(company as any).startup_logo}
                   alt="Startup Logo"
                   className="w-8 h-8 rounded object-cover"
                 />
               )}
               <h2 className="text-lg font-semibold text-customBlack">
-                {company?.startup_name || "Startup"}
+                {'startup_id' in (company || {}) ? (company as any).startup_name : "Startup"}
               </h2>
             </div>
           ) : (
@@ -174,7 +200,7 @@ const StartupFormDrawer: React.FC = () => {
                     Startup Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    {...register("startup_name", {
+                    {...register("startup_name" as any, {
                       required: "Startup name is required",
                       minLength: {
                         value: 2,
@@ -184,9 +210,9 @@ const StartupFormDrawer: React.FC = () => {
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                     placeholder="Enter startup name"
                   />
-                  {errors.startup_name && (
+                  {(errors as any)["startup_name"] && (
                     <p className="text-red-500 text-xs mt-1">
-                      {errors.startup_name.message}
+                      {(errors as any)["startup_name"].message}
                     </p>
                   )}
                 </div>
@@ -208,9 +234,9 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="https://example.com"
                 />
-                {errors.startup_url && (
+                {(errors as any)["startup_url"] && (
                   <p className="text-red-500 text-xs mt-1">
-                    {errors.startup_url.message}
+                    {(errors as any)["startup_url"].message}
                   </p>
                 )}
               </div>
@@ -231,9 +257,9 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200 resize-none"
                   placeholder="Describe what this startup does..."
                 />
-                {errors.startup_description && (
+                {(errors as any)["startup_description"] && (
                   <p className="text-red-500 text-xs mt-1">
-                    {errors.startup_description.message}
+                    {(errors as any)["startup_description"].message}
                   </p>
                 )}
               </div>
@@ -252,6 +278,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter analyst rating"
                 />
+                {(errors as any)["startup_analyst_rating"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_analyst_rating"].message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -263,6 +294,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter GSI"
                 />
+                {(errors as any)["startup_gsi"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_gsi"].message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -274,6 +310,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter partners"
                 />
+                {(errors as any)["startup_partners"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_partners"].message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -285,6 +326,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter customers"
                 />
+                {(errors as any)["startup_customers"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_customers"].message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -296,6 +342,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter use cases"
                 />
+                {(errors as any)["startup_usecases"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_usecases"].message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -307,6 +358,11 @@ const StartupFormDrawer: React.FC = () => {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                   placeholder="Enter solutions"
                 />
+                {(errors as any)["startup_solutions"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_solutions"].message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -324,6 +380,11 @@ const StartupFormDrawer: React.FC = () => {
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                     placeholder="e.g., FinTech, Healthcare, SaaS"
                   />
+                  {(errors as any)["startup_industry"] && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {(errors as any)["startup_industry"].message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -335,6 +396,11 @@ const StartupFormDrawer: React.FC = () => {
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                     placeholder="e.g., React, Node.js, MongoDB"
                   />
+                  {(errors as any)["startup_technology"] && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {(errors as any)["startup_technology"].message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -346,6 +412,11 @@ const StartupFormDrawer: React.FC = () => {
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-customBlue focus:border-transparent transition-all duration-200"
                     placeholder="e.g., United States, India, Germany"
                   />
+                  {(errors as any)["startup_country"] && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {(errors as any)["startup_country"].message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -372,6 +443,11 @@ const StartupFormDrawer: React.FC = () => {
                   <option value="IPO">IPO</option>
                   <option value="Acquired">Acquired</option>
                 </select>
+                {(errors as any)["startup_company_stage"] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {(errors as any)["startup_company_stage"].message}
+                  </p>
+                )}
               </div>
 
               <div>
