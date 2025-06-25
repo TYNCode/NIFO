@@ -68,18 +68,14 @@ export const uploadProjectFiles = createAsyncThunk<
       if (projectID) formData.append("project_id", projectID);
       if (problemStatement) formData.append("text", problemStatement);
 
-      // Use direct axios call for upload-file endpoint to handle FormData properly
-      const token = localStorage.getItem("jwtAccessToken");
-      const headers: any = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      // Don't set Content-Type for FormData - let browser set it automatically
-
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const url = `${baseURL}/coinnovation/upload-file/`;
-      
-      const response = await axios.post(url, formData, { headers });
+      // Use apiRequest for upload-file endpoint to handle FormData properly
+      const response = await apiRequest(
+        "post",
+        "/coinnovation/upload-file/",
+        formData,
+        true, // usePrivate
+        true  // isFormData (assume apiRequest is updated to accept this param)
+      );
 
       const uploaded = response.data?.files || [];
 
