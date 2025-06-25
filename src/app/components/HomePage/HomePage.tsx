@@ -1,33 +1,48 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import LeftFrame from "../LeftFrame/LeftFrame";
 import Prompt from "../Prompt";
 import CompanyProfilePane from "../CompanyProfilePane";
 import MobileHeader from "../../mobileComponents/MobileHeader";
 import { v4 as uuidv4 } from "uuid";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchPartnerConnectsByOrg } from "../../redux/features/connection/connectionSlice";
+import {
+  setSessionId,
+  setUserInfo,
+  setSelectedStartup,
+  setMailMessage,
+  setQueryData,
+  clearMessages,
+  clearChatState,
+  sendPrompt,
+  addMessage,
+} from "../../redux/features/chat/chatSlice";
 
 export default function HomePage() {
-  const [messages, setMessages] = useState([]);
-  const [sessionId, setSessionId] = useState(() => uuidv4());
-  const [openLeftFrame, setOpenLeftFrame] = useState(true);
-  const [openRightFrame, setOpenRightFrame] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [selectedStartup, setSelectedStartup] = useState(null);
-  const [mailMessage, setMailMessage] = useState(null);
-  const [queryData, setQueryData] = useState(null);
+  // UI toggles remain local
+  const [openLeftFrame, setOpenLeftFrame] = React.useState(true);
+  const [openRightFrame, setOpenRightFrame] = React.useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
 
   const dispatch = useAppDispatch();
+  const {
+    messages,
+    sessionId,
+    userInfo,
+    selectedStartup,
+    mailMessage,
+    queryData,
+    loading,
+    error,
+  } = useAppSelector((state) => state.chat);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
-    if (user) setUserInfo(JSON.parse(user));
-  }, []);
+    if (user) dispatch(setUserInfo(JSON.parse(user)));
+  }, [dispatch]);
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
@@ -36,46 +51,31 @@ export default function HomePage() {
     };
   }, [isMobileMenuOpen]);
 
-  const handleSaveInput = async (input) => {
-    const token = localStorage.getItem("jwtAccessToken");
-    setMessages((prev) => [...prev, { question: input, response: "Loading" }]);
-
-    try {
-      const res = await axios.post(
-        "https://tyn-server.azurewebsites.net/prompt/chat/",
-        { input, session_id: sessionId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.question === input ? { question: input, response: res.data } : msg
-        )
-      );
-    } catch (error) {
-      const message =
-        error.code === "ECONNREFUSED"
-          ? "Connection error"
-          : error.response?.status === 500
-          ? "Internal Server Error"
-          : error.message || "Error fetching response";
-
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.question === input ? { question: input, response: message } : msg
-        )
-      );
+  useEffect(() => {
+    // On mount, set a sessionId if not present
+    if (!sessionId) {
+      dispatch(setSessionId(uuidv4()));
     }
+  }, [dispatch, sessionId]);
+
+  const handleSaveInput = async (input: string) => {
+    const token = localStorage.getItem("jwtAccessToken");
+    dispatch(addMessage({ question: input, response: "Loading" }));
+    dispatch(
+      sendPrompt({ input, sessionId, token: token || "" })
+    );
   };
 
   const handleNewChat = () => {
-    setSessionId(uuidv4());
-    setMessages([]);
+    dispatch(setSessionId(uuidv4()));
+    dispatch(clearMessages());
+    dispatch(clearChatState());
   };
 
   const toggleWidth = () => setExpanded((prev) => !prev);
-  const handleSendStartupData = (item, msg) => {
-    setMailMessage(msg);
-    setSelectedStartup(item?.database_info);
+  const handleSendStartupData = (item: any, msg: any) => {
+    dispatch(setMailMessage(msg));
+    dispatch(setSelectedStartup(item?.database_info));
     dispatch(fetchPartnerConnectsByOrg(item?.database_info?.startup_id));
     setOpenRightFrame(true);
   };
@@ -90,7 +90,7 @@ export default function HomePage() {
       <div className="flex flex-row w-full h-full">
         {/* Left Sidebar - Desktop */}
         <div className="hidden lg:block lg:w-[21%]">
-          <LeftFrame onNewChat={handleNewChat} setSessionId={setSessionId} />
+          <LeftFrame onNewChat={handleNewChat} setSessionId={(id: string) => dispatch(setSessionId(id))} />
         </div>
 
         {/* Left Sidebar - Mobile */}
@@ -99,11 +99,16 @@ export default function HomePage() {
           isMobileOpen={isMobileMenuOpen}
           onCloseMobile={() => setIsMobileMenuOpen(false)}
           onNewChat={handleNewChat}
-          setSessionId={setSessionId}
+          setSessionId={(id: string) => dispatch(setSessionId(id))}
         />
 
         {/* Center Prompt Area */}
-       <div className="relative flex-grow flex flex-col min-h-screen overflow-hidden">
+        <div className="relative flex-grow flex flex-col min-h-screen overflow-hidden">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-50">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+            </div>
+          )}
           <Prompt
             handleToggleLeftFrame={() => setOpenLeftFrame(!openLeftFrame)}
             handleToggleRightFrame={() => setOpenRightFrame(!openRightFrame)}
@@ -123,7 +128,7 @@ export default function HomePage() {
               expanded={expanded}
               toggleWidth={toggleWidth}
               mailData={mailMessage}
-              setMailData={setMailMessage}
+              setMailData={(msg: any) => dispatch(setMailMessage(msg))}
               queryData={queryData}
             />
           </div>

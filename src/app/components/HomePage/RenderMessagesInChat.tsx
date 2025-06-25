@@ -52,7 +52,7 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
               <span className="font-semibold text-black block mb-3">NIFO:</span>
 
               {message?.response === "Loading" ? (
-                <BounceLoading />
+                <div className="text-gray-400 italic py-4">NIFO is thinking...</div>
               ) : (
                 <>
                   {queryType === "valid" &&
