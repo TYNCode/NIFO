@@ -5,8 +5,9 @@ import {
   setJsonForDocument,
   setActiveDefineStepTab,
   resetChallenge,
+  fetchQuestionnaire,
+  fetchChallengeDocument,
 } from "./challengeSlice";
-import axios from "axios";
 
 export const loadFullProjectContext = (projectID: string) => async (dispatch: AppDispatch) => {
   try {
@@ -19,21 +20,20 @@ export const loadFullProjectContext = (projectID: string) => async (dispatch: Ap
     dispatch(setProjectID(projectID));
     dispatch(enableStep(1));
 
-    // Step 2: Fetch questionnaire (01.b)
-    const questionRes = await axios.post(
-      "https://tyn-server.azurewebsites.net/coinnovation/generate-questions/",
-      { project_id: projectID }
-    );
-    dispatch(setQuestionnaireData(questionRes.data.data));
-    // dispatch(enableStep(2));
+    // Step 2: Fetch questionnaire (01.b) - uses Redux action
+    const questionRes = await dispatch(
+      fetchQuestionnaire({ 
+        projectID,
+        problemStatement: projectRes.problem_statement,
+        context: projectRes.project_description || projectRes.context
+      })
+    ).unwrap();
+    dispatch(setQuestionnaireData(questionRes));
 
-    // Step 3: Fetch document (01.c)
-    const docRes = await axios.get(
-      `https://tyn-server.azurewebsites.net/coinnovation/generate-challenge-document/?project_id=${projectID}`
-    );
-    if (docRes.data.data?.json) {
-      dispatch(setJsonForDocument(docRes.data.data.json));
-    //   dispatch(enableStep(3));
+    // Step 3: Fetch document (01.c) - uses Redux action
+    const docRes = await dispatch(fetchChallengeDocument(projectID)).unwrap();
+    if (docRes) {
+      dispatch(setJsonForDocument(docRes));
     }
   } catch (err) {
     console.error("❌ Failed to load full project context", err);

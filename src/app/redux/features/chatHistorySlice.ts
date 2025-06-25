@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ChatHistoryResponse, Session } from "../../interfaces";
-import { getRequestWithAccessToken } from "../hooks";
+import { apiRequest } from "../../utils/apiWrapper/apiRequest";
 
 export interface ChatHistoryState {
   history: Session[];
@@ -18,9 +18,7 @@ export const fetchChatHistory = createAsyncThunk(
   "chatHistory/fetchChatHistory",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await getRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/prompt/sessions/"
-      );
+      const response = await apiRequest("get", "/prompt/sessions/", {}, true);
 
       const data = response.data;
 

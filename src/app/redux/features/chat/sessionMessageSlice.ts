@@ -1,8 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  getRequestWithAccessToken,
-  deleteRequestWithAccessToken,
-} from "../../hooks";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 import { StartupType } from "@/app/admin/startups/types/company";
 
 // --- Types ---
@@ -59,9 +56,7 @@ export const fetchConversationsBySessionId = createAsyncThunk<
   "sessionMessages/fetchConversationsBySessionId",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await getRequestWithAccessToken(
-        `https://tyn-server.azurewebsites.net/prompt/convo/${id}/`
-      );
+      const response = await apiRequest("get", `/prompt/convo/${id}/`, {}, true);
       return response.data.conversations;
     } catch (error: unknown) {
       const err = error as any;
@@ -78,9 +73,7 @@ export const fetchAllSessions = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/fetchAllSessions", async (_, { rejectWithValue }) => {
   try {
-    const response = await getRequestWithAccessToken(
-      `https://tyn-server.azurewebsites.net/prompt/sessions/`
-    );
+    const response = await apiRequest("get", "/prompt/sessions/", {}, true);
     return response.data;
   } catch (error: unknown) {
     const err = error as any;
@@ -94,9 +87,7 @@ export const fetchSingleSession = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/fetchSingleSession", async (id, { rejectWithValue }) => {
   try {
-    const response = await getRequestWithAccessToken(
-      `https://tyn-server.azurewebsites.net/prompt/sessions/${id}/`
-    );
+    const response = await apiRequest("get", `/prompt/sessions/${id}/`, {}, true);
     return response.data;
   } catch (error: unknown) {
     const err = error as any;
@@ -110,9 +101,7 @@ export const deleteSessionById = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/deleteSessionById", async (id, { rejectWithValue }) => {
   try {
-    await deleteRequestWithAccessToken(
-      `https://tyn-server.azurewebsites.net/prompt/sessions/${id}/delete/`
-    );
+    await apiRequest("delete", `/prompt/sessions/${id}/delete/`, {}, true);
     return id;
   } catch (error: unknown) {
     const err = error as any;

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 import { updateSolutionProvider } from "./solutionProviderDetailsSlice";
 
 
@@ -38,10 +38,11 @@ export const fetchSolutionProviders = createAsyncThunk<
     const projectId = localStorage.getItem("projectID");
     if (!projectId) throw new Error("Project ID is missing");
 
-    const response = await axios.post(
-      "https://tyn-server.azurewebsites.net/coinnovation/source-solution-providers/",
+    const response = await apiRequest(
+      "post",
+      "/coinnovation/source-solution-providers/",
       { project_id: projectId },
-      { headers: { "Content-Type": "application/json" } }
+      true
     );
 
     return response.data.solution_providers;
@@ -64,10 +65,11 @@ export const addSolutionProvider = createAsyncThunk<
   { rejectValue: string }
 >("solutionProvider/addSolutionProvider", async (formData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      "https://tyn-server.azurewebsites.net/coinnovation/add-solution-provider/",
+    const response = await apiRequest(
+      "post",
+      "/coinnovation/add-solution-provider/",
       formData,
-      { headers: { "Content-Type": "application/json" } }
+      true
     );
     return response.data.provider_details;
   } catch (error: any) {
@@ -82,12 +84,11 @@ export const deleteSolutionProvider = createAsyncThunk<
   { rejectValue: string }
 >("solutionProvider/deleteSolutionProvider", async ({ project_id, solution_provider_id }, { rejectWithValue }) => {
   try {
-    await axios.delete(
-      "https://tyn-server.azurewebsites.net/coinnovation/delete-solution-provider/",
-      {
-        headers: { "Content-Type": "application/json" },
-        data: { project_id, solution_provider_id }
-      }
+    await apiRequest(
+      "delete",
+      "/coinnovation/delete-solution-provider/",
+      { project_id, solution_provider_id },
+      true
     );
     return { solution_provider_id };
   } catch (error: any) {
@@ -102,10 +103,11 @@ export const saveShortlistedProviders = createAsyncThunk<
   { rejectValue: string }
 >("solutionProvider/saveShortlistedProviders", async ({ project_id, selected_ids }, { rejectWithValue }) => {
   try {
-    await axios.post(
-      "https://tyn-server.azurewebsites.net/coinnovation/shortlist-solution-providers/",
+    await apiRequest(
+      "post",
+      "/coinnovation/shortlist-solution-providers/",
       { project_id, selected_ids },
-      { headers: { "Content-Type": "application/json" } }
+      true
     );
     return selected_ids;
   } catch (error: any) {

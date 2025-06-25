@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface RatingCriteria {
   score: number;
@@ -35,14 +35,11 @@ export const compareSolutionProviders = createAsyncThunk<
   "comparison/compareSolutionProviders",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/compare-solution-providers/",
+      const response = await apiRequest(
+        "post",
+        "/coinnovation/compare-solution-providers/",
         payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        true
       );
       return response.data;
     } catch (error: any) {

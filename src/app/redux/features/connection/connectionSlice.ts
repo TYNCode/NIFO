@@ -1,9 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  getRequestWithAccessToken,
-  postRequestWithAccessToken,
-  patchRequestWithAccessToken,
-} from "../../hooks";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 export type ConnectionStatus =
   | "requested"
@@ -40,7 +36,6 @@ interface PartnerConnectResponse {
   use_case?: string;
 }
 
-
 interface PartnerConnectState {
   connectionsMade: PartnerConnectResponse[];
   connectionsReceived: PartnerConnectResponse[];
@@ -71,9 +66,7 @@ export const fetchPartnerConnectsByOrg = createAsyncThunk<
   "partnerConnect/fetchPartnerConnectsByOrg",
   async (orgId, { rejectWithValue }) => {
     try {
-      const response = await getRequestWithAccessToken(
-        `https://tyn-server.azurewebsites.net/partnerconnect/connects/?requested_org=${orgId}`
-      );
+      const response = await apiRequest("get", `/partners/connects/?requested_org=${orgId}`, {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -90,9 +83,7 @@ export const fetchPartnerConnectsMade = createAsyncThunk<
   { rejectValue: string }
 >("partnerConnect/fetchPartnerConnectsMade", async (_, { rejectWithValue }) => {
   try {
-    const response = await getRequestWithAccessToken(
-      "https://tyn-server.azurewebsites.net/partnerconnect/connects/made/"
-    );
+    const response = await apiRequest("get", "/partners/connects/made/", {}, true);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -109,13 +100,11 @@ export const fetchPartnerConnectsReceived = createAsyncThunk<
   "partnerConnect/fetchPartnerConnectsReceived",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await getRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/received/"
-      );
+      const response = await apiRequest("get", "/partners/connects/received/", {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data?.error
+        error?.response?.data?.error || "Failed to fetch partner connects received"
       );
     }
   }
@@ -129,10 +118,7 @@ export const createPartnerConnect = createAsyncThunk<
   "partnerConnect/createPartnerConnect",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await postRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
-        payload
-      );
+      const response = await apiRequest("post", "/partners/connects/create-update/", payload, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -150,10 +136,7 @@ export const updatePartnerConnectStatus = createAsyncThunk<
   "partnerConnect/updatePartnerConnectStatus",
   async ({ id, request_status }, { rejectWithValue }) => {
     try {
-      const response = await patchRequestWithAccessToken(
-        "https://tyn-server.azurewebsites.net/partnerconnect/connects/create-update/",
-        { id, request_status }
-      );
+      const response = await apiRequest("patch", "/partners/connects/create-update/", { id, request_status }, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -173,6 +156,10 @@ const partnerConnectSlice = createSlice({
     ) => {
       const { startupId, status } = action.payload;
       state.connectionStatuses[startupId] = status;
+    },
+    clearConnectionState: (state) => {
+      state.error = null;
+      state.successMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -205,8 +192,7 @@ const partnerConnectSlice = createSlice({
         }
       )
       .addCase(fetchPartnerConnectsReceived.rejected, (state, action) => {
-        state.error =
-          action.payload;
+        state.error = action.payload || "Failed to fetch partner connects received";
         state.loading = false;
       })
 
@@ -222,8 +208,7 @@ const partnerConnectSlice = createSlice({
         }
       )
       .addCase(fetchPartnerConnectsByOrg.rejected, (state, action) => {
-        state.error =
-          action.payload || "Failed to fetch partner connects by org";
+        state.error = action.payload || "Failed to fetch partner connects by org";
         state.loading = false;
       })
 
@@ -268,12 +253,11 @@ const partnerConnectSlice = createSlice({
           "updatePartnerConnectStatusSlice Rejected",
           action.payload
         );
-        state.error =
-          action.payload || "Failed to update partner connect status";
+        state.error = action.payload || "Failed to update partner connect status";
         state.loading = false;
       });
   },
 });
 
-export const { setConnectionStatus } = partnerConnectSlice.actions;
+export const { setConnectionStatus, clearConnectionState } = partnerConnectSlice.actions;
 export default partnerConnectSlice.reducer;

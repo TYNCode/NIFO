@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface SolutionProviderDetails {
   solution_provider_id: string;
@@ -36,10 +36,11 @@ export const fetchSolutionProviderDetails = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/solution-provider-details/",
+      const response = await apiRequest(
+        "post",
+        "/coinnovation/solution-provider-details/",
         { project_id, solution_provider_id },
-        { headers: { "Content-Type": "application/json" } }
+        true
       );
       return {
         solution_provider_id,
@@ -72,14 +73,15 @@ export const updateSolutionProvider = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.put(
-        `https://tyn-server.azurewebsites.net/coinnovation/edit-solution-provider/`,
+      const response = await apiRequest(
+        "put",
+        "/coinnovation/edit-solution-provider/",
         {
           solution_provider_id,
           project_id,
           ...updatedData,
         },
-        { headers: { "Content-Type": "application/json" } }
+        true
       );
 
       return {

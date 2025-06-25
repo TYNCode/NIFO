@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 import axios from "axios";
 
 // Types
@@ -32,23 +33,20 @@ const initialState: FileState = {
   problemStatementFromFile: null,
 };
 
-// Constants
-const BASE_URL = "https://tyn-server.azurewebsites.net";
-
 // Thunks
 
 export const fetchProjectFiles = createAsyncThunk<StoredFile[], string>(
   "file/fetchProjectFiles",
   async (projectID, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${BASE_URL}/coinnovation/create-project/?project_id=${projectID}`);
+      const response = await apiRequest("get", `/coinnovation/create-project/?project_id=${projectID}`, {}, true);
       const files = response.data?.files || [];
 
       const formatted = files.map((file: any) => ({
         id: file.id,
         original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
         name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
-        url: `${BASE_URL}${file.file}`,
+        url: file.file,
       }));
 
       return formatted;
@@ -70,9 +68,18 @@ export const uploadProjectFiles = createAsyncThunk<
       if (projectID) formData.append("project_id", projectID);
       if (problemStatement) formData.append("text", problemStatement);
 
-      const response = await axios.post(`${BASE_URL}/coinnovation/upload-file/`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // Use direct axios call for upload-file endpoint to handle FormData properly
+      const token = localStorage.getItem("jwtAccessToken");
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      // Don't set Content-Type for FormData - let browser set it automatically
+
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const url = `${baseURL}/coinnovation/upload-file/`;
+      
+      const response = await axios.post(url, formData, { headers });
 
       const uploaded = response.data?.files || [];
 
@@ -80,7 +87,7 @@ export const uploadProjectFiles = createAsyncThunk<
         id: file.id,
         original_name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
         name: file.original_name || decodeURIComponent(file.file.split("/").pop()),
-        url: `${BASE_URL}${file.file}`,
+        url: file.file,
       }));
 
       return {
@@ -93,12 +100,11 @@ export const uploadProjectFiles = createAsyncThunk<
   }
 );
 
-
 export const deleteProjectFile = createAsyncThunk<number, number>(
   "file/deleteProjectFile",
   async (fileId, { rejectWithValue }) => {
     try {
-      await axios.delete(`${BASE_URL}/coinnovation/delete-file/?file_id=${fileId}`);
+      await apiRequest("delete", `/coinnovation/delete-file/?file_id=${fileId}`, {}, true);
       return fileId;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to delete file.");

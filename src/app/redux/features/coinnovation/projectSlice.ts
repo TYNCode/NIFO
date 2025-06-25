@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProjectData } from "../../../interfaces/coinnovation";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 import axios from "axios";
 
 interface ProjectState {
@@ -34,9 +35,7 @@ export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "https://tyn-server.azurewebsites.net/coinnovation/create-project/"
-      );
+      const response = await apiRequest("get", "/coinnovation/create-project/", {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -50,9 +49,7 @@ export const fetchProjectDetails = createAsyncThunk(
   "projects/fetchProjectDetails",
   async (projectID: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `https://tyn-server.azurewebsites.net/coinnovation/create-project/?project_id=${projectID}`
-      );
+      const response = await apiRequest("get", `/coinnovation/create-project/?project_id=${projectID}`, {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -83,15 +80,20 @@ export const createOrUpdateProject = createAsyncThunk(
         }
       });
 
+      // Use direct axios call for create-project endpoint to handle FormData properly
+      const token = localStorage.getItem("jwtAccessToken");
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      // Don't set Content-Type for FormData - let browser set it automatically
+
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const url = `${baseURL}/coinnovation/create-project/`;
+      
       const response = projectID
-        ? await axios.put(
-            "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
-            formData
-          )
-        : await axios.post(
-            "https://tyn-server.azurewebsites.net/coinnovation/create-project/",
-            formData
-          );
+        ? await axios.put(url, formData, { headers })
+        : await axios.post(url, formData, { headers });
 
       return response.data;
     } catch (error: any) {

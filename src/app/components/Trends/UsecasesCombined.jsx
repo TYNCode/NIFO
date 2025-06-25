@@ -26,7 +26,7 @@ const UsecasesCombined = ({
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const res = await fetch("https://tyn-server.azurewebsites.net/trends/");
+        const res = await fetch("https://tyn-server.azurewebsites.net/api/trends/");
         const data = await res.json();
 
         const normalize = (arr) => [...new Set(arr.filter(Boolean))];

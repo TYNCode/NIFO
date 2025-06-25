@@ -13,7 +13,7 @@ const CurvedLineUp = ({ selectedSector }) => {
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("https://tyn-server.azurewebsites.net/trends/options/");
+        const response = await fetch("https://tyn-server.azurewebsites.net/api/trends/options/");
         const data = await response.json();
 
         const sectors = (data.sectors || []).map((s) => s.value);

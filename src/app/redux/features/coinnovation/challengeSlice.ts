@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 import axios from "axios";
 
 interface Answer {
@@ -27,6 +28,7 @@ interface ChallengeState {
   loading: boolean;
   error: string | null;
   isPDDJsonGenerating: boolean;
+  isDocxGenerating: boolean;
 }
 
 const initialState: ChallengeState = {
@@ -36,6 +38,7 @@ const initialState: ChallengeState = {
   loading: false,
   error: null,
   isPDDJsonGenerating: false,
+  isDocxGenerating: false,
 };
 
 // ============ ASYNC THUNKS ============ //
@@ -51,17 +54,65 @@ export const generateQuestions = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/generate-questions/",
+      const res = await apiRequest(
+        "post",
+        "/coinnovation/generate-questions/",
         {
           project_id: projectID,
           problem_statement: problemStatement,
           context,
-        }
+        },
+        true
       );
       return res.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error || "Failed to generate questions");
+    }
+  }
+);
+
+export const fetchQuestionnaire = createAsyncThunk(
+  "challenge/fetchQuestionnaire",
+  async (
+    {
+      projectID,
+      problemStatement,
+      context,
+    }: { 
+      projectID: string; 
+      problemStatement?: string; 
+      context?: string; 
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // Use direct axios call for generate-questions endpoint
+      const token = localStorage.getItem("jwtAccessToken");
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      headers["Content-Type"] = "application/json";
+
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const url = `${baseURL}/coinnovation/generate-questions/`;
+      
+      const payload: any = {
+        project_id: projectID,
+      };
+
+      // Only add problem_statement and context if they are provided
+      if (problemStatement) {
+        payload.problem_statement = problemStatement;
+      }
+      if (context) {
+        payload.context = context;
+      }
+
+      const response = await axios.post(url, payload, { headers });
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || "Failed to fetch questionnaire");
     }
   }
 );
@@ -76,12 +127,14 @@ export const updateQuestionnaire = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.put(
-        "https://tyn-server.azurewebsites.net/coinnovation/generate-questions/",
+      const res = await apiRequest(
+        "put",
+        "/coinnovation/generate-questions/",
         {
           project_id: projectID,
           categories: updatedCategories,
-        }
+        },
+        true
       );
       return res.data.data;
     } catch (error: any) {
@@ -107,14 +160,16 @@ export const generatePDD = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.post(
-        "https://tyn-server.azurewebsites.net/coinnovation/generate-challenge-document/",
+      const res = await apiRequest(
+        "post",
+        "/coinnovation/generate-challenge-document/",
         {
           project_id: projectID,
           problem_statement: problemStatement,
           context,
           categories: questionnaire,
-        }
+        },
+        true
       );
       return res.data.data.json;
     } catch (error: any) {
@@ -133,16 +188,102 @@ export const updatePDD = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.put(
-        "https://tyn-server.azurewebsites.net/coinnovation/generate-challenge-document/",
+      const res = await apiRequest(
+        "put",
+        "/coinnovation/generate-challenge-document/",
         {
           project_id: projectID,
           json: jsonForDocument,
-        }
+        },
+        true
       );
       return res.data.data.json;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error || "Failed to update PDD");
+    }
+  }
+);
+
+export const fetchChallengeDocument = createAsyncThunk(
+  "challenge/fetchChallengeDocument",
+  async (projectID: string, { rejectWithValue }) => {
+    try {
+      // Use direct axios call for generate-challenge-document endpoint
+      const token = localStorage.getItem("jwtAccessToken");
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const url = `${baseURL}/coinnovation/generate-challenge-document/?project_id=${projectID}`;
+      
+      const response = await axios.get(url, { headers });
+      return response.data.data?.json || null;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || "Failed to fetch challenge document");
+    }
+  }
+);
+
+export const generateDocx = createAsyncThunk(
+  "challenge/generateDocx",
+  async (
+    {
+      projectID,
+      projectName,
+      owner,
+      approver,
+      category,
+      businessUnit,
+      location,
+      department,
+      jsonData,
+    }: {
+      projectID: string;
+      projectName?: string;
+      owner?: string;
+      approver?: string;
+      category?: string;
+      businessUnit?: string;
+      location?: string;
+      department?: string;
+      jsonData?: Record<string, any>;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // Use direct axios call for generate-docx endpoint
+      const token = localStorage.getItem("jwtAccessToken");
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      headers["Content-Type"] = "application/json";
+
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const url = `${baseURL}/coinnovation/generate-docx/`;
+      
+      const payload = {
+        project_id: projectID,
+        project_name: projectName || "Untitled Project",
+        owner: owner || "N/A",
+        approver: approver || "N/A",
+        category: category || "N/A",
+        business_unit: businessUnit || "N/A",
+        location: location || "N/A",
+        department: department || "N/A",
+        ...(jsonData && { final_document: jsonData }),
+      };
+
+      const response = await axios.post(url, payload, { 
+        headers,
+        responseType: "blob"
+      });
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to generate DOCX");
     }
   }
 );
@@ -165,6 +306,7 @@ const challengeSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.isPDDJsonGenerating = false;
+      state.isDocxGenerating = false;
       state.activeDefineStepTab = "01.a";
     },
     setActiveDefineStepTab: (state, action: PayloadAction<string>) => {
@@ -172,6 +314,9 @@ const challengeSlice = createSlice({
     },
     setIsPDDJsonGenerating: (state, action: PayloadAction<boolean>) => {
       state.isPDDJsonGenerating = action.payload;
+    },
+    setIsDocxGenerating: (state, action: PayloadAction<boolean>) => {
+      state.isDocxGenerating = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -185,6 +330,19 @@ const challengeSlice = createSlice({
         state.questionnaireData = action.payload;
       })
       .addCase(generateQuestions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(fetchQuestionnaire.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchQuestionnaire.fulfilled, (state, action) => {
+        state.loading = false;
+        state.questionnaireData = action.payload;
+      })
+      .addCase(fetchQuestionnaire.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -207,6 +365,23 @@ const challengeSlice = createSlice({
 
       .addCase(updatePDD.fulfilled, (state, action) => {
         state.jsonForDocument = action.payload;
+      })
+
+      .addCase(fetchChallengeDocument.fulfilled, (state, action) => {
+        state.jsonForDocument = action.payload;
+      })
+
+      .addCase(generateDocx.pending, (state) => {
+        state.isDocxGenerating = true;
+        state.error = null;
+      })
+      .addCase(generateDocx.fulfilled, (state, action) => {
+        state.isDocxGenerating = false;
+        // The action.payload contains the blob data for download
+      })
+      .addCase(generateDocx.rejected, (state, action) => {
+        state.isDocxGenerating = false;
+        state.error = action.payload as string;
       });
   },
 });
@@ -217,6 +392,7 @@ export const {
   resetChallenge,
   setActiveDefineStepTab,
   setIsPDDJsonGenerating,
+  setIsDocxGenerating,
 } = challengeSlice.actions;
 
 export default challengeSlice.reducer;

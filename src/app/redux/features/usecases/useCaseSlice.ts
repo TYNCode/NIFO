@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
+import { apiRequest } from '../../../utils/apiWrapper/apiRequest';
 
 interface UseCase {
     id: number;
@@ -22,12 +21,12 @@ const initialState: UseCaseState = {
     error: null,
 };
 
-export const fetchUseCases = createAsyncThunk('useCase/fetchUseCases', async () => {
+export const fetchUseCases = createAsyncThunk('useCase/fetchUseCases', async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get('https://tyn-server.azurewebsites.net/usecases/');
+        const response = await apiRequest('get', '/usecases/', {}, false);
         return response.data.usecases;
-    } catch (error) {
-        throw new Error(error.message);
+    } catch (error: any) {
+        return rejectWithValue(error.response?.data?.message || error.message);
     }
 });
 

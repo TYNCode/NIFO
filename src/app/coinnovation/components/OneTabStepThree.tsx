@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   updatePDD,
   setJsonForDocument,
+  generateDocx,
 } from "../../redux/features/coinnovation/challengeSlice";
 import {
   enableStep,
@@ -22,6 +23,8 @@ const OneTabStepThree: React.FC = () => {
     (state) => state.challenge.jsonForDocument
   );
   const projectID = useAppSelector((state) => state.projects.projectID);
+  const projectDetails = useAppSelector((state) => state.projects.projectDetails);
+  const isDocxGenerating = useAppSelector((state) => state.challenge.isDocxGenerating);
   const [editableText, setEditableText] = useState("");
   const [challengeTab, setChallengeTab] = useState("Focus Areas");
   const [endUserTab, setEndUserTab] = useState("Roles");
@@ -33,7 +36,6 @@ const OneTabStepThree: React.FC = () => {
   const [isEditingEndUser, setIsEditingEndUser] = useState(false);
   const [isEditingOutcome, setIsEditingOutcome] = useState(false);
   const [isEditingKpiTable, setIsEditingKpiTable] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleSourceSolution = () => {
     dispatch(enableStep(2));
@@ -210,17 +212,27 @@ const OneTabStepThree: React.FC = () => {
   if (!jsonForDocument) return <div className="p-4">Loading...</div>;
 
   const handleDownloadDoc = async () => {
-    setIsDownloading(true);
+    if (!projectID) return;
+
     try {
-      const res = await fetch("https://tyn-server.azurewebsites.net/coinnovation/generate-docx/", {
-        method: "POST",
-        body: JSON.stringify({ project_id: projectID }),
-        headers: { "Content-Type": "application/json" },
+      const result = await dispatch(
+        generateDocx({
+          projectID,
+          projectName: projectDetails?.project_name,
+          owner: projectDetails?.owner,
+          approver: projectDetails?.approver,
+          category: projectDetails?.category,
+          businessUnit: projectDetails?.business_unit,
+          location: projectDetails?.location,
+          department: projectDetails?.department,
+          jsonData: jsonForDocument,
+        })
+      ).unwrap();
+
+      // Create blob and download
+      const blob = new Blob([result], { 
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
       });
-
-      if (!res.ok) throw new Error("Failed to generate document");
-
-      const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
@@ -229,10 +241,9 @@ const OneTabStepThree: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Download failed:", error);
-    } finally {
-      setIsDownloading(false);
     }
   };
 
@@ -373,7 +384,7 @@ const OneTabStepThree: React.FC = () => {
         />
         <DownloadButton 
           onClick={handleDownloadDoc} 
-          isLoading={isDownloading}
+          isLoading={isDocxGenerating}
           className="w-full sm:w-auto"
         />
       </div>

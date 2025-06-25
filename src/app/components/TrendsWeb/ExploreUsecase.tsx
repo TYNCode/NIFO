@@ -11,7 +11,7 @@ const ExploreUseCase = ({ useCaseId, onBack }) => {
     useEffect(() => {
         const fetchUseCaseDetails = async () => {
             try {
-                const res = await fetch(`https://tyn-server.azurewebsites.net/trends/${useCaseId}/`);
+                const res = await fetch(`https://tyn-server.azurewebsites.net/api/trends/${useCaseId}/`);
                 const data = await res.json();
                 setUseCaseData(data);
             } catch (error) {

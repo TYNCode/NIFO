@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
+import { apiRequest } from '../../../utils/apiWrapper/apiRequest';
 
 export const fetchROIEvaluation = createAsyncThunk(
     'roiEvaluation/fetchROIEvaluation',
@@ -13,13 +12,15 @@ export const fetchROIEvaluation = createAsyncThunk(
         solution_provider_id: string;
         force_refresh?: boolean;
     }) => {
-        const response = await axios.post(
-            'https://tyn-server.azurewebsites.net/coinnovation/roi-evaluation/',
+        const response = await apiRequest(
+            'post',
+            '/coinnovation/roi-evaluation/',
             {
                 project_id,
                 solution_provider_id,
                 force_refresh,
-            }
+            },
+            true
         );
         return response.data;
     }
@@ -41,9 +42,11 @@ export const saveROISectionParameters = createAsyncThunk(
             units?: number;
         }[];
     }) => {
-        const response = await axios.patch(
-            `https://tyn-server.azurewebsites.net/coinnovation/roi-evaluation/${roiId}/section/${section}/`,
-            updates
+        const response = await apiRequest(
+            'patch',
+            `/coinnovation/roi-evaluation/${roiId}/section/${section}/`,
+            updates,
+            true
         );
         return response.data;
     }
@@ -64,8 +67,12 @@ export const deleteSubParameter = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const url = `https://tyn-server.azurewebsites.net/coinnovation/roi-evaluation/${roiId}/section/${section}/`;
-            await axios.delete(url, { data: [id] }); 
+            await apiRequest(
+                'delete',
+                `/coinnovation/roi-evaluation/${roiId}/section/${section}/`,
+                [id],
+                true
+            );
             return { id };
         } catch (error: any) {
             return rejectWithValue(error.response?.data || 'Delete failed');

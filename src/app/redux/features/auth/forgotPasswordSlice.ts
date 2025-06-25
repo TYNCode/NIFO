@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { apiRequest } from "../../../utils/apiWrapper/apiRequest";
 
 interface ChangePasswordState {
   loading: boolean;
@@ -17,10 +17,7 @@ export const requestPasswordReset = createAsyncThunk(
   "user/requestPasswordReset",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/user/forgot-password/",
-        { email }
-      );
+      const response = await apiRequest("post", "/user/forgot-password/", { email }, false);
       return response.data.message;
     } catch (error: any) {
       return rejectWithValue(
