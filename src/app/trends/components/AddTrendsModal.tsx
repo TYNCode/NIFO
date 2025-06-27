@@ -5,6 +5,7 @@ import type { RootState, AppDispatch } from "../../redux/store";
 import { apiRequest } from "../../utils/apiWrapper/apiRequest";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import debounce from "lodash.debounce";
+import { canManageTrends } from "../../utils/localStorageUtils";
 
 interface AddTrendsModalProps {
     isOpen: boolean;
@@ -51,6 +52,12 @@ const AddTrendsModal: React.FC<AddTrendsModalProps> = ({ isOpen, onClose }) => {
     const [sector, setSector] = useState("");
     const [industry, setIndustry] = useState("");
     const [subIndustry, setSubIndustry] = useState("");
+    const [canManage, setCanManage] = useState(false);
+
+    useEffect(() => {
+        // Check if user can manage trends
+        setCanManage(canManageTrends());
+    }, []);
 
     useEffect(() => {
         if (!isOpen) {
@@ -159,6 +166,13 @@ const AddTrendsModal: React.FC<AddTrendsModalProps> = ({ isOpen, onClose }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Check permissions before submitting
+        if (!canManage) {
+            alert('You do not have permission to create trends. Only TYN users can create trends.');
+            return;
+        }
+
         const imagesToSend = images.map((img) => img.name);
         dispatch(
             addTrend({
@@ -166,7 +180,7 @@ const AddTrendsModal: React.FC<AddTrendsModalProps> = ({ isOpen, onClose }) => {
                 challenge,
                 solution: solution.filter((s) => s.trim() !== ""),
                 impact: impact.filter((i) => i.trim() !== ""),
-                solution_provider: solutionProvider,
+                solution_provider: parseInt(solutionProvider),
                 solution_provider_website: solutionProviderWebsite,
                 enterprise_name: enterpriseName,
                 testimonials,
@@ -180,6 +194,28 @@ const AddTrendsModal: React.FC<AddTrendsModalProps> = ({ isOpen, onClose }) => {
     };
 
     if (!isOpen) return null;
+
+    // Show permission error if user cannot manage trends
+    if (!canManage) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-gray-200">
+                    <h2 className="text-2xl font-bold mb-4 text-red-600">Access Denied</h2>
+                    <p className="text-gray-700 mb-6">
+                        You do not have permission to create trends. Only TYN users can create, update, and delete trends.
+                    </p>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={onClose}
+                            className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">

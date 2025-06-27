@@ -6,6 +6,7 @@ import UsecasesCombined from "../../components/Trends/UsecasesCombined";
 import Ecosystem from "../../components/Trends/Ecosystem";
 import UsecaseDescription from "../../components/Trends/UsecaseDescription";
 import AddTrendsModal from "../../trends/components/AddTrendsModal";
+import { useTrendsPermissions } from "../../hooks/useTrendsPermissions";
 
 interface TrendsMobileProps {
   selectedSector?: string;
@@ -42,6 +43,7 @@ const TrendsMobile: React.FC<TrendsMobileProps> = ({
   });
 
   const [isAddTrendModalOpen, setIsAddTrendModalOpen] = useState(false);
+  const { canManage } = useTrendsPermissions();
 
   const handleUsecaseClick = useCallback((usecase: any) => {
     setSelectedUseCase(usecase);
@@ -60,19 +62,23 @@ const TrendsMobile: React.FC<TrendsMobileProps> = ({
 
   return (
     <div className="w-full max-w-screen-sm mx-auto bg-white min-h-screen pb-4">
-      {/* Add Trend Button */}
-      <div className="flex justify-end p-4">
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded shadow"
-          onClick={() => setIsAddTrendModalOpen(true)}
-        >
-          Add Trend
-        </button>
-      </div>
-      <AddTrendsModal
-        isOpen={isAddTrendModalOpen}
-        onClose={() => setIsAddTrendModalOpen(false)}
-      />
+      {/* Add Trend Button - Only show for TYN users */}
+      {canManage && (
+        <div className="flex justify-end p-4">
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded shadow"
+            onClick={() => setIsAddTrendModalOpen(true)}
+          >
+            Add Trend
+          </button>
+        </div>
+      )}
+      {canManage && (
+        <AddTrendsModal
+          isOpen={isAddTrendModalOpen}
+          onClose={() => setIsAddTrendModalOpen(false)}
+        />
+      )}
       {/* Trends Header */}
       
 

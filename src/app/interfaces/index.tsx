@@ -44,7 +44,8 @@ export interface UserInfo {
   first_name:string;
   is_superuser:boolean;
   organization:number;
-  is_primary_user : boolean
+  is_primary_user : boolean;
+  role?: string;
 }
 
 

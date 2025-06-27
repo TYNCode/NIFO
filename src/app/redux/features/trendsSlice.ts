@@ -18,7 +18,21 @@ export interface Trend {
   sub_industry: string;
 }
 
-export interface TrendPayload extends Omit<Trend, 'id'> {}
+export interface TrendPayload {
+  challenge_title: string;
+  challenge: string;
+  solution: string[];
+  impact: string[];
+  solution_provider: number;
+  solution_provider_website?: string;
+  enterprise_name?: string;
+  testimonials?: string;
+  references: string[];
+  images: string[];
+  sector: string;
+  industry: string;
+  sub_industry: string;
+}
 
 interface TrendsState {
   trends: Trend[];
@@ -49,6 +63,10 @@ export const addTrend = createAsyncThunk(
       await apiRequest('post', '/trends/', payload, false);
       return true;
     } catch (err: any) {
+      // Handle RBAC errors specifically
+      if (err.response?.status === 403) {
+        return rejectWithValue('You do not have permission to create trends. Only TYN users can create trends.');
+      }
       return rejectWithValue('Failed to add trend.');
     }
   }
@@ -95,8 +113,6 @@ export const fetchSubIndustries = createAsyncThunk(
       const res = await apiRequest('get', '/trends/sector-industry-subindustry/', { sector, industry }, false);
       if (Array.isArray(res.data.subindustries)) {
         return res.data.subindustries;
-      } else if (Array.isArray(res.data.sub_industries)) {
-        return res.data.sub_industries;
       } else if (Array.isArray(res.data)) {
         return res.data;
       }
@@ -134,7 +150,11 @@ export const deleteTrend = createAsyncThunk(
     try {
       await apiRequest('delete', `/trends/${trendId}/`, {}, false);
       return trendId;
-    } catch (error) {
+    } catch (error: any) {
+      // Handle RBAC errors specifically
+      if (error.response?.status === 403) {
+        return rejectWithValue('You do not have permission to delete trends. Only TYN users can delete trends.');
+      }
       return rejectWithValue('Failed to delete trend');
     }
   }
