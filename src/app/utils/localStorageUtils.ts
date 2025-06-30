@@ -17,7 +17,7 @@ export const getUserInfo = (): UserInfo | null => {
 export const hasTYNRole = (): boolean => {
     try {
         const userInfo = getUserInfo();
-        return userInfo?.role === 'tyn' || userInfo?.is_superuser === true;
+        return userInfo?.role?.toLowerCase() === 'tyn' || userInfo?.is_superuser === true;
     } catch (error) {
         console.error("Failed to check TYN role:", error);
         return false;
