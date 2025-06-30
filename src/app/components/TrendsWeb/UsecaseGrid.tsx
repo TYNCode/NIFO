@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchTrends, deleteTrend } from '../../redux/features/trendsSlice';
 import type { RootState, AppDispatch } from '../../redux/store';
 import AddTrendsModal from "../../trends/components/AddTrendsModal";
+import { useTrendsPermissions } from '../../hooks/useTrendsPermissions';
 
 const UsecaseGrid = ({
     selectedSector,
@@ -15,12 +16,18 @@ const UsecaseGrid = ({
     const dispatch = useDispatch<AppDispatch>();
     const { trends, loading, error } = useSelector((state: RootState) => state.trends);
     const [isAddTrendModalOpen, setIsAddTrendModalOpen] = useState(false);
+    const { canManage } = useTrendsPermissions();
 
     useEffect(() => {
         dispatch(fetchTrends({ selectedSector, selectedIndustry, selectedSubIndustry }));
     }, [dispatch, selectedSector, selectedIndustry, selectedSubIndustry]);
 
     const handleDelete = (trendId: number) => {
+        if (!canManage) {
+            alert('You do not have permission to delete trends. Only TYN users can delete trends.');
+            return;
+        }
+        
         if (window.confirm('Are you sure you want to delete this trend?')) {
             dispatch(deleteTrend(trendId));
         }
@@ -48,17 +55,21 @@ const UsecaseGrid = ({
                 <div className="text-lg font-semibold text-primary">
                     {getHeading()}
                 </div>
-                <button
-                    className="bg-primary text-white px-4 py-2 rounded shadow hover:bg-[#005a9a] transition-colors"
-                    onClick={() => setIsAddTrendModalOpen(true)}
-                >
-                    Add Trend
-                </button>
+                {canManage && (
+                    <button
+                        className="bg-primary text-white px-4 py-2 rounded shadow hover:bg-[#005a9a] transition-colors"
+                        onClick={() => setIsAddTrendModalOpen(true)}
+                    >
+                        Add Trend
+                    </button>
+                )}
             </div>
-            <AddTrendsModal
-                isOpen={isAddTrendModalOpen}
-                onClose={() => setIsAddTrendModalOpen(false)}
-            />
+            {canManage && (
+                <AddTrendsModal
+                    isOpen={isAddTrendModalOpen}
+                    onClose={() => setIsAddTrendModalOpen(false)}
+                />
+            )}
             <div
                 className={`grid gap-4 px-3 py-3 pb-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-no-arrows
                 ${trends.length <= 2
@@ -76,13 +87,15 @@ const UsecaseGrid = ({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05, duration: 0.4 }}
                         >
-                            <button
-                                onClick={() => handleDelete(item.id)}
-                                className="absolute top-2 right-2 z-10 p-1.5 bg-white/70 rounded-full hover:bg-red-100 transition"
-                                aria-label="Delete trend"
-                            >
-                                <FaTrash className="text-red-500 text-xs" />
-                            </button>
+                            {canManage && (
+                                <button
+                                    onClick={() => handleDelete(item.id)}
+                                    className="absolute top-2 right-2 z-10 p-1.5 bg-white/70 rounded-full hover:bg-red-100 transition"
+                                    aria-label="Delete trend"
+                                >
+                                    <FaTrash className="text-red-500 text-xs" />
+                                </button>
+                            )}
                             <div className="relative">
                                 <img
                                     src={imageUrl}
