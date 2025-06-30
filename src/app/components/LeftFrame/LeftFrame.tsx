@@ -31,6 +31,7 @@ interface LeftFrameProps {
   isMobile?: boolean;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onSessionSelect?: (id: string) => void;
 }
 
 const LeftFrame: React.FC<LeftFrameProps> = ({
@@ -40,6 +41,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   isMobile = false,
   isMobileOpen = false,
   onCloseMobile,
+  onSessionSelect,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -134,12 +136,13 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
       <aside
         className={`
           ${sidebarWidth}
-          min-h-screen h-full bg-white border-r border-gray-100 shadow-lg flex flex-col justify-between z-[150] transition-all duration-300
+          h-screen bg-white border-r border-gray-100 shadow-lg flex flex-col justify-between z-[150] transition-all duration-300
           ${isMobile
             ? `fixed top-0 left-0 transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:hidden`
             : 'sticky top-0'
           }
         `}
+        style={{ maxHeight: '100vh' }}
       >
         <div>
           {/* Header */}
@@ -164,8 +167,8 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
             </div>
           </div>
 
-          {/* Navigation */}
-          <div className="relative mt-3">
+          {/* Navigation and Scrollable Content */}
+          <div className="relative mt-3 flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 100px)' }}>
             <div
               className={highlightClass}
               style={{
@@ -229,7 +232,7 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           )}
 
           {!shouldBeCollapsed && pathname === "/" && subTab === "recommended" && <RecommendedQueries />}
-          {!shouldBeCollapsed && pathname === "/" && subTab === "chathistory" && <ChatHistory />}
+          {!shouldBeCollapsed && pathname === "/" && subTab === "chathistory" && <ChatHistory onSessionSelect={onSessionSelect} />}
         </div>
 
         {/* Footer */}

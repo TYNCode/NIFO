@@ -82,13 +82,13 @@ const Prompt: React.FC<PromptProps> = ({
     <div className="flex flex-col flex-grow min-h-0 w-full">
       {/* Message Section */}
       <div className="flex-1 my-5 overflow-y-scroll px-2 sm:px-4 lg:px-0">
-        {messages.length === 0 ? (
+        {(messages && Array.isArray(messages) ? messages : []).length === 0 ? (
           <div className="my-4">
             <HomeComponents />
           </div>
         ) : (
           <div className="mx-2 mb-8 md:mb-16">
-            <RenderMessagesInChat messages={messages} />
+            <RenderMessagesInChat messages={messages && Array.isArray(messages) ? messages : []} />
           </div>
         )}
         <div ref={messagesEndRef} />

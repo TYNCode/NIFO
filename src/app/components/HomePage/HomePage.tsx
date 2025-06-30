@@ -19,6 +19,8 @@ import {
   sendPrompt,
   addMessage,
 } from "../../redux/features/chat/chatSlice";
+import { fetchConversationsBySessionId } from "../../redux/features/chat/sessionMessageSlice";
+import { useParams } from "next/navigation";
 
 export default function HomePage() {
   // UI toggles remain local
@@ -26,6 +28,7 @@ export default function HomePage() {
   const [openRightFrame, setOpenRightFrame] = React.useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
+  const [selectedSessionId, setSelectedSessionId] = React.useState<string | null>(null);
 
   const dispatch = useAppDispatch();
   const {
@@ -38,6 +41,9 @@ export default function HomePage() {
     loading,
     error,
   } = useAppSelector((state) => state.chat);
+  const sessionMessage = useAppSelector((state) => state.sessionMessage);
+  const params = useParams();
+  const urlSessionId = params?.id as string | undefined;
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -62,12 +68,14 @@ export default function HomePage() {
     const token = localStorage.getItem("jwtAccessToken");
     dispatch(addMessage({ question: input, response: "Loading" }));
     dispatch(
-      sendPrompt({ input, sessionId, token: token || "" })
+      sendPrompt({ input, sessionId: selectedSessionId || sessionId, token: token || "" })
     );
   };
 
   const handleNewChat = () => {
-    dispatch(setSessionId(uuidv4()));
+    const newSessionId = uuidv4();
+    dispatch(setSessionId(newSessionId));
+    setSelectedSessionId(null);
     dispatch(clearMessages());
     dispatch(clearChatState());
   };
@@ -80,6 +88,13 @@ export default function HomePage() {
     setOpenRightFrame(true);
   };
 
+  const handleSessionSelect = (id: string) => {
+    setSelectedSessionId(id);
+    dispatch(setSessionId(id));
+    dispatch(clearMessages());
+    dispatch(fetchConversationsBySessionId(id));
+  };
+
   return (
     <main className="flex flex-col w-full h-full">
       {/* Mobile Header */}
@@ -89,8 +104,8 @@ export default function HomePage() {
 
       <div className="flex flex-row w-full h-full">
         {/* Left Sidebar - Desktop */}
-        <div className="hidden lg:block lg:w-[21%]">
-          <LeftFrame onNewChat={handleNewChat} setSessionId={(id: string) => dispatch(setSessionId(id))} />
+        <div className="hidden lg:block lg:w-[260px]">
+          <LeftFrame onNewChat={handleNewChat} setSessionId={(id: string) => dispatch(setSessionId(id))} onSessionSelect={handleSessionSelect} />
         </div>
 
         {/* Left Sidebar - Mobile */}
@@ -100,6 +115,7 @@ export default function HomePage() {
           onCloseMobile={() => setIsMobileMenuOpen(false)}
           onNewChat={handleNewChat}
           setSessionId={(id: string) => dispatch(setSessionId(id))}
+          onSessionSelect={handleSessionSelect}
         />
 
         {/* Center Prompt Area */}
@@ -113,7 +129,7 @@ export default function HomePage() {
             handleToggleLeftFrame={() => setOpenLeftFrame(!openLeftFrame)}
             handleToggleRightFrame={() => setOpenRightFrame(!openRightFrame)}
             onSaveInput={handleSaveInput}
-            messages={messages}
+            messages={urlSessionId ? sessionMessage.conversations : selectedSessionId ? sessionMessage.conversations : messages}
           />
         </div>
 

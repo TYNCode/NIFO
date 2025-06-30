@@ -56,7 +56,7 @@ export const fetchConversationsBySessionId = createAsyncThunk<
   "sessionMessages/fetchConversationsBySessionId",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", `/prompt/convo/${id}/`, {}, true);
+      const response = await apiRequest("get", `/prompts/convo/${id}/`, {}, true);
       return response.data.conversations;
     } catch (error: unknown) {
       const err = error as any;
@@ -73,7 +73,7 @@ export const fetchAllSessions = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/fetchAllSessions", async (_, { rejectWithValue }) => {
   try {
-    const response = await apiRequest("get", "/prompt/sessions/", {}, true);
+    const response = await apiRequest("get", "/prompts/sessions/", {}, true);
     return response.data;
   } catch (error: unknown) {
     const err = error as any;
@@ -87,7 +87,7 @@ export const fetchSingleSession = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/fetchSingleSession", async (id, { rejectWithValue }) => {
   try {
-    const response = await apiRequest("get", `/prompt/sessions/${id}/`, {}, true);
+    const response = await apiRequest("get", `/prompts/sessions/${id}/`, {}, true);
     return response.data;
   } catch (error: unknown) {
     const err = error as any;
@@ -101,7 +101,7 @@ export const deleteSessionById = createAsyncThunk<
   { rejectValue: string }
 >("sessionMessages/deleteSessionById", async (id, { rejectWithValue }) => {
   try {
-    await apiRequest("delete", `/prompt/sessions/${id}/delete/`, {}, true);
+    await apiRequest("delete", `/prompts/sessions/${id}/delete/`, {}, true);
     return id;
   } catch (error: unknown) {
     const err = error as any;

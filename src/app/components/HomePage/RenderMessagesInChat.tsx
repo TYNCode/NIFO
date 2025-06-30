@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BounceLoading from "./BounceLoading/BounceLoading";
 import ComparisonTable from "./ComparisonTable";
+import ProviderDeepDiveCard from "./ProviderDeepDiveCard";
 
 interface MessageType {
   question: string;
@@ -20,7 +21,7 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
 
   return (
     <>
-      {messages.map((message: any, index: number) => {
+      {(messages && Array.isArray(messages) ? messages : []).map((message: any, index: number) => {
         const activeTab = activeTabs[index] || "Breakdown";
         const responseData = typeof message.response === "object" ? message.response : message;
         const queryType = responseData.query_type || responseData.classifier_output?.query_type;
@@ -60,7 +61,7 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
                       intentType
                     ) && (
                       <div className="flex flex-col gap-6">
-                        <div className="text-xl font-semibold break-words">
+                        <div className="text-xl font-semibold text-[#2286C0] break-words">
                           {expandedQuery}
                         </div>
 
@@ -75,7 +76,7 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
                                     [index]: tab,
                                   }))
                                 }
-                                className={`pb-1 cursor-pointer whitespace-nowrap ${activeTab === tab ? "font-semibold text-[#2286C0] border-b-2 border-[#2286C0]" : "text-gray-400"}`}
+                                className={`pb-1 cursor-pointer whitespace-nowrap transition-all duration-200 ${activeTab === tab ? "font-semibold text-[#2286C0] border-b-4 border-[#2286C0]" : "text-gray-400 hover:text-[#2286C0]"}`}
                               >
                                 {tab}
                               </div>
@@ -85,44 +86,44 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
 
                         <div className="mt-4">
                           {activeTab === "Breakdown" && (
-                            <>
-                              <div className="font-bold text-gray-700 mb-2">
+                            <div className="bg-[#EEF7FF] rounded-xl p-5 mb-4 shadow-sm">
+                              <div className="font-bold text-[#2286C0] mb-2">
                                 Problem:
                               </div>
                               <div className="text-[15px] text-gray-700 mb-4 break-words">
                                 {breakdown?.core_problem}
                               </div>
-                              <div className="font-bold text-gray-700 mb-2">
+                              <div className="font-bold text-[#2286C0] mb-2">
                                 Key Requirements:
                               </div>
                               <div className="flex flex-wrap gap-2">
                                 {breakdown?.technology_requirements
                                   ?.split(",")
                                   ?.map((tech: string, idx: number) => (
-                                    <div
+                                    <span
                                       key={idx}
-                                      className="px-3 py-1 text-sm rounded-full bg-blue-100 text-[#2286C0] capitalize break-words"
+                                      className="px-3 py-1 text-sm rounded-full bg-[#2286C0] text-white capitalize break-words font-medium"
                                     >
                                       {tech.trim()}
-                                    </div>
+                                    </span>
                                   ))}
                               </div>
-                            </>
+                            </div>
                           )}
 
                           {activeTab === "Analysis" && (
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-4">
                               {part1?.startups_brief_list?.map(
                                 (startup: any, idx: number) => (
                                   <div
                                     key={idx}
-                                    className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer"
+                                    className="p-4 bg-[#EEF7FF] border-l-4 border-[#2286C0] rounded-lg shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:border-[#005fa3]"
                                     onClick={() => handleSendStartupData && handleSendStartupData(startup, message)}
                                   >
-                                    <div className="font-semibold break-words">
+                                    <div className="font-bold text-[#2286C0] text-base break-words">
                                       {startup.name}
                                     </div>
-                                    <div className="text-sm text-gray-600 break-words">
+                                    <div className="text-sm text-gray-700 break-words">
                                       {startup.description}
                                     </div>
                                   </div>
@@ -132,15 +133,15 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
                           )}
 
                           {activeTab === "Solution Provider" && (
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-4">
                               {part2?.recommendations?.map(
                                 (startup: any, idx: number) => (
                                   <div
                                     key={idx}
-                                    className="p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer"
+                                    className="p-4 bg-[#FFF9E5] border-l-4 border-[#FFD600] rounded-lg shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:border-yellow-600"
                                     onClick={() => handleSendStartupData && handleSendStartupData(startup, message)}
                                   >
-                                    <div className="font-bold text-[16px] break-words">
+                                    <div className="font-bold text-[#B8860B] text-base break-words">
                                       {startup.name}
                                     </div>
                                     <div className="text-[14px] text-gray-700 break-words">
@@ -162,154 +163,34 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
                     )}
                   {queryType === "valid" &&
                     intentType === "provider_deep_dive" && (
-                      <div className="flex flex-col gap-4">
-                        <div className="text-xl font-semibold">
-                          Detailed Profile
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <div className="break-words">
-                            <strong>Name:</strong> {responseData.provider_name}
-                          </div>
-                          <div>
-                            <strong>Founded:</strong> {responseData.founded_year}
-                          </div>
-                          <div className="break-words">
-                            <strong>Headquarters:</strong>{" "}
-                            {responseData.headquarters}
-                          </div>
-                          <div>
-                            <strong>Team Strength:</strong>{" "}
-                            {responseData.team_strength}
-                          </div>
-                          <div>
-                            <strong>Funding Stage:</strong>{" "}
-                            {responseData.funding_stage}
-                          </div>
-                          <div className="break-all">
-                            <strong>Website:</strong>{" "}
-                            <a
-                              href={responseData.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 underline"
-                            >
-                              {responseData.website}
-                            </a>
-                          </div>
-                          <div className="break-words">
-                            <strong>Overview:</strong> {responseData.overview}
-                          </div>
-                          <div>
-                            <strong>Core Offerings:</strong>
-                            <ul className="list-disc pl-6">
-                              {responseData.core_offerings?.map(
-                                (item: string, idx: number) => (
-                                  <li key={idx} className="break-words">{item}</li>
-                                )
-                              )}
-                            </ul>
-                          </div>
-                          <div>
-                            <strong>Key Technologies:</strong>
-                            <ul className="list-disc pl-6">
-                              {responseData.key_technologies?.map(
-                                (tech: string, idx: number) => (
-                                  <li key={idx} className="break-words">{tech}</li>
-                                )
-                              )}
-                            </ul>
-                          </div>
-                          <div>
-                            <strong>Use Cases:</strong>
-                            {responseData.use_cases?.map(
-                              (uc: any, idx: number) => (
-                                <div
-                                  key={idx}
-                                  className="mt-2 p-2 bg-gray-50 rounded"
-                                >
-                                  <div className="font-semibold break-words">{uc.title}</div>
-                                  <div className="text-sm break-words">{uc.description}</div>
-                                  <div className="text-sm text-gray-600 break-words">
-                                    Impact: {uc.impact}
-                                  </div>
-                                  <div className="text-sm text-gray-600 break-words">
-                                    Client/Sector: {uc.client_or_sector}
-                                  </div>
-                                </div>
-                              )
-                            )}
-                          </div>
-                          <div className="break-words">
-                            <strong>Notable Clients:</strong>{" "}
-                            {responseData.notable_clients?.join(", ")}
-                          </div>
-                          <div>
-                            <strong>Impact Metrics:</strong>
-                            <ul className="list-disc pl-6">
-                              <li className="break-words">
-                                Clients Served:{" "}
-                                {responseData.impact_metrics?.clients_served}
-                              </li>
-                              <li className="break-words">
-                                Value Generated:{" "}
-                                {responseData.impact_metrics?.value_generated}
-                              </li>
-                              <li className="break-words">
-                                Regions: {responseData.impact_metrics?.regions}
-                              </li>
-                            </ul>
-                          </div>
-                          <div>
-                            <strong>Competitive Positioning:</strong>
-                            <div className="mt-1 break-words">
-                              Peers:{" "}
-                              {responseData.competitive_positioning?.peers?.join(
-                                ", "
-                              )}
-                            </div>
-                            <ul className="list-disc pl-6 mt-1">
-                              {responseData.competitive_positioning?.differentiators?.map(
-                                (d: string, idx: number) => <li key={idx} className="break-words">{d}</li>
-                              )}
-                            </ul>
-                          </div>
-                          <div className="break-words">
-                            <strong>USP Summary:</strong>{" "}
-                            {responseData.summary_usp}
-                          </div>
-                        </div>
-                      </div>
+                      <ProviderDeepDiveCard data={responseData} />
                     )}
 
                   {queryType === "valid" && intentType === "trend_insight" && (
-                    <div className="flex flex-col gap-5">
-                      <div className="text-xl font-semibold">Emerging Trends</div>
+                    <div className="flex flex-col gap-6">
                       {trendList?.map((trend: any, idx: number) => (
                         <div
                           key={idx}
-                          className="p-4 bg-gray-50 rounded-lg shadow-sm"
+                          className="rounded-xl shadow-md border-l-4 border-[#2286C0] bg-white p-5 flex flex-col gap-2"
                         >
-                          <div className="font-semibold text-[#2286C0] text-[16px] break-words">
-                            {trend.name}
+                          <div className="flex items-center gap-2 mb-1">
+                            <svg className="w-5 h-5 text-[#2286C0]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            <span className="font-bold text-lg text-[#2286C0]">{trend.name}</span>
                           </div>
-                          <div className="text-sm text-gray-700 mt-1 break-words">
-                            {trend.description}
+                          <div className="text-gray-700 text-[15px] mb-2">{trend.description}</div>
+                          <div className="bg-[#FFF9E5] border-l-4 border-yellow-400 rounded p-3 text-gray-800 text-sm mb-2">
+                            <span className="font-semibold text-yellow-700">Example:</span> {trend.example}
                           </div>
-                          <div className="text-sm text-gray-600 mt-2 break-words">
-                            Example: {trend.example}
-                          </div>
-                          <div className="mt-2">
-                            <span className="font-semibold text-gray-700">
-                              Startups:
-                            </span>
-                            <ul className="list-disc pl-6 text-sm text-gray-700">
+                          <div>
+                            <span className="font-semibold text-gray-700">Startups:</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                               {trend.startups?.map((s: any, sIdx: number) => (
-                                <li key={sIdx} className="break-words">
-                                  {s.name} - {s.description}
-                                </li>
+                                <div key={sIdx} className="bg-[#EEF7FF] rounded-lg px-3 py-2 flex flex-col">
+                                  <span className="font-bold text-[#2286C0] text-sm">{s.name}</span>
+                                  <span className="text-xs text-gray-600">{s.description}</span>
+                                </div>
                               ))}
-                            </ul>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -343,6 +224,24 @@ const RenderMessagesInChat: React.FC<RenderMessagesInChatProps> = ({
                           ))}
                         </ul>
                       )}
+                    </div>
+                  )}
+
+                  {/* Clarification intent type */}
+                  {queryType === "valid" && intentType === "clarification" && (
+                    <div className="bg-[#EEF7FF] border-l-4 border-[#2286C0] rounded-lg p-4 flex items-start gap-2 my-2">
+                      <svg className="w-5 h-5 text-[#2286C0] mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01" /></svg>
+                      <div>
+                        <div className="text-[#2286C0] font-semibold mb-1">Clarification</div>
+                        <div className="text-gray-800">{chatResponse}</div>
+                        {followUpQuestions?.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {followUpQuestions.map((q: string, idx: number) => (
+                              <span key={idx} className="bg-[#FFD600] text-gray-900 px-3 py-1 rounded-full text-xs font-medium">{q}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </>

@@ -62,6 +62,9 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: tableData });
 
+  // Find the best fit startup name for highlighting
+  const bestFitName = recommendation_summary?.best_fit;
+
   if (intentType === "compare_startups" && data.length === 0) {
     return (
       <p className="text-gray-500 text-center py-4">
@@ -77,18 +80,18 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
         <div className="overflow-x-auto">
           <table
             {...getTableProps()}
-            className="table-auto w-full border-collapse border border-gray-300 bg-white shadow-md rounded-lg"
+            className="table-auto w-full border-collapse bg-white shadow-lg rounded-xl overflow-hidden"
           >
-            <thead className="bg-blue-50">
+            <thead>
               {headerGroups.map((headerGroup) => (
                 <tr
                   {...headerGroup.getHeaderGroupProps()}
-                  className="border-b border-gray-300"
+                  className="bg-[#2286C0]"
                 >
                   {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps()}
-                      className="px-4 py-3 border border-gray-300 text-primary text-left text-sm font-semibold"
+                      className="px-4 py-3 text-white text-left text-sm font-semibold border-b border-[#2286C0] first:rounded-tl-xl last:rounded-tr-xl"
                     >
                       {column.render("Header")}
                     </th>
@@ -96,20 +99,23 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
                 </tr>
               ))}
             </thead>
-            <tbody {...getTableBodyProps()} className="bg-white">
+            <tbody {...getTableBodyProps()}>
               {rows.map((row, rowIndex) => {
                 prepareRow(row);
+                const isBestFit = bestFitName && row.original.name === bestFitName;
                 return (
                   <tr
                     {...row.getRowProps()}
-                    className={`border-b border-gray-300 ${
-                      rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"
-                    } hover:bg-gray-100 transition duration-200`}
+                    className={`border-b border-gray-200 transition duration-200 
+                      ${isBestFit ? "bg-[#FFF9E5] font-bold text-[#B8860B]" : rowIndex % 2 === 0 ? "bg-[#EEF7FF]" : "bg-white"}
+                      ${rowIndex === 0 ? "first:rounded-tl-xl first:rounded-tr-xl" : ""}
+                    `}
+                    style={isBestFit ? { borderLeft: '6px solid #FFD600' } : { borderLeft: '4px solid #2286C0' }}
                   >
                     {row.cells.map((cell) => (
                       <td
                         {...cell.getCellProps()}
-                        className="px-4 py-3 border border-gray-300 text-sm text-left align-top"
+                        className="px-4 py-3 text-sm text-left align-top border-b border-gray-100"
                       >
                         {cell.render("Cell")}
                       </td>
@@ -124,19 +130,19 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({
 
       {/* Recommendation Summary */}
       {recommendation_summary && (
-        <div className="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-primary mb-2">
+        <div className="mt-8 bg-[#EEF7FF] border-l-4 border-[#2286C0] p-4 rounded-md shadow">
+          <h3 className="text-lg font-semibold text-[#2286C0] mb-2">
             Recommendation Summary
           </h3>
           <p className="text-sm text-gray-700 mb-4">
-            <strong>Best Fit:</strong>{" "}
-            <span className="text-primary font-semibold">
+            <strong className="text-[#FFD600]">Best Fit:</strong>{" "}
+            <span className="text-[#2286C0] font-semibold">
               {recommendation_summary.best_fit}
             </span>{" "}
             — {recommendation_summary.reason}
           </p>
           <div>
-            <h4 className="font-semibold text-primary mb-1">
+            <h4 className="font-semibold text-[#2286C0] mb-1">
               Situational Recommendations:
             </h4>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">

@@ -21,6 +21,7 @@ import agreementSlice from "./features/admin/agreements/agreementSlice"
 import promptSlice from "./features/prompt/promptSlice";
 import trendsReducer from "./features/trendsSlice";
 import chatSlice from "./features/chat/chatSlice";
+import recommendedQueriesReducer from "./features/recommendedQueriesSlice";
 
 const rootReducer = combineReducers({
   chat: chatSlice,
@@ -45,6 +46,7 @@ const rootReducer = combineReducers({
   agreement:agreementSlice,
   prompt: promptSlice,
   trends: trendsReducer,
+  recommendedQueries: recommendedQueriesReducer,
 });
 
 export default rootReducer;
