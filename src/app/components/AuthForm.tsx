@@ -76,6 +76,16 @@ const AuthForm: React.FC<AuthFormProps> = ({
           className="h-10 md:h-12 px-3 py-2 text-base outline-none rounded-lg shadow placeholder:text-gray-300 border-none w-full"
         />
         {errors.password && <p className="text-red-500 text-xs md:text-sm">{errors.password.message}</p>}
+        {/* Forgot password link, only show in login mode */}
+        {mode === "login" && (
+          <a
+            href="/changePassword"
+            className="text-primary text-xs md:text-sm mt-1 hover:underline self-end"
+            style={{ marginTop: '4px' }}
+          >
+            Forgot password?
+          </a>
+        )}
       </div>
       {showOrg && (
         renderOrgInput

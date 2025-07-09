@@ -32,7 +32,7 @@ export const resetPassword = createAsyncThunk(
     try {
       const response = await apiRequest(
         "post",
-        "/user/reset-password/",
+        "/users/reset-password/",
         { uidb64, token, new_password, confirm_new_password },
         false
       );
