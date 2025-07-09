@@ -1,6 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormData } from "../interfaces";
+import { useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -38,6 +40,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   renderOrgInput,
 }) => {
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({ mode: "onChange" });
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full h-screen sm:h-full max-w-md mx-auto px-8 sm:p-0">
@@ -65,16 +68,29 @@ const AuthForm: React.FC<AuthFormProps> = ({
         />
         {errors.email && <p className="text-red-500 text-xs md:text-sm">{errors.email.message}</p>}
       </div>
-      <div className="flex flex-col items-start gap-2 w-full">
+      <div className="flex flex-col items-start gap-2 w-full relative">
         <label htmlFor="password" className="text-sm md:text-base">Password</label>
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           autoComplete="off"
           {...register("password", { required: "Password is required" })}
           id="password"
           placeholder="Enter your password"
-          className="h-10 md:h-12 px-3 py-2 text-base outline-none rounded-lg shadow placeholder:text-gray-300 border-none w-full"
+          className="h-10 md:h-12 px-3 py-2 text-base outline-none rounded-lg shadow placeholder:text-gray-300 border-none w-full pr-10"
         />
+        <button
+          type="button"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-3 top-9 md:top-11 focus:outline-none"
+          tabIndex={0}
+        >
+          {showPassword ? (
+            <FiEye className="text-gray-400" size={20} />
+          ) : (
+            <FiEyeOff className="text-gray-400" size={20} />
+          )}
+        </button>
         {errors.password && <p className="text-red-500 text-xs md:text-sm">{errors.password.message}</p>}
         {/* Forgot password link, only show in login mode */}
         {mode === "login" && (
