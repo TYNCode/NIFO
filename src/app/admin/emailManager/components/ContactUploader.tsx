@@ -42,7 +42,7 @@ const ContactUploader: React.FC<ContactUploaderProps> = ({ contacts, setContacts
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/upload-contacts/", {
+      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/upload-contacts/", {
         method: "POST",
         body: formData,
       });
@@ -71,7 +71,7 @@ const ContactUploader: React.FC<ContactUploaderProps> = ({ contacts, setContacts
     setErrors([]);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/upload-contacts/", {
+      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/upload-contacts/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

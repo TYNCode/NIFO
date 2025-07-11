@@ -18,7 +18,7 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
     const fetchIndustries = async () => {
       try {
         const res = await fetch(
-          `https://tyn-server.azurewebsites.net/api/trends/?sector=${encodeURIComponent(
+          `https://tyn-server.azurewebsites.net/api/api/trends/?sector=${encodeURIComponent(
             selectedSector
           )}`
         );

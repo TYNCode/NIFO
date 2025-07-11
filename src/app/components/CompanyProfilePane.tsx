@@ -91,7 +91,7 @@ const CompanyProfilePane: React.FC<CompanyProfilePaneProps> = ({
 
   const sendEmail = async () => {
     try {
-      await axios.post("https://tyn-server.azurewebsites.net/email/send-email/", {
+      await axios.post("https://tyn-server.azurewebsites.net/api/email/send-email/", {
         subject: "This is a test email",
         template_name: "email_template.html",
         context: { userInfo, mailData, companyData },

@@ -59,7 +59,7 @@ const BulkEmailForm: React.FC<BulkEmailFormProps> = ({ contacts }) => {
     setShowResults(false);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/send-bulk-email/", {
+      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/send-bulk-email/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

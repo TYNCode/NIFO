@@ -61,7 +61,7 @@ const AssignToMe: React.FC<AssignToMeProps> = ({
     if (jwtAccessToken) {
       try {
         await axios.put(
-          `https://tyn-server.azurewebsites.net/partnerconnect/${id}`,
+          `https://tyn-server.azurewebsites.net/api/partnerconnect/${id}`,
           {
             assigned_status: true,
             assigned_to: assignee,

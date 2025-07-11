@@ -163,6 +163,10 @@ const projectSlice = createSlice({
           state.projectDetails = action.payload;
           state.problemStatement = action.payload.problem_statement || "";
           state.fetching = false;
+          // Use backend-provided progress
+          state.enabledSteps = action.payload.completed_steps || [1];
+          // Optionally, expose last_active_define_step_tab for substep restore logic
+          // (handled in challengeSlice or component as needed)
         }
       )
       .addCase(fetchProjectDetails.rejected, (state, action) => {

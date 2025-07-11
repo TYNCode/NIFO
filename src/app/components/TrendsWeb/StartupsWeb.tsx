@@ -35,7 +35,7 @@ const StartupsWeb = ({
   const fetchStartupDetails = async (startupName) => {
     try {
       const response = await fetch(
-        `https://tyn-server.azurewebsites.net/directorysearch/companysearch/?startup_name=${startupName}`
+        `https://tyn-server.azurewebsites.net/api/directorysearch/companysearch/?startup_name=${startupName}`
       );
       const data = await response.json();
       if (data.length > 0) {

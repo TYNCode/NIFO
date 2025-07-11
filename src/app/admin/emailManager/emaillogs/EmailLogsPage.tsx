@@ -28,7 +28,7 @@ const EmailLogsPage = () => {
   const fetchLogs = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/email-logs/");
+      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/email-logs/");
       if (response.ok) {
         const data = await response.json();
         setLogs(data);
@@ -82,7 +82,7 @@ const EmailLogsPage = () => {
   const handleResend = async (log: EmailLog) => {
     if (!confirm(`Resend email to ${log.recipient_email}?`)) return;
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/send-single-email/", {
+      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/send-single-email/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
