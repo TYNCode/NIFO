@@ -71,6 +71,7 @@ const ProgressOne: React.FC = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwtAccessToken")}`,
+            "Content-Type": "application/json",
           },
         }
       );
