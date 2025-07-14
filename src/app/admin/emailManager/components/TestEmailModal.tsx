@@ -41,7 +41,8 @@ const TestEmailModal: React.FC<TestEmailModalProps> = ({ isOpen, onClose }) => {
     setMessage(null);
 
     try {
-      const response = await fetch("https://tyn-server.azurewebsites.net/api/api/emails/send-single-email/", {
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${baseURL}emails/send-single-email/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
