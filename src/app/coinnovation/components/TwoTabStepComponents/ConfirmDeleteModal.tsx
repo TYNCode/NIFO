@@ -21,8 +21,13 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-[90%] max-w-md">
-        <h2 className="text-lg font-semibold mb-2">{title}</h2>
+      <div className="bg-white p-6 rounded-xl shadow-lg w-[95%] max-w-xl">
+        <h2
+          className="text-lg font-semibold mb-2 truncate max-w-full cursor-pointer"
+          title={title}
+        >
+          {title}
+        </h2>
         <p className="text-sm text-gray-600 mb-4">{message}</p>
         <div className="flex justify-end gap-4">
           <button
