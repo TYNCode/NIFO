@@ -35,7 +35,7 @@ export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", "/coinnovation/create-project/", {}, true);
+      const response = await apiRequest("get", "coinnovation/create-project/", {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -49,7 +49,7 @@ export const fetchProjectDetails = createAsyncThunk(
   "projects/fetchProjectDetails",
   async (projectID: string, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", `/coinnovation/create-project/?project_id=${projectID}`, {}, true);
+      const response = await apiRequest("get", `coinnovation/create-project/?project_id=${projectID}`, {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -89,7 +89,7 @@ export const createOrUpdateProject = createAsyncThunk(
       // Don't set Content-Type for FormData - let browser set it automatically
 
       const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const url = `${baseURL}/coinnovation/create-project/`;
+      const url = `${baseURL}coinnovation/create-project/`;
       
       const response = projectID
         ? await axios.put(url, formData, { headers })

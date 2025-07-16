@@ -39,7 +39,7 @@ export const fetchProjectFiles = createAsyncThunk<StoredFile[], string>(
   "file/fetchProjectFiles",
   async (projectID, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", `/coinnovation/create-project/?project_id=${projectID}`, {}, true);
+      const response = await apiRequest("get", `coinnovation/create-project/?project_id=${projectID}`, {}, true);
       const files = response.data?.files || [];
 
       const formatted = files.map((file: any) => ({

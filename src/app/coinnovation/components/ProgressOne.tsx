@@ -63,7 +63,7 @@ const ProgressOne: React.FC = () => {
     // Save to backend
     if (projectID) {
       axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/coinnovation/create-project/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}coinnovation/create-project/`,
         {
           project_id: projectID,
           last_active_define_step_tab: tabId,

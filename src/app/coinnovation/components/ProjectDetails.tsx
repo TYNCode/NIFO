@@ -94,11 +94,17 @@ const ProjectDetails: React.FC = () => {
   const handleSaveAndContinue = async () => {
     if (!projectDetails || !projectID) return;
 
-    const formatted = {
+    // Build the payload, but only include completed_steps if it is a non-empty array
+    const formatted: any = {
       ...projectDetails,
       start_date: projectDetails.start_date?.split("T")[0],
       end_date: projectDetails.end_date?.split("T")[0],
     };
+    if (Array.isArray(projectDetails?.completed_steps) && projectDetails.completed_steps.length > 0) {
+      formatted.completed_steps = projectDetails.completed_steps;
+    } else {
+      delete formatted.completed_steps;
+    }
 
     await dispatch(
       createOrUpdateProject({ projectID, projectData: formatted , mode: "save" })
