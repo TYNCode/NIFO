@@ -55,9 +55,12 @@ const OneTabStepOne: React.FC = () => {
         project_description,
         problem_statement: problemStatement,
         enterprise_img: "",
-        // Ensure completed_steps is always an array
-        completed_steps: Array.isArray(projectDetails?.completed_steps) ? projectDetails.completed_steps : [],
       };
+      
+      // Only include completed_steps if it's a non-empty array
+      if (Array.isArray(projectDetails?.completed_steps) && projectDetails.completed_steps.length > 0) {
+        payload.completed_steps = projectDetails.completed_steps;
+      }
 
       const result = await dispatch(
         createOrUpdateProject({ projectID, projectData: payload , mode: "describe" })

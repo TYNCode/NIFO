@@ -76,7 +76,15 @@ export const createOrUpdateProject = createAsyncThunk(
       const formData = new FormData();
       Object.entries(projectData).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
-          formData.append(key, value as string | Blob);
+          // Handle arrays properly - skip empty arrays and convert non-empty arrays to JSON
+          if (Array.isArray(value)) {
+            if (value.length > 0) {
+              formData.append(key, JSON.stringify(value));
+            }
+            // Skip empty arrays to avoid sending "0" string
+          } else {
+            formData.append(key, value as string | Blob);
+          }
         }
       });
 
