@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const highlightClass = `absolute ${
     isCollapsed ? "w-12 left-2" : "w-[220px] left-5"
-  } h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out`;
+  } h-12 bg-primary rounded-lg transition-all duration-500 ease-in-out`;
 
   // Mobile overlay sidebar
   if (isMobile) {
@@ -117,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   }}
                 />
                 <button
-                  className="text-primary font-bold ml-auto text-[#0070C0]"
+                  className="text-primary font-bold ml-auto"
                   onClick={handleToggleCollapse}
                 >
                   <FiChevronsLeft size={22} />
@@ -128,7 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             {/* Navigation Items */}
             <div className="relative mt-3">
               <div
-                className="absolute w-[220px] left-5 h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out"
+                className="absolute w-[220px] left-5 h-12 bg-primary rounded-lg transition-all duration-500 ease-in-out"
                 style={{
                   transform:
                     activeIndex !== -1
@@ -147,13 +147,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                       className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                         isActive
                           ? "text-white scale-105"
-                          : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                          : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                       }`}
                       onClick={() => handleSidebarClick(option.route)}
                     >
                       {React.cloneElement(option.icon, {
                         className: `text-base ${
-                          isActive ? "text-white" : "text-[#0070C0]"
+                          isActive ? "text-white" : "text-primary"
                         } flex-shrink-0`,
                       })}
                       <span className="text-sm whitespace-nowrap">{option.title}</span>
@@ -188,13 +188,13 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => router.push("/")}
             />
             <button
-              className="text-primary font-bold ml-auto text-[#0070C0]"
+              className="text-primary font-bold ml-auto"
               onClick={handleToggleCollapse}
             >
               {isCollapsed ? (
                 <IoChevronForward size={20} />
               ) : (
-                <div className="text-[#0070C0]">
+                <div className="text-primary">
                   <FiChevronsLeft size={22} />
                 </div>
               )}
@@ -227,13 +227,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                   } h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
                     isActive
                       ? "text-white scale-105"
-                      : "text-gray-700 hover:scale-[1.02] hover:text-[#0070C0]"
+                      : "text-gray-700 hover:scale-[1.02] hover:text-primary"
                   }`}
                   onClick={() => handleSidebarClick(option.route)}
                 >
                   {React.cloneElement(option.icon, {
                     className: `${isCollapsed ? "text-xl" : "text-base"} ${
-                      isActive ? "text-white" : "text-[#0070C0]"
+                      isActive ? "text-white" : "text-primary"
                     } flex-shrink-0`,
                   })}
                   {!isCollapsed && (

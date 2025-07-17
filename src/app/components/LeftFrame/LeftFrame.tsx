@@ -3,26 +3,59 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchChatHistory } from "../../redux/features/chatHistorySlice";
+import { fetchUserProfile, updateUserProfile } from "../../redux/features/auth/userProfileSlice";
+import { fetchCompanyById, updateCompany } from "../../redux/features/companyprofile/companyProfileSlice";
 import useUserInfo from "../../redux/customHooks/userHook";
 import ChatHistory from "./ChatHistory";
 import RecommendedQueries from "./RecommendedQueries";
 import { IoHome, IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { FiChevronsLeft } from "react-icons/fi";
 import { LuLampDesk } from "react-icons/lu";
-import { FaArrowTrendUp, FaFolder } from "react-icons/fa6";
+import { FaArrowTrendUp, FaFolder, FaBuilding, FaRocket, FaUsers, FaEnvelope } from "react-icons/fa6";
+import { FaUserCog } from "react-icons/fa";
 import { FiLink } from "react-icons/fi";
 import { GrLogout } from "react-icons/gr";
 import { FaTimes } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
+import { FiPower, FiUsers, FiBriefcase } from "react-icons/fi";
+import { apiRequest } from "../../utils/apiWrapper/apiRequest";
 
-const navItems = [
-  { title: "Home", icon: IoHome, href: "/", subTab: "default" },
-  { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
-  { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
-  { title: "Connections", icon: FiLink, href: "/connections" },
-  { title: "Projects", icon: FaFolder, href: "/coinnovation" },
-];
+// Role-based navigation items
+const getNavItems = (userRole: string) => {
+  if (userRole === "startup") {
+    return [
+      { title: "Dashboard", icon: FaFolder, href: "/startup/dashboard" },
+      { title: "Challenges", icon: FaBuilding, href: "/startup/challenges" },
+      { title: "Research Agent", icon: FaRocket, href: "/coinnovation" },
+    ];
+  } else {
+    // Enterprise and TYN/Admin users see Home + other items
+    const baseItems = [
+      { title: "Home", icon: IoHome, href: "/", subTab: "default" },
+    ];
+
+    if (userRole === "enterprise") {
+      return [
+        ...baseItems,
+        { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
+        { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
+        { title: "Connections", icon: FiLink, href: "/connections" },
+        { title: "Projects", icon: FaFolder, href: "/coinnovation" },
+      ];
+    } else {
+      // TYN/Admin users see all items
+      return [
+        ...baseItems,
+        { title: "Startup Spotlight", icon: LuLampDesk, href: "/spotlights" },
+        { title: "Trends", icon: FaArrowTrendUp, href: "/trends" },
+        { title: "Connections", icon: FiLink, href: "/connections" },
+        { title: "Projects", icon: FaFolder, href: "/coinnovation" },
+      ];
+    }
+  }
+};
 
 interface LeftFrameProps {
   onNewChat?: () => void;
@@ -47,11 +80,78 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
+  const userProfile = useAppSelector((state) => state.userProfile.data);
+  const userProfileLoading = useAppSelector((state) => state.userProfile.loading);
+  const userProfileError = useAppSelector((state) => state.userProfile.error);
   const logoutRef = useRef<HTMLDivElement | null>(null);
   const userInfo = useUserInfo();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [subTab, setSubTab] = useState("default");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  // Add state for modal
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [profileEditData, setProfileEditData] = useState<any>(null);
+  const [settingsTab, setSettingsTab] = useState<'profile' | 'company'>('profile');
+  const companyProfile = useAppSelector((state) => state.companyProfile.company);
+  const companyProfileLoading = useAppSelector((state) => state.companyProfile.loading);
+  const companyProfileError = useAppSelector((state) => state.companyProfile.error);
+  const [companyEditData, setCompanyEditData] = useState<any>(null);
+  const [isCompanyEditing, setIsCompanyEditing] = useState(false);
+  const [settingsSection, setSettingsSection] = useState<'none' | 'profile' | 'company' | 'invite'>('none');
+
+  // Fetch company info when switching to company tab (for startups)
+  useEffect(() => {
+    if (settingsTab === 'company' && userInfo?.role === 'startup' && userInfo?.organization) {
+      dispatch(fetchCompanyById({ id: userInfo.organization, type: 'startup' }));
+    }
+  }, [settingsTab, userInfo, dispatch]);
+
+  useEffect(() => {
+    if (companyProfile) setCompanyEditData(companyProfile);
+  }, [companyProfile]);
+
+  const handleProfileEditClick = async () => {
+    setShowProfileEdit(true);
+    if (!userProfile) {
+      dispatch(fetchUserProfile()).then((res: any) => {
+        if (res.payload) setProfileEditData(res.payload);
+      });
+    } else {
+      setProfileEditData(userProfile);
+    }
+  };
+
+  const handleProfileEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfileEditData((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+
+
+  const handleProfileCancel = () => {
+    setProfileEditData(userProfile);
+    setShowProfileEdit(false);
+  };
+
+  const handleCompanyEditClick = () => setIsCompanyEditing(true);
+  const handleCompanyEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCompanyEditData((prev: any) => ({ ...prev, [name]: value }));
+  };
+  const handleCompanySave = async () => {
+    if (companyProfile && 'startup_id' in companyProfile) {
+      await dispatch(updateCompany({ id: companyProfile.startup_id, payload: companyEditData, type: 'startup' }));
+      setIsCompanyEditing(false);
+    }
+  };
+  const handleCompanyCancel = () => {
+    setCompanyEditData(companyProfile);
+    setIsCompanyEditing(false);
+  };
+
+  // Get role-based navigation items
+  const navItems = useMemo(() => getNavItems(userInfo?.role || "enterprise"), [userInfo?.role]);
 
   useEffect(() => {
     const initialSubTab = searchParams.get("subTab");
@@ -94,21 +194,25 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
   
 
   const handleDashboardRoute = () => {
-    router.push("/Dashboard");
+    if (userInfo?.role === "startup") {
+      router.push("/startup/dashboard");
+    } else {
+      router.push("/Dashboard");
+    }
   };
 
   const activeIndex = useMemo(() => {
     return navItems.findIndex((item) => {
       if (item.href === "/" && pathname === "/") {
-        return item.subTab === subTab;
+        return 'subTab' in item && item.subTab === subTab;
       }
       return pathname === item.href || pathname.startsWith(item.href + "/");
     });
-  }, [pathname, subTab]);
+  }, [pathname, subTab, navItems]);
 
   const handleNavigation = (item: (typeof navItems)[0]) => {
-    if (item.href === "/") {
-      setSubTab(item.subTab || "default");
+    if (item.href === "/" && 'subTab' in item && item.subTab) {
+      setSubTab(item.subTab);
     }
     router.push(item.href);
     if (isMobile && onCloseMobile) {
@@ -118,9 +222,6 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
   const shouldBeCollapsed = !isMobile && isCollapsed;
   const sidebarWidth = isMobile ? "w-[280px]" : shouldBeCollapsed ? "w-16" : "w-[260px]";
-
-  const highlightClass = `absolute ${shouldBeCollapsed ? "w-12 left-2" : "w-[220px] left-5"
-    } h-12 bg-[#0070C0] rounded-lg transition-all duration-500 ease-in-out`;
 
   const MobileOverlay = () =>
     isMobile && isMobileOpen ? (
@@ -154,7 +255,13 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                 width={shouldBeCollapsed ? 50 : 100}
                 height={shouldBeCollapsed ? 50 : 100}
                 className={`cursor-pointer ${shouldBeCollapsed ? "w-8 h-8" : "w-36"}`}
-                onClick={() => router.push("/")}
+                onClick={() => {
+                  if (userInfo?.role === "startup") {
+                    router.push("/startup/dashboard");
+                  } else {
+                    router.push("/");
+                  }
+                }}
               />
               <button
                 className="ml-auto p-1 hover:bg-gray-100 rounded-md transition-colors"
@@ -169,8 +276,9 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
 
           {/* Navigation and Scrollable Content */}
           <div className="relative mt-3 flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 100px)' }}>
+            {/* Animated Highlight */}
             <div
-              className={highlightClass}
+              className="absolute w-[220px] h-12 bg-primary left-5 rounded-lg transition-transform duration-[650ms] ease-in-out"
               style={{
                 transform: activeIndex !== -1 ? `translateY(${activeIndex * 52}px)` : "none",
                 opacity: activeIndex !== -1 ? 1 : 0,
@@ -181,24 +289,18 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
                 const isActive = index === activeIndex;
                 const Icon = item.icon;
                 return (
-                  <div
+                  <button
                     key={item.title}
-                    title={shouldBeCollapsed ? item.title : ""}
                     onClick={() => handleNavigation(item)}
-                    className={`group flex items-center ${shouldBeCollapsed ? "justify-center px-2" : "gap-3 pl-10 px-6"
-                      } h-12 font-medium rounded-full cursor-pointer transition-all duration-300 ease-in-out ${isActive
-                        ? "text-white scale-105"
-                        : "text-gray-700 hover:scale-[1.02] hover:text-primary"
-                      }`}
+                    className={`group flex items-center gap-3 pl-10 px-6 h-12 font-medium rounded-full transition-all duration-300 ease-in-out
+                      ${isActive ? "text-white scale-105" : "text-gray-700 hover:scale-[1.02] hover:text-primary"}
+                    `}
                   >
                     <Icon
-                      className={`${shouldBeCollapsed ? "text-xl" : "text-base"} ${isActive ? "text-white" : "text-primary"
-                        } flex-shrink-0`}
+                      className={`text-base transition-colors duration-300 ${isActive ? "text-white" : "text-gray-500 group-hover:text-primary"}`}
                     />
-                    {!shouldBeCollapsed && (
-                      <span className="text-sm whitespace-nowrap">{item.title}</span>
-                    )}
-                  </div>
+                    <span className="text-sm">{item.title}</span>
+                  </button>
                 );
               })}
             </nav>
@@ -235,53 +337,65 @@ const LeftFrame: React.FC<LeftFrameProps> = ({
           {!shouldBeCollapsed && pathname === "/" && subTab === "chathistory" && <ChatHistory onSessionSelect={onSessionSelect} />}
         </div>
 
-        {/* Footer */}
-        <div className="relative border-t border-gray-100">
+        {/* Footer - Settings Button */}
+        <div className="relative border-t border-gray-100 px-4 py-3">
           <div
-            className={`px-4 py-3 flex items-center ${shouldBeCollapsed ? "justify-center" : "justify-between"
-              } cursor-pointer hover:bg-gray-50 transition-colors`}
-            onClick={() => setIsLogoutOpen(!isLogoutOpen)}
-            ref={logoutRef}
+            className="flex items-center gap-5 cursor-pointer mx-3 px-2 py-2 text-[#0070C0] text-sm font-medium"
+            onClick={() => setIsSettingsModalOpen(true)}
           >
-            {!shouldBeCollapsed && (
-              <div className="text-sm font-medium text-gray-700 truncate">
-                {userInfo?.first_name || "User"}
-              </div>
-            )}
-            <GrLogout size={shouldBeCollapsed ? 18 : 16} className="text-gray-600 flex-shrink-0" />
+            <IoSettingsOutline size={16} />
+            <span>Settings</span>
           </div>
 
-          {isLogoutOpen && (
-            <div
-              className={`absolute bottom-full ${shouldBeCollapsed ? "left-0 w-48" : "left-0 w-full"
-                } mb-1 bg-white border border-gray-200 rounded-md shadow-lg z-20`}
-            >
-              {userInfo?.is_primary_user && (
-                <div
-                  className="px-4 py-3 hover:bg-yellow-50 hover:text-yellow-600 cursor-pointer text-sm border-b border-gray-100 transition-colors"
-                  onClick={handleDashboardRoute}
-                >
-                  View Dashboard
-                </div>
-              )}
-
-              <div>
-                <div
-                  className="px-4 py-3 hover:bg-gray-50 hover:text-gray-700 flex items-center justify-between cursor-pointer text-sm transition-colors"
-                  onClick={() => router.push("/admin")}
-                >
-                  <span>Admin</span>
-                  <FaFolder size={16} />
-                </div>
-              </div>
+          {/* Settings Dropdown/Popover */}
+          {isSettingsModalOpen && (
+            <>
               <div
-                className="px-4 py-3 hover:bg-red-50 hover:text-red-600 flex items-center justify-between cursor-pointer text-sm transition-colors"
-                onClick={handleLogout}
+                className="absolute bottom-16 left-0 w-full bg-white rounded-xl shadow-lg z-50 border border-gray-100 py-2"
+                style={{ minWidth: '220px', boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08)' }}
               >
-                <span>Logout</span>
-                <GrLogout size={16} />
+                <div className="flex flex-col gap-2 mx-4 py-2">
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 rounded border border-[#0070C0] text-[#0070C0] font-medium hover:bg-blue-50"
+                    onClick={() => { setIsSettingsModalOpen(false); router.push('/startup/profile'); }}
+                  >
+                    <FaUserCog size={16} /> Profile
+                  </button>
+                  {userInfo?.role === 'startup' && (
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 rounded border border-[#0070C0] text-[#0070C0] font-medium hover:bg-blue-50"
+                      onClick={() => { setIsSettingsModalOpen(false); router.push('/startup/company'); }}
+                    >
+                      <FiBriefcase size={16} /> Company Info
+                    </button>
+                  )}
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 rounded border border-[#0070C0] text-[#0070C0] font-medium hover:bg-blue-50"
+                    onClick={() => { setIsSettingsModalOpen(false); router.push('/startup/team'); }}
+                  >
+                    <FiUsers size={16} /> Invite Teammates
+                  </button>
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 rounded border border-[#0070C0] text-[#0070C0] font-medium hover:bg-blue-50"
+                    onClick={() => { setIsSettingsModalOpen(false); router.push('/startup/settings'); }}
+                  >
+                    <IoSettingsOutline size={16} /> Settings
+                  </button>
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 rounded border border-[#0070C0] text-[#0070C0] font-medium hover:bg-blue-50"
+                    onClick={() => { setIsSettingsModalOpen(false); handleLogout(); }}
+                  >
+                    <FiPower size={16} /> Logout
+                  </button>
+                </div>
               </div>
-            </div>
+              {/* Click outside to close */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsSettingsModalOpen(false)}
+                style={{ pointerEvents: 'auto' }}
+              />
+            </>
           )}
         </div>
       </aside>

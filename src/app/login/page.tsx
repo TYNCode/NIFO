@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loginUser, clearLoginState } from "../redux/features/auth/loginSlice";
 import { FormData } from "../interfaces";
 import AuthForm from "../components/AuthForm";
+import { getRoleBasedRoute } from "../utils/roleBasedRouting";
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +27,17 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (message && !loading && !error) {
-      router.push("/");
+      // Get user info from localStorage to determine role-based routing
+      const userInfo = localStorage.getItem("user");
+      if (userInfo) {
+        const user = JSON.parse(userInfo);
+        const route = getRoleBasedRoute(user);
+        router.push(route);
+      } else {
+        // Fallback if user info is not available
+        router.push("/");
+      }
+      
       dispatch(clearLoginState()); // Only reset after successful login
     }
   }, [message, error, loading, router, dispatch]);

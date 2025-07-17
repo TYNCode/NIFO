@@ -22,6 +22,9 @@ import promptSlice from "./features/prompt/promptSlice";
 import trendsReducer from "./features/trendsSlice";
 import chatSlice from "./features/chat/chatSlice";
 import recommendedQueriesReducer from "./features/recommendedQueriesSlice";
+import challengesListReducer from "./features/coinnovation/challengesListSlice";
+import userProfileReducer from "./features/auth/userProfileSlice";
+import teamReducer from "./features/auth/teamSlice";
 
 const rootReducer = combineReducers({
   chat: chatSlice,
@@ -47,6 +50,9 @@ const rootReducer = combineReducers({
   prompt: promptSlice,
   trends: trendsReducer,
   recommendedQueries: recommendedQueriesReducer,
+  challengesList: challengesListReducer,
+  userProfile: userProfileReducer,
+  team: teamReducer,
 });
 
 export default rootReducer;

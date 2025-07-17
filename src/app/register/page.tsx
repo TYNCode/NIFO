@@ -8,6 +8,7 @@ import { fetchStartupSearchSuggestions, clearSearchResults, fetchEnterpriseSearc
 import AuthForm from "../components/AuthForm";
 import RegistrationModel from "../components/RegisterModel/RegisterModel";
 import { useRouter } from "next/navigation";
+import { getRoleBasedRoute } from "../utils/roleBasedRouting";
 
 const RegisterPage = () => {
   const dispatch = useAppDispatch();
@@ -64,10 +65,19 @@ const RegisterPage = () => {
   };
 
   useEffect(() => {
-    if (message) {
-      router.push("/");
+    if (message && !loading && !error) {
+      // Get user info from localStorage to determine role-based routing
+      const userInfo = localStorage.getItem("user");
+      if (userInfo) {
+        const user = JSON.parse(userInfo);
+        const route = getRoleBasedRoute(user);
+        router.push(route);
+      } else {
+        // Fallback if user info is not available
+        router.push("/");
+      }
     }
-  }, [message]);
+  }, [message, error, loading, router]);
 
   const openAddCompanyModal = () => setShowAddCompanyModal(true);
   const closeAddCompanyModal = () => setShowAddCompanyModal(false);

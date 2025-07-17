@@ -31,6 +31,36 @@ interface ChallengeState {
   isDocxGenerating: boolean;
 }
 
+interface ChallengeApplication {
+  id: number;
+  challenge: number;
+  challenge_title: string;
+  startup: number;
+  startup_email: string;
+  applied_at: string;
+}
+
+interface ChallengeClarification {
+  id: number;
+  challenge: number;
+  challenge_title: string;
+  startup: number;
+  startup_email: string;
+  subject: string;
+  query: string;
+  sent_at: string;
+}
+
+interface ChallengeExtraState {
+  applications: ChallengeApplication[];
+  applicationsLoading: boolean;
+  applicationsError: string | null;
+  applyStatus: "idle" | "loading" | "succeeded" | "failed";
+  applyError: string | null;
+  clarificationStatus: "idle" | "loading" | "succeeded" | "failed";
+  clarificationError: string | null;
+}
+
 const initialState: ChallengeState = {
   questionnaireData: null,
   jsonForDocument: null,
@@ -39,6 +69,16 @@ const initialState: ChallengeState = {
   error: null,
   isPDDJsonGenerating: false,
   isDocxGenerating: false,
+};
+
+const initialExtraState: ChallengeExtraState = {
+  applications: [],
+  applicationsLoading: false,
+  applicationsError: null,
+  applyStatus: "idle",
+  applyError: null,
+  clarificationStatus: "idle",
+  clarificationError: null,
 };
 
 // ============ ASYNC THUNKS ============ //
@@ -288,11 +328,89 @@ export const generateDocx = createAsyncThunk(
   }
 );
 
+// ============ CHALLENGE APPLICATIONS ============ //
+
+export const fetchChallengeApplications = createAsyncThunk(
+  "challenge/fetchChallengeApplications",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await apiRequest(
+        "get",
+        "/coinnovation/challenge-applications/",
+        undefined,
+        true
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || "Failed to fetch challenge applications"
+      );
+    }
+  }
+);
+
+export const applyToChallenge = createAsyncThunk(
+  "challenge/applyToChallenge",
+  async (
+    { challengeId }: { challengeId: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await apiRequest(
+        "post",
+        "/coinnovation/challenge-applications/",
+        { challenge: challengeId },
+        true
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || "Failed to apply to challenge"
+      );
+    }
+  }
+);
+
+// ============ CHALLENGE CLARIFICATIONS ============ //
+
+export const sendClarification = createAsyncThunk(
+  "challenge/sendClarification",
+  async (
+    {
+      challengeId,
+      subject,
+      query,
+    }: { challengeId: number; subject: string; query: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await apiRequest(
+        "post",
+        "/coinnovation/challenge-clarifications/",
+        {
+          challenge: challengeId,
+          subject,
+          query,
+        },
+        true
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || "Failed to send clarification"
+      );
+    }
+  }
+);
+
 // ============ SLICE ============ //
 
 const challengeSlice = createSlice({
   name: "challenge",
-  initialState,
+  initialState: {
+    ...initialState,
+    ...initialExtraState,
+  },
   reducers: {
     setQuestionnaireData: (state, action: PayloadAction<QuestionnaireData>) => {
       state.questionnaireData = action.payload;
@@ -382,6 +500,45 @@ const challengeSlice = createSlice({
       .addCase(generateDocx.rejected, (state, action) => {
         state.isDocxGenerating = false;
         state.error = action.payload as string;
+      })
+
+      // Challenge Applications
+      .addCase(fetchChallengeApplications.pending, (state) => {
+        state.applicationsLoading = true;
+        state.applicationsError = null;
+      })
+      .addCase(fetchChallengeApplications.fulfilled, (state, action) => {
+        state.applicationsLoading = false;
+        state.applications = action.payload;
+      })
+      .addCase(fetchChallengeApplications.rejected, (state, action) => {
+        state.applicationsLoading = false;
+        state.applicationsError = action.payload as string;
+      })
+      // Apply to Challenge
+      .addCase(applyToChallenge.pending, (state) => {
+        state.applyStatus = "loading";
+        state.applyError = null;
+      })
+      .addCase(applyToChallenge.fulfilled, (state, action) => {
+        state.applyStatus = "succeeded";
+        state.applications.push(action.payload);
+      })
+      .addCase(applyToChallenge.rejected, (state, action) => {
+        state.applyStatus = "failed";
+        state.applyError = action.payload as string;
+      })
+      // Send Clarification
+      .addCase(sendClarification.pending, (state) => {
+        state.clarificationStatus = "loading";
+        state.clarificationError = null;
+      })
+      .addCase(sendClarification.fulfilled, (state) => {
+        state.clarificationStatus = "succeeded";
+      })
+      .addCase(sendClarification.rejected, (state, action) => {
+        state.clarificationStatus = "failed";
+        state.clarificationError = action.payload as string;
       });
   },
 });

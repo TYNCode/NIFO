@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { apiRequest } from "@/app/utils/apiWrapper/apiRequest";
+import axios from 'axios';
 
 // Base Company Interface
 interface BaseCompany {
@@ -341,6 +342,23 @@ const mergeUniqueCompanies = (
   return Array.from(map.values());
 };
 
+export const fetchMyStartupCompany = createAsyncThunk(
+  'companyProfile/fetchMyStartupCompany',
+  async (_, thunkAPI) => {
+    try {
+      const response = await apiRequest(
+        'get',
+        '/users/my-startup-company/',
+        null,
+        true
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response?.data || 'Error fetching company');
+    }
+  }
+);
+
 const companySlice = createSlice({
   name: "company",
   initialState,
@@ -567,6 +585,20 @@ const companySlice = createSlice({
       .addCase(deleteCompany.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Fetch my startup company
+      .addCase(fetchMyStartupCompany.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyStartupCompany.fulfilled, (state, action) => {
+        state.loading = false;
+        state.company = action.payload;
+      })
+      .addCase(fetchMyStartupCompany.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
