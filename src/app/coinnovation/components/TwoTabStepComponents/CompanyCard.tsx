@@ -150,7 +150,10 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             className="mt-1 h-4 w-4 text-primary border-gray-300 rounded"
             onChange={(e) => onSelect(e.target.checked, company.solution_provider_id)}
           />
-          <h3 className="text-sm sm:text-base font-semibold text-primary break-words">
+          <h3
+            className="text-sm sm:text-base font-semibold text-primary break-words truncate max-w-[150px] sm:max-w-[200px] cursor-pointer"
+            title={company.solution_provider_name}
+          >
             {company.solution_provider_name}
           </h3>
         </div>

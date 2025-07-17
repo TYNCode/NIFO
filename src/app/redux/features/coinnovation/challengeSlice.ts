@@ -96,7 +96,7 @@ export const generateQuestions = createAsyncThunk(
     try {
       const res = await apiRequest(
         "post",
-        "/coinnovation/generate-questions/",
+        "coinnovation/generate-questions/",
         {
           project_id: projectID,
           problem_statement: problemStatement,
@@ -135,7 +135,7 @@ export const fetchQuestionnaire = createAsyncThunk(
       headers["Content-Type"] = "application/json";
 
       const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const url = `${baseURL}/coinnovation/generate-questions/`;
+      const url = `${baseURL}coinnovation/generate-questions/`;
       
       const payload: any = {
         project_id: projectID,
@@ -169,7 +169,7 @@ export const updateQuestionnaire = createAsyncThunk(
     try {
       const res = await apiRequest(
         "put",
-        "/coinnovation/generate-questions/",
+        "coinnovation/generate-questions/",
         {
           project_id: projectID,
           categories: updatedCategories,

@@ -14,7 +14,7 @@ const UsecasesArc = ({ selectedSector, selectedIndustry }) => {
   useEffect(() => {
     const fetchTrends = async () => {
       try {
-        const res = await fetch("https://tyn-server.azurewebsites.net/api/trends/");
+        const res = await fetch("https://tyn-server.azurewebsites.net/api/api/trends/");
         const data = await res.json();
 
         const allSectors = [...new Set(data.map((item) => item.sector))];

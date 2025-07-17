@@ -25,7 +25,7 @@ const ResetPasswordMobile: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "https://tyn-server.azurewebsites.net/user/reset-password/",
+        "https://tyn-server.azurewebsites.net/api/users/reset-password/",
         {
           uidb64: uidb64,
           token: token,

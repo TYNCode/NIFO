@@ -35,7 +35,7 @@ export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", "/coinnovation/create-project/", {}, true);
+      const response = await apiRequest("get", "coinnovation/create-project/", {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -49,7 +49,7 @@ export const fetchProjectDetails = createAsyncThunk(
   "projects/fetchProjectDetails",
   async (projectID: string, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("get", `/coinnovation/create-project/?project_id=${projectID}`, {}, true);
+      const response = await apiRequest("get", `coinnovation/create-project/?project_id=${projectID}`, {}, true);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -76,7 +76,15 @@ export const createOrUpdateProject = createAsyncThunk(
       const formData = new FormData();
       Object.entries(projectData).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
-          formData.append(key, value as string | Blob);
+          // Handle arrays properly - skip empty arrays and convert non-empty arrays to JSON
+          if (Array.isArray(value)) {
+            if (value.length > 0) {
+              formData.append(key, JSON.stringify(value));
+            }
+            // Skip empty arrays to avoid sending "0" string
+          } else {
+            formData.append(key, value as string | Blob);
+          }
         }
       });
 
@@ -89,7 +97,7 @@ export const createOrUpdateProject = createAsyncThunk(
       // Don't set Content-Type for FormData - let browser set it automatically
 
       const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const url = `${baseURL}/coinnovation/create-project/`;
+      const url = `${baseURL}coinnovation/create-project/`;
       
       const response = projectID
         ? await axios.put(url, formData, { headers })
@@ -163,6 +171,10 @@ const projectSlice = createSlice({
           state.projectDetails = action.payload;
           state.problemStatement = action.payload.problem_statement || "";
           state.fetching = false;
+          // Use backend-provided progress
+          state.enabledSteps = action.payload.completed_steps || [1];
+          // Optionally, expose last_active_define_step_tab for substep restore logic
+          // (handled in challengeSlice or component as needed)
         }
       )
       .addCase(fetchProjectDetails.rejected, (state, action) => {

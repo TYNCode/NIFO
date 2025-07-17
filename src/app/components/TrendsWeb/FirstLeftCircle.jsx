@@ -26,7 +26,8 @@ const FirstLeftCircle = ({ onDotClick, onSectorHighlight }) => {
   useEffect(() => {
     const fetchFilteredSectors = async () => {
       try {
-        const usecaseResponse = await fetch("https://tyn-server.azurewebsites.net/api/trends/");
+        const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const usecaseResponse = await fetch(`${baseURL}trends/`);
         const usecaseData = await usecaseResponse.json();
 
         const validSectorsSet = new Set(usecaseData.map((item) => item.sector));

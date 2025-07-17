@@ -17,10 +17,9 @@ const CurvedLineDown = ({ selectedSector, onIndustryClick }) => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
+        const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const res = await fetch(
-          `https://tyn-server.azurewebsites.net/api/trends/?sector=${encodeURIComponent(
-            selectedSector
-          )}`
+          `${baseURL}trends/?sector=${encodeURIComponent(selectedSector)}`
         );
         const data = await res.json();
 

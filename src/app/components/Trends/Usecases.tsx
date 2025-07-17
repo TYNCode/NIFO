@@ -28,7 +28,7 @@ const Usecases = ({ selectedSector, selectedIndustry, selectedSubindustry, onUse
     const fetchUsecases = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://tyn-server.azurewebsites.net/api/trends/");
+        const res = await fetch("https://tyn-server.azurewebsites.net/api/api/trends/");
         const data = await res.json();
 
         const normalize = (str) => str?.trim().toLowerCase();

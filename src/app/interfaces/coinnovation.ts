@@ -17,4 +17,6 @@ export interface ProjectData {
     project_description?: string;
     problem_statement?: string;
     context?: string;
+    completed_steps?: number[];
+    last_active_define_step_tab?: string;
   }

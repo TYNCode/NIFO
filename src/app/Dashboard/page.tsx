@@ -39,8 +39,9 @@ const Dashboard: React.FC = () => {
   const fetchStartups = async (page) => {
     try {
       setIsLoadingStartups(true);
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
-        `https://tyn-server.azurewebsites.net/adminroutes/api/startups/?page=${page}`
+        `${baseURL}admin/api/startups/?page=${page}`
       );
       if (!response.ok) throw new Error("Failed to fetch startups");
 
@@ -59,8 +60,9 @@ const Dashboard: React.FC = () => {
     const fetchConsultants = async () => {
       try {
         setIsLoadingConsultants(true);
+        const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const response = await fetch(
-          "https://tyn-server.azurewebsites.net/adminroutes/api/consultants/"
+          `${baseURL}admin/api/consultants/`
         );
         if (!response.ok) throw new Error("Failed to fetch consultants");
 
@@ -83,8 +85,8 @@ const Dashboard: React.FC = () => {
   //       setIsLoading(true);
 
   //       const [startupsRes, consultantsRes] = await Promise.all([
-  //         fetch("https://tyn-server.azurewebsites.net/adminroutes/api/startups/"),
-  //         fetch("https://tyn-server.azurewebsites.net/adminroutes/api/consultants/"),
+  //         fetch("https://tyn-server.azurewebsites.net/api/adminroutes/api/startups/"),
+  //         fetch("https://tyn-server.azurewebsites.net/api/adminroutes/api/consultants/"),
   //       ]);
 
   //       if (!startupsRes.ok || !consultantsRes.ok)
@@ -116,8 +118,9 @@ const Dashboard: React.FC = () => {
   const fetchUsers = async (page) => {
     try {
       setIsLoading(true);
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
-        `https://tyn-server.azurewebsites.net/adminroutes/api/users/?page=${page}`
+        `${baseURL}admin/api/users/?page=${page}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch users");

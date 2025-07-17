@@ -27,7 +27,7 @@ const AllRequests = ({
 
   useEffect(() => {
     axios
-      .get("https://tyn-server.azurewebsites.net/partnerconnect/")
+      .get("https://tyn-server.azurewebsites.net/api/partnerconnect/")
       .then((response) => {
         setRequests(response.data);
       })

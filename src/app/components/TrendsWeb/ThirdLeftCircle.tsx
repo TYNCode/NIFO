@@ -32,7 +32,7 @@ const ThirdLeftCircle = ({
   useEffect(() => {
     const fetchSubIndustries = async () => {
       try {
-        const response = await fetch("https://tyn-server.azurewebsites.net/api/trends/");
+        const response = await fetch("https://tyn-server.azurewebsites.net/api/api/trends/");
         const data = await response.json();
 
         const filtered = data.filter(

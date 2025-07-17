@@ -46,8 +46,9 @@ const StartupDetailsWeb = ({ selectedStartup, handleClose }) => {
     if (selectedStartup?.startup_id) {
       const fetchStartupDetails = async () => {
         try {
+          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
           const response = await fetch(
-            `https://tyn-server.azurewebsites.net/directorysearch/companyview/${selectedStartup.startup_id}`
+            `${baseURL}companies/view/${selectedStartup.startup_id}/`
           );
           const data = await response.json();
           setStartupDetails(data);

@@ -7,6 +7,7 @@ import OneTabStepThree from "./OneTabStepThree";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setProjectID } from "../../redux/features/coinnovation/projectSlice";
 import { setActiveDefineStepTab } from "../../redux/features/coinnovation/challengeSlice";
+import axios from "axios";
 
 type DefineStepTab = "01.a" | "01.b" | "01.c";
 
@@ -19,6 +20,7 @@ const ProgressOne: React.FC = () => {
   const activeTab = useAppSelector((state) =>
     (state.challenge.activeDefineStepTab || "01.a") as DefineStepTab
   );
+  const projectDetails = useAppSelector((state) => state.projects.projectDetails);
 
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -34,10 +36,12 @@ const ProgressOne: React.FC = () => {
     }
     if (storedTab) {
       dispatch(setActiveDefineStepTab(storedTab));
+    } else if (projectDetails?.last_active_define_step_tab) {
+      dispatch(setActiveDefineStepTab(projectDetails.last_active_define_step_tab as DefineStepTab));
     }
 
     setInitialLoading(false);
-  }, [dispatch]);
+  }, [dispatch, projectDetails?.last_active_define_step_tab]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -53,6 +57,26 @@ const ProgressOne: React.FC = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeTab]);
+
+  const handleTabChange = (tabId: DefineStepTab) => {
+    dispatch(setActiveDefineStepTab(tabId));
+    // Save to backend
+    if (projectID) {
+      axios.put(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}coinnovation/create-project/`,
+        {
+          project_id: projectID,
+          last_active_define_step_tab: tabId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtAccessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+  };
 
   const tabs = [
     {
@@ -98,7 +122,7 @@ const ProgressOne: React.FC = () => {
             <div
               key={tab.id}
               onClick={() =>
-                tab.enabled && dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
+                tab.enabled && handleTabChange(tab.id as DefineStepTab)
               }
               className={`flex-1 text-center flex flex-row items-center justify-center gap-2 text-sm font-medium px-4 rounded-t-lg cursor-pointer transition-all duration-200
                 ${
@@ -125,7 +149,7 @@ const ProgressOne: React.FC = () => {
               <div
                 key={tab.id}
                 onClick={() =>
-                  tab.enabled && dispatch(setActiveDefineStepTab(tab.id as DefineStepTab))
+                  tab.enabled && handleTabChange(tab.id as DefineStepTab)
                 }
                 className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer transition-all duration-200 whitespace-nowrap
                   ${

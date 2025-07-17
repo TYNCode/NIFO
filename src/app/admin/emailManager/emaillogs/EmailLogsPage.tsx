@@ -28,7 +28,8 @@ const EmailLogsPage = () => {
   const fetchLogs = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/email-logs/");
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${baseURL}emails/email-logs/`);
       if (response.ok) {
         const data = await response.json();
         setLogs(data);
@@ -82,7 +83,8 @@ const EmailLogsPage = () => {
   const handleResend = async (log: EmailLog) => {
     if (!confirm(`Resend email to ${log.recipient_email}?`)) return;
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/emails/send-single-email/", {
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${baseURL}emails/send-single-email/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

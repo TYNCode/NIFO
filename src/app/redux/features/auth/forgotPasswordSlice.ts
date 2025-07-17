@@ -17,7 +17,7 @@ export const requestPasswordReset = createAsyncThunk(
   "user/requestPasswordReset",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await apiRequest("post", "/user/forgot-password/", { email }, false);
+      const response = await apiRequest("post", "/users/forgot-password/", { email }, false);
       return response.data.message;
     } catch (error: any) {
       return rejectWithValue(
